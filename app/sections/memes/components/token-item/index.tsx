@@ -18,8 +18,8 @@ import Big from "big.js";
 import { useRouter } from 'next/navigation';
 import { MemesContext } from '@/app/sections/memes/context';
 
-const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
-  const { className, token } = props;
+const TokenItem = (props: { className?: string; token: Hot | Meme; holders?: number; holdersLoading?: boolean; }) => {
+  const { className, token, holders = 0, holdersLoading } = props;
 
   const { isMobile } = useUserAgent();
   const router = useRouter();
@@ -172,7 +172,7 @@ const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
               <TokenItemMarketCap token={token} />
             </div>
             <div className={styles.TokenItemFoot}>
-              <TokenItemSummaries token={token} />
+              <TokenItemSummaries token={token} holders={holders} holdersLoading={holdersLoading} />
               <div className={styles.TokenItemCreateAt}>
                 {token.created2Now}
               </div>
@@ -182,7 +182,7 @@ const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
       ) : (
         <div className={styles.TokenItemLaptopFooter}>
           <TokenItemMarketCap token={token} />
-          <TokenItemSummaries token={token} />
+          <TokenItemSummaries token={token} holders={holders} holdersLoading={holdersLoading} />
         </div>
       )}
     </div>
@@ -258,33 +258,35 @@ export const TokenItemLoading = (props: any) => {
 };
 
 export const TokenItemSummaries = (props: any) => {
-  const { className, token } = props;
+  const { className, token, holders, holdersLoading } = props;
 
   return (
     <div className={clsx(styles.TokenItemSummaries, className)}>
-      {token.kind === "Hot" && (
-        <>
-          {[0, 1, 2].includes(token.status) ? (
-            <SummaryItem
-              className={styles.TokenItemSummary}
-              type="rocket"
-              value={token.launched_like || 0}
-            />
-          ) : (
-            <SummaryItem
-              className={styles.TokenItemSummary}
-              type="plane"
-              value={token.launched_like || 0}
-            />
-          )}
+      <>
+        {[0, 1, 2].includes(token.status) ? (
           <SummaryItem
             className={styles.TokenItemSummary}
-            type="user"
-            value={token.holder || 0}
+            type="rocket"
+            value={token.launched_like || 0}
           />
-        </>
-      )}
-      {token.kind === "Meme" && (
+        ) : (
+          <SummaryItem
+            className={styles.TokenItemSummary}
+            type="plane"
+            value={token.launched_like || 0}
+          />
+        )}
+        <SummaryItem
+          className={styles.TokenItemSummary}
+          type="user"
+          value={holders || 0}
+          loading={holdersLoading}
+        />
+      </>
+      {/*{token.kind === "Hot" && (
+
+      )}*/}
+      {/*{token.kind === "Meme" && (
         <>
           <SummaryItem
             className={styles.TokenItemSummary}
@@ -297,7 +299,7 @@ export const TokenItemSummaries = (props: any) => {
             value={token.pre_paid || 0}
           />
         </>
-      )}
+      )}*/}
     </div>
   );
 };

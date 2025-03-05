@@ -13,9 +13,12 @@ interface MemesState {
   memesListedList: Meme[];
   memesImportList: Meme[];
   memesListCountdown: Record<string, number>;
+  memesListHolders: Record<string, number>;
+  memesListHoldersLoading: Record<string, boolean>;
   memesListPageLimit: number;
   memesListPageOffset: number;
   memesListPageNext: boolean;
+  memesHoldersQueue: any[];
   setMemesGenesisList: (list: Meme[]) => void;
   setMemesTickingList: (list: Meme[]) => void;
   setMemesListedList: (list: Meme[]) => void;
@@ -25,6 +28,10 @@ interface MemesState {
   setMemesListPageOffset: (offset: number) => void;
   setMemesListPageNext: (next: boolean) => void;
   setMemesListCountdown: (obj: Record<string, number>) => void;
+  setMemesListHolders: (obj: Record<string, number>) => void;
+  setMemesListHoldersLoading: (obj: Record<string, boolean>) => void;
+  setMemesHoldersQueue: (item: any) => void;
+  spliceMemesHoldersQueue: (index: number) => void;
 }
 
 export const useMemesListStore = create(persist<MemesState>((set) => ({
@@ -37,10 +44,13 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
   memesTickingList: [],
   memesListedList: [],
   memesImportList: [],
-  memesListPageLimit: 20,
+  memesListPageLimit: 10,
   memesListPageOffset: 0,
   memesListPageNext: true,
   memesListCountdown: {},
+  memesListHolders: {},
+  memesListHoldersLoading: {},
+  memesHoldersQueue: [],
   setMemesGenesisList: (list: Meme[]) => set((state) => ({ ...state, memesGenesisList: list })),
   setMemesTickingList: (list: Meme[]) => set((state) => ({ ...state, memesTickingList: list })),
   setMemesListedList: (list: Meme[]) => set((state) => ({ ...state, memesListedList: list })),
@@ -54,6 +64,35 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
     return {
       ...state,
       memesListCountdown: _memesListCountdown
+    };
+  }),
+  setMemesListHolders: (obj) => set((state) => {
+    const _memesListHolders = { ...state.memesListHolders, ...obj };
+    return {
+      ...state,
+      memesListHolders: _memesListHolders
+    };
+  }),
+  setMemesListHoldersLoading: (obj) => set((state) => {
+    const _memesListHoldersLoading = { ...state.memesListHoldersLoading, ...obj };
+    return {
+      ...state,
+      memesListHoldersLoading: _memesListHoldersLoading
+    };
+  }),
+  setMemesHoldersQueue: (item) => set((state) => {
+    const _memesHoldersQueue = [...state.memesHoldersQueue, item];
+    return {
+      ...state,
+      memesHoldersQueue: _memesHoldersQueue
+    };
+  }),
+  spliceMemesHoldersQueue: (index) => set((state) => {
+    const _memesHoldersQueue = [...state.memesHoldersQueue];
+    _memesHoldersQueue.splice(index, 1);
+    return {
+      ...state,
+      memesHoldersQueue: _memesHoldersQueue
     };
   }),
 }), {
@@ -108,6 +147,7 @@ export interface Hot {
   marketCapTrendsDirection?: '+' | '-';
   holder?: number;
   kLineData?: { timestamp: number; price: number; }[];
+  holders?: number;
 }
 
 export interface Meme {
@@ -167,4 +207,5 @@ export interface Meme {
   // front-end attributes
   kind: 'Meme',
   created2Now?: string;
+  holders?: number;
 }
