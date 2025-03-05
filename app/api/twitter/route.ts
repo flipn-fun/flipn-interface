@@ -1,14 +1,24 @@
+import { URL } from "url";
 import { NextRequest } from "next/server";
 
 export const runtime = "edge";
-
 export async function GET(request: Request | NextRequest) {
-  const parsedUrl = new URL(request.url as string);
-  const imgUrl = parsedUrl.searchParams.get("imgUrl");
-  const tokenName = parsedUrl.searchParams.get("tokenName");
-  const about = parsedUrl.searchParams.get("about");
-  const tokenAddress = parsedUrl.searchParams.get("address");
-  const referral = parsedUrl.searchParams.get("referral");
+  const queryString = request.url.split('?')[1] || '';
+  const queryParams: { [key: string]: string } = {};
+  
+  if (queryString) {
+    const pairs = queryString.split('&');
+    for (const pair of pairs) {
+      const [key, value] = pair.split('=');
+      queryParams[decodeURIComponent(key)] = decodeURIComponent(value || '');
+    }
+  }
+
+  const imgUrl = queryParams["imgUrl"];
+  const tokenName = queryParams["tokenName"];
+  const about = queryParams["about"];
+  const tokenAddress = queryParams["address"];
+  const referral = queryParams["referral"];
   const domain = process.env.NEXT_PUBLIC_DOMAIN || "https://stage.flipn.fun";
   const s3Domain =
     process.env.NEXT_PUBLIC_S3_URL_PREFIX ||
