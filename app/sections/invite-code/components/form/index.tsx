@@ -9,6 +9,7 @@ import Loading from '@/app/components/icons/loading';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useUserAgent } from '@/app/context/user-agent';
+import { useAirdropContext } from '@/app/context/airdrop';
 
 const InviteCodeForm: React.FC<any> = (props) => {
   const { className } = props;
@@ -16,6 +17,7 @@ const InviteCodeForm: React.FC<any> = (props) => {
   const router = useRouter();
   const { isMobile } = useUserAgent();
   const searchParams = useSearchParams();
+  const { getAirdropData } = useAirdropContext();
 
   const codeParam = searchParams.get('code');
 
@@ -24,6 +26,7 @@ const InviteCodeForm: React.FC<any> = (props) => {
   const [pending, setPending] = useState<boolean>();
   const [codeValid, setCodeValid] = useState<boolean>();
   const [isStarted, setIsStarted] = useState<boolean>(false);
+  const [startLoading, setStartLoading] = useState<boolean>(false);
 
   const handleCodeChange=  (value?: string) => {
     setCodeValid(void 0);
@@ -64,9 +67,12 @@ const InviteCodeForm: React.FC<any> = (props) => {
 
   const handleStart = () => {
     setIsStarted(true);
-    const timer = setTimeout(() => {
+    setStartLoading(true);
+    const timer = setTimeout(async () => {
       clearTimeout(timer);
+      await getAirdropData?.({ isLoading: false });
       router.replace('/');
+      setStartLoading(false);
     }, 300);
   };
 
@@ -118,13 +124,13 @@ const InviteCodeForm: React.FC<any> = (props) => {
         }}
       >
         <button
-          disabled={pending || !codeValid}
+          disabled={pending || !codeValid || startLoading}
           type="button"
           className={styles.InviteCodeFormButton}
           onClick={handleStart}
         >
           {
-            pending && (
+            (pending || startLoading) && (
               <Loading size={16} />
             )
           }
