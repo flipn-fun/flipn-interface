@@ -3,6 +3,10 @@ import { WalletModalButton } from "@/app/libs/solana/wallet-adapter/modal";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import InfoIcon from "../info-icon";
+import Popover, {
+  PopoverPlacement,
+  PopoverTrigger
+} from "@/app/components/popover";
 
 export default function LikeToEarn({ info, userInfo }: any) {
   const router = useRouter();
@@ -28,10 +32,19 @@ export default function LikeToEarn({ info, userInfo }: any) {
         <div className={styles.ItemHeader}>
           <div className={styles.ItemTitle}>
             <span>Like to Earn</span>
-            {/* <InfoIcon
-              onClick={() => {
-              }}
-            /> */}
+            <Popover
+              content={
+                <div className={styles.Tips}>
+                  Like Genesis products to earn, {info?.like_num || 100} likes
+                  per day.
+                </div>
+              }
+              trigger={PopoverTrigger.Hover}
+              placement={PopoverPlacement.Top}
+              closeDelayDuration={0}
+            >
+              <InfoIcon />
+            </Popover>
           </div>
         </div>
         <div className={styles.ItemDesc}>
