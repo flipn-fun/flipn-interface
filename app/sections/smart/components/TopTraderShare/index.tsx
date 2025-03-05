@@ -1,6 +1,6 @@
 import styles from './index.module.css';
 import TopTraderShareInfoCard from '@/app/sections/smart/components/TopTraderShare/share-info';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useCallback, useEffect } from 'react';
 import { useAccount } from '@/app/hooks/useAccount';
 import { fail, success } from '@/app/utils/toast';
 import html2canvas from 'html2canvas';
@@ -13,7 +13,10 @@ import {
 } from "@/app/sections/trends/components/top-traders/icons";
 import { useUserAgent } from '@/app/context/user-agent';
 import CloseIcon from "@/app/components/icons/modal-close";
+import { postUpload, base64ToBlob } from '@/app/utils';
+import { getShortUrl, shareToX } from "@/app/utils/share";
 
+const domain = process.env.NEXT_PUBLIC_DOMAIN || "https://stage.flipn.fun";
 const TopTraderShare = (props: any) => {
   const { show, onClose, selectedItems, currentUserInfo, shareName } = props;
   const { isMobile } = useUserAgent();
@@ -25,6 +28,8 @@ const TopTraderShare = (props: any) => {
   const [downloadVisible, setDownloadVisible] = useState(false);
   const [downloadSrc, setDownloadSrc] = useState<any>();
   const [downloadFileName, setDownloadFileName] = useState<any>();
+  const [shareImgUrl, setShareImgUrl] = useState<any>();
+  const [isNoHead, setIsNoHead] = useState(false);
 
   const shareLink = useMemo(() => {
     const _shareLink = new URL(window?.location?.origin + '/smartTopDetail');
@@ -76,6 +81,112 @@ const TopTraderShare = (props: any) => {
     setLoading(false);
   };
 
+
+
+  const getShareImg = async () => {
+    if (loading) return;
+    setLoading(true);
+    
+    if (cardRef.current) {
+      try {
+        // Add a small delay to ensure styles are loaded
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        
+        const element = cardRef.current;
+        // Force a reflow to ensure styles are applied
+        element.offsetHeight;
+
+        // Remove fixed dimensions and let the content determine the size
+        const canvas = await html2canvas(element, { 
+          useCORS: true,
+          backgroundColor: '#000',
+          scale: 1,
+          logging: false,
+          imageTimeout: 0,
+          allowTaint: true,
+          width: element.offsetWidth,
+          height: element.offsetHeight,
+          onclone: (clonedDoc) => {
+            const clonedElement = clonedDoc.querySelector(`[class*="${styles.CopyTradeShareCard}"]`);
+            if (clonedElement) {
+              const el = clonedElement as HTMLElement;
+              el.style.opacity = '1';
+              el.style.visibility = 'visible';
+              el.style.display = 'block';
+              el.style.position = 'relative';
+              el.style.width = `${element.offsetWidth}px`;
+              el.style.height = `${element.offsetHeight}px`;
+            }
+          }
+        });
+
+        const blob = await new Promise<Blob>((resolve) => {
+          canvas.toBlob((blob) => {
+            resolve(blob!);
+          }, 'image/jpeg', 0.8);
+        });
+        const timestamp = dayjs().format('YYYYMMDDHHmmss');
+        const randomString = generateRandomString(8);
+        const filename = `top_trader_${timestamp}_${randomString}.jpg`;
+
+        const url = await postUpload(blob, filename, 'image/jpeg');
+        if (url) {
+          console.log('Upload successful:', url);
+          setShareImgUrl(url);
+        }
+      } catch (err: any) {
+        console.error('Share image generation/upload failed:', err);
+        fail(`Failed to generate/upload share image${err?.message ? ': ' + err?.message : ''}`);
+      }
+    }
+    
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (!isNoHead) {
+      getShareImg();
+    }
+  }, [isNoHead]);
+
+
+  const handleCopyX = async () => {
+    await setLoading(true);
+    if (shareImgUrl) {
+      const longUrl = `${domain}/api/smart?address=${encodeURIComponent(
+        shareName
+      )}&imgUrl=${encodeURIComponent(
+        shareImgUrl
+      )}&title=${encodeURIComponent(
+        'Top Trader Share'
+      )}&about=${encodeURIComponent('flip top trader')}`;
+      const shortUrl = await getShortUrl(longUrl);
+      shareToX('Check out this top trader on Flipn! 🚀', shortUrl);
+    }
+    await setLoading(false);
+    onClose?.();
+  }
+
+
+  useEffect(() => {
+    if (
+      navigator.userAgent.toLowerCase().indexOf("phantom") > -1 ||
+      navigator.userAgent.toLowerCase().indexOf("solflare") > -1
+    ) {
+      setIsNoHead(true);
+    }
+  }, []);
+
+
+  const showError = useCallback(() => {
+    fail("This feature is unavailable in the wallet's browser. ", {
+      maskStyle: {
+        zIndex: 9999
+      }
+    });
+  }, []);
+
   return (
     <div className={isMobile ? styles.CopyTradeShareContainer : styles.CopyTradeShareContainerPC}>
       {
@@ -94,7 +205,7 @@ const TopTraderShare = (props: any) => {
       <div ref={cardRef} className={styles.CopyTradeShareCard}>
         <TopTraderShareInfoCard shareName={shareName} shareLink={shareLink} selectedItems={selectedItems} currentUserInfo={currentUserInfo} />
       </div>
-      <div className={isMobile ? styles.CopyTradeShareFooter : styles.CopyTradeShareFooterPC}>
+      <div className={isMobile ? styles.CopyTradeShareFooter : styles.CopyTradeShareFooterPC }>
         <button
           type="button"
           className={styles.AirdropShareButtonDark}
@@ -111,9 +222,14 @@ const TopTraderShare = (props: any) => {
         <button
           type="button"
           className={styles.AirdropShareButtonPrimary}
-          onClick={handleCopy}
+          onClick={isNoHead ? handleCopy : handleCopyX}
+          disabled={loading}
         >
-          <img src="/img/airdrop/icon-share.svg" alt="" className={styles.AirdropShareButtonIcon} />
+           {
+            loading && (
+              <Loading size={14} />
+            )
+          }
           <span>Share</span>
         </button>
       </div>

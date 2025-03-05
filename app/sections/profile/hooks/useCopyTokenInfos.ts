@@ -3,6 +3,7 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { defaultAvatar } from "@/app/utils/config";
 import { getTokenMeta } from '@/app/utils/solanaScanApi';
+import { Metaplex } from '@metaplex-foundation/js';
 
 export function useCopyTokenInfos(tokens: any[] | undefined) {
     const { connection } = useConnection();
@@ -40,11 +41,23 @@ export function useCopyTokenInfos(tokens: any[] | undefined) {
                     symbol: 'token'
                 };
             } else {
-                const tokenInfo = await getTokenMeta(address);
+                const metaplex = Metaplex.make(connection);
+                const nft = await metaplex.nfts().findByMint({ mintAddress: new PublicKey(address) });
+                const mintInfo = await connection.getTokenSupply(new PublicKey(address));
+                let imageUrl = defaultAvatar;
+                if (nft.uri) {
+                    try {
+                        const response = await fetch(nft.uri);
+                        const metadata = await response.json();
+                        imageUrl = metadata.image || defaultAvatar;
+                    } catch (error) {
+                        console.error('Error fetching NFT metadata:', error);
+                    }
+                }
                 return {
-                    supply: tokenInfo.data.supply,
-                    icon: tokenInfo.data.icon || defaultAvatar,
-                    symbol: tokenInfo.data.symbol || 'token'
+                    supply: mintInfo.value.uiAmount || 0,
+                    icon: imageUrl || defaultAvatar,
+                    symbol: nft.symbol || 'token'
                 };
             }
         } catch (error) {

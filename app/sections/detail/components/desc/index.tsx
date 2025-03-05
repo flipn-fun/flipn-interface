@@ -12,6 +12,7 @@ import { useTrendsStore } from "@/app/store/useTrends";
 import { defaultAvatar } from "@/app/utils/config";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
+import { useUserAgent } from "@/app/context/user-agent";
 
 export default function Desc({
   data,
@@ -32,6 +33,7 @@ export default function Desc({
   const { connection } = useConnection();
   const [holders, setHolders] = useState(0);
   const router = useRouter();
+  const { isMobile } = useUserAgent()
   const userName = useMemo(() => {
     if (data?.creater) {
       if (data.creater.name) {
@@ -54,11 +56,24 @@ export default function Desc({
   useEffect(() => {
     (async () => {
       if (connection && data) {
-        const tokenAccounts = await connection.getTokenLargestAccounts(
-          new PublicKey(data.address as string),
-          "confirmed"
-        );
-        const size = tokenAccounts.value.filter((item) => Number(item.amount) > 0).length;
+       
+        const tokenAccounts = await connection.getParsedProgramAccounts(new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), {
+            "filters": [
+              {
+                "dataSize": 165
+              },
+              {
+                "memcmp": {
+                  "offset": 0,
+                  "bytes": data.address as string
+                }
+              }
+            ]
+          });
+
+          // @ts-ignore
+          const size = tokenAccounts.filter((item) => Number(item.account.data.parsed.info.tokenAmount.amount) > 0).length;
+
         setHolders(size);
       }
     })();
@@ -86,7 +101,7 @@ export default function Desc({
             </div>
             <div className={styles.statsValue}>
               {"$"}
-              {data.mc ? simplifyNum(Number(data.mc)) : "-"}
+              {data.mc ? simplifyNum(Number(data.mc), 2) : "-"}
             </div>
           </div>
           <div className={styles.statsItem}>
@@ -249,7 +264,7 @@ export default function Desc({
             </div>
           )}
 
-          {!isCreated && data.status! > 0 && (
+          {!isCreated && data.status! > 0 && isMobile && (
             <div className={styles.nameWrapper}>
               <div className={styles.ticker}>Market cap:</div>
               <div className={styles.authorDesc} key={data.address}>

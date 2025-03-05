@@ -16,7 +16,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const { setReferral } = useReferralStore();
   const { setReferer } = useUser();
 
-  const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(pathname);
+  const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(
+    pathname
+  );
 
   const [airdropUserData, setAirdropUserData] = useState<any>();
   const [airdropDataLoading, setAirdropDataLoading] = useState(true);
@@ -44,7 +46,11 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     console.log("referral saved: %o", res.data.referral_account);
     Cookies.set("referral", res.data.referral_account, { path: "/" });
     setReferer(res.data.allow_login);
-    if (!res.data?.allow_login && !isTerms && !["/invite-code", "/"].includes(pathname)) {
+    if (
+      !res.data?.allow_login &&
+      !isTerms &&
+      !["/invite-code", "/"].includes(pathname)
+    ) {
       router.replace("/invite-code");
     }
     setAirdropDataLoading(false);

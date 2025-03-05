@@ -59,6 +59,12 @@ export default function CopyItem({itemInfo, handleCloseCopyTrade, isCloseCopyTra
     };
 
     const gasFee = 0.01;
+    const rentFee = 0.00089088;
+    const itemPnl = (itemInfo: any)=>{
+      const pnl = new Big(itemInfo?.roi).times(itemInfo.investment + rentFee + gasFee).toString();
+      return pnl;
+    }
+
   return (
     <div className={styles.ItemBox}>
       <div className={styles.ItemBoxContent}>
@@ -117,7 +123,7 @@ export default function CopyItem({itemInfo, handleCloseCopyTrade, isCloseCopyTra
                             new Big(itemInfo?.netWorth).minus(itemInfo?.balance).toNumber() : 0, 
                             color: '#C9FF5D', name: 'USED' 
                         },
-                        { value: itemInfo?.balance || 0, color: '#515B63', name: 'BALANCE' },
+                        { value: itemInfo?.investment || 0, color: '#515B63', name: 'BALANCE' },
                 ]} />
               </div>
         </div>
@@ -129,7 +135,7 @@ export default function CopyItem({itemInfo, handleCloseCopyTrade, isCloseCopyTra
             <div className={styles.TitlePubStyle}>Copied ROI (PnL) </div>
             <div className={styles.PNLValuePercent}>{Big(itemInfo?.roi).times(100).toString() || 0}%</div>
             <div className={styles.PNLValueUSD}>
-              <span style={{color: isGtZero(itemInfo?.pnl || '0') ? '#C9FF5D' : '#FF2681'}}>{formatPnl(itemInfo?.pnl || '0')} SOL</span>
+              <span style={{color: isGtZero(itemPnl(itemInfo) || '0') ? '#C9FF5D' : '#FF2681'}}>{formatPnl(itemPnl(itemInfo))} SOL</span>
             </div>
         </div>
         {/* coppied tokens */}
@@ -158,7 +164,7 @@ export default function CopyItem({itemInfo, handleCloseCopyTrade, isCloseCopyTra
    placement={PopoverPlacement.TopLeft}
    trigger={tokensInfo?.length > 0 ? PopoverTrigger.Hover : undefined}
  >
-            <div className={styles.TokenIconBox} onClick={() => setShowTokenGroup(true)}>
+            <div className={styles.TokenIconBox}>
                {tokensInfo.map((tokenInfo:any, index:number) => {
                     if (index === 4) {
                         return <div key={index} className={styles.MoreTokens}>...</div>
