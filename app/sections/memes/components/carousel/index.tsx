@@ -249,14 +249,16 @@ const Carousel: React.FC<CarouselProps> = ({
                               isShortUppercase: true
                             })}
                           </div>
-                          <div className={styles.CarouselMarketCapChange}>
+                          <div
+                            className={Big(item?.market_cap_24h_usd || 0).gte(0) ? styles.CarouselMarketCapChange : styles.CarouselMarketCapChangeDown}
+                          >
                             {
                               Big(item?.market_cap_24h_usd || 0).gte(0)
                                 ? "+"
                                 : "-"
                             }
                             {numberFormatter(
-                              item?.market_cap_24h_usd,
+                              Math.abs(item?.market_cap_24h_usd || 0),
                               2,
                               true,
                               {

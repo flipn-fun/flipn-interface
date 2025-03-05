@@ -260,6 +260,10 @@
   font-weight: 400;
   line-height: 120%;
 }
+.CarouselMarketCapChangeDown {
+  composes: CarouselMarketCapChange;
+  color: #FF2681;
+}
 .CarouselMarketCapChangeUnit {
   color: #fff;
   margin-left: 2px;
