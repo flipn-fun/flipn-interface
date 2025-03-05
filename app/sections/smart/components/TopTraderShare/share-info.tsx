@@ -16,8 +16,6 @@ const TopTraderShareInfoCard = (props: any, ref: any) => {
   const { shareLink, selectedItems, currentUserInfo, shareName } = props;
 
   const { userInfo } = useUser();
-  console.log(userInfo, currentUserInfo, "userInfo");
-  console.log(selectedItems, "selectedItems");
   const { userData, userHasPoints } = useContext(AirdropContext);
 
   const refs = {};
@@ -35,10 +33,11 @@ const TopTraderShareInfoCard = (props: any, ref: any) => {
 
   return (
     <div className={styles.CopyTradeShareInfoCardContainer}>
+      
       <div className={styles.CopyTradeShareInfoCard}>
-        <ShareTitleIcon
-          style={{ position: "absolute", top: "-30px", left: "0px" }}
-        />
+      <ShareTitleIcon
+            style={{ position: "absolute", top: "-10px", left: "0px"}}
+          />
         <div className={styles.CopyTradeShareInfoCardContent}>
           <div className={styles.avatarAndName}>
             <img

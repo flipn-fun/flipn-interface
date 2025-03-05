@@ -4,8 +4,8 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useAuth } from "@/app/context/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useDebounceFn } from "ahooks";
-import { useReferralStore } from '@/app/store/useReferral';
-import { useUser } from '@/app/store/useUser';
+import { useReferralStore } from "@/app/store/useReferral";
+import { useUser } from "@/app/store/useUser";
 
 const AirdropContext = React.createContext<Partial<IAirdropContext>>({});
 
@@ -15,7 +15,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const { setReferral } = useReferralStore();
   const { setReferer } = useUser();
 
-  const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(pathname);
+  const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(
+    pathname
+  );
 
   const [airdropUserData, setAirdropUserData] = useState<any>();
   const [airdropDataLoading, setAirdropDataLoading] = useState(true);
@@ -40,7 +42,11 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     setAirdropUserData(res.data);
     setReferral(res.data.referral_account);
     setReferer(res.data.allow_login);
-    if (!res.data?.allow_login && !isTerms && !["/invite-code", "/"].includes(pathname)) {
+    if (
+      !res.data?.allow_login &&
+      !isTerms &&
+      !["/invite-code", "/"].includes(pathname)
+    ) {
       router.replace("/invite-code");
     }
     setAirdropDataLoading(false);

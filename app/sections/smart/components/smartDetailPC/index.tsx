@@ -22,11 +22,14 @@ import CopyTradeShare from '@/app/sections/smart/components/CopyTraderShare/moda
 import { useAccount } from "@/app/hooks/useAccount";
 import Big from 'big.js';
 import { useCloseCopy } from "@/app/store/useCloseCopy";
+import { useTotalPnl } from "@/app/store/use-total-pnl";
 
 export default function SmartDetailPC() {
   const { userInfo } = useUser();
   const { lastCloseCopyTime, set: setLastCloseCopyTime }:any = useCloseCopy();
   const { address: walletAddress } = useAccount();
+  const { totalPnl:currentTotalPnl }:any = useTotalPnl();
+  console.log(currentTotalPnl, "currentTotalPnl");
   const currentAddress = userInfo?.address || walletAddress;
   const { isMobile } = useUserAgent();
   const router = useRouter();
@@ -106,7 +109,7 @@ export default function SmartDetailPC() {
                   </div>
                 </div>
                
-              <SmartDetailContent copyTradersUserInfo={copyTradersUserInfo || null} />
+              <SmartDetailContent copyTradersUserInfo={copyTradersUserInfo || null} currentTotalPnl={currentTotalPnl} />
         </div>
          
         </div>
@@ -115,6 +118,7 @@ export default function SmartDetailPC() {
               copyTradersUserInfo={copyTradersUserInfo || null}
               visible={shareVisible}
               onClose={() => setShareVisible(false)}
+              reqAddress={reqAddress}
             />
     </div>
   );
@@ -142,9 +146,11 @@ const formatWinRate = (winRate: string) => {
 }
 
 export const SmartDetailContent = ({
-  copyTradersUserInfo
+  copyTradersUserInfo,
+  currentTotalPnl
 }: {
   copyTradersUserInfo: CopyTraderAddress | null;
+  currentTotalPnl: any;
 }) => {
   return (
     <div className={styles.smartDetailContent}>
@@ -198,8 +204,8 @@ export const SmartDetailContent = ({
           <div className={styles.statItem}>
             <div className={styles.statLabel}>Current P NL</div>
             <div className={styles.statValue}>
-              <span className={isGtZero(copyTradersUserInfo?.tradeInfo?.currentPNL || "0") ? styles.highlight : styles.shortlight}>
-                {formatPnl(copyTradersUserInfo?.tradeInfo?.currentPNL || "0")}
+              <span className={isGtZero(currentTotalPnl || "0") ? styles.highlight : styles.shortlight}>
+                {formatPnl(currentTotalPnl || "0")}
               </span>
               <span className={styles.detailValueCurrency}>SOL</span>
             </div>
