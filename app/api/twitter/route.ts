@@ -1,4 +1,3 @@
-import { URL } from "url";
 import { NextRequest } from "next/server";
 
 export const runtime = "edge";
