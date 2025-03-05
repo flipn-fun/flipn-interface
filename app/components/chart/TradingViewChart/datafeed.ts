@@ -184,11 +184,20 @@ const datafeed: (
         savedHistoryCallback([bar], { noData: false });
       }
 
-      addPriceMarker({ price: item[1], lastPrice, time: item[6], tvWidgetRef });
-
       onRealtimeCallback(bar);
-      lastPrice = item[1];
 
+      setTimeout(() => {
+        if (lastPrice) {
+          addPriceMarker({
+            price: item[1],
+            lastPrice,
+            time: item[6],
+            tvWidgetRef
+          });
+        }
+
+        lastPrice = item[1];
+      }, 30);
       pullingQueryPriceTimer = setTimeout(fetchPrice, 5000);
     };
     clearTimeout(pullingQueryPriceTimer);

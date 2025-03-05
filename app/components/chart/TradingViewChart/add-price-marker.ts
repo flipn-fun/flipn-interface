@@ -24,7 +24,7 @@ export default function updatePriceMarker({
     { time, price },
     {
       shape: price > lastPrice ? "arrow_up" : "arrow_down",
-      lock: true,
+      lock: false,
       disableSelection: true,
       disableSave: true,
       disableUndo: true,
