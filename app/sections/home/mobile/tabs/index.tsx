@@ -17,8 +17,6 @@ export default function Tabs() {
             position: "absolute",
             top: 45,
             width: "100%",
-            background:
-              "linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0) 81%)",
             zIndex: 5,
             gap: 20
           }
