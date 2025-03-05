@@ -4,7 +4,10 @@ import { useAuth } from "@/app/context/auth";
 import { useRouter } from "next/navigation";
 import CheckedIcon from "../checked-icon";
 import InfoIcon from "../info-icon";
-
+import Popover, {
+  PopoverPlacement,
+  PopoverTrigger
+} from "@/app/components/popover";
 import dayjs from "dayjs";
 
 export default function CreateToEarn({ airdropEndTime, info }: any) {
@@ -29,10 +32,22 @@ export default function CreateToEarn({ airdropEndTime, info }: any) {
         <div className={styles.ItemHeader}>
           <div className={styles.ItemTitle}>
             <span>Create to Earn</span>
-            <InfoIcon onClick={() => {}} />
+            <Popover
+              content={
+                <div className={styles.Tips}>
+                  30% integral amplification for the first creation
+                </div>
+              }
+              trigger={PopoverTrigger.Hover}
+              placement={PopoverPlacement.Top}
+              closeDelayDuration={0}
+            >
+              <InfoIcon />
+            </Popover>
           </div>
           <div className={styles.ItemSubTitle}>
-            +50 <span className={styles.ThemeColor}>$FUN</span>
+            +{info?.total_point || 0}{" "}
+            <span className={styles.ThemeColor}>$FUN</span>
           </div>
         </div>
         <div className={styles.ItemDesc}>

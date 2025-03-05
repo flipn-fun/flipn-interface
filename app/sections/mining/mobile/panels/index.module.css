@@ -144,3 +144,15 @@
   font-weight: 600;
   line-height: normal;
 }
+
+.Tips {
+  padding: 10px 15px;
+  border-radius: 8px;
+  background: #373737;
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
