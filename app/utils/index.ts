@@ -230,6 +230,7 @@ export async function initAuthorization() {
   // }
 
   if (window?.isInitingAuthorization) {
+    window.connecting = false;
     return;
   }
   // @ts-ignore
@@ -237,6 +238,7 @@ export async function initAuthorization() {
 
   if (!walletProvider || !sexAddress) {
     // await connect();
+    window.connecting = false;
     return;
   }
 
@@ -275,6 +277,8 @@ export async function initAuthorization() {
     watingQuene.length = 0;
     window.disconnect?.();
     logOut();
+  } finally {
+    window.connecting = false;
   }
 
   window.isInitingAuthorization = false;

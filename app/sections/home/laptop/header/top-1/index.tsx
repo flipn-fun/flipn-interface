@@ -7,7 +7,7 @@ export default function Top1() {
   const { top1 } = useTrends({ isPolling: true });
   const router = useRouter();
 
-  return (
+  return top1 && (
     <div
       className={`${styles.Container} button`}
       onClick={() => {

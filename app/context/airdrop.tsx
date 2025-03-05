@@ -16,7 +16,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const { setReferral } = useReferralStore();
   const { setReferer } = useUser();
 
-  const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(pathname);
+  const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(
+    pathname
+  );
 
   const [airdropUserData, setAirdropUserData] = useState<any>();
   const [airdropDataLoading, setAirdropDataLoading] = useState(true);
@@ -31,8 +33,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
       { wait: 2000 }
     );
 
-  const getAirdropData = async () => {
-    setAirdropDataLoading(true);
+  const getAirdropData = async (params?: { isLoading?: boolean; }) => {
+    const { isLoading = true } = params ?? {};
+    isLoading && setAirdropDataLoading(true);
     const res = await httpAuthGet("/airdrop/data");
     if (res.code !== 0) {
       setAirdropDataLoading(false);
@@ -43,7 +46,11 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     console.log("referral saved: %o", res.data.referral_account);
     Cookies.set("referral", res.data.referral_account, { path: "/" });
     setReferer(res.data.allow_login);
-    if (!res.data?.allow_login && !isTerms && !["/invite-code", "/"].includes(pathname)) {
+    if (
+      !res.data?.allow_login &&
+      !isTerms &&
+      !["/invite-code", "/"].includes(pathname)
+    ) {
       router.replace("/invite-code");
     }
     setAirdropDataLoading(false);
@@ -66,7 +73,8 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     <AirdropContext.Provider
       value={{
         airdropUserData,
-        airdropDataLoading
+        airdropDataLoading,
+        getAirdropData
       }}
     >
       {children}
@@ -90,4 +98,5 @@ interface IAirdropContext {
     allow_login: boolean;
   };
   airdropDataLoading: boolean;
+  getAirdropData(params?: { isLoading?: boolean; }): Promise<void>;
 }

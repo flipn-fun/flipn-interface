@@ -46,7 +46,14 @@ export default function Token({
       }}
     >
       {token?.id && (
-        <div className={styles.Container}>
+        <div
+          className={styles.Container}
+          style={{
+            background: isPreview
+              ? "linear-gradient(to bottom, #ffffff0d, transparent)"
+              : "#ffffff0d"
+          }}
+        >
           <div
             className={styles.Token}
             style={{

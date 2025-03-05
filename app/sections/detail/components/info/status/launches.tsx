@@ -5,8 +5,6 @@ import ZeroFormat from "@/app/components/zeroFomat";
 import Big from "big.js";
 import { numberFormatter } from "@/app/utils/common";
 export default function LaunchesStatus({ data }: any) {
-  console.log(data);
-
   return (
     <div className={styles.panel}>
       {data.status === 1 && (
@@ -16,7 +14,7 @@ export default function LaunchesStatus({ data }: any) {
               {data.bondingProgress}%
             </div>
             <div className={styles.progressTitle}>
-              {numberFormatter(new Big(data.solReserve).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
+              {numberFormatter(new Big(data.solReserve || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
             </div>
           </div>
 
