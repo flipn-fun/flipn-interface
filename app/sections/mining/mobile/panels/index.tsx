@@ -11,6 +11,7 @@ export default function Panels({ info, rate, userInfo }: any) {
   const configStore: any = useConfig((store: any) => store.config);
 
   const showCreateToEarn = useMemo(() => {
+    if (info?.is_created) return true;
     return (
       info?.clime_created &&
       Date.now() >= configStore.AirdropStartTime &&
