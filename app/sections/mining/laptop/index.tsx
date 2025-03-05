@@ -19,7 +19,7 @@ export default function Laptop({
   rateLoading,
   onQuery
 }: any) {
-  const configStore: any = useConfig();
+  const configStore: any = useConfig((store: any) => store.config);
 
   const showCreateToEarn = useMemo(() => {
     return (
