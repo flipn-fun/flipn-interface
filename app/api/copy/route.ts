@@ -1,6 +1,8 @@
 import { URL } from "url";
 import { NextRequest } from "next/server";
 
+export const runtime = "edge";
+
 export async function GET(request: Request | NextRequest) {
   const parsedUrl = new URL(request.url as string);
   const imgUrl = parsedUrl.searchParams.get("imgUrl");
@@ -11,7 +13,8 @@ export async function GET(request: Request | NextRequest) {
   const decodedAbout = decodeURIComponent(about || "");
   const address = parsedUrl.searchParams.get("address");
   // const referral = parsedUrl.searchParams.get("referral");
-  const domain = process.env.NEXT_PUBLIC_DOMAIN || "https://copytrade.flipn.fun";
+  const domain =
+    process.env.NEXT_PUBLIC_DOMAIN || "https://copytrade.flipn.fun";
 
   const res = new Response(
     `<!DOCTYPE html>
