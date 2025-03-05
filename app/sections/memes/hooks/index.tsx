@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { httpGet, timeAgo } from '@/app/utils';
 import { PublicKey } from '@solana/web3.js';
 import { programId_address } from '@/app/utils/config';
@@ -37,6 +37,13 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     setMemesListPageNext,
     memesListCountdown,
     setMemesListCountdown,
+    memesListHolders,
+    setMemesListHolders,
+    memesHoldersQueue,
+    setMemesHoldersQueue,
+    spliceMemesHoldersQueue,
+    memesListHoldersLoading,
+    setMemesListHoldersLoading,
   } = useMemesListStore();
   const {
     currentTab,
@@ -49,6 +56,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
   const { connection } = useConnection();
 
   const memesContainerRef = useRef<any>();
+  const [holdersLoading, setHoldersLoading] = useState(false);
 
   const _currentMemesList = (_type: string) => {
     if (_type === TABS[1].value) {
@@ -99,6 +107,37 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     currentFilter,
     _currentMemesList
   ]);
+
+  const getMemeHolders = async (address: string) => {
+    setHoldersLoading(true);
+    setMemesListHoldersLoading({ [address]: true });
+    return new Promise((resolve) => {
+      connection.getParsedProgramAccounts(new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), {
+        "filters": [
+          {
+            "dataSize": 165
+          },
+          {
+            "memcmp": {
+              "offset": 0,
+              "bytes": address
+            }
+          }
+        ]
+      }).then((res) => {
+        const holders = res?.length || 0;
+        setMemesListHolders({ [address]: holders });
+        resolve(holders);
+      }).catch((err) => {
+        resolve(void 0);
+        console.log('get meme holders queue err: %o', err);
+      }).finally(() => {
+        setHoldersLoading(false);
+        setMemesListHoldersLoading({ [address]: false });
+        spliceMemesHoldersQueue(0);
+      })
+    });
+  };
 
   const getPoolToken = async (token: Hot) => {
     try {
@@ -158,6 +197,8 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       it.kind = 'Hot';
       it.created2Now = timeAgo(new Date(it.project_created).getTime(), new Date().getTime());
 
+      setMemesHoldersQueue(it.address);
+
       if ([0].includes(it.status)) {
         const { poolAmount, solAmount } = await getPoolToken(it);
         let _progress = Big(1095840542120770).minus(poolAmount).div(Big(1095840542120770).minus(295840542120770)).times(100);
@@ -216,6 +257,9 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       const it = _list[i];
       it.kind = 'Meme';
       it.created2Now = timeAgo(it.DApp === "pump" ? it.time : it.created_at);
+
+      setMemesHoldersQueue(it.address);
+
       if (memesListCountdown[it.id] !== void 0 && tabType === 'import') {
         it.countdown = memesListCountdown[it.id];
       }
@@ -305,6 +349,14 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     getMemesList();
   }, [isLoadData]);
 
+  useEffect(() => {
+    if (holdersLoading) return;
+    const curr = memesHoldersQueue[0];
+    if (curr) {
+      getMemeHolders(curr);
+    }
+  }, [memesHoldersQueue, holdersLoading, connection]);
+
   return {
     hotList,
     list: listShown,
@@ -322,7 +374,9 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     onMemesListNextPage,
     initMemesList,
     memesContainerRef,
-    setMemesListCountdown
+    setMemesListCountdown,
+    memesListHolders,
+    memesListHoldersLoading,
   };
 }
 
@@ -340,4 +394,6 @@ export interface Memes extends MemesState {
   initMemesList: () => void;
   memesContainerRef: React.MutableRefObject<any>;
   setMemesListCountdown: (obj: Record<string, number>) => void;
+  memesListHolders: Record<string, number>;
+  memesListHoldersLoading: Record<string, boolean>;
 }
