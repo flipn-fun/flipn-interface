@@ -8,9 +8,10 @@ import {
   IconRocket,
   IconUser
 } from '@/app/sections/memes/components/summary-item/icons';
+import Loading from '@/app/components/icons/loading';
 
 const SummaryItem = (props: any) => {
-  const { className, type, value } = props;
+  const { className, type, value, loading } = props;
 
   const Icon = Config[type].icon;
 
@@ -18,7 +19,11 @@ const SummaryItem = (props: any) => {
     <div className={clsx(styles.SummaryItemContainer, className)}>
       <Icon className="icon" />
       <div className="text">
-        {numberFormatter(value, 1, true, { isShort: true, isShortUppercase: true })}
+        {
+          loading ? (
+            <Loading size={10} />
+          ) : numberFormatter(value, 1, true, { isShort: true, isShortUppercase: true })
+        }
       </div>
     </div>
   );
