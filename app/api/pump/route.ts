@@ -1,5 +1,5 @@
-import { URL } from "url";
 import { NextRequest } from "next/server";
+import { urlFormat } from "@/app/utils/urlFormat";
 // const { spawn } = require('child_process');
 
 const prefix = "https://frontend-api.pump.fun/coins/";
@@ -8,9 +8,9 @@ export const runtime = "edge";
 
 export async function GET(request: Request | NextRequest) {
   const params: any = {};
-  const parsedUrl = new URL(request.url as string);
+  const queryParams = urlFormat(request.url)
 
-  const token = parsedUrl.searchParams.get("token");
+  const token = queryParams["token"];
 
   const v = await fetch(prefix + token, params);
 
