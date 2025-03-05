@@ -54,11 +54,24 @@ export default function Desc({
   useEffect(() => {
     (async () => {
       if (connection && data) {
-        const tokenAccounts = await connection.getTokenLargestAccounts(
-          new PublicKey(data.address as string),
-          "confirmed"
-        );
-        const size = tokenAccounts.value.filter((item) => Number(item.amount) > 0).length;
+       
+        const tokenAccounts = await connection.getParsedProgramAccounts(new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), {
+            "filters": [
+              {
+                "dataSize": 165
+              },
+              {
+                "memcmp": {
+                  "offset": 0,
+                  "bytes": data.address as string
+                }
+              }
+            ]
+          });
+
+          // @ts-ignore
+          const size = tokenAccounts.filter((item) => Number(item.account.data.parsed.info.tokenAmount.amount) > 0).length;
+
         setHolders(size);
       }
     })();

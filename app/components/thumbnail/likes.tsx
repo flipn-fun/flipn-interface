@@ -4,7 +4,6 @@ import type { Project } from "@/app/type";
 import { fail } from "@/app/utils/toast";
 import Share from "../share";
 import { useEffect, useState } from "react";
-import { getHoldersByToken } from "@/app/utils/solanaScanApi";
 
 interface Props {
   data: Project;
@@ -25,9 +24,9 @@ export default function Likes({
 
   useEffect(() => {
     if (data.status !== 0 && data.address) {
-      getHoldersByToken(data.address, 1, 10).then((res) => {
-        setHolders(res.total);
-      });
+      // getHoldersByToken(data.address, 1, 10).then((res) => {
+      //   setHolders(res.total);
+      // });
     }
   }, [data]);
 

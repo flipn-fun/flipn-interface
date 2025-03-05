@@ -5,8 +5,6 @@ import ZeroFormat from "@/app/components/zeroFomat";
 import Big from "big.js";
 import { numberFormatter } from "@/app/utils/common";
 export default function LaunchesStatus({ data }: any) {
-  console.log(data);
-
   return (
     <div className={styles.panel}>
       {data.status === 1 && (
