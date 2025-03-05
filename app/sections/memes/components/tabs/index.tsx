@@ -29,6 +29,8 @@ const MemesTabs = (props: any) => {
     getHotList,
     getMemesList,
     memesContainerRef,
+    memesListHolders,
+    memesListHoldersLoading,
   } = useContext(MemesContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -231,7 +233,12 @@ const MemesTabs = (props: any) => {
                   <div className={styles.MemesTabsListInner}>
                     {
                       list?.map?.((item: Hot | Meme, index: number) => (
-                        <TokenItem key={index} token={item} />
+                        <TokenItem
+                          key={index}
+                          token={item}
+                          holders={memesListHolders?.[item.address]}
+                          holdersLoading={memesListHoldersLoading?.[item.address]}
+                        />
                       ))
                     }
                   </div>
