@@ -164,7 +164,7 @@ export default function CopyItem({itemInfo, handleCloseCopyTrade, isCloseCopyTra
    placement={PopoverPlacement.TopLeft}
    trigger={tokensInfo?.length > 0 ? PopoverTrigger.Hover : undefined}
  >
-            <div className={styles.TokenIconBox} onClick={() => setShowTokenGroup(true)}>
+            <div className={styles.TokenIconBox}>
                {tokensInfo.map((tokenInfo:any, index:number) => {
                     if (index === 4) {
                         return <div key={index} className={styles.MoreTokens}>...</div>
