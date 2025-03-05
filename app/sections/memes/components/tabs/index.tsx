@@ -238,6 +238,7 @@ const MemesTabs = (props: any) => {
                           token={item}
                           holders={memesListHolders?.[item.address]}
                           holdersLoading={memesListHoldersLoading?.[item.address]}
+                          currentTab={currentTab}
                         />
                       ))
                     }
