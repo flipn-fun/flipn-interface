@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { getTokenMeta } from "../utils/solanaScanApi";
 import { useConfig } from "../store/useConfig";
 import { getMint } from "@solana/spl-token";
 import { useConnection } from "@solana/wallet-adapter-react";
