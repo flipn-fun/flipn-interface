@@ -1,17 +1,18 @@
-import { URL } from "url";
 import { NextRequest } from "next/server";
+import { urlFormat } from "@/app/utils/urlFormat";
 
 export const runtime = "edge";
 
 export async function GET(request: Request | NextRequest) {
-  const parsedUrl = new URL(request.url as string);
-  const imgUrl = parsedUrl.searchParams.get("imgUrl");
+  const queryParams = urlFormat(request.url)
+
+  const imgUrl = queryParams["imgUrl"];
   const decodedImgUrl = decodeURIComponent(imgUrl || "");
-  const title = parsedUrl.searchParams.get("title");
+  const title = queryParams["title"];
   const decodedTitle = decodeURIComponent(title || "");
-  const about = parsedUrl.searchParams.get("about");
+  const about = queryParams["about"];
   const decodedAbout = decodeURIComponent(about || "");
-  const address = parsedUrl.searchParams.get("address");
+  const address = queryParams["address"];
   // const referral = parsedUrl.searchParams.get("referral");
   const domain =
     process.env.NEXT_PUBLIC_DOMAIN || "https://copytrade.flipn.fun";

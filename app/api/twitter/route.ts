@@ -1,18 +1,9 @@
-import { URL } from "url";
 import { NextRequest } from "next/server";
+import { urlFormat } from "@/app/utils/urlFormat";
 
 export const runtime = "edge";
 export async function GET(request: Request | NextRequest) {
-  const queryString = request.url.split('?')[1] || '';
-  const queryParams: { [key: string]: string } = {};
-  
-  if (queryString) {
-    const pairs = queryString.split('&');
-    for (const pair of pairs) {
-      const [key, value] = pair.split('=');
-      queryParams[decodeURIComponent(key)] = decodeURIComponent(value || '');
-    }
-  }
+  const queryParams = urlFormat(request.url)
 
   const imgUrl = queryParams["imgUrl"];
   const tokenName = queryParams["tokenName"];
