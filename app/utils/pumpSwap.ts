@@ -1,17 +1,15 @@
 import { ComputeBudgetProgram, Connection, LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction, clusterApiUrl } from '@solana/web3.js';
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, createCloseAccountInstruction } from '@solana/spl-token';
 import { createTransaction, sendAndConfirmTransactionWrapper, bufferFromUInt64 } from '../hooks/utils';
-
-
 import { GLOBAL, FEE_RECIPIENT, SYSTEM_PROGRAM_ID, RENT, PUMP_FUN_ACCOUNT, PUMP_FUN_PROGRAM, ASSOC_TOKEN_ACC_PROG } from '@/app/utils/config';
+import { Idl, Program } from '@coral-xyz/anchor';
+import IDL from '@/app/hooks/pump.json';
 
 export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any) {
+    
     try {
-
-        const coinData = await getCoinData(mintStr);
-        if (!coinData) {
-            throw 'Failed to retrieve coin data...';
-        }
+        
+        const { virtualTokenReserves, virtualSolReserves, bondingCurve, associatedBondingCurve } = await getCoinData(mintStr, connection)
 
         const owner = walletProvider.publicKey;
         const mint = new PublicKey(mintStr);
@@ -46,21 +44,24 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
         }
 
         const solInLamports = solIn * LAMPORTS_PER_SOL;
-        const tokenOut = Math.floor(solInLamports * coinData["virtual_token_reserves"] / coinData["virtual_sol_reserves"]);
 
-        const _tokenOut = Math.floor(tokenOut * (1 - slippageDecimal));
-        const maxSolCost = Math.floor(solIn * LAMPORTS_PER_SOL);
+        // const tokenOut = Math.floor(solInLamports * coinData["virtual_token_reserves"] / coinData["virtual_sol_reserves"]);
+        const tokenOut = Math.floor(solInLamports * virtualTokenReserves / virtualSolReserves);
+
+
+        const _tokenOut = Math.floor(tokenOut);
+        const maxSolCost = Math.floor(solInLamports * (1 + slippageDecimal));
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
-        const BONDING_CURVE = new PublicKey(coinData['bonding_curve']);
-        const ASSOCIATED_BONDING_CURVE = new PublicKey(coinData['associated_bonding_curve']);
+        // const BONDING_CURVE = new PublicKey(coinData['bonding_curve']);
+        // const ASSOCIATED_BONDING_CURVE = new PublicKey(coinData['associated_bonding_curve']);
 
         const keys = [
             { pubkey: GLOBAL, isSigner: false, isWritable: false },
             { pubkey: FEE_RECIPIENT, isSigner: false, isWritable: true },
             { pubkey: mint, isSigner: false, isWritable: false },
-            { pubkey: BONDING_CURVE, isSigner: false, isWritable: true },
-            { pubkey: ASSOCIATED_BONDING_CURVE, isSigner: false, isWritable: true },
+            { pubkey: bondingCurve, isSigner: false, isWritable: true },
+            { pubkey: associatedBondingCurve, isSigner: false, isWritable: true },
             { pubkey: ASSOCIATED_USER, isSigner: false, isWritable: true },
             { pubkey: USER, isSigner: false, isWritable: true },
             { pubkey: SYSTEM_PROGRAM_ID, isSigner: false, isWritable: false },
@@ -81,8 +82,8 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
             programId: PUMP_FUN_PROGRAM,
             data: data
         });
-        txBuilder.add(instruction);
 
+        txBuilder.add(instruction);
 
         const hash = await walletProvider.signAndSendTransaction(txBuilder)
 
@@ -98,11 +99,7 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
 export async function pumpFunSell(mintStr: string, tokenBalance: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any) {
     try {
-        const coinData = await getCoinData(mintStr);
-        if (!coinData) {
-            throw 'Failed to retrieve coin data...';
-            return;
-        }
+        const { virtualTokenReserves, virtualSolReserves, bondingCurve, associatedBondingCurve } = await getCoinData(mintStr, connection)
 
         const owner = walletProvider.publicKey;
         const mint = new PublicKey(mintStr);
@@ -132,14 +129,14 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
             tokenAccount = tokenAccountAddress;
         }
 
-        const minSolOutput = Math.floor(tokenBalance! * (1 - slippageDecimal) * coinData["virtual_sol_reserves"] / coinData["virtual_token_reserves"]);
+        const minSolOutput = Math.floor(tokenBalance! * (1 - slippageDecimal) * virtualSolReserves / virtualTokenReserves);
 
         const keys = [
             { pubkey: GLOBAL, isSigner: false, isWritable: false },
             { pubkey: FEE_RECIPIENT, isSigner: false, isWritable: true },
             { pubkey: mint, isSigner: false, isWritable: false },
-            { pubkey: new PublicKey(coinData['bonding_curve']), isSigner: false, isWritable: true },
-            { pubkey: new PublicKey(coinData['associated_bonding_curve']), isSigner: false, isWritable: true },
+            { pubkey: bondingCurve, isSigner: false, isWritable: true },
+            { pubkey: associatedBondingCurve, isSigner: false, isWritable: true },
             { pubkey: tokenAccount, isSigner: false, isWritable: true },
             { pubkey: owner, isSigner: false, isWritable: true },
             { pubkey: SYSTEM_PROGRAM_ID, isSigner: false, isWritable: false },
@@ -175,7 +172,51 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
 }
 
 
-export async function getCoinData(mintStr: string) {
-    const url = `/api/pump?token=${mintStr}`;
-    return fetch(url).then(res => res.json())
+export async function getCoinData(mintStr: string, connection: Connection) {
+    const program = new Program(IDL as Idl, PUMP_FUN_PROGRAM, {
+        connection
+    });
+
+    const mintAddressPublicKey = new PublicKey(mintStr)
+
+    const bondingCurve = getBondingCurveAddress(mintAddressPublicKey);
+
+    const associatedBondingCurve = getAssociatedBondingCurveAddress(bondingCurve, mintAddressPublicKey);
+
+    const accountData: any = await program.account.bondingCurve.fetch(bondingCurve);
+
+    // @ts-ignore
+    console.log('accountData:', 
+        accountData, 
+        accountData.virtualSolReserves.toNumber(), 
+        accountData.virtualTokenReserves.toNumber(), 
+        bondingCurve.toBase58(), 
+        associatedBondingCurve.toBase58()
+    )
+
+    return {
+        bondingCurve,
+        associatedBondingCurve,
+        virtualSolReserves: accountData.virtualSolReserves.toNumber(),
+        virtualTokenReserves: accountData.virtualTokenReserves.toNumber(),
+    }
 }
+
+// Helper function to get the bonding curve address
+const getBondingCurveAddress = (mintAddress: PublicKey): PublicKey => {
+    const [bondingCurve] = PublicKey.findProgramAddressSync(
+        [Buffer.from('bonding-curve'), mintAddress.toBytes()],
+        PUMP_FUN_PROGRAM,
+    );
+    return bondingCurve;
+};
+
+
+// Helper function to get the associated bonding curve address
+const getAssociatedBondingCurveAddress = (bondingCurveAddress: PublicKey, mintAddress: PublicKey): PublicKey => {
+    const [associatedBondingCurve] = PublicKey.findProgramAddressSync(
+        [bondingCurveAddress.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintAddress.toBytes()],
+        ASSOC_TOKEN_ACC_PROG,
+    );
+    return associatedBondingCurve;
+};

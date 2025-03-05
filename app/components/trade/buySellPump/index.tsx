@@ -17,6 +17,7 @@ import useBalance from "@/app/hooks/useBalance";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
+import { useUserAgent } from "@/app/context/user-agent";
 
 type Token = {
   tokenName: string;
@@ -87,6 +88,7 @@ export default function BuySellPump({
   const [sellOut, setSellOut] = useState("0");
   const [sellOutSol, setSellOutSol] = useState("0");
   const [reFreshBalnace, setReFreshBalnace] = useState(1);
+  const { isMobile } = useUserAgent()
 
   const { userInfo }: any = useUser();
 
@@ -344,18 +346,21 @@ export default function BuySellPump({
               </div>
 
               <div></div>
-              <div
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  ev.nativeEvent.stopImmediatePropagation();
-                  setShowSlip(true);
-                }}
-                className={`${styles.slippage}`}
-                ref={slippageTextRef}
-              >
-                <img src="/img/trade/slip.svg" className={styles.slipIcon} />
-                <span className="button">Slippage</span>
-              </div>
+
+              {
+                isMobile && <div
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    ev.nativeEvent.stopImmediatePropagation();
+                    setShowSlip(true);
+                  }}
+                  className={`${styles.slippage}`}
+                  ref={slippageTextRef}
+                >
+                  <img src="/img/trade/slip.svg" className={styles.slipIcon} />
+                  <span className="button">Slippage</span>
+                </div>
+              }
             </div>
 
             <div
@@ -403,7 +408,7 @@ export default function BuySellPump({
 
                 <div className={styles.tokenPrice}>
                   ${numberFormatter(
-                    currentToken.tokenName === "SOL" ? Number(config.SolPrice) * Number(valInput) : Number(token.price) * Number(config.SolPrice) * Number(valInput),
+                    currentToken.tokenName === "SOL" ? Number(config.SolPrice) * Number(valInput) : Number(token.price || 0) * Number(config.SolPrice) * Number(valInput),
                     2,
                     true
                   )}

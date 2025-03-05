@@ -421,7 +421,7 @@ export default function BuySellLaunched({
 
                 <div className={styles.tokenPrice}>
                   ${numberFormatter(
-                    currentToken.tokenName === "SOL" ? Number(config.SolPrice) * Number(valInput) : Number(token.price) * Number(config.SolPrice) * Number(valInput),
+                    currentToken.tokenName === "SOL" ? Number(config.SolPrice) * Number(valInput) : Number(token.price || 0) * Number(config.SolPrice) * Number(valInput),
                     2,
                     true
                   )}
