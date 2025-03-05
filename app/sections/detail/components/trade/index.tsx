@@ -7,20 +7,15 @@ import type { Project } from "@/app/type";
 interface Props {
   data: Project;
   from?: string;
+  mc: string | number;
 }
 
-export default function TradeInfo({ data, from }: Props) {
-
-  console.log('from:', from)
-
+export default function TradeInfo({ data, from, mc }: Props) {
   return (
-    <div className={from === "laptop" ? styles.LaptopContainer : ""}>
-      <CA from={from} data={data}/>
-      <Trade
-        token={data}
-        from={from}
-      />
-      <Holder from={from} />
+    <div>
+      <CA from={from} data={data} mc={mc} />
+      {from !== "laptop-home" && <Trade token={data} from={from} />}
+      <Holder style={{ backgroundColor: '#121719' }} from={from} address={data.address}/>
     </div>
   );
 }

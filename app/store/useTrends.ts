@@ -1,20 +1,50 @@
 import { create } from "zustand";
-import { Trend } from '@/app/sections/trends/hooks';
+import { Trend } from "@/app/sections/trends/hooks";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 interface TrendsState {
-  list: Trend[];
+  allListLoading: boolean;
   allList: Trend[];
+  tableList: Trend[];
+  hottestList: Trend[];
   top1: Trend | undefined;
-  setList: (list: Trend[]) => void;
   setAllList: (list: Trend[]) => void;
+  setHottestList: (list: Trend[]) => void;
+  setTableList: (list: Trend[]) => void;
   setTop1: (top1: Trend) => void;
+  setAllListLoading: (loading: boolean) => void;
 }
 
-export const useTrendsStore = create<TrendsState>((set) => ({
-  list: [],
+export const useTrendsStore = create(persist<TrendsState>((set) => ({
+  allListLoading: false,
   allList: [],
+  hottestList: [],
+  tableList: [],
   top1: void 0,
-  setList: (list: Trend[]) => set((state) => ({ ...state, list })),
-  setAllList: (allList: Trend[]) => set((state) => ({ ...state, allList })),
+  setAllList: (list: Trend[]) => set((state) => ({ ...state, allList: list })),
+  setHottestList: (list: Trend[]) => set((state) => ({ ...state, hottestList: list })),
+  setTableList: (list: Trend[]) => set((state) => ({ ...state, tableList: list })),
   setTop1: (top1: Trend) => set((state) => ({ ...state, top1 })),
+  setAllListLoading: (loading) => set((state) => ({ ...state, allListLoading: loading }))
+}), {
+  name: "trends_list",
+  version: 0.1,
+  storage: createJSONStorage(() => sessionStorage),
+  partialize: (state) => ({
+    top1: state.top1,
+  } as any)
 }));
+
+export const useTrendsBannerStore = create(
+  persist(
+    (set, get: any) => ({
+      visible: true,
+      set: (params: any) => set(() => ({ ...params }))
+    }),
+    {
+      name: "trends_banner",
+      version: 0.2,
+      storage: createJSONStorage(() => sessionStorage)
+    }
+  )
+);

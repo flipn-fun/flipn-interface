@@ -1,0 +1,6 @@
+.Container {
+  width: 100vw;
+  background-color: #252328;
+  border: 1px solid #3b3b3b;
+  border-radius: 20px 20px 0px 0px;
+}

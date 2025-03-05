@@ -1,27 +1,36 @@
 import { useEffect, useRef } from "react";
-import { useAccount } from "@/app/hooks/useAccount";
+import { useAuth } from "@/app/context/auth";
 import { httpAuthGet } from "@/app/utils";
 import { Toast } from "antd-mobile";
-
+import useRead from "../components/messages/use-read";
+import { useUserAgent } from "@/app/context/user-agent";
 export default function useNotice() {
-  const { address: userAddress } = useAccount();
+  const { accountRefresher } = useAuth();
   const noticesRef = useRef<any>([]);
   const timerRef = useRef<any>();
+  const { onRead } = useRead();
+  const { isWindowVisible } = useUserAgent();
 
   const onToast = (list: any) => {
     const notice = list.shift();
     Toast.show({
       content: (
-        <div style={{ color: "#AAFF00" }}>
+        <div style={{ color: "#AAFF00", wordBreak: "break-word" }}>
           {notice.content_2} you liked has been launched!
         </div>
       ),
       position: "top",
       duration: 5000,
       afterClose() {
+        onRead({ ids: [notice.id] });
         noticesRef.current = list;
         if (list.length) {
           onToast(list);
+        } else {
+          clearTimeout(timerRef.current);
+          timerRef.current = setTimeout(() => {
+            onQuery();
+          }, 10000);
         }
       }
     });
@@ -37,15 +46,22 @@ export default function useNotice() {
       if (response.data?.list) {
         list = [...list, ...response.data.list];
       }
-      onToast(list);
-      clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        onQuery();
-      }, 10000);
+      if (list.length) {
+        onToast(list);
+      } else {
+        clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => {
+          onQuery();
+        }, 10000);
+      }
     } catch (err) {}
   };
 
   useEffect(() => {
-    if (userAddress && process.env.NODE_ENV !== "development") onQuery();
-  }, [userAddress]);
+    if (!isWindowVisible) {
+      clearTimeout(timerRef.current);
+      return;
+    }
+    if (accountRefresher) onQuery();
+  }, [accountRefresher, isWindowVisible]);
 }

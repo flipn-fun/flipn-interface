@@ -2,34 +2,30 @@ import Upload from "@/app/components/upload";
 import { useEffect, useMemo, useState } from "react";
 import type { ImageUploadItem } from "antd-mobile/es/components/image-uploader";
 import useUserInfo from "../../../hooks/useUserInfo";
-import { useAccount } from "@/app/hooks/useAccount";
 import styles from "./edit.module.css";
 import { success, fail } from "@/app/utils/toast";
 import MainBtn from "@/app/components/mainBtn";
-import { Picker } from "antd-mobile";
+import Education from "./education";
+import { useAuth } from "@/app/context/auth";
+import { useUserAgent } from "@/app/context/user-agent";
 
 const defaultAvatar = "/img/avatar.png";
 const defaultBannerImg = "/img/upload-banner.png";
 
-export default function EditContent({
-  inputStyle,
-  actionButtonsStyle,
-  onSuccess,
-  onClose
-}: any) {
+export default function EditContent({ onSuccess, onClose }: any) {
   const [name, setName] = useState<string>("");
   const [disableNameEdit, setDisableNameEdit] = useState(false);
   const [education, setEducation] = useState<string>("");
   const [avatar, setAvatar] = useState<ImageUploadItem[]>([]);
   const [banner, setBanner] = useState<ImageUploadItem[]>([]);
-
-  const { address } = useAccount();
-  const { userInfo, saveUserInfo } = useUserInfo(address);
+  const { userInfo, updateCurrentUserInfo } = useAuth();
+  const { saveUserInfo } = useUserInfo(userInfo?.address, true);
+  const { isMobile } = useUserAgent();
 
   const iaInValid = useMemo(() => {
-    if (!name || avatar.length === 0) {
-      return true;
-    }
+    // if (!name || avatar.length === 0) {
+    //   return true;
+    // }
     return false;
   }, [name, avatar, banner]);
 
@@ -68,9 +64,9 @@ export default function EditContent({
     <>
       <div className={styles.group}>
         <div className={styles.groupTitle}>
-          <span className={styles.require}>*</span>Username
+          Username
         </div>
-        <div className={styles.groupContent}>
+        <div className={styles.groupContent} style={{ marginTop: 12 }}>
           <input
             disabled={disableNameEdit}
             value={name}
@@ -79,80 +75,24 @@ export default function EditContent({
             }}
             className={styles.inputText}
             placeholder="say something"
-            style={inputStyle}
+            style={{
+              width: isMobile ? "100%" : "calc(100% - 20px)",
+              border: isMobile ? "none" : "1px solid rgba(146, 144, 177, 0.60)",
+              backgroundColor: isMobile
+                ? "rgba(18, 23, 25, 1)"
+                : "rgba(146, 144, 177, 0.10)",
+              marginLeft: isMobile ? 0 : 10,
+              borderRadius: isMobile ? 0 : 8,
+              height: isMobile ? 42 : 50
+            }}
           />
         </div>
         <div className={styles.tip}>*It can be modified only once</div>
       </div>
 
-      <div className={styles.group}>
-        <div className={styles.groupTitle}>Highest education</div>
-        <div className={styles.groupContent}>
-          <div
-            onClick={async () => {
-              const value = await Picker.prompt({
-                columns: [
-                  [
-                    { label: "Kindergarten", value: "Kindergarten" },
-                    { label: "Elementary School", value: "Elementary School" },
-                    {
-                      label: "Junior High School",
-                      value: "Junior High School"
-                    },
-                    { label: "High School", value: "High School" },
-                    {
-                      label: "College Preparatory",
-                      value: "College Preparatory"
-                    },
-                    { label: "Bachelor's Degree", value: "Bachelor's Degree" },
-                    { label: "Master's Degree", value: "Master's Degree" },
-                    { label: "PhD", value: "PhD" }
-                  ]
-                ],
-                cancelText: "Cancel",
-                confirmText: "Ok",
-                // @ts-ignore
-                value: [education]
-              });
-
-              console.log("value:", value);
-              if (value && value.length > 0) {
-                setEducation(value[0] as string);
-              } else {
-                setEducation("");
-              }
-            }}
-            className={styles.picker}
-            style={inputStyle}
-          >
-            {education ? (
-              <div className={styles.pickerValue}>{education}</div>
-            ) : (
-              <div className={styles.pickerTitle}>Select</div>
-            )}
-
-            <div>
-              <svg
-                width="16"
-                height="10"
-                viewBox="0 0 16 10"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M15.0711 1.07107L8 8.14214L0.928932 1.07107"
-                  stroke="white"
-                  strokeWidth="2"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.group}>
+      <div className={styles.group} style={{ paddingTop: 8 }}>
         <div className={styles.groupTitle}>
-          <span className={styles.require}>*</span>Profile Photo
+          Profile Photo
         </div>
         <div
           className={styles.groupContent}
@@ -168,8 +108,15 @@ export default function EditContent({
       </div>
 
       <div className={styles.group}>
-        <div className={styles.groupTitle}>
-          <span className={styles.require}>*</span>Head Banner
+        <div className={styles.groupTitle}>Highest education</div>
+        <div className={styles.groupContent}>
+          <Education {...{ setEducation, education }} />
+        </div>
+      </div>
+
+      <div className={styles.group}>
+        <div className={styles.groupTitle} style={{ marginBottom: 10 }}>
+          Head Banner
         </div>
         <div
           className={styles.groupContent}
@@ -180,6 +127,7 @@ export default function EditContent({
         >
           <Upload
             percent={0.5}
+            scala={10}
             fileList={banner}
             setFileList={setBanner}
             type="banner"
@@ -187,47 +135,54 @@ export default function EditContent({
         </div>
       </div>
 
-      <div className={styles.actionBtns} style={actionButtonsStyle}>
-        <div
-          onClick={() => {
-            onClose();
-          }}
-          className={styles.cancel + " " + styles.btn}
-        >
-          Cancel
-        </div>
+      <div
+        className={styles.actionBtns}
+        style={{
+          position: isMobile ? "fixed" : "inherit",
+          backgroundColor: isMobile ? "transparent" : "transparent"
+        }}
+      >
+        {isMobile && (
+          <div
+            onClick={() => {
+              onClose();
+            }}
+            className={styles.cancel + " " + styles.btn + " button"}
+          >
+            Cancel
+          </div>
+        )}
         <MainBtn
           isDisabled={iaInValid}
           onClick={async () => {
-            if (name) {
-              let icon = "",
-                bannerImg = "";
-              if (avatar.length) {
-                icon = avatar[0].url;
-              }
-
-              if (banner.length) {
-                bannerImg = banner[0].url;
-              } else {
-                bannerImg = defaultBannerImg;
-              }
-
-              const isSuccess = await saveUserInfo(
-                bannerImg,
-                icon,
-                name,
-                education
-              );
-
-              if (isSuccess) {
-                success("Edit profile success");
-                onSuccess();
-              } else {
-                fail("Edit profile fail");
-              }
+            let icon = "", bannerImg = "";
+            if (avatar.length) {
+              icon = avatar[0].url;
             }
+
+            if (banner.length) {
+              bannerImg = banner[0].url;
+            } else {
+              bannerImg = defaultBannerImg;
+            }
+
+            const isSuccess = await saveUserInfo(
+              bannerImg,
+              icon,
+              name || '',
+              education || ''
+            );
+
+            if (isSuccess) {
+              success("Edit profile success");
+              onSuccess();
+              updateCurrentUserInfo();
+            } else {
+              fail("Edit profile fail");
+            }
+
           }}
-          style={{ flex: 1 }}
+          style={{ flex: 1, color: "#000" }}
         >
           Save
         </MainBtn>

@@ -1,21 +1,21 @@
 import Thumbnail from "@/app/components/thumbnail";
-import TokenCardActions from "../token-card-actions";
 import styles from "./index.module.css";
 
-export default function TokenCard({ token }: any) {
+export default function TokenCard({ token, ...rest }: any) {
   return token ? (
     <div className={styles.Container}>
-      <TokenCardActions token={token} />
       <Thumbnail
-        showProgress={false}
+        showProgress={true}
         showDesc={true}
         data={token}
         autoHeight={true}
         showTags={false}
+        showDropdownIcon={false}
         style={{
-          height: 620,
+          height: "100%",
           margin: 0
         }}
+        {...rest}
       />
     </div>
   ) : null;

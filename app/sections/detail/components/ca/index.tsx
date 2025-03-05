@@ -1,37 +1,53 @@
 import type { Project } from "@/app/type";
 import styles from "./ca.module.css";
-import { formatAddress, formatAddressLast } from "@/app/utils";
+import { formatAddress, simplifyNum } from "@/app/utils";
+import Copyed from "@/app/components/copyed";
+import { useUserAgent } from "@/app/context/user-agent";
 
 export default function CA({
   from,
-  data
+  data,
+  mc
 }: {
   from: string | undefined;
   data: Project;
+  mc: string | number;
 }) {
-  console.log("data:", data);
+  const { isMobile } = useUserAgent();
 
   return (
     <div
       className={[
         styles.marketCa,
-        from === "laptop" ? styles.LaptopPanel : styles.panel
+        from === "laptop-home" ? styles.LaptopPanel : styles.panel
       ].join(" ")}
     >
       <div className={styles.marketCap}>
         <div className={styles.mcTitle}>Market cap:</div>
-        <div className={styles.mcAmount}>5.78K</div>
+        {Number(data?.status) > 0 ? (
+          <div className={styles.mcAmount}>
+            {mc && `$${simplifyNum(Number(mc), 2)}`}
+          </div>
+        ) : (
+          <div className={styles.mcAmount}>-</div>
+        )}
       </div>
       <div className={styles.ca}>
         <div className={styles.caAddress}>
           <div className={styles.caTtitle}>CA:</div>
           <div className={styles.address}>
-            {data.address ? formatAddress(data.address) : ""}
+            {data?.address
+              ? isMobile
+                ? formatAddress(data.address)
+                : data.address
+              : ""}
           </div>
         </div>
 
-        <div className={styles.copy}>
-          <svg
+        <div className={styles.copy} onClick={() => {}}>
+          {data?.address && <Copyed value={data.address as string} />}
+
+          {/* <svg
             width="16"
             height="16"
             viewBox="0 0 16 16"
@@ -52,7 +68,7 @@ export default function CA({
               stroke="#979ABE"
               strokeWidth="2"
             />
-          </svg>
+          </svg> */}
         </div>
       </div>
     </div>

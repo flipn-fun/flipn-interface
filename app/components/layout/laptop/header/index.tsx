@@ -1,21 +1,12 @@
-import ConnectButton from "@/app/components/connectButton";
-import Messages from "@/app/components/messages";
 import styles from "./index.module.css";
-import TrendBanner from "@/app/sections/trends/components/banner";
-import PointsLabel from "@/app/components/points-label";
+import Tips from "@/app/components/page-header/mobile/tips";
+import SearchBar from "@/app/components/search-bar";
 
-export default function Header({ tab, userInfo }: any) {
+export default function Header() {
   return (
     <div className={styles.Container}>
-      <TrendBanner />
-      <div className={styles.Actions}>
-        <PointsLabel id="layout-points-label" />
-        <ConnectButton userInfo={userInfo} />
-        <a href="/mining" className="button" id="layout-mining">
-          <img src="/img/tabs/tab2-active.svg" />
-        </a>
-        <Messages />
-      </div>
+      <Tips isCustomWidth />
+      <SearchBar />
     </div>
   );
 }

@@ -1,0 +1,23 @@
+.Label {
+  width: 36px;
+  height: 16px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  background: #3c3c3c80;
+}
+
+.Normal {
+  color: #fff;
+}
+
+.Upper {
+  color: #2afeb4;
+}

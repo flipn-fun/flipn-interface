@@ -1,4 +1,4 @@
-import { Popup } from "antd-mobile";
+import { Modal, Popup } from "antd-mobile";
 import styles from "./mobile.module.css";
 import Trade from "../trade";
 import type { Project } from "@/app/type";
@@ -6,18 +6,16 @@ import type { Project } from "@/app/type";
 interface Props {
   show: boolean;
   token: Project;
-  onSuccess: () => void;
+  onSuccess: (amount?: string) => void;
   onHide?: () => void;
 }
 
 export default function SmokPanel({ show, token, onSuccess, onHide }: Props) {
-
   return (
     <Popup
       visible={show}
-      onMaskClick={() => {
-        onHide && onHide();
-      }}
+      closeOnMaskClick
+      className="no-bg trans-flip"
       onClose={() => {
         onHide && onHide();
       }}
@@ -29,15 +27,18 @@ export default function SmokPanel({ show, token, onSuccess, onHide }: Props) {
       }}
     >
       <div className={styles.main}>
-        <div className={styles.smokeLogo}>
-          <img className={styles.smokeImg} src="/img/home/smokeHotLogo.svg" />
-        </div>
-
+        {/* <div className={styles.smokeLogo}>
+          <img className={styles.smokeImg} src="/img/home/flipLogo.png" />
+        </div> */}
         <Trade
           modalShow={show}
           token={token}
-          onSuccess={() => {
-            onSuccess && onSuccess()
+          onClose={() => {
+            onHide && onHide();
+          }}
+          onSuccess={onSuccess}
+          panelStyle={{
+            padding: "0px 14px 20px"
           }}
         />
       </div>

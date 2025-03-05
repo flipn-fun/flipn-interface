@@ -5,11 +5,20 @@ import {
   type LibrarySymbolInfo
 } from "@/public/libs/charting_library";
 import dayjs from "@/app/utils/dayjs";
-import { fetchData, fetchLastData } from "../fetch-data";
+import {
+  fetchData,
+  fetchLastData,
+  getGranularityByResolution
+} from "../fetch-data";
+import addPriceMarker from "./add-price-marker";
 
-let page = 0;
-let hasNext = true;
+let lastPrice = 0;
 let pullingQueryPriceTimer: any = null;
+let kChartSubscriberList: Record<string, number> = {};
+let currentSymbolInfo: SymbolInfo | null = null;
+let savedHistoryCallback:
+  | ((bars: any[], meta: { noData: boolean }) => void)
+  | null = null;
 
 interface SymbolInfo extends LibrarySymbolInfo {
   full_name: string;
@@ -17,13 +26,17 @@ interface SymbolInfo extends LibrarySymbolInfo {
 
 const supported_resolutions = [
   "1",
-  "5"
-  // "15",
-  // "30",
-  // "1H",
-  // "1D",
-  // "1W",
-  // "1M"
+  "5",
+  "15",
+  "30",
+  "45",
+  "1H",
+  "2H",
+  "3H",
+  "4H",
+  "1D",
+  "1W",
+  "1M"
 ] as ResolutionString[];
 
 const configurationData: DatafeedConfiguration = {
@@ -40,8 +53,18 @@ const configurationData: DatafeedConfiguration = {
 };
 
 const datafeed: (
-  address: string
-) => ChartingLibraryWidgetOptions["datafeed"] = (address) => ({
+  address: string,
+  tvWidgetRef: any,
+  pageRef: any,
+  hasNextRef: any,
+  resolutionRef: any
+) => ChartingLibraryWidgetOptions["datafeed"] = (
+  address,
+  tvWidgetRef,
+  pageRef,
+  hasNextRef,
+  resolutionRef
+) => ({
   onReady: (callback) => {
     setTimeout(() => callback(configurationData));
   },
@@ -62,7 +85,7 @@ const datafeed: (
       session: "24x7",
       timezone: "Etc/UTC",
       minmov: 1,
-      pricescale: 10 ** 8,
+      pricescale: 10 ** 10,
       has_intraday: true,
       visible_plots_set: "ohlc",
       has_weekly_and_monthly: true,
@@ -70,8 +93,7 @@ const datafeed: (
       volume_precision: 4,
       data_status: "streaming",
       full_name: symbolName,
-      format: "price",
-      has_empty_bars: true
+      format: "price"
     };
     setTimeout(() => onSymbolResolvedCallback(symbolInfo), 0);
   },
@@ -84,14 +106,30 @@ const datafeed: (
     onErrorCallback
   ) => {
     try {
-      if (!hasNext) {
+      savedHistoryCallback = onHistoryCallback;
+
+      if (resolution !== resolutionRef.current) {
+        hasNextRef.current = true;
+        pageRef.current = 0;
+      }
+
+      if (!hasNextRef.current) {
         onHistoryCallback([], { noData: true });
         return;
       }
-      page++;
-      const { data, hasNextPage } = await fetchData(address, resolution, page);
-      hasNext = hasNextPage;
-      const bars = data.map((item: any) => ({
+      pageRef.current = pageRef.current + 1;
+
+      const { data = [], hasNextPage } = await fetchData(
+        address,
+        getGranularityByResolution(resolution),
+        pageRef.current
+      );
+
+      if (data?.length) lastPrice = data[data.length - 1][1];
+      resolutionRef.current = resolution;
+      hasNextRef.current = hasNextPage;
+      resolutionRef.current = resolution;
+      const bars = data?.map((item: any) => ({
         time: item[6],
         low: item[3],
         high: item[2],
@@ -99,7 +137,7 @@ const datafeed: (
         close: item[4],
         volume: item[5]
       }));
-      if (data.length === 0) {
+      if (!data || data?.length === 0) {
         onHistoryCallback([], { noData: true });
         return;
       }
@@ -118,11 +156,21 @@ const datafeed: (
     subscriberId,
     onResetCacheNeededCallback
   ) => {
-    if (pullingQueryPriceTimer) {
-      clearInterval(pullingQueryPriceTimer);
-    }
+    if (kChartSubscriberList[subscriberId]) return;
+
+    kChartSubscriberList[subscriberId] = 1;
+    currentSymbolInfo = symbolInfo;
     const fetchPrice = async () => {
+      clearTimeout(pullingQueryPriceTimer);
+
+      if (!currentSymbolInfo?.name) return;
       const item = await fetchLastData(address, resolution);
+      if (!item?.[6]) {
+        pullingQueryPriceTimer = setTimeout(fetchPrice, 5000);
+        lastPrice = 0;
+        return;
+      }
+
       const bar = {
         time: item[6],
         low: item[3],
@@ -132,15 +180,25 @@ const datafeed: (
         volume: item[5]
       };
 
-      onRealtimeCallback(bar);
-    };
+      if (!lastPrice && savedHistoryCallback) {
+        savedHistoryCallback([bar], { noData: false });
+      }
 
-    pullingQueryPriceTimer = setInterval(fetchPrice, 3000);
+      addPriceMarker({ price: item[1], lastPrice, time: item[6], tvWidgetRef });
+
+      onRealtimeCallback(bar);
+      lastPrice = item[1];
+
+      pullingQueryPriceTimer = setTimeout(fetchPrice, 5000);
+    };
+    clearTimeout(pullingQueryPriceTimer);
+    pullingQueryPriceTimer = setTimeout(fetchPrice, 5000);
   },
 
   unsubscribeBars: (id) => {
     // console.log("unsubscribeBars", id);
-    id === "custom" && clearInterval(pullingQueryPriceTimer);
+    delete kChartSubscriberList[id];
+    id === "custom" && clearTimeout(pullingQueryPriceTimer);
   }
 });
 

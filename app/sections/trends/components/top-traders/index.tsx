@@ -1,0 +1,86 @@
+import React, { useState, useCallback, useEffect } from 'react'
+import TopTradersMobile from './m-traders'
+import TopTradersPC from './pc-traders'
+import { useUserAgent } from '@/app/context/user-agent'
+import styles from './index.module.css'
+import { useGetSmartMonies } from '../../hooks/useGetSmartMonies';
+import Empty from '@/app/components/empty';
+import { useAccount } from '@/app/hooks/useAccount';
+import { useCopyTradeRefresh } from '@/app/store/useCopyTradeRefresh';
+import { useTopTraderTab } from '@/app/store/useTopTraderTab';
+export default function TopTraders() {
+  const lastCopyTradeTime = useCopyTradeRefresh((state: any) => state.lastCopyTradeTime);
+  const topTraderTab = useTopTraderTab((state: any) => state.topTraderTab);
+  const setTab = useTopTraderTab((state: any) => state.set)
+  const { isMobile } = useUserAgent()
+  const pageSize = 10;
+  const [pageIndex, setPageIndex] = useState<number>(1);
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+  const [tradersList, setTradersList] = useState<{items: any[], total: number}>({
+    items: [],
+    total: 0
+  });
+  const { address: walletAddress } = useAccount();
+  const [orderBy, setOrderBy] = useState<string>(topTraderTab)
+  const { smartMonies, smartMoniesLoading } = useGetSmartMonies({ 
+    chain: 'solana', 
+    page: pageIndex, 
+    pageSize,
+    orderBy,
+    walletAddress: walletAddress || '',
+    lastCopyTradeTime
+  });
+
+  useEffect(() => {
+    if (smartMonies?.items) {
+      setTradersList({
+        items: pageIndex === 1 ? smartMonies.items : [...tradersList.items, ...smartMonies.items],
+        total: smartMonies.total
+      });
+
+      setHasMore(smartMonies.items.length >= pageSize);
+      setIsLoadingMore(false);
+    }
+  }, [smartMonies]);
+
+  const resetList = useCallback(() => {
+    setPageIndex(1);
+    setTradersList({
+      items: [],
+      total: 0
+    });
+    setHasMore(true);
+  }, []);
+
+  const loadMore = useCallback(() => {
+    if (!isLoadingMore && !smartMoniesLoading) {
+      setIsLoadingMore(true);
+      setPageIndex(prev => prev + 1);
+    }
+  }, [isLoadingMore, smartMoniesLoading]);
+
+  const handleOrderByChange = (newOrderBy: string) => {
+    setOrderBy(newOrderBy);
+    setTab({ topTraderTab: newOrderBy });
+    resetList();
+  };
+
+
+  useEffect(() => {
+    resetList();
+  }, [lastCopyTradeTime]);
+
+
+  return (
+    <>
+      <div className={styles.topTraders}>
+        {isMobile ? 
+          <TopTradersMobile list={tradersList.items} setOrderBy={handleOrderByChange} orderBy={orderBy} loadMore={loadMore} hasMore={hasMore || smartMoniesLoading} isLoadingMore={isLoadingMore} smartMoniesLoading={smartMoniesLoading}/> : 
+          <TopTradersPC list={tradersList.items} setOrderBy={handleOrderByChange} orderBy={orderBy} loadMore={loadMore} hasMore={hasMore || smartMoniesLoading} isLoadingMore={isLoadingMore} smartMoniesLoading={smartMoniesLoading} />
+        }
+      </div>
+    
+    </>
+  )
+}

@@ -2,23 +2,31 @@ import Multiple from "./component/multiple";
 import Statistics from "./component/statistics";
 import Rank from "./component/rank";
 
-export default function Mining({ styles, isMobile, info }: any) {
+export default function Mining({ styles, isMobile, info, infoLoading }: any) {
   return (
     <div className={styles.main}>
-      <div className={styles.zBox}>
-        <Multiple num={info?.once_like_amount || 0} />
-        <Statistics
-          style={{
-            justifyContent: "center"
-          }}
-          itemStyle={{
-            width: isMobile ? "50%" : "20%"
-          }}
-          info={info}
+      <div className={styles.Content}>
+        <div className={styles.Bg} />
+        <div className={styles.zBox}>
+          <Multiple num={info?.once_like_amount || 0} rewards={info?.minted} />
+          <Statistics
+            style={{
+              justifyContent: "center"
+            }}
+            itemStyle={{
+              width: isMobile ? "50%" : "30%"
+            }}
+            info={info}
+          />
+        </div>
+        <Rank
+          rank={info?.your_rank}
+          list={info?.mining_rank}
+          loading={infoLoading}
         />
       </div>
-      <Rank list={info?.mining_rank || []} rank={info?.your_rank} />
-      <div className={styles.bottomAni}>
+      {/* <div className={styles.AniBg} /> */}
+      {/* <div className={styles.bottomAni}>
         <div className={styles.boxAni} style={{ width: "200%" }}>
           {[1, 2].map((item) => {
             return (
@@ -30,7 +38,7 @@ export default function Mining({ styles, isMobile, info }: any) {
             );
           })}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

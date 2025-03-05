@@ -1,41 +1,81 @@
 .main {
-  min-height: 100vh;
-  
-  /* background: #fff; */
-  padding: 0 0 100px;
+  height: 100dvh;
+  background-color: #000;
+  overflow-y: auto;
 
-  .isOther {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: absolute;
-    left: 20px;
-    right: 20px;
-    top: 10px;
-  
-  }
+  /* background: #fff; */
+  padding: 0;
+  overflow-y: auto;
 
   .avatarBox {
     position: relative;
-    background: #000 url("/img/profile/bg.png") left top no-repeat;
-  background-size: 100% auto;
+    background: #000 url("/img/profile/bg.svg") left bottom no-repeat;
+    background-size: 100% auto;
+    height: 216px;
   }
-  .avatarBox::after {
-    content: ' ';
+  /* .avatarBox::after {
+    content: " ";
     display: block;
     position: absolute;
     left: 0;
     right: 0;
     bottom: -1px;
     height: 1px;
-    /* background-color: #000; */
-  }
+    background-color: #000;
+  } */
 
   .avatarContent {
-    padding: 50px 0 16px;
+    padding: 46px 0 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 190px;
+    min-height: 172px;
+    height: 100%;
   }
+}
+
+.Points {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.Tabs {
+  overflow-x: auto;
+}
+.Tabs::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background: transparent;
+}
+.TabsCursorClassName {
+  height: 2px;
+  border-radius: 1px;
+  bottom: 0;
+  width: 100%;
+}
+.TabsContentClassName {
+  background: rgba(255, 255, 255, 0.08);
+  min-height: calc(100dvh - 274px);
+}
+.SettingButton {
+  width: 30px;
+  height: 30px;
+  background: url("/img/profile/icon-setting.svg") no-repeat center / contain;
+}
+.ShareButton {
+  composes: SettingButton;
+  background: url("/img/profile/icon-share.svg") no-repeat center / contain;
+}
+.ProfileBackButton {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  background: rgba(13, 16, 18, 0.80);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  transform: translateX(-5px);
 }

@@ -1,10 +1,51 @@
-.Container {
+.Wrapper {
   position: relative;
-  background: linear-gradient(180deg, #FF2681 0%, #0D1012 100%);
-  padding: 0 30px 100px;
-  min-width: max-content;
+  height: 100vh;
 }
 
-.Back {
-  margin-top: 20px;
+.Container {
+  padding-top: 90px;
+  padding-bottom: 30px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.Box {
+  width: 1150px;
+  margin: 0 auto;
+}
+
+/*#region List*/
+.List {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 18px;
+}
+/*#endregion*/
+
+.TitleWrapper {
+  position: absolute;
+  left: 30px;
+  top: 20px;
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ListTitle {
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  padding-top: 30px;
 }

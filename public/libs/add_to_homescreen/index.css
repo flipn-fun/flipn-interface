@@ -11,23 +11,19 @@
   transition: opacity 0.3s ease-in-out, background-color 0.3s ease-in-out;
   font-family: Unbounded;
   color: #212121;
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .adhs-container.visible {
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.1);
   opacity: 1;
 }
 
 .adhs-container .adhs-modal {
-  background: radial-gradient(
-    89.59% 86.58% at 40.75% 0%,
-    #ffbcd8 0%,
-    #ffe8f1 100%
-  );
+  background: #fbca04;
   border-radius: 20px;
-  border: 1px solid #ff008a;
+  border: 1px solid #fbca04;
   left: 50%;
   margin: auto;
   max-width: 400px;
@@ -722,12 +718,12 @@
 }
 
 .adhs-container .adhs-modal .adhs-button-cancel {
-  border: 2px solid #ff2681;
-  color: #ff2681;
+  border: 2px solid #000;
+  color: #000;
 }
 
 .adhs-container .adhs-modal .adhs-button-install {
-  background-color: #ff2681;
+  background-color: #000;
   color: white;
 }
 

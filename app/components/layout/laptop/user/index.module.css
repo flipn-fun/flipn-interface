@@ -24,11 +24,23 @@
   background: linear-gradient(to top, #0d1012 35.66%, #ff2f74 99.63%);
 }
 
-.SexyFi {
+.Flip {
+  background: url(/img/laptop/flip.png) no-repeat;
+}
+
+.Banner {
   position: absolute;
-  width: 467px;
-  height: 191px;
-  background: url(/img/laptop/sexyfi.png) no-repeat;
+  width: 480px;
+  height: 240px;
+  z-index: 1;
+}
+
+.BannerMask {
+  width: 480px;
+  height: 240px;
+  position: absolute;
+  z-index: 2;
+  background: linear-gradient(0deg, #0d1012 41.35%, rgba(0, 0, 0, 0) 100%);
 }
 
 .Avatar {
@@ -37,4 +49,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.Empty {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(17px);
 }

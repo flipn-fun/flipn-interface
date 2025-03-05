@@ -1,15 +1,19 @@
 import { useAccount } from "@/app/hooks/useAccount";
 import styles from "./index.module.css";
-import { formatAddressLast, logOut } from "@/app/utils";
+import { formatAddressLast } from "@/app/utils";
 import { useRouter } from "next/navigation";
+
+const netParam = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? '' : '?cluster=devnet'
 
 export default function Address({
   address,
   color = "rgba(126, 138, 147, 1)",
   fontSize = 10,
-  style
+  style,
+  isFull = false,
+  logout
 }: any) {
-  const { disconnect, address: loginAddress } = useAccount();
+  const { address: loginAddress } = useAccount();
   const router = useRouter();
 
   return (
@@ -18,10 +22,10 @@ export default function Address({
         className={styles.addressContent}
         style={{ color, fontSize }}
         onClick={() => {
-          window.open(`https://solscan.io/account/${address}?cluster=devnet`);
+          window.open(`https://solscan.io/account/${address}${netParam}`);
         }}
       >
-        <div>{formatAddressLast(address)}</div>
+        <div>{isFull ? address : formatAddressLast(address)}</div>
         <svg
           width={fontSize}
           height={fontSize}
@@ -39,10 +43,10 @@ export default function Address({
       {loginAddress === address && (
         <div
           onClick={async () => {
-            await disconnect();
-            logOut();
+            logout?.();
             router.push("/");
           }}
+          className="button"
         >
           <svg
             width="38"
@@ -54,7 +58,7 @@ export default function Address({
             <path
               d="M38 19C38 8.50659 29.4934 0 19 0C8.50659 0 0 8.50659 0 19C0 29.4934 8.50659 38 19 38C29.4934 38 38 29.4934 38 19Z"
               fill="white"
-              fill-opacity="0.08"
+              fillOpacity="0.08"
             />
             <path
               d="M22.8001 11.3999H12.6667V26.5999H22.8001"

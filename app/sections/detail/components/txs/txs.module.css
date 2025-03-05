@@ -1,70 +1,108 @@
 .main {
+  padding: 15px 0;
+}
+
+.filter {
+  margin-bottom: 10px;
+  padding: 0 15px;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  padding: 5px 0;
+  gap: 8px;
+}
+
+.filterText {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  color: #9290b1;
+  font-weight: 300;
 }
 
 .txContent {
-  background-color: #121719;
+  background-color: #252328;
   border-radius: 10px;
-  padding: 5px 12px;
-  margin-left: 5px;
-  margin-right: 5px;
+  padding: 5px 15px;
+}
+
+.LaptopContent {
+  background-color: transparent;
 }
 
 .txTtitles {
   display: flex;
   align-items: center;
+  padding: 15px 0;
+}
+
+.MobileTitles {
   color: rgba(146, 144, 177, 1);
   border-bottom: 1px solid rgba(146, 144, 177, 0.2);
+}
+
+.LaptopTitles {
+  color: #ffffff80;
+  border-bottom: 1px solid #ffffff33;
+}
+
+.titleItem {
+  flex: 1;
+  height: 16px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.item {
+  display: flex;
+  align-items: center;
   padding: 15px 0;
-  .titleItem {
-    flex: 1;
+  font-weight: 300;
+}
+
+.Account {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 3;
+}
+
+.LaptopAccount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+}
+
+.type {
+  flex: 1;
+  &.sell {
+    color: rgba(255, 75, 167, 1);
+  }
+  &.buy {
+    color: rgba(111, 255, 0, 1);
   }
 }
 
-.txList {
-  .item {
-    display: flex;
-    align-items: center;
-    padding: 15px 0;
-    font-weight: 300;
-    .account {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 2;
-      color: rgba(169, 167, 208, 1);
-      .avatar {
-        width: 20px;
-        height: 20px;
-        border-radius: 20px;
-      }
-    }
-
-    .type {
-      flex: 1;
-      &.sell {
-        color: rgba(255, 75, 167, 1);
-      }
-      &.buy {
-        color: rgba(111, 255, 0, 1);
-      }
-    }
-
-    .value {
-      flex: 1;
-      color: #fff;
-    }
-
-    .vva {
-      flex: 1;
-      color: #fff;
-    }
-
-    .link {
-      flex: 1;
-    }
-  }
+.value {
+  flex: 1;
+  color: #fff;
 }
 
-.LaptopContent {
-  background-color: #121719;
+.vva {
+  flex: 1;
+  color: #fff;
+}
+
+.link {
+  flex: 1;
 }

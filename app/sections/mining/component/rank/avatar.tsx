@@ -1,10 +1,15 @@
 import styles from "./avatar.module.css";
 import Rank from "./rank-icon";
-export default function Avatar({ src, rank }: any) {
+import { defaultAvatar } from "@/app/utils/config";
+export default function Avatar({ src, rank, isUser }: any) {
   return (
     <div className={styles.AvatarWrapper}>
-      <img src={src} className={styles.Avatar} />
-      <Rank rank={rank} />
+      <Rank
+        rank={rank}
+        isUser={isUser}
+        textClassName={isUser && styles.UserRank}
+      />
+      <img src={src || defaultAvatar} className={styles.Avatar} />
     </div>
   );
 }

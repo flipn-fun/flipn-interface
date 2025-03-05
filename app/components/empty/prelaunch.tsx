@@ -1,5 +1,5 @@
 import styles from "./index.module.css";
-export default function Prelanuch() {
+export default function Prelanuch({ type, from, onTextClick }: any) {
   return (
     <div
       className={styles.Container}
@@ -196,22 +196,42 @@ export default function Prelanuch() {
           </linearGradient>
         </defs>
       </svg>
-      <div
-        className={styles.Text}
-        style={{
-          color: "#FFFFFFA6"
-        }}
-      >
-        That{"'"}s all done...
-      </div>
-      <div
-        className={styles.Text}
-        style={{
-          color: "#FFFFFFA6"
-        }}
-      >
-        You can go to <span style={{ color: "#fff" }}>Launching/ed.</span>
-      </div>
+      {from === "detail" ? (
+        <div
+          className={styles.Text}
+          style={{
+            color: "#FFFFFFA6"
+          }}
+        >
+          No data.
+        </div>
+      ) : (
+        <>
+          <div
+            className={styles.Text}
+            style={{
+              color: "#FFFFFFA6"
+            }}
+          >
+            That{"'"}s all done...
+          </div>
+          <div
+            className={styles.Text}
+            style={{
+              color: "#FFFFFFA6"
+            }}
+          >
+            You can go to{" "}
+            <span
+              style={{ color: "#fff" }}
+              className="button"
+              onClick={onTextClick}
+            >
+              {type === "preLaunch" ? "Launches" : "PreLaunch"}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -1,100 +1,96 @@
-import Back from "@/app/components/back/laptop";
 import CreateNode from "../CreateNode";
-import PreviewNode from "../PreviewNode";
-import { useState, useRef } from "react";
-import { useAccount } from "@/app/hooks/useAccount";
-import useUserInfo from "@/app/hooks/useUserInfo";
+// import PreviewNode from "./preview";
+import { motion } from "framer-motion";
+import { useState, useRef, useMemo } from "react";
+import { fail } from "@/app/utils/toast";
+import { httpAuthPost, sleep } from "@/app/utils";
 import type { Project } from "@/app/type";
 import styles from "./index.module.css";
+import Steps from "./step";
+import PreviewNode from "../PreviewNode";
+import { useUserAgent } from "@/app/context/user-agent";
 
 export default function Laptop() {
-  const [renderType, setRenderType] = useState(0);
+  const [step, setStep] = useState(1);
   const [dataAdd, setDataAdd] = useState<Project>();
-  const { address } = useAccount();
-  const { userInfo } = useUserInfo(address);
   const createRef = useRef<any>();
-  const previewRef = useRef<any>();
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const { isMobile } = useUserAgent();
+
+  const query = useMemo(() => {
+    const query: any = {
+      about_us: dataAdd?.about,
+      discord: dataAdd?.discord,
+      icon: dataAdd?.tokenIcon,
+      tg: dataAdd?.tg,
+      ticker: dataAdd?.ticker,
+      token_name: dataAdd?.tokenName,
+      token_symbol: dataAdd?.tokenSymbol,
+      video: dataAdd?.tokenImg,
+      website: dataAdd?.website,
+      x: dataAdd?.x
+    };
+
+    const queryStr = Object.keys(query)
+      .map((key) => `${key}=${encodeURIComponent(query[key])}`)
+      .join("&");
+
+    return queryStr;
+  }, [dataAdd]);
 
   return (
-    <div className={styles.Wrapper}>
-      <div className={styles.Container}>
-        <div className={styles.Header}>
-          <div className={styles.BackWrapper}>
-            <Back />
-          </div>
-          <div>
-            <div className={styles.Title}>Create Token</div>
-            {userInfo?.name && (
-              <div className={styles.Create}>
-                <span>Created by:</span>
-                <span
-                  style={{
-                    color: "#55FFF4"
-                  }}
-                >
-                {userInfo?.name}
-              </span>
-              </div>
-            )}
-          </div>
-          <div className={styles.Buttons}>
-            {renderType === 1 ? (
-              <>
-                <button
-                  onClick={() => {
-                    previewRef.current?.onEdit();
-                  }}
-                  className={styles.Button}
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => {
-                    previewRef.current?.onCreate();
-                  }}
-                  className={styles.Button}
-                  style={{
-                    background: "rgba(255, 38, 129, 1)",
-                    borderColor: "rgba(255, 38, 129, 1)"
-                  }}
-                >
-                  Create
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => {
-                  createRef.current?.onPreview();
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className={styles.Wrapper}
+      >
+        { step <= 3 && <Steps step={step} /> }
+        <div className={styles.Container}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={styles.EditWrapper}
+          >
+            <CreateNode
+                ref={createRef}
+                step={step}
+                // @ts-ignore
+                show={step === 1}
+                onNext={() => {
+                  setStep(step + 1);
                 }}
-                className={styles.Button}
-              >
-                Preview
-              </button>
-            )}
-          </div>
-        </div>
-        <div className={styles.Content}>
-          <CreateNode
-            show={renderType === 0}
-            onAddDataFill={(value: any) => {
-              setDataAdd(value);
-              setRenderType(1);
-              window.scrollTo(0, 0);
-            }}
-            ref={createRef}
-          />
-          {renderType === 1 && (
-            <PreviewNode
-              show={true}
-              data={dataAdd!}
-              onAddDataCancel={() => {
-                setRenderType(0);
-              }}
-              ref={previewRef}
-            />
+                onBack={() => {
+                  setStep(step - 1);
+                }}
+                onAddDataFill={(value: any) => {
+                  setDataAdd(value);
+                  setStep(2);
+                  window.scrollTo(0, 0);
+                }}
+              />
+            
+          </motion.div>
+          { step >= 2 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <PreviewNode
+                show={true}
+                step={step}
+                data={dataAdd!}
+                onNext={() => {
+                  setStep(step + 1);
+                }}
+                goBackTo={() => {
+                  setStep(2)
+                }}
+                onBack={() => {
+                  console.log('onBack', step)
+                  setStep(step - 1);
+                }} />
+            </motion.div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </>
   );
 }

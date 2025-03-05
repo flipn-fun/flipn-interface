@@ -1,30 +1,10 @@
-import { Popup } from "antd-mobile";
 import Content from "./content";
 
 export default function Create({
-  show,
-  onHide,
-  setShowSuccessModal,
+  onBeforeCreate,
   ...rest
 }: any) {
   return (
-    <Popup
-      visible={show}
-      onMaskClick={() => {
-        onHide && onHide();
-      }}
-      onClose={() => {
-        onHide && onHide();
-      }}
-      bodyStyle={{
-        borderTopLeftRadius: "8px",
-        borderTopRightRadius: "8px",
-        paddingTop: 30,
-        paddingBottom: 0
-        // height: '50vh'
-      }}
-    >
-      <Content {...{ onHide, setShowSuccessModal, ...rest }} />
-    </Popup>
+    <Content {...{ onBeforeCreate, ...rest }} width="100vw" />
   );
 }

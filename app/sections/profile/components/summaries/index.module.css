@@ -1,0 +1,138 @@
+.Container {
+  width: 100%;
+  padding: 0 10px;
+}
+.ContainerPc {
+  width: 100%;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.SummaryContainerPC {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+}
+
+.Inner {
+  border-radius: 10px 10px 0 0;
+  color: #9290B1;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 13px 20px 11px 12px;
+  height: 116px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.InnerPc {
+  border-radius: 12px;
+  color: #9290B1;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+.GreenBg {
+  background: rgba(201, 255, 93, 0.1);
+}
+.PurpleBg {
+  background: rgba(143, 73, 255, 0.15);
+}
+
+.Summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 9px;
+}
+.SummaryTitleTrade {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #C9FF5D;
+}
+.SummaryTitleCopied {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #A369FF;
+}
+
+
+.SummaryValue {
+  color: #FFF;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.SummaryValueBuy {
+  color: #C9FF5D;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+.SummaryValueSell {
+  color: #FF2681;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+
+
+
+
+
+.CopyBtn {
+  height: 24px;
+  border-radius: 30px;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  border: 2px solid #C9FF5D;
+  background: #C9FF5D;
+  color: #000;
+  padding: 10px 24px;
+}
+.CopyBtn:hover {
+  opacity: 0.8;
+}

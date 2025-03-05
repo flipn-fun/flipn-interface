@@ -1,11 +1,13 @@
+"use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { httpAuthGet } from "@/app/utils";
-import { useAccount } from "@/app/hooks/useAccount";
+import { useAuth } from "@/app/context/auth";
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 10;
 
 export default function useList() {
-  const { address: userAddress } = useAccount();
+  const { accountRefresher } = useAuth();
   const [list, setList] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -19,7 +21,11 @@ export default function useList() {
           (pageRef.current - 1) * PAGE_SIZE
         }`
       );
-      setList([...list, ...(response.data.list || [])]);
+
+      pageRef.current === 1
+        ? setList(response.data.list || [])
+        : setList([...list, ...(response.data.list || [])]);
+
       setHasMore(response.data.has_next_page);
     } catch (err) {
       setList([]);
@@ -35,15 +41,26 @@ export default function useList() {
     onQuery();
   };
 
+  const onInit = () => {
+    pageRef.current = 1;
+    onQuery();
+  };
+
   useEffect(() => {
-    if (userAddress) onQuery();
-  }, [userAddress]);
+    if (accountRefresher) {
+      onInit();
+    } else {
+      setList([]);
+    }
+  }, [accountRefresher]);
 
   return {
     list,
     loading,
     hasMore,
+    page: pageRef,
     onQuery,
-    onNextPage
+    onNextPage,
+    onInit
   };
 }

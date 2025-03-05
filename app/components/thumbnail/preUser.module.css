@@ -1,0 +1,66 @@
+.main {
+}
+
+.title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.userItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 36px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.avatarImg {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.userBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.userName {
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.followers {
+  color: rgba(146, 144, 177, 1);
+  margin-top: 3px;
+  text-align: left;
+}
+
+.creator {
+  color: rgba(201, 255, 93, 1);
+}
+
+.like {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #fff;
+  background-color: rgba(60, 60, 60, 0.4);
+  border-radius: 30px;
+  padding: 5px 10px;
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}

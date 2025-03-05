@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useDebounceFn } from "ahooks";
 import styles from './index.module.css';
 
@@ -12,7 +12,7 @@ import styles from './index.module.css';
 //            |                                  |
 // LeftBottom ------------------------------------ RightBottom
 //            BottomLeft     Bottom    BottomRight
-const Popover = (props: Props) => {
+const Popover = (props: Props, ref: any) => {
   const {
     children,
     content,
@@ -22,7 +22,9 @@ const Popover = (props: Props) => {
     contentStyle,
     contentClassName,
     triggerContainerStyle,
-    triggerContainerClassName
+    triggerContainerClassName,
+    closeDelayDuration = 300,
+    onVisibleChange,
   } = props;
 
   const triggerRef = useRef<any>();
@@ -37,8 +39,18 @@ const Popover = (props: Props) => {
       setVisible(false);
       setRealVisible(false);
     },
-    { wait: 300 }
+    { wait: closeDelayDuration }
   );
+
+  const refs = {
+    onClose: closeDelay,
+    onCloseCancel: closeCancel,
+  };
+  useImperativeHandle(ref, () => refs);
+
+  useEffect(() => {
+    onVisibleChange?.(realVisible);
+  }, [realVisible]);
 
   return (
     <>
@@ -47,7 +59,13 @@ const Popover = (props: Props) => {
         style={triggerContainerStyle}
         className={triggerContainerClassName}
         onClick={() => {
-          if (trigger === PopoverTrigger.Hover) return;
+          if (trigger === PopoverTrigger.Hover) {
+            if (closeDelayDuration <= 0) {
+              setVisible(false);
+              setRealVisible(false);
+            }
+            return;
+          }
           setVisible(true);
         }}
         onMouseEnter={() => {
@@ -69,6 +87,10 @@ const Popover = (props: Props) => {
             y={y}
             onLoaded={(elTooltip) => {
               const triggerEl = triggerRef.current;
+
+              if (!triggerEl) {
+                return;
+              }
 
               const {
                 width: triggerW,
@@ -173,7 +195,7 @@ const Popover = (props: Props) => {
   );
 };
 
-export default Popover;
+export default React.forwardRef(Popover);
 
 export enum PopoverPlacement {
   Top,
@@ -207,6 +229,8 @@ interface Props {
   triggerContainerStyle?: React.CSSProperties;
   triggerContainerClassName?: string;
   elRef?: HTMLElement;
+  closeDelayDuration?: number;
+  onVisibleChange?(visible?: boolean): void;
 }
 
 const Card = (props: CardProps) => {

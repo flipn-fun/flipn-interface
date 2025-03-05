@@ -1,29 +1,76 @@
 .distributionArea {
   margin-top: 10px;
+  padding: 0 10px;
   .distributionTitle {
-    color: rgba(146, 144, 177, 1);
-    font-size: 20px;
-    font-weight: 500;
-    padding-left: 10px;
+    color: #9290B1;
+    font-size: 12px;
   }
 }
 
 .list {
-  /* background-color: rgba(18, 23, 25, 1); */
   color: #fff;
+
   .item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+    padding: 10px 0;
     .itemContent {
       display: flex;
       align-items: center;
+      gap: 10px;
     }
   }
 }
 
 .LaptopList {
-  background-color: transparent;
-  margin-top: 10px;
+  margin-top: 2px;
+  padding: 0px 16px;
+  margin-right: 10px;
+}
+
+.UserName {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.avatarContent {
+  display: flex;
+  align-items: center;
+  .avatar {
+    width: 36px;
+    height: 36px;
+    .avatrImg {
+      width: 36px;
+      height: 36px;
+      border-radius: 36px;
+    }
+  }
+
+  .nameContent {
+    text-align: left;
+  }
+
+  .nameLevel {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 5px;
+  }
+  .followers {
+    color: #9290b1;
+  }
+}
+
+.loading {
+  display: flex;  
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.itemAmount {
+  font-size: 10px;
+  margin-top: 5px;
+  text-align: right;
 }

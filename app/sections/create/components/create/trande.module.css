@@ -1,147 +1,205 @@
-.panel {
-    background-color: #121719;
-    border-radius: 10px;
-    padding: 12px 12px 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.avatar {
-    padding: 0 20px;
-}
 
 
 .cationArea {
-    .tradeTabs {
-        padding: 20px 15px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+  .tradeTabs {
+    padding: 20px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
-        .tab {
-            flex: 1;
-            background-color: rgba(95, 96, 106, 1);
-            color: #fff;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 38px;
-            border-radius: 8px;
+    .tab {
+      flex: 1;
+      background-color: rgba(95, 96, 106, 1);
+      color: #fff;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      border-radius: 8px;
 
-            &.active:first-child {
-                background-color: rgba(109, 181, 0, 1);
-            }
+      &.active:first-child {
+        background-color: rgba(109, 181, 0, 1);
+      }
 
-            &.active:last-child {
-                background-color: rgba(255, 47, 116, 1);
-            }
-        }
+      &.active:last-child {
+        background-color: rgba(255, 47, 116, 1);
+      }
     }
+  }
 }
 
-.inputArea {
-    .actionArea {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 12px;
-        font-weight: 300;
 
-        .switchTokenName {
-            color: #fff;
-        }
-    }
-
-    .inputArea {
-        margin-top: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: #fff;
-        gap: 10px;
-        height: 46px;
-        border: 1px solid rgba(146, 144, 177, 0.6);
-        border-radius: 8px;
-        padding: 0 10px;
-
-        .input {
-            flex: 1;
-            height: 46px;
-            background-color: inherit;
-            border: none;
-            outline: none;
-            color: #fff;
-            font-size: 16px;
-        }
-
-        .inputToken {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 5px;
-            font-size: 16px;
-
-            .tokenImg {
-                width: 30px;
-                height: 30px;
-                border-radius: 30px;
-                overflow: hidden;
-
-                .tiImg {
-                    width: 100%;
-                    height: 100%;
-                }
-            }
-        }
-    }
-
-    .tokenPercent {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 10px;
-
-        .percentTag {
-            font-size: 12px;
-            font-weight: 300;
-            color: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(146, 144, 177, 0.4);
-            border-radius: 30px;
-            padding: 5px 10px;
-
-            &.tagActive {
-                background-color: rgba(146, 144, 177, 0.4);
-                color: #fff;
-            }
-        }
-    }
-}
-
-.paid {
+  .actionArea {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 12px;
     color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
     font-weight: 300;
+
+    .switchTokenName {
+      color: #fff;
+    }
+  }
+
+  .inputArea {
     margin-top: 10px;
-    height: 27px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    gap: 10px;
+    height: 46px;
+    padding: 0 10px;
+
+    .input {
+      height: 46px;
+      background-color: inherit;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 16px;
+      text-align: center;
+      font-size: 36px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .input::placeholder {
+      color: #fff;
+    }
+
+    .inputToken {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 5px;
+      font-size: 16px;
+    }
+
+    .inputPrice {
+      font-size: 10px;
+      color: #9290B1;
+    }
+  }
+
+.tokenPercent {
+  display: flex;
+  align-items: center;
+
+  .percentTag {
+    font-size: 12px;
+    font-weight: 300;
+    padding: 5px;
+    color: #fff;
+    border-radius: 6px;
+    &.tagActive {
+      background-color: #3C3C3C80;
+      
+    }
+  }
+}
+
+.paid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  margin-top: 10px;
+  height: 27px;
 }
 
 .receiveTokenAmount {
-    display: flex;
-    align-items: center;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 300;
-    gap: 10px;
+  display: flex;
+  align-items: flex-start;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  gap: 10px;
+}
+
+.receiveTitleWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.receiveTitlePaidWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.receiveTitle {
+  margin-top: 6px;
+}
+.receiveTitlePaid {
+  color: #fff;
+  text-align: right;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .launchTip {
-    background-color: rgba(255, 67, 146, 0.17);
-    padding: 15px;
-    color: rgba(255, 72, 149, 1);
-    text-align: center;
+  background-color: #fbca041a;
+  padding: 15px;
+  color: var(--part-bg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background-color: #fbca041a;
+  border-radius: 14px;
+  color: #fbca04;
+  font-family: Unbounded;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin-top: 10px;
+}
+
+.Container {
+  position: relative;
+  padding: 20px 20px 20px;
+  display: flex ;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.ContainerPc {
+  width: 570px;
+  margin: 0 auto;
+  .inputArea {
+    height: 180px;
+  }
+}
+
+.walletBalance {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #9290B1;
+  background-color: #3C3C3C80 ;
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+
+.quickAction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.skipBtn {
+  font-size: 14px;
+  color: #9290B1;
+  cursor: pointer;  
+  font-weight: 500; 
 }

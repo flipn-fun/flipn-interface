@@ -1,18 +1,23 @@
 import styles from "./upload.module.css";
-import DefaultAvatar from "../icons/defalut-avatar";
+
+const Empty = (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0.729646 10.4921C0.181251 10.3932 0.18125 9.60679 0.729644 9.50793L7.82542 8.22879C8.03091 8.19174 8.19174 8.03091 8.22879 7.82542L9.50793 0.729646C9.60679 0.181251 10.3932 0.181251 10.4921 0.729644L11.7712 7.82542C11.8083 8.03091 11.9691 8.19174 12.1746 8.22879L19.2704 9.50793C19.8187 9.60679 19.8187 10.3932 19.2704 10.4921L12.1746 11.7712C11.9691 11.8083 11.8083 11.9691 11.7712 12.1746L10.4921 19.2704C10.3932 19.8187 9.60679 19.8187 9.50793 19.2704L8.22879 12.1746C8.19174 11.9691 8.03091 11.8083 7.82542 11.7712L0.729646 10.4921Z" fill="#9290B1" />
+        </svg>
+);
 
 export default function UploadBox({ type, onClick, children }: any) {
   if (type === "avatar") {
     return (
       <div className={`${styles.Avatar} ${styles.Center}`} onClick={onClick}>
-        <DefaultAvatar size={100} />
+        {Empty}
       </div>
     );
   }
   if (type === "token") {
     return (
       <div className={`${styles.Token} ${styles.Center}`} onClick={onClick}>
-        <DefaultAvatar size={85} />
+        {Empty}
       </div>
     );
   }

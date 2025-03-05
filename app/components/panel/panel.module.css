@@ -5,11 +5,11 @@
 }
 
 .Light {
-  background-color: #ab1f5c;
+  background-color: transparent;
   margin-left: 0px;
 }
 
 .Dark {
-  background-color: #121719;
+  background-color: #252328;
   margin-left: 10px;
 }

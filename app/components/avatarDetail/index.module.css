@@ -1,0 +1,25 @@
+.avatarBox {
+    display: flex;
+    gap: 10px;
+}
+
+.tokenImgBox {
+    display: flex;
+    width: 25px;
+    height: 25px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 44px;
+    overflow: hidden;
+}
+
+.tokenImg {
+    width: 100%;
+    height: 100%;
+    border-radius: 44px;
+    object-fit: cover;
+    object-position: center;
+}
+
+
+

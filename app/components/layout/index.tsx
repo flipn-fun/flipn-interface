@@ -1,111 +1,87 @@
 import { useUserAgent } from "@/app/context/user-agent";
 import Mobile from "./mobile/Layout";
-import Laptop from "./laptop";
-import { useUser } from "@/app/store/useUser";
-import useUserInfo from "@/app/hooks/useUserInfo";
-import { useAccount } from "@/app/hooks/useAccount";
-
+import Laptop from "./laptop/index";
 import { useConfig } from "@/app/store/useConfig";
 import { httpGet } from "@/app/utils";
-import { useEffect, useCallback, useState } from "react";
-import useNotice from "../../hooks/use-notice";
-import {
-  getAuthorizationByLocalAndServer,
-  initAuthorization
-} from "@/app/utils";
+import { useEffect } from "react";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import { usePrepaidDelayTimeStore } from "@/app/store/usePrepaidDelayTime";
+import { AuthProvider } from "@/app/context/auth";
+import { MessageProvider } from "@/app/context/messages";
+import { MessageContextProvider } from "@/app/context/messageContext";
+import AirdropEntry from "@/app/components/airdrop/entry";
+import { usePathname } from "next/navigation";
+import { useWhitelist } from "@/app/components/airdrop/hooks/use-whitelist";
+import { AIRDROP_STAGE } from "@/app/config/airdrop";
+import { AirdropContextProvider } from '@/app/context/airdrop';
+
+const UnWrappedPath = [
+  AIRDROP_STAGE.PREVIEW.path,
+  "/invite-code",
+  "/privacy-policy",
+  "/terms-and-conditions"
+];
 
 export default function Layout(props: any) {
   const { isMobile } = useUserAgent();
-  const { address, walletProvider } = useAccount();
-  const userStore: any = useUser();
-  const configStore: any = useConfig()
-  const { prepaidDelayTime, setPrepaidDelayTime } = usePrepaidDelayTimeStore()
-  const { userInfo, onQueryInfo } = useUserInfo(address);
-  const [showLoginModal, setShowLoginModal] = useState(false);
+  const configStore: any = useConfig();
+  const { prepaidDelayTime, setPrepaidDelayTime } = usePrepaidDelayTimeStore();
+  const pathname = usePathname();
+
+  // useWhitelist();
 
   const { getConfig } = useTokenTrade({
     tokenName: "",
     tokenSymbol: "",
-    tokenDecimals: 2
+    tokenDecimals: 6,
+    loadData: false
   });
 
-  useNotice();
-
   useEffect(() => {
-    if (address && userInfo) {
-      userStore.set({
-        userInfo: userInfo
-      });
-
-      setShowLoginModal(false)
-    }
-  }, [userInfo, address]);
-
-  useEffect(() => {
-    httpGet('/config').then(res => {
+    httpGet("/config").then((res) => {
       if (res.code === 0) {
-        configStore.set({
-          config: res.data
-        })
-      }
-    })
-  }, [])
+        const showAirdropEntry =
+          res.data.AirdropStartTime &&
+          Date.now() + AIRDROP_STAGE.PREVIEW.endTime >
+            res.data.AirdropStartTime;
 
-  useEffect(() => {
+        const airdropReady = Date.now() > res.data.AirdropStartTime;
+
+        configStore.set({
+          config: {
+            ...res.data,
+            showAirdropEntry,
+            airdropReady
+          }
+        });
+      }
+    });
+
     getConfig().then((stateData) => {
       setPrepaidDelayTime(
-        stateData.prepaidWithdrawDelayTime.toNumber() * 1000
+        stateData.prepaidWithdrawDelayTime?.toNumber() * 1000
       );
     });
   }, []);
 
-  const initToken = useCallback(async () => {
-    const auth = await getAuthorizationByLocalAndServer();
-    if (!auth) {
-      initAuthorization();
-    }
-  }, [address]);
-
-  useEffect(() => {
-    if (!address) {
-      return;
-    }
-
-    // @ts-ignore
-    window.walletProvider = walletProvider;
-    // @ts-ignore
-    window.sexAddress = address;
-
-    initToken();
-  }, [address]);
-
-  useEffect(() => {
-    // @ts-ignore
-    window.connect = () => {
-      setShowLoginModal(true);
-    };
-  }, []);
-
-  return isMobile ? (
-    <Mobile
-      {...props}
-      {...{
-        showLoginModal,
-        setShowLoginModal
-      }}
-    />
-  ) : (
-    <Laptop
-      {...props}
-      {...{
-        userInfo,
-        address,
-        onQueryInfo,
-        showLoginModal,
-        setShowLoginModal
-      }}
-    />
+  return (
+    <AuthProvider>
+      <MessageProvider>
+        <MessageContextProvider>
+          <AirdropContextProvider>
+            {isMobile ? (
+              <Mobile {...props} />
+            ) : UnWrappedPath.includes(pathname) ? (
+              props.children
+            ) : (
+              <Laptop {...props} />
+            )}
+            {configStore.config.showAirdropEntry && (
+              <AirdropEntry isMobile={isMobile} />
+            )}
+          </AirdropContextProvider>
+        </MessageContextProvider>
+      </MessageProvider>
+    </AuthProvider>
   );
 }

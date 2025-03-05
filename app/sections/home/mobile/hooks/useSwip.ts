@@ -4,13 +4,13 @@ import { useThrottleFn } from 'ahooks';
 
 export default function useSwip(containerRef: any, onPre: any, onNext: any, onPreing: any, onNexting: any, reBind: boolean, isBloacked: boolean) {
 
-    const { run: runPreing } = useThrottleFn(onPreing, {
-        wait: 200, 
-    });
+    // const { run: runPreing } = useThrottleFn(onPreing, {
+    //     wait: 200, 
+    // });
 
-    const { run: runNexting } = useThrottleFn(onNexting, {
-        wait: 200, 
-    });
+    // const { run: runNexting } = useThrottleFn(onNexting, {
+    //     wait: 200, 
+    // });
     
 
     useEffect(() => {
@@ -20,22 +20,13 @@ export default function useSwip(containerRef: any, onPre: any, onNext: any, onPr
             // manager.add(Swipe);
 
             const Pan = new Hammer.Pan({
-                direction: Hammer.DIRECTION_ALL, 
-                threshold: 0,
-                velocity: 0.3,
+                direction: Hammer.DIRECTION_ALL,
+                threshold: 5,
+                velocity: 0,
                 pointers: 1,
+                interval: 50
             });
             manager.add(Pan);
-
-            // manager.on("swipe", function (e) {
-            //     console.log(11)
-            //     const direction = e.offsetDirection;
-            //     if (direction === 2 || direction === 16) {
-            //         onPre && onPre()
-            //     } else if (direction === 4 || direction === 8) {
-            //         onNext && onNext()
-            //     }
-            // });
 
             const winWidth = window.innerWidth
             let startDistance = 0
@@ -77,11 +68,12 @@ export default function useSwip(containerRef: any, onPre: any, onNext: any, onPr
                 // if (e.distance > maxDistance) {
                 //     maxDistance = e.distance
                 // }
+
                 
                 if (e.deltaX < 0) {
-                    runPreing(e.distance / winWidth)
+                    onPreing(e.distance / winWidth)
                 } else {
-                    runNexting(e.distance / winWidth)
+                    onNexting(e.distance / winWidth)
                 }
 
                 // setTimeout(() => {
@@ -96,22 +88,20 @@ export default function useSwip(containerRef: any, onPre: any, onNext: any, onPr
                 }
                 isStart = false
 
-                console.log('direction: ', direction, 'e.distance:', e.distance , 'startDistance:', startDistance)
-
                 if (direction === 0) {
                     if (e.distance > startDistance + 20) {
                         onNext && onNext()
                     } else {
-                        runNexting(0)
+                        onNexting(0)
                     }
                 } else if (direction === 1) {
                     if (e.distance > startDistance + 20) {
                         onPre && onPre()
                     } else {
-                        runPreing(0)
+                        onPreing(0)
                     }
                 } else {
-                    runNexting(0)
+                    onNexting(0)
                 }
                 
                 

@@ -1,33 +1,72 @@
 import styles from "./index.module.css";
-import LoginModal from "@/app/components/loginModal";
-import User from "./user";
+import RightActions from "./right-actions";
+import dynamic from "next/dynamic";
+import Main from "@/app/sections/home/laptop";
+import Menu from "./menu";
+import { useAuth } from "@/app/context/auth";
+import useNotice from "../../../hooks/use-notice";
+import { useSetting } from "@/app/store/use-setting";
+import Refer from "@/app/components/layout/laptop/user/refer";
 import Header from "./header";
+import { SHOW_COPY_TRADE } from "@/app/utils/config";
 
-export default function Laptop({
-  userInfo,
-  address,
-  onQueryInfo,
-  children,
-  showLoginModal,
-  setShowLoginModal
-}: any) {
+const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
+const MemesPage = dynamic(() => import("@/app/sections/memes"));
+const RewardPage = dynamic(() => import("@/app/sections/mining"));
+const ProfileCom = dynamic(() => import("@/app/sections/profile"));
+const DetailPage = dynamic(() => import("@/app/sections/detail"));
+const MessagePage = dynamic(() => import("@/app/sections/messages/laptop"));
+const SmartPage = dynamic(() => import("@/app/smart/page"));
+const SmartTopDetailPage = dynamic(() => import("@/app/smartTopDetail/page"));
+const SmartDetailPage = dynamic(() => import("@/app/smartDetail/page"));
+const InviteCodeView = dynamic(() => import("@/app/sections/invite-code"));
+const Landing = dynamic(() => import("@/app/landing/page"));
+
+
+export default function Laptop({ children }: any) {
+  const { userInfo, address, updateCurrentUserInfo, logout, pathname } =
+    useAuth();
+  const settingStore: any = useSetting();
+  useNotice();
+
+  if (pathname === "/landing") {
+    return <Landing />;
+  }
+
   return (
-    <>
-      <div className={styles.Container}>
-        <User userInfo={userInfo} address={address} onQueryInfo={onQueryInfo} />
-        <div className={styles.Content}>
-          <Header />
-          <div className={styles.ContentInner}>
-            {children}
-          </div>
-        </div>
-      </div>
-      <LoginModal
-        modalShow={showLoginModal}
-        onHide={() => {
-          setShowLoginModal(false);
+    <div className={styles.Container}>
+      <RightActions logout={logout} userInfo={userInfo} />
+      <Menu />
+      {["/create", "/smart", "/memes", "/detail"].includes(pathname) && (
+        <Header />
+      )}
+      <div
+        className={styles.Content}
+        style={{
+          width: `calc(100vw - ${settingStore.menuExpand ? 160 : 62}px)`
         }}
-      />
-    </>
+      >
+        {pathname === "/" && <Main />}{" "}
+        {pathname === "/reward" && <RewardPage />}
+        {pathname === "/create" && <CreatePage />}
+        {pathname === "/smart" && SHOW_COPY_TRADE && <SmartPage />}
+        {pathname === "/memes" && <MemesPage />}
+        {pathname === "/profile/user" && (
+          <ProfileCom
+            isOther={true}
+            updateCurrentUserInfo={updateCurrentUserInfo}
+          />
+        )}
+        {pathname === "/profile" && (
+          <ProfileCom updateCurrentUserInfo={updateCurrentUserInfo} />
+        )}
+        {pathname === "/detail" && <DetailPage />}
+        {pathname === "/messages" && <MessagePage />}
+        {pathname === "/smartTopDetail" && SHOW_COPY_TRADE && <SmartTopDetailPage />}
+        {pathname === "/smartDetail" && SHOW_COPY_TRADE && <SmartDetailPage />}
+        {pathname === "/invite-code" && <InviteCodeView />}
+      </div>
+      <Refer userInfo={userInfo} />
+    </div>
   );
 }

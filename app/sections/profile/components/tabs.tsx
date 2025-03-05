@@ -4,76 +4,92 @@ import Held from "./held";
 import { useEffect, useMemo, useState } from "react";
 import { useHomeTab } from "@/app/store/useHomeTab";
 import { usePrepaidDelayTimeStore } from "@/app/store/usePrepaidDelayTime";
+import { useUserAgent } from "@/app/context/user-agent";
+import { useAccount } from "@/app/hooks/useAccount";
+import Coppied from "@/app/sections/profile/components/coppied";
+import { SHOW_COPY_TRADE } from "@/app/utils/config";
 
 export default function Tabs({
-  showHot,
   address,
-  defaultIndex,
   tabContentStyle,
+  tabHeaderStyle,
   from,
-  onTabChange
+  isOther,
+  tabHeadersClassName,
+  tabHeadersStyle,
+  cursorClassName,
+  tabContentClassName,
+  cursorStyle,
+  style,
+  tabsRef
 }: any) {
-  const { set: setProfileTabIndex }: any = useHomeTab();
-  const { prepaidDelayTime } = usePrepaidDelayTimeStore()
+  const homeTabStore: any = useHomeTab();
+  const { prepaidDelayTime } = usePrepaidDelayTimeStore();
+  const { isMobile } = useUserAgent();
+  // base tab
+  const createTabContent = (type: string, tabName: string) => ({
+    content: (
+      <Created
+        hideHot={type === "created"}
+        address={address}
+        type={type}
+        isOther={isOther}
+        prepaidWithdrawDelayTime={prepaidDelayTime}
+        from={from}
+        refresher={0}
+        isCurrent={homeTabStore.profileTabName === tabName}
+      />
+    )
+  });
 
-  const tabs = [
+  const baseTabs = [
     {
       name: "Held",
-      content: <Held from={from} />
+      content: <Held from={from} address={address} />
     },
     {
       name: "Created",
-      content: (
-        <Created
-          hideHot={true}
-          address={address}
-          type="created"
-          prepaidWithdrawDelayTime={prepaidDelayTime}
-          from={from}
-        />
-      )
+      ...createTabContent("created", "Created")
     },
     {
-      name: "Hot",
-      content: (
-        <Created
-          address={address}
-          type="hot"
-          prepaidWithdrawDelayTime={prepaidDelayTime}
-        />
-      )
+      name: "Flipped",
+      ...createTabContent("flipped", "Flipped")
     },
     {
       name: "Liked",
-      content: (
-        <Created
-          address={address}
-          type="liked"
-          prepaidWithdrawDelayTime={prepaidDelayTime}
-        />
-      )
+      ...createTabContent("liked", "Liked")
     }
   ];
 
-  const activeNode = useMemo(() => {
-    return tabs[defaultIndex || 0].name;
-  }, [defaultIndex, tabs]);
+  // const tabs =
+  //   isOther || !SHOW_COPY_TRADE
+  //     ? baseTabs
+  //     : [
+  //         {
+  //           name: "Copied",
+  //           content: <Coppied from={from} address={address} isOther={isOther} />
+  //         },
+  //         ...baseTabs
+  //       ];
 
   return (
     <Tab
-      nodes={tabs}
+      ref={tabsRef}
+      nodes={baseTabs}
       onTabChange={(nodeName: string) => {
-        let defaultIndex = 0;
-        tabs.some((tab, index) => {
-          defaultIndex = index;
-          return tab.name === nodeName;
-        });
-        setProfileTabIndex({
-          profileTabIndex: defaultIndex
+        homeTabStore.set({
+          profileTabName: nodeName
         });
       }}
-      activeNode={activeNode}
+      activeNode={homeTabStore.profileTabName}
       tabContentStyle={tabContentStyle}
+      tabHeaderStyle={tabHeaderStyle}
+      tabHeadersClassName={tabHeadersClassName}
+      tabHeadersStyle={tabHeadersStyle}
+      cursorClassName={cursorClassName}
+      tabContentClassName={tabContentClassName}
+      cursorStyle={cursorStyle}
+      style={style}
     />
   );
 }

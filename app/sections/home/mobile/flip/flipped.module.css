@@ -1,0 +1,38 @@
+.Container {
+  margin-left: 12px;
+  position: relative;
+  width: 110px;
+  height: 29.5px;
+  flex-shrink: 0;
+  font-family: FingerPaint;
+  margin-bottom: 10px;
+  transform: rotate(-3deg);
+}
+
+.Content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+}
+
+.Bg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.Star {
+  margin-top: 10px;
+  margin-left: 9px;
+}
+
+.Text {
+  color: #040404;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 4px;
+  margin-left: 5px;
+}

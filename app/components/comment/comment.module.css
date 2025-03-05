@@ -1,49 +1,51 @@
 .main {
-  padding-top: 10px;
-
   .title {
-    font-weight: 600;
-    font-size: 18px;
-    color: rgba(146, 144, 177, 1);
-    /* padding: 0 15px; */
-  }
-  .inputWrapper {
-    border: 1px solid rgba(146, 144, 177, 0.6);
-    border-radius: 8px;
-    padding: 0 10px;
-    margin: 10px 0;
-    background-color: #000;
-    position: relative;
-    .inputClear {
-      position: absolute;
-      right: 8px;
-      top: 50%;
-      transform: translateY(-50%);
+    font-size: 15px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .postBtn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 92px;
+      height: 30px;
+      border-radius: 10px;
+      background: #fbca04;
+      color: #000;
+      font-size: 12px;
+      cursor: pointer;
     }
   }
-  .input {
-    height: 37px;
-    width: 100%;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 16px;
-    padding: 0 5px;
+}
+
+.inputWrapper {
+  height: 322px;
+  padding: 20px 20px 40px;
+  background-color: #202325;
+  position: relative;
+  .inputClear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
   }
-  .input:focus {
-    border: none;
-    outline: none;
-  }
 }
-
-.LightMain {
-  background-color: #ab1f5c;
-  border-radius: 10px;
-  margin-right: 10px;
+.inputTitle {
+  color: #fff;
+  font-size: 16px;
+  padding-left: 10px;
 }
-
-.DarkInput {
-  background-color: #000;
-}
-
-.LightInput {
-  background-color: #0000001a;
+.input {
+  margin-top: 15px;
+  border: 1px solid rgba(146, 144, 177, 0.6);
+  background: rgba(146, 144, 177, 0.1);
+  border-radius: 8px;
+  height: 162px;
+  padding: 10px;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  font-family: "Unbounded";
 }

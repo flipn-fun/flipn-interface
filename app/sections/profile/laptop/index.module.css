@@ -1,30 +1,39 @@
 .Container {
   position: relative;
-  background: linear-gradient(to bottom, #ea2779 0%, #b81a5d 100%);
   border-radius: 20px;
-  height: calc(100vh - 120px);
+  height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.SexyFi {
-  position: absolute;
-  width: 492px;
-  height: 160px;
-  background: url(/img/laptop/sexyfi-1.png) no-repeat;
-  bottom: 0;
-  z-index: 1;
+.Content {
+  width: 1140px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
 }
 
-.BackWrapper {
+.TitleWrapper {
   position: absolute;
   left: 24px;
-  top: 32px;
+  top: 26px;
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .Top {
   display: flex;
   gap: 30px;
   padding-top: 100px;
-  padding-left: 60px;
+  padding-left: 30px;
 }
 
 .Avatar {
@@ -35,9 +44,20 @@
   border: 4px solid rgba(255, 255, 255, 0.55);
 }
 
+
+.DescWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
 .Desc {
   flex-grow: 1;
-  padding-right: 60px;
+  /* padding-right: 60px; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .NameTop {
@@ -63,4 +83,11 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.LoadingWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }

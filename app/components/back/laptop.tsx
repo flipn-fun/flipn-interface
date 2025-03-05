@@ -1,12 +1,21 @@
-import { useRouter } from "next/navigation";
 import styles from "./laptop.module.css";
-export default function GoBack() {
-  const router = useRouter();
+
+export default function GoBack(props: { onBack?(): void; from?: string ; text?: string; }) {
+  const { from, onBack, text = "Back" } = props;
+
   return (
     <button
       className={`${styles.Container} button`}
       onClick={() => {
-        router.back();
+        if (typeof onBack === "function") {
+          onBack();
+          return;
+        }
+        if (from === "detail") {
+          history.pushState({ page: "/" }, "Home", `/`);
+          return;
+        }
+        history.back();
       }}
     >
       <svg
@@ -24,7 +33,9 @@ export default function GoBack() {
           strokeLinejoin="round"
         />
       </svg>
-      <span className={styles.Text}>Back</span>
+      <span className={styles.Text}>
+        {text}
+      </span>
     </button>
   );
 }

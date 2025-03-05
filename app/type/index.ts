@@ -5,11 +5,14 @@ export interface Project {
     ticker: string;
     about: string;
     website?: string;
-    twitter?: string;
+    x?: string;
     telegram?: string;
+    tg?: string;
     discord?: string;
     tokenImg: string;
+    token_icon?: string;
     tokenIcon?: string;
+    token_video?: string;
     tokenDecimals?: number;
     isLike?: boolean;
     isUnLike?: boolean;
@@ -25,6 +28,23 @@ export interface Project {
     status?: number;
     createdAt?: number;
     DApp?: string;
+    initiativeLaunching?: boolean;
+    prePaidAmount?: string;
+    prePaid?: string;
+    comment?: number;
+    bondingProgress?: number;
+    kingProgress?: number;
+    isKing?: boolean;
+    lastKingTime?: number;
+    timeLeft?: number;
+    price?: string;
+    tx?: number;
+    sells24hUsd?: number;
+    buys24hUsd?: number;    
+    marketCap24hUsd?: number;
+    volume24hUsd?: number;
+    mc?: string;
+    solReserve?: string;
 }
 
 export interface Comment {

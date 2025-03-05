@@ -1,44 +1,68 @@
 .main {
-    padding-top: 80px;
-    width: 80vw;
-    .content {
-        background-color: rgba(255, 243, 248, 1);
-        border-radius: 20px;
-        padding: 30px;
-        text-align: center;
-    }
+  width: 90vw;
+  max-width: 350px;
+  
+  &.firstTimeLike {
+    position: absolute ;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -47vh;
+  }
 
-    .topImg {
-        margin-top: -50%; 
-    }
+  &.secondTimeLike {
+    padding-top: 100px;
+  }
+  .content {
+    background-color: rgba(255, 243, 248, 1);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+  }
 
-    .learnTip {
-        text-align: center;
-        margin-top: 15px;
-        .learnLink {
-            color: rgba(32, 32, 32, 1);
-            text-decoration: underline;
-        }
-    }
+  .topImg {
+    margin-top: -50%;
+  }
 
-    .actionBox {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: #fff;
-        font-size: 16px;
-        margin-top: 20px;
-        .cancel {
-            margin-left: 30px;
-        }
-        .shareBox {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            .share {
-                width: 50px;
-            }
-        }
+  .learnTip {
+    text-align: center;
+    margin-top: 25px;
+    .learnLink {
+      color: rgba(32, 32, 32, 1);
+      text-decoration: underline;
     }
+  }
+
+  .actionBox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    font-size: 16px;
+    margin-top: 20px;
+    .cancel {
+      margin-left: 30px;
+    }
+    .shareBox {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      .share {
+        width: 50px;
+      }
+    }
+  }
+
+  .shareText {
+    font-size: 16px;
+    width: 155px;
+    height: 50px;
+    border-radius: 30px;
+    background-color: #FBCA04;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    border: 2px solid #000;
+  }
 }

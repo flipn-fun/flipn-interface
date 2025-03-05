@@ -1,0 +1,91 @@
+.Container {
+  padding: 10px;
+  box-sizing: border-box;
+  color: #fff;
+}
+
+.Title {
+  font-family: Unbounded;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: Unbounded;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 6px;
+  flex-wrap: wrap;
+}
+
+.TickerWrapper {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #fbca04;
+}
+
+.TickerLabel {
+  color: #fff;
+}
+
+.About {
+  max-height: 36px;
+  /* word-break: break-all; */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 150%; /* 18px */
+  margin-top: 6px;
+}
+
+.Create {
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 120%; /* 14.4px */
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.Creator {
+  color: #fbca04;
+  font-family: Unbounded;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120%; /* 15.6px */
+}
+
+.MC {
+  color: #6fff00;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-top: 5px;
+}

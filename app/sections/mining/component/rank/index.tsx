@@ -1,58 +1,65 @@
 import styles from "./index.module.css";
-import Avatar from "./avatar";
-import Icon from "@/app/components/points-label/Reicon";
 import { useUserAgent } from "@/app/context/user-agent";
-import { numberFormatter } from "@/app/utils/common";
+import CircleLoading from "@/app/components/icons/loading";
+import Header from "./header";
+import RankItem from "./item";
+import clsx from "clsx";
 
-export default function Rank({ list, rank }: any) {
+export default function Rank(props: any) {
+  const {
+    info,
+    userInfo,
+    loading,
+    className,
+    listClassName,
+    itemClassName,
+    itemLeftClassName,
+    itemRightClassName
+  } = props;
   const { isMobile } = useUserAgent();
+
   return (
-    <div className={styles.Container}>
-      <div className={styles.Header}>
-        <div className={styles.Title}>Mining Rank</div>
-        <div className={styles.YourRank}>
-          <span>Your Rank:</span>
-          <div className={styles.YourRankTag}>{rank || "-"}</div>
-        </div>
-      </div>
+    <div className={clsx(styles.Container, className)}>
+      <Header />
       <div
-        className={styles.List}
+        className={clsx(styles.List, listClassName)}
         style={{
-          height: isMobile ? "auto" : "calc(100vh - 510px)"
+          height: isMobile ? "auto" : "calc(100% - 50px)"
         }}
       >
-        {list.map((item: any, index: number) => (
-          <div className={styles.Item} key={index}>
-            <div className={styles.ItemLeft}>
-              <Avatar rank={index + 1} src={item.account_data?.icon} />
-              <div>
-                <div className={styles.ItemTitle}>
-                  {item.account_data?.name}
-                </div>
-                {isMobile && (
-                  <div className={styles.ItemDesc}>
-                    {item.account_data?.followers} followers
-                  </div>
-                )}
-              </div>
-              {!isMobile && (
-                <div className={styles.ItemTitle} style={{ marginLeft: 60 }}>
-                  {item.account_data?.followers}{" "}
-                  <span style={{ color: "#FFFFFFB5" }}>followers</span>
-                </div>
-              )}
-            </div>
-            <div className={styles.ItemRight}>
-              <span>
-                {numberFormatter(item.minted_amount, 2, true, {
-                  isShort: true
-                })}
-              </span>
-              <Icon size={20} />
-            </div>
-          </div>
+        {info?.mining_rank?.map((item: any, index: number) => (
+          <RankItem
+            key={index}
+            rank={index + 1}
+            {...{
+              item,
+              itemRightClassName,
+              itemLeftClassName,
+              itemClassName
+            }}
+          />
         ))}
+        <RankItem
+          item={{
+            account_data: { name: userInfo?.name, level: userInfo?.level },
+            address: userInfo?.address,
+            minted_amount: info?.minted
+          }}
+          rank={info?.your_rank}
+          className={styles.UserRank}
+          isUser={true}
+        />
       </div>
+      {loading && (
+        <div
+          style={{
+            paddingTop: 60,
+            textAlign: "center"
+          }}
+        >
+          <CircleLoading size={30} />
+        </div>
+      )}
     </div>
   );
 }

@@ -1,26 +1,45 @@
 import type { UserInfo } from "@/app/type";
-import { httpAuthGet, httpAuthPost, httpAuthPut } from "@/app/utils";
+import { httpAuthGet, httpAuthPost } from "@/app/utils";
 import { fail, success } from "@/app/utils/toast";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useReferStore } from "@/app/store/use-user-info";
 
-export default function useUserInfo(address: string | undefined) {
+export default function useUserInfo(
+  address: string | undefined,
+  isSelf = false,
+  accountRefresher?: number
+) {
+  const { info, setInfo } = useReferStore();
   const [userInfo, setUserInfo] = useState<UserInfo>();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const userInfoShown = useMemo(() => {
+    if (userInfo) return userInfo;
+    return info[address || "default"];
+  }, [info, userInfo]);
+
+  const handleUserInfo = (_userInfo: UserInfo) => {
+    setUserInfo(_userInfo);
+    setInfo(address, _userInfo);
+  };
 
   const onQueryInfo = useCallback(async () => {
     if (address) {
-      const userInfo = await fecthUserInfo(address);
-      if (userInfo) {
-        setUserInfo(userInfo);
+      setIsLoading(true);
+      const _userInfo = await fecthUserInfo(address);
+      if (_userInfo) {
+        handleUserInfo(_userInfo);
       }
+      setIsLoading(false);
     }
   }, [address]);
 
   const fecthUserInfo = async (address: string) => {
     return httpAuthGet("/account", { address: address }).then((res) => {
       if (res.code === 0 && res.data) {
-        const userInfo = {
+        return {
           name: res.data.name,
-          address: res.data.address,
+          address,
           icon: res.data.icon,
           banner: res.data.banner,
           followers: res.data.followers,
@@ -37,9 +56,8 @@ export default function useUserInfo(address: string | undefined) {
           vipStartTime: res.data.vip_start_time,
           proxyFee: res.data.proxy_fee,
           referralFee: res.data.referral_fee,
+          ...res.data
         };
-
-        return userInfo;
       }
 
       return null;
@@ -47,10 +65,13 @@ export default function useUserInfo(address: string | undefined) {
   };
 
   useEffect(() => {
-    if (address) {
+    if (address && !isSelf) {
       onQueryInfo();
     }
-  }, [address]);
+    if (isSelf && accountRefresher) {
+      onQueryInfo();
+    }
+  }, [address, accountRefresher, isSelf]);
 
   async function saveUserInfo(
     banner: string,
@@ -82,9 +103,11 @@ export default function useUserInfo(address: string | undefined) {
   }
 
   return {
-    userInfo,
+    userInfo: userInfoShown,
+    isLoading,
     saveUserInfo,
     fecthUserInfo,
-    onQueryInfo
+    onQueryInfo,
+    setUserInfo: handleUserInfo
   };
 }

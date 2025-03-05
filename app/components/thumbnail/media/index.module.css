@@ -1,0 +1,18 @@
+.Wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 2;
+}
+.Media {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  min-height: 100%;
+  object-fit: contain;
+  display: flex;
+  align-items: center;
+}

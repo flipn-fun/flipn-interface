@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
+import useIsWindowVisible from "@/app/hooks/use-is-window-visible";
 
 const UserAgentContext = React.createContext<any | null>(null);
 
@@ -7,11 +10,20 @@ export const UserAgentProvider: React.FC<{
   children: ReactNode;
 }> = ({ children }) => {
   const [isMobile, setIsMobile] = useState<boolean>();
+  const [innerHeight, setInnerHeight] = useState<number>(0);
+  const [innerWidth, setInnerWidth] = useState<number>(0);
+  const [screenWidth, setScreenWidth] = useState<number>(0);
+  const isWindowVisible = useIsWindowVisible();
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.navigator.userAgent.includes("Mobile"));
-      // setIsMobile(false);
+      const _isMobile =
+        window.navigator.userAgent.includes("Mobile") ||
+        window.innerWidth < 450;
+      setIsMobile(_isMobile);
+      setInnerHeight(_isMobile ? window.innerHeight : 702);
+      setInnerWidth(_isMobile ? window.innerWidth : 426);
+      setScreenWidth(window.innerWidth);
     };
 
     checkIsMobile();
@@ -23,7 +35,15 @@ export const UserAgentProvider: React.FC<{
   }, []);
 
   return (
-    <UserAgentContext.Provider value={{ isMobile }}>
+    <UserAgentContext.Provider
+      value={{
+        isWindowVisible,
+        isMobile,
+        innerHeight,
+        innerWidth,
+        screenWidth
+      }}
+    >
       {isMobile !== undefined && children}
     </UserAgentContext.Provider>
   );
@@ -33,9 +53,7 @@ export function useUserAgent() {
   const context = useContext(UserAgentContext);
 
   if (!context) {
-    throw new Error(
-      "useWalletType must be used within a WalletTypeContextProvider"
-    );
+    throw new Error("");
   }
 
   return context;

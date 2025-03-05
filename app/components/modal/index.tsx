@@ -1,8 +1,10 @@
 import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
-import CloseIcon from "../icons/close";
+import CloseIcon from "../icons/modal-close";
 import { AnimatePresence, motion } from "framer-motion";
+import { useUserAgent } from "@/app/context/user-agent";
 import styles from "./index.module.css";
+import animations from "./animations";
 
 interface ModalProps {
   open?: boolean;
@@ -11,6 +13,10 @@ interface ModalProps {
   closeIcon?: React.ReactNode;
   style?: React.CSSProperties;
   mainStyle?: React.CSSProperties;
+  closeStyle?: React.CSSProperties;
+  maskClose?: boolean;
+  animation?: string;
+  forceNoCloseIcon?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -19,7 +25,11 @@ const Modal: React.FC<ModalProps> = ({
   children,
   closeIcon,
   style,
-  mainStyle
+  mainStyle,
+  closeStyle,
+  maskClose = true,
+  animation = "modal",
+  forceNoCloseIcon
 }) => {
   useEffect(() => {
     if (open) {
@@ -34,10 +44,12 @@ const Modal: React.FC<ModalProps> = ({
   if (!open) return null;
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!maskClose) return;
     if (e.target === e.currentTarget) {
       onClose && onClose();
     }
   };
+
   return ReactDOM.createPortal(
     (
       <AnimatePresence mode="wait">
@@ -46,27 +58,32 @@ const Modal: React.FC<ModalProps> = ({
           style={style}
           onClick={handleBackdropClick}
         >
-          <div className={styles.Main} style={mainStyle}>
+          <div
+            className={styles.Main}
+            style={{
+              ...mainStyle,
+              ...(animation === "popup"
+                ? {
+                    position: "absolute",
+                    left: 0,
+                    bottom: 0
+                  }
+                : {})
+            }}
+          >
             <motion.div
-              initial={{
-                scale: 0.8
-              }}
-              animate={{
-                scale: 1,
-                transition: {
-                  duration: 0.3
-                }
-              }}
-              exit={{
-                scale: 0.8
-              }}
+              {...animations[animation]}
               onClick={(e) => {
                 e.stopPropagation();
               }}
             >
-              {closeIcon || onClose ? (
-                <button onClick={onClose} className={styles.CloseButton}>
-                  <CloseIcon />
+              {!forceNoCloseIcon && (closeIcon || onClose) ? (
+                <button
+                  onClick={onClose}
+                  className={styles.CloseButton}
+                  style={closeStyle}
+                >
+                  <CloseIcon size={35} />
                 </button>
               ) : null}
               {children}

@@ -1,0 +1,134 @@
+.Container {
+  padding-left: 16px;
+  width: 160px;
+  height: calc(100vh - 44px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.List {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+.Item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 138px;
+  height: 38px;
+  border-radius: 19px;
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-transform: capitalize;
+  padding-left: 12px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.5);
+  transition: 0.3s;
+  position: relative;
+}
+
+.ItemActive {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.Item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ItemIcon {
+  transform: scale(0.74);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Bottom {
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+
+.Links {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
+
+.LinkIcon {
+  transform: scale(0.66);
+}
+
+.Desc {
+  color: rgba(255, 255, 255, 0.4);
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  position: relative;
+  padding-top: 22px;
+}
+
+.BarIcon {
+  position: absolute;
+  right: -10px;
+}
+
+.Create {
+  width: 116px;
+  height: 36px;
+  border-radius: 48px;
+  background: #c9ff5d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: #000;
+  font-family: Unbounded;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-transform: capitalize;
+  margin-bottom: 25px;
+}
+
+
+
+.copyDot {
+  width: 10px;
+  height: 10px;
+  background: #FF2681;
+  border-radius: 50%;
+  position: absolute;
+  top: 0px;
+  right: 20%;
+}
+
+
+.ComingSoon {
+  position: absolute;
+  top: 6px;
+  left: 40px;
+  z-index: 100;
+  width: 50px;
+}
+
+
+.ComingSoonWrapper {
+  opacity: 0.5 !important;
+}
+.ComingSoonWrapper:hover {
+  background: transparent !important;
+}

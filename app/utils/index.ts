@@ -2,19 +2,29 @@ import dayjs from "./dayjs";
 import type { Project } from "../type";
 import { fail } from "./toast";
 import { clearAll } from "./listStore";
+import { Connection } from "@solana/web3.js";
+// import Cropper from "cropperjs";
+// @ts-ignore
+import Croppie from "croppie";
+import Big from "big.js";
+import { deleteCookie } from "./common";
+import { imgReg, videoReg } from "../components/upload";
 
-const BASE_URL = "https://api.dumpdump.fun/api/v1";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API || "https://api.dumpdump.fun/api/v1";
 const TOKEN_ERROR_CODE = -401;
 // const BASE_URL = '/api/v1'
 
 const AUTH_KEY = "sex-ui-auth";
 
-export function http(
+export async function http(
   path: string,
   method: string,
   params?: any,
-  headers?: any
+  headers?: any,
+  isRepeat?: boolean
 ) {
+  if (!path) return;
   let _path = path,
     postBody = {};
   if (method === "GET" && params) {
@@ -38,100 +48,88 @@ export function http(
     ? {
         headers: headers
       }
-    : getAuthorizationByLocal()
-    ? {
+    : {
         headers: {
           authorization: getAuthorizationByLocal()
         }
-      }
-    : {};
+      };
 
-  return fetch(`${BASE_URL}${_path}`, {
+  const response = await fetch(`${BASE_URL}${_path}`, {
     method: method,
     ...postBody,
     ..._header
-  }).then((res) => res.json());
+  });
+  const data = await response.json();
+  if (typeof data?.code === "undefined") return data;
+
+  if (data.code === TOKEN_ERROR_CODE) {
+    if (!window.connecting) {
+      window.connect();
+      window.localStorage.removeItem(AUTH_KEY);
+    }
+    if (isRepeat) {
+      return await http(path, method, params, headers, false);
+    }
+    return data;
+  }
+  if (data.code !== 0) {
+    return data;
+  } else {
+    return data;
+  }
 }
 
 export async function httpGet(
   path: string,
   params: any = {},
   isRepeat: boolean = true
-) {
-  const val = await http(path, "GET", params);
-
-  if (typeof val.code !== "undefined") {
-    if (val.code === TOKEN_ERROR_CODE) {
-      window.localStorage.removeItem(AUTH_KEY);
-      if (isRepeat) {
-        return await httpGet(path, params, false);
-      }
-      return val;
-    } else if (val.code !== 0) {
-      // fail(val.message)
-      return val;
-    } else {
-      return val;
-    }
-  }
+): Promise<any> {
+  return await http(path, "GET", params, null, isRepeat);
 }
 
 export async function httpAuthGet(
   path: string,
   params: any = {},
   isRepeat: boolean = true
-) {
+): Promise<any> {
   const authorization = await getAuthorization();
-  const header = {
-    authorization
-  };
-  const val = await http(path, "GET", params, header);
-
-  if (typeof val.code !== "undefined") {
-    if (val.code === TOKEN_ERROR_CODE) {
-      window.localStorage.removeItem(AUTH_KEY);
-      if (isRepeat) {
-        return await httpAuthGet(path, params, false);
-      }
-      return val;
-    } else if (val.code !== 0) {
-      // fail(val.message)
-      return val;
-    } else {
-      return val;
-    }
+  if (!authorization) {
+    return {
+      code: -1,
+      data: null
+    };
   }
+  return await http(
+    path,
+    "GET",
+    params,
+    {
+      authorization
+    },
+    isRepeat
+  );
 }
 
 export async function httpAuthPost(
   path: string,
   params: any = {},
-  isRepeat: boolean = true
+  isRepeat: boolean = true,
+  isJson?: boolean
 ) {
   const authorization = await getAuthorization();
 
-  console.log("authorization:", authorization);
-
-  const header = {
-    authorization
-  };
-  const val = await http(path, "POST", params, header);
-
-  if (typeof val.code !== "undefined") {
-    if (val.code === TOKEN_ERROR_CODE) {
-      window.localStorage.removeItem(AUTH_KEY);
-      if (isRepeat) {
-        return await httpAuthPost(path, params, false);
-      }
-
-      return val;
-    } else if (val.code !== 0) {
-      // fail(val.message)
-      return val;
-    } else {
-      return val;
-    }
-  }
+  return await http(
+    path,
+    "POST",
+    params,
+    isJson
+      ? {
+          authorization,
+          "Content-Type": "application/json"
+        }
+      : { authorization },
+    isRepeat
+  );
 }
 
 export async function httpAuthDelete(
@@ -141,28 +139,15 @@ export async function httpAuthDelete(
 ) {
   const authorization = await getAuthorization();
 
-  console.log("authorization:", authorization);
-
-  const header = {
-    authorization
-  };
-  const val = await http(path, "DELETE", params, header);
-
-  if (typeof val.code !== "undefined") {
-    if (val.code === TOKEN_ERROR_CODE) {
-      window.localStorage.removeItem(AUTH_KEY);
-      if (isRepeat) {
-        return await httpAuthDelete(path, params, false);
-      }
-
-      return val;
-    } else if (val.code !== 0) {
-      // fail(val.message)
-      return val;
-    } else {
-      return val;
-    }
-  }
+  return await http(
+    path,
+    "DELETE",
+    params,
+    {
+      authorization
+    },
+    isRepeat
+  );
 }
 
 export async function httpAuthPut(
@@ -171,27 +156,16 @@ export async function httpAuthPut(
   isRepeat: boolean = true
 ) {
   const authorization = await getAuthorization();
-  const header = {
-    authorization
-  };
 
-  const val = await http(path, "PUT", params, header);
-
-  if (typeof val.code !== "undefined") {
-    if (val.code === TOKEN_ERROR_CODE) {
-      window.localStorage.removeItem(AUTH_KEY);
-      if (isRepeat) {
-        return await httpAuthPut(path, params);
-      }
-
-      return val;
-    } else if (val.code !== 0) {
-      fail(val.message);
-      return null;
-    } else {
-      return val;
-    }
-  }
+  return await http(
+    path,
+    "PUT",
+    params,
+    {
+      authorization
+    },
+    isRepeat
+  );
 }
 
 export async function bufferToBase64(buffer: Uint8Array) {
@@ -203,19 +177,22 @@ export async function bufferToBase64(buffer: Uint8Array) {
   return base64url.slice(base64url.indexOf(",") + 1);
 }
 
-let isInitingAuthorization = false,
-  authorization: string | undefined;
+let authorization: string | undefined;
 const watingQuene: any[] = [];
+
+// const rejectDuration = 1000 * 30;
+// let rejectTime = Date.now() - rejectDuration - 1;
 
 export async function getAuthorization() {
   authorization = getAuthorizationByLocal();
+
   if (!authorization) {
-    if (isInitingAuthorization) {
+    if (window?.isInitingAuthorization) {
       return new Promise((resolve, reject) => {
         watingQuene.push(resolve);
       });
     } else {
-      await initAuthorization();
+      // await initAuthorization();
     }
   }
 
@@ -240,30 +217,37 @@ export async function getAuthorizationByLocalAndServer() {
   return auth;
 }
 
+export function removeAuth() {
+  window.localStorage.removeItem(AUTH_KEY);
+}
+
 export async function initAuthorization() {
-  if (isInitingAuthorization) {
+  // if (getAuthorizationByLocal()) {
+  //   return
+  // }
+  // if (Date.now() - rejectTime < rejectDuration) {
+  //   return;
+  // }
+
+  if (window?.isInitingAuthorization) {
     return;
   }
-
   // @ts-ignore
   const { walletProvider, sexAddress, connect } = window;
 
   if (!walletProvider || !sexAddress) {
-    console.log("connect", connect);
-    await connect();
+    // await connect();
     return;
   }
 
-  isInitingAuthorization = true;
+  window.isInitingAuthorization = true;
+
   const now = Date.now();
-  const text = `login sexy,time:${now}`;
+  const text = `login FlipN,time:${now}`;
   const encodedMessage = new TextEncoder().encode(text);
   try {
     const signMessage = await walletProvider!.signMessage(encodedMessage);
-    // console.log('signMessage:', signMessage)
-
     const b64encoded = await bufferToBase64(signMessage);
-    console.log("b64encoded", b64encoded);
 
     const v = await httpGet("/account/token", {
       address: sexAddress,
@@ -284,21 +268,25 @@ export async function initAuthorization() {
       _reslove(v.data);
     }
   } catch (e) {
+    while (watingQuene.length) {
+      const _reslove = watingQuene.shift();
+      _reslove(null);
+    }
     watingQuene.length = 0;
+    window.disconnect?.();
+    logOut();
   }
 
-  isInitingAuthorization = false;
+  window.isInitingAuthorization = false;
 }
 
 export function logOut() {
-  // @ts-ignore
   window.walletProvider = null;
-  // @ts-ignore
-  window.sexAddress = null;
+  window.sexAddress = undefined;
   window.localStorage.removeItem(AUTH_KEY);
-
-  clearAll("launching");
-  clearAll("preLaunch");
+  deleteCookie("referral");
+  authorization = undefined;
+  watingQuene.length = 0;
 }
 
 export function getFullNum(value: any) {
@@ -330,19 +318,16 @@ export function sleep(time: number) {
   });
 }
 
-
-
-const addressReg = /(\w{5}).+(\w{5})/;
-export function formatAddress(address: string) {
+export function formatAddress(address: string, len?: number) {
   if (!address) {
     return "";
   }
-
-  if (address.length > 12) {
-    return address.replace(addressReg, ($1, $2, $3) => {
-      return $2 + "...." + $3;
-    });
-  }
+  const _len = len || 5;
+  return (
+    address.slice(0, _len) +
+    "...." +
+    address.slice(address.length - _len, address.length)
+  );
 }
 
 const addressLastReg = /(\w{35}).+(\w{1})/;
@@ -404,8 +389,7 @@ export function formatDateTime(
   }
   return fmt;
 }
-
-function base64ToBlob(base64Data: string) {
+export function base64ToBlob(base64Data: string) {
   const dataArr: any = base64Data.split(",");
   const imageType = dataArr[0].match(/:(.*?);/)[1];
   const textData = window.atob(dataArr[1]);
@@ -421,10 +405,13 @@ export async function upload(
   fileName: string,
   file: File,
   isImage: boolean = true,
-  percent = 1.5
+  percent = 1.5,
+  scala = 2,
+  cropper = false
 ) {
   let _file: any = file;
-  if (isImage) {
+
+  if (isImage && !cropper) {
     const url = await new Promise<string | void>((resolve) => {
       const reader = new FileReader();
       reader.onload = () => {
@@ -446,69 +433,117 @@ export async function upload(
       }
     );
 
-    const targetAspectRatio = 1 / percent;
-    let cropWidth, cropHeight;
+    if (percent === 0) {
+      const canvasWidth = 128 * scala;
+      const canvasHeight = canvasWidth * 1.5;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
-    if (naturalWidth / naturalHeight > targetAspectRatio) {
-      cropHeight = naturalHeight;
-      cropWidth = cropHeight * targetAspectRatio;
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      let scale = Math.min(
+        canvasWidth / naturalWidth,
+        canvasHeight / naturalHeight
+      );
+      let newWidth = naturalWidth * scale;
+      let newHeight = naturalHeight * scale;
+      let x = (canvasWidth - newWidth) / 2;
+      let y = (canvasHeight - newHeight) / 2;
+
+      ctx.drawImage(img, x, y, newWidth, newHeight);
+    } else if (percent > 0) {
+      const targetAspectRatio = 1 / percent;
+      let cropWidth, cropHeight;
+
+      if (naturalWidth / naturalHeight > targetAspectRatio) {
+        cropHeight = naturalHeight;
+        cropWidth = cropHeight * targetAspectRatio;
+      } else {
+        cropWidth = naturalWidth;
+        cropHeight = cropWidth / targetAspectRatio;
+      }
+
+      const cropX = (naturalWidth - cropWidth) / 2;
+      const cropY = (naturalHeight - cropHeight) / 2;
+
+      const canvasWidth = 128 * scala;
+      const canvasHeight = canvasWidth * percent;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      ctx.drawImage(
+        img,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        canvasWidth,
+        canvasHeight
+      );
     } else {
-      cropWidth = naturalWidth;
-      cropHeight = cropWidth / targetAspectRatio;
+      const scale = Math.min(800 / img.width, 800 / img.height);
+      const newWidth = img.width * scale;
+      const newHeight = img.height * scale;
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      ctx.drawImage(img, 0, 0, newWidth, newHeight);
     }
 
-    const cropX = (naturalWidth - cropWidth) / 2;
-    const cropY = (naturalHeight - cropHeight) / 2;
-
-    const canvasWidth = 128 * 2;
-    const canvasHeight = canvasWidth * percent;
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    ctx.drawImage(
-      img,
-      cropX,
-      cropY,
-      cropWidth,
-      cropHeight,
-      0,
-      0,
-      canvasWidth,
-      canvasHeight
-    );
     const base64Url = canvas.toDataURL("image/webp");
-
     const bloBData = base64ToBlob(base64Url);
-
     _file = bloBData[0];
   }
 
-  const newFileName = generateRandomString(10) + fileName;
-  const val = await httpAuthPost(
-    `/upload/data?dir=${encodeURIComponent(
-      "sexy/dev/"
-    )}&file_name=${newFileName}`
-  );
-  if (val?.code === 0) {
-    const res = await fetch(val.data, {
-      method: "PUT",
-      body: _file,
-      headers: {
-        "Content-Type": file.type
+  const newFileName = generateRandomString(5);
+  const fileExt = fileName?.split(".").pop() || "";
+  const finalFileName = `${newFileName}${fileExt ? "." + fileExt : ""}`;
+
+  return postUpload(_file, finalFileName, file.type);
+}
+
+const s3_dir = process.env.NEXT_PUBLIC_S3_DIR || "flipn/stg/";
+
+export async function postUpload(
+  _file: any,
+  newFileName: string,
+  type: string
+) {
+  try {
+    const val = await httpAuthPost(
+      `/upload/data?dir=${encodeURIComponent(s3_dir)}&file_name=${newFileName}`
+    );
+    if (val?.code === 0) {
+      const res = await fetch(val.data, {
+        method: "PUT",
+        body: _file,
+        headers: {
+          "Content-Type": type
+        }
+      });
+
+      if (!res.ok) {
+        fail("Upload fail");
+        return null;
       }
-    });
 
-    if (!res.ok) {
-      fail("Upload fail");
-      return null;
+      console.log(
+        `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`
+      );
+
+      return `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`;
     }
-
-    return `https://deltabot-1.s3.us-east-1.amazonaws.com/sexy/dev/${newFileName}`;
+  } catch (e) {
+    fail("Upload fail");
+    console.log(e);
   }
 
   return null;
 }
 
-function generateRandomString(length: number) {
+export function generateRandomString(length: number) {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
@@ -552,9 +587,9 @@ export function timeAgo(time?: number, currentTime?: number) {
   return seconds === 1 ? "1 second ago" : `${seconds} seconds ago`;
 }
 
-export function formatDateEn(time: number) {
+export function formatDateEn(time: number, format: string = "MMM D, YYYY") {
   const date = dayjs(time);
-  return date.format("MMM D, YYYY");
+  return date.format(format);
 }
 
 export function getDeviceType() {
@@ -604,4 +639,95 @@ export function formatSortAddress(address: string | undefined) {
       ? `${address.slice(0, 6)}...${address.slice(-4)}`
       : address;
   }
+}
+
+export const simplifyNum = (number: number, precision: number = 0) => {
+  if (typeof Number(number) !== "number") return 0;
+  if (isNaN(Number(number))) return 0;
+  if (Number(number) === 0) return 0;
+
+  if (number === 0) {
+    return "0";
+  }
+
+  if (number < 0.01) {
+    return "<0.01";
+  }
+
+  let str_num;
+  if (number >= 1e3 && number < 1e6) {
+    str_num = number / 1e3;
+    return new Big(str_num).toFixed(precision, 0) + "K";
+  } else if (number >= 1e6) {
+    str_num = number / 1e6;
+    return new Big(str_num).toFixed(precision, 0) + "M";
+  } else {
+    return Number(number).toFixed(2);
+  }
+};
+
+export function isValidURL(url: string) {
+  const regex = /^https?:\/\/([\w.-]+)\.([a-z]{2,6})(\/[\w.-]*)*\/?(\?.*)?$/i;
+  return regex.test(url);
+}
+
+export async function getTransaction(
+  connection: Connection,
+  hash: string,
+  tokenAddress: string,
+  userAddress: string
+) {
+  const transactionDetails = await connection.getTransaction(hash, {
+    commitment: "confirmed",
+    maxSupportedTransactionVersion: 0
+  });
+
+  if (transactionDetails?.meta) {
+    const { preTokenBalances, postTokenBalances } = transactionDetails?.meta;
+
+    const toeknAddress = tokenAddress;
+    const preToken = preTokenBalances?.find(
+      (item) => item.mint === toeknAddress && item.owner === userAddress
+    );
+    const postToken = postTokenBalances?.find(
+      (item) => item.mint === toeknAddress && item.owner === userAddress
+    );
+
+    if (postToken) {
+      const preAmount = preToken ? preToken.uiTokenAmount.amount : 0;
+      const result = new Big(postToken.uiTokenAmount.amount)
+        .minus(preAmount)
+        .toFixed(0);
+      return result;
+    }
+  }
+
+  return null;
+}
+
+export async function getPointByVolume(volume: string, type: "sexy" | "pump") {
+  const params =
+    type === "sexy"
+      ? { sexy_volume: volume, pump_volume: 0 }
+      : { pump_volume: volume, sexy_volume: 0 };
+  return httpGet("/mining/swapEstimate", params).then((res) => res.data);
+}
+
+export function formatNumberWithCommas(num: string | number) {
+  if (typeof num === "number") {
+    num = num.toString();
+  }
+
+  const parts = num.split(".");
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return parts.join(".");
+}
+
+export function checkFileType(file: string): "image" | "video" | null {
+  if (videoReg.test(file)) {
+    return "video";
+  } else if (imgReg.test(file)) {
+    return "image";
+  }
+  return null;
 }

@@ -1,83 +1,157 @@
 import { shareToX } from "@/app/utils/share";
 import styles from "./likes.module.css";
 import type { Project } from "@/app/type";
+import { fail } from "@/app/utils/toast";
+import Share from "../share";
+import { useEffect, useState } from "react";
+import { getHoldersByToken } from "@/app/utils/solanaScanApi";
 
-export default function Likes({ data }: { data: Project }) {
+interface Props {
+  data: Project;
+  showShare?: boolean;
+  likeNumsStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
+  likesNumsStyle?: React.CSSProperties;
+}
+
+export default function Likes({
+  data,
+  showShare = true,
+  likeNumsStyle,
+  style,
+  likesNumsStyle
+}: Props) {
+  const [holders, setHolders] = useState(0);
+
+  useEffect(() => {
+    if (data.status !== 0 && data.address) {
+      getHoldersByToken(data.address, 1, 10).then((res) => {
+        setHolders(res.total);
+      });
+    }
+  }, [data]);
+
   return (
-    <div className={styles.box}>
-      <div className={styles.likeNums}>
-        {
-          data.DApp === 'pump' && <div className={[styles.pump, styles.likeCustom].join(" ")}>
-          <PumpIcon />
-          <span className={styles.likesNums}>Imported</span>
-        </div>
-        }
+    <div className={styles.box} style={style}>
+      <div className={styles.likeNums} style={likeNumsStyle}>
+        {data.DApp === "pump" && (
+          <div className={[styles.pump, styles.likeCustom].join(" ")}>
+            <PumpIcon />
+            <span className={styles.likesNums} style={likesNumsStyle}>
+              Imported
+            </span>
+          </div>
+        )}
 
-        {
-          data.DApp === 'sexy' && <>
+        {/* {data.DApp === "sexy" && !data.initiativeLaunching && (
+          <>
             <div className={[styles.likes, styles.likeCustom].join(" ")}>
-              {data.like === 0 ? <LikeIconEmpty /> : <LikeIcon />}
-              <span className={styles.likesNums}>{data.like}</span>
-              /
-              <span className={styles.likesNums}>100</span>
+              {data.status !== 0 ? (
+                <>
+                  <LikeFullIcon />
+                  <span className={styles.likesNums} style={likesNumsStyle}>
+                    100
+                  </span>
+                </>
+              ) : (
+                <>
+                  {data.like === 0 ? <LikeIconEmpty /> : <LikeIcon />}
+                  <span className={styles.likesNums} style={likesNumsStyle}>
+                    {data.like}
+                  </span>
+                  /
+                  <span className={styles.likesNums} style={likesNumsStyle}>
+                    100
+                  </span>
+                </>
+              )}
             </div>
-            <div className={[styles.superLikes, styles.likeCustom].join(" ")}>
+            <div
+              className={[styles.superLikes, styles.likeCustom].join(" ")}
+              style={likesNumsStyle}
+            >
               <SuperLikeIcon />
-              <span className={styles.tips}>
-                Smoky
-                <br />
-                HOT
-              </span>
-              <span className={styles.likesNums}>{data.superLike}</span>
+              <span className={styles.tips}>Flipped</span>
+              <span className={styles.likesNums}>{data.prePaid}</span>
             </div>
           </>
-        }
+        )} */}
 
-        <div className={[styles.holder, styles.likeCustom].join(" ")}>
-          <span className={styles.likesNums}>Holders 0</span>
-        </div>
+        {data.DApp === "sexy" && data.initiativeLaunching && (
+          <div className={[styles.superLikes, styles.likeCustom].join(" ")}>
+            Fast pass
+          </div>
+        )}
 
+        {data.status !== 0 && (
+          <div
+            className={[styles.holder, styles.likeCustom].join(" ")}
+            style={likesNumsStyle}
+          >
+            <span className={styles.likesNums}>Holders {holders}</span>
+          </div>
+        )}
       </div>
 
-      <div className={styles.share} onClick={() => {
-        shareToX(data.tokenName, "https://sexyfi.dumpdump.fun//detail?id=" + data.id)
-      }}>
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g filter="url(#filter0_b_4443_336)">
-            <circle cx="20" cy="20" r="20" fill="black" fill-opacity="0.4" />
-          </g>
-          <circle cx="25.7727" cy="13.8636" r="2.86364" stroke="white" stroke-width="2" />
-          <circle cx="25.7727" cy="26.1366" r="2.86364" stroke="white" stroke-width="2" />
-          <circle cx="13.0908" cy="20.0001" r="4.09091" fill="white" />
-          <path d="M23.3181 15.0908L13.9091 19.9999L23.3181 24.909" stroke="white" stroke-width="2" />
-          <defs>
-            <filter id="filter0_b_4443_336" x="-10" y="-10" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
-              <feGaussianBlur in="BackgroundImageFix" stdDeviation="5" />
-              <feComposite in2="SourceAlpha" operator="in" result="effect1_backgroundBlur_4443_336" />
-              <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_4443_336" result="shape" />
-            </filter>
-          </defs>
-        </svg>
-
-      </div>
+      {showShare && <Share token={data} />}
     </div>
   );
 }
 
 function LikeIcon() {
   return (
-    <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3.4122 0C1.5277 0 0 1.48403 0 3.31465C0 6.6293 4.0326 9.64262 6.20401 10.3436C8.37541 9.64262 12.408 6.6293 12.408 3.31465C12.408 1.48403 10.8803 0 8.99581 0C7.84177 0 6.82152 0.55653 6.20401 1.40837C5.58649 0.55653 4.56624 0 3.4122 0Z" fill="white" fill-opacity="0.5" />
-      <path d="M4.653 3.10349C4.653 3.10349 0 1.48458 0 3.31521C0 6.62986 4.0326 9.64317 6.20401 10.3441C8.37541 9.64317 12.408 6.62986 12.408 3.31521C9.30601 4.65489 6.72101 3.62067 4.653 3.10349Z" fill="white" />
+    <svg
+      width="13"
+      height="11"
+      viewBox="0 0 13 11"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M3.4122 0C1.5277 0 0 1.48403 0 3.31465C0 6.6293 4.0326 9.64262 6.20401 10.3436C8.37541 9.64262 12.408 6.6293 12.408 3.31465C12.408 1.48403 10.8803 0 8.99581 0C7.84177 0 6.82152 0.55653 6.20401 1.40837C5.58649 0.55653 4.56624 0 3.4122 0Z"
+        fill="white"
+        fillOpacity="0.5"
+      />
+      <path
+        d="M4.653 3.10349C4.653 3.10349 0 1.48458 0 3.31521C0 6.62986 4.0326 9.64317 6.20401 10.3441C8.37541 9.64317 12.408 6.62986 12.408 3.31521C9.30601 4.65489 6.72101 3.62067 4.653 3.10349Z"
+        fill="white"
+      />
     </svg>
   );
 }
 
 function LikeIconEmpty() {
   return (
-    <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4.02402 0.903809C2.13951 0.903809 0.611816 2.38784 0.611816 4.21846C0.611816 7.53311 4.64442 10.5464 6.81582 11.2474C8.98722 10.5464 13.0198 7.53311 13.0198 4.21846C13.0198 2.38784 11.4921 0.903809 9.60762 0.903809C8.45359 0.903809 7.43334 1.46034 6.81582 2.31217C6.19831 1.46034 5.17806 0.903809 4.02402 0.903809Z" fill="white" fill-opacity="0.5" />
+    <svg
+      width="14"
+      height="12"
+      viewBox="0 0 14 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.02402 0.903809C2.13951 0.903809 0.611816 2.38784 0.611816 4.21846C0.611816 7.53311 4.64442 10.5464 6.81582 11.2474C8.98722 10.5464 13.0198 7.53311 13.0198 4.21846C13.0198 2.38784 11.4921 0.903809 9.60762 0.903809C8.45359 0.903809 7.43334 1.46034 6.81582 2.31217C6.19831 1.46034 5.17806 0.903809 4.02402 0.903809Z"
+        fill="white"
+        fillOpacity="0.5"
+      />
+    </svg>
+  );
+}
+
+function LikeFullIcon() {
+  return (
+    <svg
+      width="13"
+      height="11"
+      viewBox="0 0 13 11"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ flexShrink: 0 }}
+    >
+      <path
+        d="M3.01613 0.998764C1.20448 1.19765 -0.10759 2.78505 0.0855464 4.5443C0.435253 7.72971 4.62988 10.1999 6.79129 10.6444C8.80479 9.7416 12.3636 6.42017 12.0139 3.23476C11.8207 1.47552 10.1955 0.210582 8.38388 0.409472C7.27446 0.531269 6.35237 1.17378 5.84859 2.05757C5.16508 1.30412 4.12556 0.876967 3.01613 0.998764Z"
+        fill="white"
+      />
     </svg>
   );
 }
@@ -102,5 +176,5 @@ function SuperLikeIcon() {
 }
 
 function PumpIcon() {
-  return <img className={ styles.punmIcon } src="/img/home/pump.png"/>
+  return <img className={styles.punmIcon} src="/img/home/pump.png" />;
 }

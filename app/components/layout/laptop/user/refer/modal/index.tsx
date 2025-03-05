@@ -4,7 +4,20 @@ import Modal from "@/app/components/modal";
 import { fail, success } from "@/app/utils/toast";
 import { useAccount } from "@/app/hooks/useAccount";
 import { useGuidingTour } from "@/app/store/use-guiding-tour";
-import { Popup } from "antd-mobile";
+import Tab, {
+  AnimateVariants,
+  TabTitle
+} from "@/app/components/layout/laptop/user/refer/modal/tab";
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from "framer-motion";
+import Loading from "@/app/components/icons/loading";
+import { useAirdrop } from "@/app/components/airdrop/hooks";
+import { useUser } from '@/app/store/useUser';
+import useUserInfo from '@/app/hooks/useUserInfo';
+import Big from 'big.js';
+import { SOL } from '@/app/components/trade/buySellPump';
+import { numberFormatter } from '@/app/utils/common';
+import useReferralRate from '@/app/sections/mining/use-referral-rate';
 
 const ReferModal = (props: any) => {
   const { isMobile } = props;
@@ -15,117 +28,285 @@ const ReferModal = (props: any) => {
     store.setVisible(false);
   };
 
-  return isMobile ? (
-    <Popup
-      visible={store.visible}
-      onMaskClick={handleClose}
-      onClose={handleClose}
-      bodyStyle={{
-        borderTopLeftRadius: "8px",
-        borderTopRightRadius: "8px"
-      }}
-    >
-      <ReferModalContent {...props} />
-    </Popup>
-  ) : (
+  return (
     <Modal
-      open={store.visible && hasShownTour}
+      open={store.visible}
       onClose={handleClose}
       style={{}}
       mainStyle={{
         border: 0
       }}
+      maskClose={false}
     >
-      <ReferModalContent {...props} />
+      <ReferModalContent {...props} isInvite={store.isInvite} />
     </Modal>
   );
 };
 
 export default ReferModal;
 
-const ReferModalContent = (props: any) => {
-  const { userInfo, isMobile } = props;
-  const { address } = useAccount();
+const SOL_REFERRAL_LIST = [
+  {
+    key: 1,
+    value: 25,
+    icon: "/img/home/refer-modal-progress-node.svg",
+    iconActive:
+      "/img/home/refer-modal-progress-node-active.svg",
+    label: "Vol.50k",
+    volume: 50000,
+    amount: 0,
+    unit: "SOL",
+    perUnit: "Month"
+  },
+  {
+    key: 2,
+    value: 50,
+    icon: "/img/home/refer-modal-progress-node.svg",
+    iconActive:
+      "/img/home/refer-modal-progress-node-active.svg",
+    label: "Vol.250k",
+    volume: 250000,
+    amount: 0,
+    unit: "SOL",
+    perUnit: "Month"
+  },
+  {
+    key: 1,
+    value: 75,
+    icon: "/img/home/refer-modal-progress-node.svg",
+    iconActive:
+      "/img/home/refer-modal-progress-node-active.svg",
+    label: "Vol.500k",
+    volume: 500000,
+    amount: 0,
+    unit: "SOL",
+    perUnit: "Month"
+  },
+  {
+    key: 1,
+    value: 100,
+    icon: "/img/home/refer-modal-progress-node.svg",
+    iconActive:
+      "/img/home/refer-modal-progress-node-active.svg",
+    label: "Vol.1m",
+    volume: 1000000,
+    amount: 0,
+    unit: "SOL",
+    perUnit: "Month"
+  }
+];
 
-  const handleCopy = () => {
+const ReferModalContent = (props: any) => {
+  const { userInfo, isMobile, isInvite } = props;
+  const { address } = useAccount();
+  const { getAirdropData, airdropData } = useAirdrop();
+  const userStore: any = useUser();
+  const { fecthUserInfo } = useUserInfo(address, true, 0);
+  const { rate, isLoading: rateLoading } = useReferralRate();
+
+  const [currentTab, setCurrentTab] = useState(isInvite ? 2 : 1);
+  const [loading, setLoading] = useState(false);
+
+  const solReferralList = useMemo(() => {
+    return SOL_REFERRAL_LIST.map((it) => {
+      it.amount = numberFormatter(Big(it.volume).times(0.01).times(Big(rate).div(100)), 2, true);
+      return it;
+    });
+  }, [rate]);
+
+  const handleCopy = async () => {
+    if (loading) return;
+    setLoading(true);
     const shareLink = new URL(window?.location?.origin);
-    shareLink.searchParams.set("code", address ?? "");
+    shareLink.searchParams.set("referral", address ?? "");
+    if (currentTab === 2) {
+      // this api had been deleted
+      // const res = await httpAuthGet("/airdrop/referral/code", {
+      //   find: false
+      // });
+      // if (res.code !== 0) {
+      //   fail("Failed to obtain the invitation code");
+      //   setLoading(false);
+      //   return;
+      // }
+      shareLink.searchParams.set("airdrop", "1");
+    }
     navigator.clipboard
       .writeText(shareLink.toString())
       .then(() => {
-        success("Copied share link!");
+        success("Copied share link!", { maskStyle: { zIndex: 2000 } });
       })
       .catch((err) => {
-        fail("Copy failed!");
+        fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
+  const handleTab = (tab: number) => {
+    if (currentTab === tab) return;
+    setCurrentTab(tab);
+  };
+
+  const getUserData = async () => {
+    if (!address) return;
+    const userInfo = await fecthUserInfo(address);
+    userStore.setUserInfo(userInfo);
+  };
+
+  useEffect(() => {
+    if (!address) return;
+    getAirdropData();
+    getUserData();
+  }, [address]);
+
   return (
     <div className={isMobile ? styles.ContainerMobile : styles.Container}>
-      <div className={isMobile ? styles.TitleMobile : styles.Title}>
-        Referral Earning
-      </div>
-      <div className={isMobile ? styles.ContentMobile : styles.Content}>
-        <div className={isMobile ? styles.EarnedMobile : styles.Earned}>
+      <div className={styles.Body}>
+        <div className={isMobile ? styles.TitleMobile : styles.Title}>
+          Referral Earning
+        </div>
+        <div className={isMobile ? styles.ContentMobile : styles.Content}>
           <div
-            className={isMobile ? styles.EarnedTitleMobile : styles.EarnedTitle}
+            className={styles.EarnedWrapper}
           >
-            <div className={styles.EarnedTitleText}>EARNED</div>
             <div
-              className={
-                isMobile
-                  ? styles.EarnedTitleValueMobile
-                  : styles.EarnedTitleValue
-              }
+              className={isMobile ? styles.EarnedTabsMobile : styles.EarnedTabs}
             >
-              {userInfo?.referralFee || 0} SOL
+              <motion.div
+                className={styles.EarnedTabsCursor}
+                animate={{
+                  x: `${(currentTab - 1) * 100}%`
+                }}
+              />
+              <TabTitle
+                {...props}
+                label="EARNED"
+                value={numberFormatter(Big(userInfo?.referralFee || 0).div(10 ** SOL.tokenDecimals), 4, true, { isShort: true })}
+                unit="SOL"
+                tab={1}
+                current={currentTab}
+                onClick={() => handleTab(1)}
+              />
+              <TabTitle
+                {...props}
+                label="EARNED"
+                value={numberFormatter(airdropData?.airdrop_points, 4, true, { isShort: true })}
+                unit="Points"
+                tab={2}
+                current={currentTab}
+                onClick={() => handleTab(2)}
+              />
             </div>
-          </div>
-          <div className={isMobile ? styles.ProgressMobile : styles.Progress}>
-            <div className={styles.ProgressValue} style={{ width: "25%" }} />
-            <div className={styles.NodeList}>
-              <div className={styles.NodeActive}>
-                <div className={styles.NodeLabel}>Vol.50k</div>
-                <div className={styles.NodeReward}>
-                  <div className={styles.NodeRewardLabel}>Earn Rewards</div>
-                  <div className={styles.NodeRewardContent}>
-                    <div className={styles.NodeRewardValue}>0.4 SOL</div>
-                    <div className={styles.NodeRewardUnit}>/month</div>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.Node}>
-                <div className={styles.NodeLabel}>Vol.250k</div>
-              </div>
-              <div className={styles.Node}>
-                <div className={styles.NodeLabel}>Vol.500k</div>
-                <div className={styles.NodeReward}>
-                  <div className={styles.NodeRewardLabel}>Earn Rewards</div>
-                  <div className={styles.NodeRewardContent}>
-                    <div className={styles.NodeRewardValue}>0.8 SOL</div>
-                    <div className={styles.NodeRewardUnit}>/month</div>
-                  </div>
-                </div>
-              </div>
-              <div className={styles.Node}>
-                <div className={styles.NodeLabel}>Vol.1000k</div>
-              </div>
-            </div>
+            <AnimatePresence mode="wait">
+              {currentTab === 1 && (
+                <Tab
+                  key={1}
+                  tab={1}
+                  {...props}
+                  bg="/img/home/refer-modal-content-bg-1.svg"
+                  list={solReferralList}
+                />
+              )}
+              {currentTab === 2 && (
+                <Tab
+                  key={2}
+                  tab={2}
+                  {...props}
+                  bg="/img/home/refer-modal-content-bg-2.svg"
+                  list={[
+                    {
+                      key: 1,
+                      value: 25,
+                      icon: "/img/home/refer-modal-progress-node-pts.svg",
+                      iconActive:
+                        "/img/home/refer-modal-progress-node-pts-active.svg",
+                      label: "10K pts",
+                      amount: "1K",
+                      unit: "pts",
+                      perUnit: "Extra"
+                    },
+                    {
+                      key: 2,
+                      value: 50,
+                      icon: "/img/home/refer-modal-progress-node-pts.svg",
+                      iconActive:
+                        "/img/home/refer-modal-progress-node-pts-active.svg",
+                      label: "100K pts",
+                      amount: "10K",
+                      unit: "pts",
+                      perUnit: "Extra"
+                    },
+                    {
+                      key: 1,
+                      value: 75,
+                      icon: "/img/home/refer-modal-progress-node-pts.svg",
+                      iconActive:
+                        "/img/home/refer-modal-progress-node-pts-active.svg",
+                      label: "1M pts",
+                      amount: "100K",
+                      unit: "pts",
+                      perUnit: "Extra"
+                    },
+                    {
+                      key: 1,
+                      value: 100,
+                      icon: "/img/home/refer-modal-progress-node-pts.svg",
+                      iconActive:
+                        "/img/home/refer-modal-progress-node-pts-active.svg",
+                      label: "10M pts",
+                      amount: "1M",
+                      unit: "pts",
+                      perUnit: "Extra"
+                    }
+                  ]}
+                />
+              )}
+            </AnimatePresence>
           </div>
         </div>
-        <div className={styles.Invite}>
-          <div className={styles.InviteText}>
-            Invite Friends and Earn Commissions Get up {!isMobile && <br />} to{" "}
-            <strong className={styles.InviteTextPrimary}>$5000</strong> rebates
-          </div>
-          <button
-            type="button"
-            className={styles.InviteBtn}
-            onClick={handleCopy}
-          >
-            Invite now
-          </button>
+        <div className={isMobile ? styles.InviteMobile : styles.Invite}>
+          <AnimatePresence mode="wait">
+            {currentTab === 1 && (
+              <motion.div
+                key={1}
+                className={styles.InviteText}
+                {...AnimateVariants}
+              >
+                Users invite more than <strong className={styles.InviteTextPrimary}>1,000</strong> people and get <strong
+                className={styles.InviteTextPrimary}
+              >50%</strong> Referral kickback
+              </motion.div>
+            )}
+            {currentTab === 2 && (
+              <motion.div
+                key={2}
+                className={styles.InviteText}
+                {...AnimateVariants}
+              >
+                When you invite a new user,
+                <br />
+                you will earn an{" "}
+                <strong className={styles.InviteTextPrimary}>
+                  extra 10%
+                </strong>{" "}
+                of their points.
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+      </div>
+      <div className={styles.Footer}>
+        <button
+          type="button"
+          className={styles.InviteBtn}
+          onClick={handleCopy}
+          disabled={loading}
+        >
+          {loading && <Loading size={16} />}
+          <span>Invite now</span>
+        </button>
       </div>
     </div>
   );

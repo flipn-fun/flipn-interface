@@ -1,0 +1,239 @@
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
+import { httpAuthGet, httpAuthPost } from '@/app/utils';
+import { fail, success } from '@/app/utils/toast';
+import { useReferStore } from '@/app/store/useRefer';
+import { useAirdropStore } from '@/app/store/use-airdrop';
+import Big from 'big.js';
+import { useAccount } from '@/app/hooks/useAccount';
+
+export function useAirdrop(): Airdrop {
+  const search = useSearchParams();
+  const referStore = useReferStore();
+  const { address } = useAccount();
+  const {
+    visible: airdropVisible,
+    setVisible: setAirdropVisible,
+    entryVisible: airdropEntryVisible,
+    setEntryVisible: setAirdropEntryVisible,
+    entryVisibleTimes: airdropEntryVisibleTimes,
+    setEntryVisibleTimes: setAirdropEntryVisibleTimes,
+    connectVisible,
+    setConnectVisible,
+  } = useAirdropStore();
+  const router = useRouter();
+
+  const airdrop = useMemo(() => {
+    return search.get('airdrop');
+  }, [search]);
+  const inviter = useMemo(() => {
+    return search.get('referral');
+  }, [search]);
+
+  const [userData, setUserData] = useState<Record<string, any>>({});
+  const [userDataLoading, setUserDataLoading] = useState<boolean>(false);
+  const [airdropData, setAirdropData] = useState<Record<string, any>>({});
+  const [airdropDataLoading, setAirdropDataLoading] = useState<boolean>(false);
+  const [pointList, setPointList] = useState<Record<string, any>[]>([]);
+  const [pointListPageIndex, setPointListPageIndex] = useState<number>(0);
+  const [pointListPageMore, setPointListPageMore] = useState<boolean>(true);
+  const [pointListLoading, setPointListLoading] = useState(false);
+  const [shareImageVisible, setShareImageVisible] = useState(false);
+
+  const [claiming, setClaiming] = useState(false);
+  const [binding, setBinding] = useState(false);
+  const [morePointsVisible, setMorePointsVisible] = useState(false);
+  const [claimPointsVisible, setClaimPointsVisible] = useState(false);
+  const [referVisible, setReferVisible] = useState(false);
+
+  const userHasPoints = useMemo(() => {
+    return Big(userData?.points ?? 0).gt(0);
+  }, [userData]);
+
+  // const { connected } = useWallet();
+  const connected = !!window.sexAddress;
+
+  const handleClose = () => {
+    setAirdropVisible(false);
+    // router.replace(`${window?.location?.origin}${window?.location?.pathname}`);
+  };
+
+  const handleClaim = async (params?: { from?: string; }) => {
+    const { from } = params ?? {};
+    const isAirdropBefore = from === 'airdrop_before';
+
+    if (claiming) return;
+
+    if (!connected && !isAirdropBefore) {
+      setConnectVisible(true);
+      return;
+    }
+    setClaiming(true);
+    if (Big(userData?.points ?? 0).lte(0) && !isAirdropBefore) {
+      handleClose();
+      setClaiming(false);
+      setReferVisible(true);
+      return;
+    }
+    if (airdropData?.clime_pump && !isAirdropBefore) {
+      handleClose();
+      setClaiming(false);
+      setMorePointsVisible(true);
+      return;
+    }
+    const res = await httpAuthPost('/airdrop/account/points');
+    if (res.code !== 0) {
+      setClaiming(false);
+      fail(`Claim points failed${res.message ? ': ' + res.message : ''}`, { maskStyle: { zIndex: 2000 } });
+      return;
+    }
+    success('Claim points successful', { maskStyle: { zIndex: 2000 } });
+    if (!isAirdropBefore) {
+      setClaimPointsVisible(true);
+      handleClose();
+    }
+    setClaiming(false);
+    return true;
+  };
+
+  const getList = async () => {
+    if (!pointListPageMore) return;
+    setPointListLoading(true);
+    const res = await httpAuthGet('/airdrop/point/list', {
+      limit: 10,
+      offset: pointListPageIndex,
+    });
+    if (res.code !== 0) {
+      setPointListLoading(false);
+      return;
+    }
+    const _pointList = pointList.slice();
+    if (pointListPageIndex === 1) {
+      setPointList([...res.data.list]);
+    } else {
+      setPointList([..._pointList, ...res.data.list]);
+    }
+    setPointListPageMore(res.data.has_next_page);
+    if (res.data.has_next_page) {
+      setPointListPageIndex(pointListPageIndex + 1);
+    }
+    setPointListLoading(false);
+  };
+
+  const handleBind = async () => {
+    if (binding || !inviter || inviter.toLowerCase() === address?.toLowerCase()) return;
+    setBinding(true);
+    const res = await httpAuthPost(`/airdrop/binding?account=${inviter}`, {
+      account: inviter,
+    }, true, true);
+    if (res.code !== 0) {
+      if (!referStore.bind) {
+        fail(`Binding failed${res.message ? ': ' + res.message : ''}`, { maskStyle: { zIndex: 2000 } });
+      }
+      setBinding(false);
+      return;
+    }
+    success('Binding successful', { maskStyle: { zIndex: 2000 } });
+    referStore.setBind(true);
+    setBinding(false);
+  };
+
+  const getUserData = async () => {
+    setUserDataLoading(true);
+    const res = await httpAuthGet('/airdrop/account/level_points', {
+      account: address,
+    });
+    if (res.code !== 0) {
+      setUserDataLoading(false);
+      return;
+    }
+    setUserData(res.data);
+    setUserDataLoading(false);
+  };
+
+  const getAirdropData = async () => {
+    setAirdropDataLoading(true);
+    const res = await httpAuthGet('/airdrop/data');
+    if (res.code !== 0) {
+      setAirdropDataLoading(false);
+      return;
+    }
+    setAirdropData(res.data);
+    setAirdropDataLoading(false);
+  };
+
+  return {
+    airdrop,
+    inviter,
+    connectVisible,
+    connected,
+    handleClaim,
+    setConnectVisible,
+    pointList,
+    pointListLoading,
+    morePointsVisible,
+    setMorePointsVisible,
+    setClaimPointsVisible,
+    claimPointsVisible,
+    handleBind,
+    getList,
+    claiming,
+    getUserData,
+    userData,
+    airdropData,
+    getAirdropData,
+    pointListPageMore,
+    onClose: handleClose,
+    airdropVisible,
+    setAirdropVisible,
+    airdropDataLoading,
+    airdropEntryVisible,
+    setAirdropEntryVisible,
+    airdropEntryVisibleTimes,
+    setAirdropEntryVisibleTimes,
+    referVisible,
+    setReferVisible,
+    userDataLoading,
+    shareImageVisible,
+    setShareImageVisible,
+    userHasPoints,
+  };
+}
+
+export interface Airdrop {
+  airdrop?: string | null;
+  inviter?: string | null;
+  connectVisible: boolean;
+  connected?: boolean;
+  claiming: boolean;
+  pointListPageMore: boolean;
+  pointList: Record<string, any>[];
+  pointListLoading: boolean;
+  morePointsVisible: boolean;
+  airdropDataLoading: boolean;
+  userDataLoading: boolean;
+  setMorePointsVisible: Dispatch<SetStateAction<boolean>>;
+  setClaimPointsVisible: Dispatch<SetStateAction<boolean>>;
+  claimPointsVisible: boolean;
+  userData: Record<string, any>;
+  airdropData: Record<string, any>;
+  airdropVisible: boolean;
+  airdropEntryVisible: boolean;
+  airdropEntryVisibleTimes: number;
+  referVisible: boolean;
+  setReferVisible: Dispatch<SetStateAction<boolean>>;
+  shareImageVisible: boolean;
+  setShareImageVisible: Dispatch<SetStateAction<boolean>>;
+  userHasPoints: boolean;
+
+  handleClaim(params?: { from?: string; }): Promise<void | boolean>;
+  handleBind(): Promise<void>;
+  getList(): Promise<void>;
+  getUserData(): Promise<void>;
+  getAirdropData(): Promise<void>;
+  onClose?(): void;
+  setAirdropVisible(visible: boolean): void;
+  setAirdropEntryVisible(visible: boolean): void;
+  setAirdropEntryVisibleTimes(times: number): void;
+  setConnectVisible(visible: boolean): void;
+}

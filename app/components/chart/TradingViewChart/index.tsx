@@ -25,7 +25,7 @@ export type TradingViewChartProps = {
   symbol: string;
   address: string;
   style?: any;
-  onLoaded?: () => void;
+  onLoaded?: any;
 };
 export type TradingViewChartExposes =
   | {
@@ -49,18 +49,27 @@ function TradingViewChart(
     resetChart
   }));
 
+  const fullscreenRef = useRef<any>();
+  const containerRef = useRef<any>();
   const tvWidgetRef = useRef<IChartingLibraryWidget>();
+  const pageRef = useRef(0);
+  const hasNextRef = useRef(true);
+  const resolutionRef = useRef("");
 
   const [loading, setLoading] = useState(false);
 
-  const datafeed = useMemo(() => datafeedFn(address), [address]);
+  const datafeed = useMemo(
+    () => datafeedFn(address, tvWidgetRef, pageRef, hasNextRef, resolutionRef),
+    [address]
+  );
 
   const { run } = useDebounceFn(
     () => {
       try {
         if (!symbol) return;
-        if (!tvWidgetRef.current || loading) initTradingView(symbol);
-        else {
+        if (!tvWidgetRef.current || loading) {
+          initTradingView(symbol);
+        } else {
           tvWidgetRef.current?.setSymbol(
             symbol,
             getStoredInterval(),
@@ -92,13 +101,20 @@ function TradingViewChart(
       library_path: "/libs/charting_library/",
       locale: "en",
       disabled_features: [
-        "use_localstorage_for_settings",
-        "header_symbol_search",
-        "header_quick_search",
-        "header_screenshot",
-        "header_compare",
-        "header_fullscreen_button",
-        "header_saveload"
+        "header_widget",
+        "left_toolbar",
+        "go_to_date",
+        "volume_force_overlay",
+        "timeframes_toolbar",
+        "legend_widget",
+        "display_market_status",
+        "main_series_scale_menu",
+        "source_selection_markers",
+        "symbol_info",
+        "snapshot_trading_drawings",
+        "edit_buttons_in_legend",
+        "hide_left_toolbar_by_default",
+        "border_around_the_chart"
       ],
       enabled_features: ["hide_left_toolbar_by_default"],
       charts_storage_url: "https://saveload.tradingview.com",
@@ -110,16 +126,15 @@ function TradingViewChart(
       header_widget_buttons_mode: "compact",
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone as Timezone,
       studies_overrides: {},
-      toolbar_bg: "#171B26",
+      toolbar_bg: "#1b1b1b",
       loading_screen: {
         backgroundColor: "#000",
         foregroundColor: "#171B26"
       },
       overrides: {
-        "paneProperties.background": "#171B26",
+        "paneProperties.background": "#1b1b1b",
         "paneProperties.backgroundType": "solid"
-      },
-      custom_css_url: "/libs/charting_library/custom-theme.css"
+      }
     };
 
     tvWidgetRef.current = new widget(widgetOptions);
@@ -129,7 +144,7 @@ function TradingViewChart(
     });
     tvWidgetRef.current.onChartReady(() => {
       setLoading(false);
-      onLoaded?.();
+      onLoaded?.(tvWidgetRef.current);
       const widget = tvWidgetRef.current;
       if (!widget) return;
       // https://www.tradingview.com/charting-library-docs/latest/api/enums/Charting_Library.SeriesType
@@ -139,24 +154,33 @@ function TradingViewChart(
         .subscribe(null, function (interval, obj) {
           tvStorage?.set("interval", interval);
         });
-      widget.chart().setChartType(10); // 1: Candles 10: Baseline
-      widget
-        .activeChart()
-        .createStudy("Volume", true, false, { id: "volume", visible: true });
+      widget.chart().setChartType(1); // 1: Candles 10: Baseline
+
       widget?.headerReady().then(() => {
         const button = widget.createButton({
           align: "right",
           useTradingViewStyle: false
         });
         button.addEventListener("click", function () {
-          const ele = document.querySelector("#TVChartContainer");
+          const ele = containerRef.current;
           ele?.classList.toggle("fullscreen");
+
+          if (!ele) return;
+          if (!fullscreenRef.current) {
+            fullscreenRef.current = {
+              width: ele?.clientWidth,
+              height: ele?.clientHeight
+            };
+          }
+
           if (ele?.classList.contains("fullscreen")) {
             button.innerHTML = exitFullscreenIcon;
             button.setAttribute("title", "Exit Fullscreen");
+            containerRef.current.requestFullscreen();
           } else {
             button.innerHTML = fullscreenIcon;
             button.setAttribute("title", "Fullscreen");
+            document.exitFullscreen();
           }
         });
         button.innerHTML = fullscreenIcon;
@@ -264,24 +288,35 @@ function TradingViewChart(
     }
   }
 
+  useEffect(() => {
+    return () => {
+      datafeed.unsubscribeBars("custom");
+    };
+  }, []);
+
   return (
     <>
       <Script src="/libs/charting_library/charting_library.standalone.js"></Script>
       <div
         style={{
           position: "relative",
-          height: "100%"
+          height: "100%",
+          ...style
         }}
       >
         {loading && <Loading />}
-        <div id="TVChartContainer" style={{ width: "100%", ...style }} />
+        <div
+          id="TVChartContainer"
+          ref={containerRef}
+          style={{ width: "100%", height: "100%" }}
+        />
       </div>
     </>
   );
 }
 
 function getStoredInterval() {
-  const interval = tvStorage?.get("interval") || "1";
+  const interval = "1";
   return interval as ResolutionString;
 }
 

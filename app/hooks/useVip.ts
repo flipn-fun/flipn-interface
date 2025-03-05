@@ -6,7 +6,8 @@ import {
 } from '@solana/web3.js';
 import { useCallback, useMemo } from "react";
 import { useAccount } from '@/app/hooks/useAccount';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { useWallet } from "@/app/hooks/use-wallet";
 import { useConfig } from '../store/useConfig';
 import Big from 'big.js';
 
@@ -32,7 +33,6 @@ export function useVip() {
         } else if (type === 'vip') {
             val = {"type":"AddVip"}
         } else if (type === 'launching') {
-            console.log('tokenAddress', tokenAddress)
             val = {"type":"AddLaunching", "token": tokenAddress}
             lamports = 100000000
         }

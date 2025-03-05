@@ -1,21 +1,64 @@
 import Modal from "@/app/components/modal";
 import SearchIcon from "@/app/components/icons/search";
-import FollowerList from "@/app/sections/profile/follower/component/followerList";
+import FollowerList from "@/app/sections/profile/follower/component/followerList/list";
 import styles from "./index.module.css";
-import { useMemo, useState } from "react";
-import useFollow from "@/app/sections/profile/hooks/useFollow";
+import { useEffect, useMemo, useState } from "react";
+import useFollowList from "@/app/sections/profile/hooks/useFollowList";
+import { useAccount } from "@/app/hooks/useAccount";
+import useUserInfo from "@/app/hooks/useUserInfo";
+import { formatAddress } from "@/app/utils";
 
-export default function FollowerModal({ address, type, open, onClose }: any) {
-  const { followerList, followingList } = useFollow(address);
+export default function FollowerModal({
+  address,
+  type,
+  open,
+  isOther,
+  onClose,
+  onRefresh
+}: any) {
   const [searchVal, setSearchVal] = useState("");
-  const list = useMemo(() => {
-    if (!type) return [];
-    return type === "following" ? followingList : followerList;
-  }, [type]);
+  const [refresh, setRefresh] = useState(0);
+  const { address: walletAddress } = useAccount();
+  const followerType = useMemo(() => (type === "following" ? 2 : 1), [type]);
+
+  const currentUser = useMemo(() => ({ address }), [address]);
+  const { userInfo: currentUserInfo } = useUserInfo(address, !isOther);
+
+  const { list, userInfo, setList, isLoading, hasMore, loadMore } =
+    useFollowList({
+      currentUser,
+      followerType,
+      refresh,
+      isOther
+    });
+
   const filteredList = useMemo(() => {
     if (!list?.length) return [];
-    return list.filter((item: any) => item.name.includes(searchVal));
-  }, [list, type]);
+    return list.filter((item: any) => {
+      if (!searchVal) return true;
+      if (!item.name) return false;
+      return item.name.toLowerCase().includes(searchVal.toLowerCase());
+    });
+  }, [list, type, searchVal]);
+
+  const title = useMemo(() => {
+    let prev = "";
+    if (walletAddress === address) {
+      prev = "My";
+    } else {
+      prev = `${currentUserInfo?.name || formatAddress(address)}'s`;
+    }
+    return `${prev} ${type === "following" ? `Following` : `Followers`} (${
+      list?.length || 0
+    })`;
+  }, [type, list, walletAddress, currentUserInfo, address]);
+
+  useEffect(() => {
+    if (open) {
+      setRefresh(refresh + 1);
+      setSearchVal("");
+    }
+  }, [open]);
   return (
     <Modal
       open={open}
@@ -27,9 +70,7 @@ export default function FollowerModal({ address, type, open, onClose }: any) {
       }}
     >
       <div className={styles.Container}>
-        <div className={styles.Title}>
-          {list?.length || 0} {type === "following" ? `Following` : `Followers`}
-        </div>
+        <div className={styles.Title}>{title}</div>
         <div className={styles.InputContainer}>
           <SearchIcon />
           <input
@@ -41,10 +82,29 @@ export default function FollowerModal({ address, type, open, onClose }: any) {
           />
         </div>
         <div className={styles.ListContainer}>
-          {/* <FollowerList
-            list={filteredList}
-            followerType={type === "following" ? 2 : 1}
-          /> */}
+          <FollowerList
+            {...{
+              list: filteredList,
+              userInfo,
+              followerType: followerType,
+              onAction() {
+                onRefresh?.();
+                setRefresh(refresh + 1);
+              },
+              setList,
+              isLoading,
+              loadMore,
+              hasMore,
+              onItemClick(item: any) {
+                history.pushState(
+                  { page: "/profile/user" },
+                  "Profile",
+                  "/profile/user?account=" + item.address
+                );
+                onClose();
+              }
+            }}
+          />
         </div>
       </div>
     </Modal>

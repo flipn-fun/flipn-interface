@@ -1,28 +1,62 @@
 import LimitProject from "../limitProjects";
 import styles from "./index.module.css";
-import { addThousandSeparator } from "@/app/utils/common";
+import { addThousandSeparator, numberFormatter } from "@/app/utils/common";
+import { useUserAgent } from "@/app/context/user-agent";
 
 export default function Statistics({ itemStyle, style, info }: any) {
+  const { isMobile } = useUserAgent();
   return (
     <div className={styles.statistics} style={style}>
       <div className={styles.statisticsItem} style={itemStyle}>
-        <div className={styles.statisticsTitle}>Total Mining</div>
-        <div style={{ fontSize: 26 }} className={styles.value}>
-          {info?.minted ? addThousandSeparator(info?.minted) : "0"}
-        </div>
-      </div>
-      <div className={styles.statisticsItem} style={itemStyle}>
-        <div className={styles.statisticsTitle}>You Liked</div>
-        <div
-          style={{ borderBottom: "1px dashed #fff" }}
-          className={styles.value}
-        >
+        <div className={styles.statisticsTitle}>My likes</div>
+        <div style={{ fontSize: isMobile ? 18 : 22 }} className={styles.value}>
           {info?.liked ? addThousandSeparator(info?.liked) : "0"}
         </div>
       </div>
       <div className={styles.statisticsItem} style={itemStyle}>
+        <div className={styles.statisticsTitle}>My volume</div>
+        <div
+          style={{
+            fontSize: isMobile ? 18 : 22
+          }}
+          className={styles.value}
+        >
+          {info?.my_volume
+            ? numberFormatter(info?.my_volume, 2, true, {
+                isShort: true,
+                round: 0,
+                prefix: "$"
+              })
+            : "$0"}
+        </div>
+      </div>
+      <div className={styles.statisticsItem} style={itemStyle}>
+        <div className={styles.statisticsTitle}>My refferrals</div>
+        <div style={{ fontSize: isMobile ? 18 : 22 }} className={styles.value}>
+          {info?.my_referrals ? addThousandSeparator(info.my_referrals) : "0"}
+        </div>
+      </div>
+      <div className={styles.statisticsItem} style={itemStyle}>
+        <div className={styles.statisticsTitle}>My kickback</div>
+        <div
+          style={{
+            fontSize: isMobile ? 18 : 22
+          }}
+          className={styles.value}
+        >
+          {info?.my_kickback ? addThousandSeparator(info?.my_kickback) : "0"}
+        </div>
+      </div>
+      <div className={styles.statisticsItem} style={itemStyle}>
         <div className={styles.statisticsTitle}>Launching Rate</div>
-        <div className={styles.value}>{info?.launching_rate || "0"}%</div>
+        <div
+          className={styles.value}
+          style={{
+            fontSize: isMobile ? 18 : 22
+          }}
+        >
+          {info?.launching_rate ? (info.launching_rate * 100).toFixed(2) : "0"}%
+        </div>
       </div>
       <div className={styles.statisticsItem} style={itemStyle}>
         <div className={styles.statisticsTitle}>Launched Projects</div>

@@ -1,14 +1,31 @@
 import styles from "./limitProject.module.css";
+import { useHomeTab } from "@/app/store/useHomeTab";
+import { useRouter } from "next/navigation";
 
 export default function LimitProject({ list = [] }: any) {
-  return (
-    <div className={styles.main}>
-      {list?.map((item: any) => {
+  const homeTabStore: any = useHomeTab();
+  const router = useRouter();
+  return !!list.length ? (
+    <div
+      className={`${styles.main} button`}
+      onClick={() => {
+        homeTabStore.set({
+          currentSummary: { label: "Launched", amount: 0, value: 3 },
+          profileTabName: "Liked"
+        });
+        console.log(16);
+        router.push("/profile");
+      }}
+    >
+      {list?.slice(0, 5).map((item: any) => {
         return <img className={styles.img} key={item.id} src={item.icon} />;
       })}
+      {(!list || list?.length === 0) && <span>-</span>}
       {list?.length > 5 && (
-        <div className={styles.more}>+{list.length - 5}</div>
+        <div className={styles.more}>{list.length - 5}+</div>
       )}
     </div>
+  ) : (
+    "-"
   );
 }

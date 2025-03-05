@@ -1,138 +1,235 @@
-.main {
-  /* padding-bottom: 100px; */
-  .title {
-    position: relative;
-    padding: 10px 0;
-    background-color: var(--part-bg);
+.title {
+  position: relative;
 
-    .titleText {
-      color: #fff;
-      font-size: 24px;
-      font-weight: 700;
-      text-align: center;
-    }
+  .titleIcon {
+    position: absolute;
+    right: 10px; 
+    top: 50%; 
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
 
-    .editProgress {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 30px;
-      font-size: 16px;
-      font-weight: 500;
-      gap: 5px;
-      .editStep {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        opacity: 0.5;
-        gap: 5px;
-      }
-      .editStep.editActive {
-        opacity: 1;
-      }
-      .line {
-        width: 35vw;
-        border-top: 1px dashed #fff;
-      }
-    }
+  .backIcon {
+    position: absolute;
+    left: 10px; 
+    top: 50%; 
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  .titleText {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
   }
 }
 
-.create {
-  .group {
-    padding: 15px 0;
+.uploadImgWrapper {
+  position: relative;
+  align-self: stretch;
+  padding-top: 20px;
+}
 
-    .groupTitle {
-      font-size: 18px;
-      color: #fff;
-      padding-left: 18px;
+.uploadAction {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
 
-      .require {
-        color: var(--part-bg);
-      }
-    }
+.group {
+  padding: 15px 0;
+}
 
-    .groupContent {
-      padding: 5px 0;
-      .inputText {
-        width: 100%;
-        border: none;
-        background: rgba(18, 23, 25, 1);
-        height: 42px;
-        color: #fff;
-        font-size: 18px;
-        padding: 0 15px;
-        &.inputError {
-          border: 1px solid var(--part-bg);
-        }
-      }
+.groupContent {
+  padding: 5px 0;
+}
 
-      .laptopInputText {
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        background: rgba(0, 0, 0, 0.16);
-        height: 50px;
-      }
+.inputText {
+  width: 100%;
+  border: none;
+  background: rgba(18, 23, 25, 1);
+  height: 42px;
+  color: #fff;
+  font-size: 16px;
+  padding: 0 15px;
+}
 
-      .inputText:focus {
-        outline: none;
-      }
+.laptopInputText {
+  width: 100%;
+  padding: 0 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(146, 144, 177, 0.4);
+  background: rgba(146, 144, 177, 0.1);
+  height: 48px;
+  margin-top: 7px;
+  color: #fff;
+}
 
-      .imgUpload {
-        width: 100px;
-        height: 100px;
-        border-radius: 8px;
-        border: 1px dashed rgba(146, 144, 177, 1);
-        background-color: rgba(33, 37, 46, 1);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-        .plus {
-          position: absolute;
-          right: -15px;
-          bottom: -15px;
-        }
-      }
+.inputError {
+  border: 1px solid var(--error-color);
+}
 
-      &.uploadContent {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 10px;
-      }
+.inputText:focus {
+  outline: none;
+}
 
-      .uploadTip {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
-
-    .tokenSymbol {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px;
-      .tokenSymbolTitle {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
-
-    .uploadError {
-      border: 1px solid var(--part-bg);
-    }
+.imgUpload {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  border: 1px dashed rgba(146, 144, 177, 1);
+  background-color: rgba(33, 37, 46, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  .plus {
+    position: absolute;
+    right: -15px;
+    bottom: -15px;
   }
+}
 
-  .btnWapper {
-    margin: 0 20px;
-  }
+.uploadContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 10px 0;
+  padding-left: 15px;
+}
 
-  .avatar :global(.adm-image-img) {
-    border-radius: 10000px;
+.uploadTip {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.Website {
+  padding: 10px 0px 5px;
+  background-color: rgba(18, 23, 25, 1);
+}
+
+.LinkPc {
+  padding-top: 12px;
+}
+
+.uploadError {
+  border: 1px solid var(--error-color);
+}
+
+.tokenSymbol {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  .tokenSymbolTitle {
+    color: rgba(255, 255, 255, 0.6);
   }
+}
+
+.groupTitle {
+  font-size: 16px;
+  color: #fff;
+  padding: 0 18px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.requireSize {
+  font-size: 10px;
+}
+
+.uploadTitle {
+  font-size: 14px;
+  color: #fff;
+}
+
+.TitlePc {
+  font-size: 14px;
+  color: #fff;
+}
+
+.require {
+  color: var(--error-color);
+}
+
+
+.avatar :global(.adm-image-img) {
+  border-radius: 10000px;
 }
 
 .Flex {
   display: flex;
   flex-wrap: wrap;
+}
+
+.linkActionGroup {
+  display: flex;  
+  align-items: center;
+  gap: 20px;
+  padding-left: 20px;
+}
+
+.linkActionItem {
+  width: 30px;
+  cursor: pointer;
+}
+.linkTitle {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;  
+}
+
+.linkOptional {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9290B1;
+}
+
+.Container {
+  .groupTitle {
+    padding-left: 18px;
+  }
+}
+
+.ContainerPc {
+  
+  .linkActionGroup {
+    margin-top: 20px;
+  }
+}
+
+.removeIcon {
+  display: none;
+}
+
+.ContainerPc {
+  .removeIcon {
+    display: block;
+    margin-left: auto;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .uploadImgWrapper {
+    position: relative;
+    padding-top: 0;
+    .uploadIconPlus {
+      position: absolute;
+      right: 0;
+      bottom: 0;  
+      left: 0;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;  
+      background-color: rgba(33, 37, 46, .6);
+      border-radius: 10px;
+    }
+  }
 }

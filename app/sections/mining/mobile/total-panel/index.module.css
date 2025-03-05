@@ -1,0 +1,131 @@
+.Container {
+  padding: 32px 16px 0px;
+}
+
+.Header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.Name {
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.Panels {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.Panel {
+  position: relative;
+  width: calc(100% - 5px);
+  height: 78px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(50, 50, 50, 0.5);
+  background: rgba(27, 27, 27, 0.5);
+}
+
+.FunLike {
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  background: linear-gradient(180deg, #ffeb9c 0%, #fbca04 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.MyLike {
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.PabelLabel {
+  color: #fff;
+  font-family: Unbounded;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+
+.PanelBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-weight: 500;
+  height: 20px;
+}
+
+.Statistics {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.StatisticsItem {
+  width: 50%;
+  position: relative;
+  margin-top: 20px;
+}
+
+.StatisticsItem:nth-child(2n),
+.StatisticsItemPc:not(:nth-child(3n + 1)) {
+  padding-left: 20px;
+}
+
+.StatisticsItem:nth-child(2n):after,
+.StatisticsItemPc:not(:nth-child(3n + 1)):after {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 18px;
+  opacity: 0.5;
+  background: #fff;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+
+.StatisticsItemPc {
+  width: 33.333333%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  margin-top: 20px;
+}
+
+.StatisticsLabel {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  position: relative;
+}
+
+.StatisticsValue {
+  color: #fff;
+  font-family: Unbounded;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}

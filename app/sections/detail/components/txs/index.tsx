@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CA from "../ca";
 import styles from "./txs.module.css";
-import { formatAddressLast, httpGet } from "@/app/utils";
+import { formatAddressLast, httpGet, simplifyNum } from "@/app/utils";
 import Big from "big.js";
 import Empty from "@/app/components/empty";
+import { defaultAvatar } from "@/app/utils/config";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/context/auth";
+import { Switch } from "antd-mobile";
+import { useInterval } from "ahooks";
+import { useAccount } from "@/app/hooks/useAccount";
+import Level from "@/app/components/level/simple";
+import { usePair } from "../hooks/usePair";
 
 const addressReg = /(\w{2}).+(\w{2})/;
-const defaultAvatar = "/img/avatar.png";
-
 
 export function formatAddress(address: string) {
   if (!address) {
@@ -21,89 +27,349 @@ export function formatAddress(address: string) {
   }
 }
 
+const switchStyle = {
+  "--checked-color": "#90CD15",
+  "--width": "37px",
+  "--height": "20px",
+  "--adm-color-background": "#515B63",
+  "--adm-color-border": "#515B63"
+  // '--adm-color-text-light-solid': '#808E9A',
+};
+
+function SexSwitch({ checked, onChange }: any) {
+  return (
+    <Switch
+      checked={checked}
+      onChange={onChange}
+      style={{
+        ...switchStyle,
+        // @ts-ignore
+        "--adm-color-text-light-solid": checked ? "#fff" : "#808E9A",
+        "--checked-color": "#FBCA04"
+      }}
+    />
+  );
+}
+
+const isDevnet = process.env.NEXT_PUBLIC_NET === "Devnet";
+
 export default function Txs({ from, data }: any) {
-  const [list, setList] = useState([])
+  const [list, setList] = useState([]);
+  const router = useRouter();
+  const { address } = useAccount();
+  const { userInfo } = useAuth();
+  const [totalGreater, setTotalGreater] = useState(0);
+  const [totalMyFollowing, setTotalMyFollowing] = useState(0);
+  const [totalMyTrades, setTotalMyTrades] = useState(0);
+  const [filter, setFilter] = useState<any>({
+    1: false,
+    2: false,
+    3: false
+  });
+
+  const getData = useCallback(() => {
+    if (data && data.tokenName && data.status === 1 && data.DApp === "sexy") {
+      httpGet(
+        `/project/trade/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
+      ).then((res) => {
+        if (res.code === 0) {
+          setList(res.data.list || []);
+          setTotalGreater(res.data.total_greater || 0);
+          setTotalMyFollowing(res.data.total_my_following || 0);
+          setTotalMyTrades(res.data.total_my_trades || 0);
+        }
+      });
+    }
+
+    if (data && data.tokenName && data.status === 1 && data.DApp === "pump") {
+      httpGet(
+        `/project/trade_pump/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
+      ).then((res) => {
+        if (res.code === 0) {
+          setList(res.data.list || []);
+          setTotalGreater(res.data.total_greater || 0);
+          setTotalMyFollowing(res.data.total_my_following || 0);
+          setTotalMyTrades(res.data.total_my_trades || 0);
+        }
+      });
+    }
+  }, [data, filter]);
 
   useEffect(() => {
-    if (data && data.tokenName) {
-      console.log(data)
+    getData();
+  }, [data, filter]);
 
-      httpGet('/project/trade/list?limit=100&token_name=' + data.address).then(res => {
-        if (res.code === 0) {
-          setList(res.data.list || [])
-        }
-      })
-    }
-  }, [data])
+  useInterval(() => {
+    getData();
+  }, 3000);
+
+  const { pair } = usePair({ token: data, type: data.status === 3 ? 2 : 0 });
 
   return (
-    <div className={styles.main}>
-      <CA from={from} data={data} />
-
-      <div
-        className={`${styles.txContent} ${from === "laptop" ? styles.LaptopContent : ""
-          }`}
-      >
-
-        {
-          data.status === 1 && <>
-            <div className={styles.txTtitles}>
-              <div style={{ flex: 2 }} className={styles.titleItem}>Account</div>
-              <div className={styles.titleItem}>Type</div>
-              <div className={styles.titleItem}>SOL</div>
-              <div className={styles.titleItem}>{ data.tokenName }</div>
-              <div style={{ textAlign: 'right' }} className={styles.titleItem}>Txn</div>
-            </div>
-
-            <div className={styles.txList}>
-              {
-                list.map((item: any) => {
-                  return <div key={item.id} className={styles.item}>
-                    <div className={styles.account}>
-                      <img className={styles.avatar} src={ item.icon || defaultAvatar } />
-                      <span>{  formatAddress(item.address) }</span>
-                    </div>
-
-                    <div className={styles.type + ' ' + styles.sell}>{ item.type }</div>
-
-                    <div className={styles.value}>{ item.sol_amount && new Big(item.sol_amount).div(10 ** 9).toFixed(2) }</div>
-
-                    <div className={styles.vva}>{ item.token_amount && new Big(item.token_amount).div(10 ** 6).toFixed(2) }</div>
-
-                    <div className={styles.link} style={{ textAlign: 'right' }} onClick={() => {
-                      window.open(`https://solscan.io/tx/${item.tx_hash}?cluster=devnet`)
-                    }}>
-                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 1H2C1.44772 1 1 1.44772 1 2V12C1 12.5523 1.44772 13 2 13H7H12C12.5523 13 13 12.5523 13 12V8" stroke="#9290B1" strokeWidth="1.2" />
-                        <path d="M9 1H13V5" stroke="#9290B1" strokeWidth="1.2" />
-                        <path d="M12.9999 1L5.19995 8.8" stroke="#9290B1" strokeWidth="1.2" />
-                      </svg>
-                    </div>
-                  </div>
-                })
-              }
-
-              {(!list || list.length === 0) && <Empty height={300} text="No Data" />}
-            </div>
-          </>
-        }
-
-        {
-          data.status === 3 && <iframe
+    <div
+      className={styles.main}
+      style={{
+        backgroundColor: from === "panel" ? "transparent" : "#252328",
+        borderRadius: from === "panel" ? "10px" : "15px 15px 0 0"
+      }}
+    >
+      {data.status === 1 && (
+        <div className={styles.filter}>
+          <div
             style={{
-              height:
-                from === "laptop" ? "calc(100vh - 430px)" : "calc(100vh - 210px)"
+              display: "flex",
+              flexDirection: from === "panel" ? "row" : "column",
+              justifyContent: from === "panel" ? "space-between" : "flex-start"
             }}
-            id="dexscreener-embed"
-            title="Dexscreener Trading Chart"
-            width="100%"
-            height="800"
-            frameBorder="none"
-            src={`https://dexscreener.com/near/refv1-4276?embed=1&theme=${"dark"}&info=0&trades=1&chart=0`}
-          ></iframe>
-        }
+          >
+            {from === "panel" && (
+              <div className={styles.filterItem}>
+                <div className={styles.filterText}>Filter by</div>
+              </div>
+            )}
+            <div
+              className={styles.filterItem}
+              style={{
+                display: "flex",
+                justifyContent:
+                  from === "panel" ? "flex-start" : "space-between"
+              }}
+            >
+              <div className={styles.filterText}>
+                Filter by size
+                <img
+                  style={{ width: "26px" }}
+                  src="/img/home/solana.png"
+                />{" "}
+                0.05 ({totalGreater} trade{totalGreater > 1 ? "s" : ""})
+              </div>
+              <SexSwitch
+                checked={filter[1]}
+                onChange={() => {
+                  setFilter({
+                    ...filter,
+                    1: !filter[1]
+                  });
+                }}
+              />
+            </div>
+          </div>
 
-      </div>
+          {address && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: from === "panel" ? "row" : "column",
+                justifyContent: "flex-end",
+                gap: from === "panel" ? "30px" : "0"
+              }}
+            >
+              <div
+                className={styles.filterItem}
+                style={{
+                  justifyContent:
+                    from === "panel" ? "flex-start" : "space-between"
+                }}
+              >
+                <div className={styles.filterText}>
+                  Own trades ({totalMyTrades} trade
+                  {totalMyTrades > 1 ? "s" : ""})
+                </div>
+                <SexSwitch
+                  checked={filter[3]}
+                  onChange={() => {
+                    setFilter({
+                      ...filter,
+                      3: !filter[3],
+                      2: false
+                    });
+                  }}
+                />
+              </div>
+              <div
+                className={styles.filterItem}
+                style={{
+                  justifyContent:
+                    from === "panel" ? "flex-start" : "space-between"
+                }}
+              >
+                <div className={styles.filterText}>
+                  My following ({totalMyFollowing} trade
+                  {totalMyFollowing > 1 ? "s" : ""})
+                </div>
+                <SexSwitch
+                  checked={filter[2]}
+                  onChange={() => {
+                    setFilter({
+                      ...filter,
+                      2: !filter[2],
+                      3: false
+                    });
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {data && (
+        <div
+          className={`${styles.txContent} ${
+            from === "panel" ? styles.LaptopContent : ""
+          }`}
+        >
+          {data?.status === 1 && (
+            <>
+              <div
+                className={`${styles.txTtitles} ${
+                  from === "panel" ? styles.LaptopTitles : styles.MobileTitles
+                }`}
+              >
+                <div style={{ flex: 3 }} className={styles.titleItem}>
+                  Account
+                </div>
+                <div className={styles.titleItem}>Type</div>
+                <div className={styles.titleItem}>SOL</div>
+                <div className={styles.titleItem}>{data.tokenName}</div>
+                <div
+                  style={{ textAlign: "right" }}
+                  className={styles.titleItem}
+                >
+                  Txn
+                </div>
+              </div>
+
+              <div className={styles.txList}>
+                {list.map((item: any, index: number) => {
+                  const isSelf = item.address === userInfo?.address;
+                  return (
+                    <div
+                      key={item.tx_hash + index}
+                      className={`${styles.item}`}
+                    >
+                      <div
+                        className={`${styles.Account} ${!isSelf && "button"}`}
+                        style={{
+                          color:
+                            from === "panel"
+                              ? "#aeace1"
+                              : "rgba(169, 167, 208, 1)"
+                        }}
+                        onClick={() => {
+                          if (!isSelf)
+                            router.push(
+                              `/profile/user?account=${item.address}&from=detail`
+                            );
+                        }}
+                      >
+                        <img
+                          className={styles.avatar}
+                          src={item.icon || defaultAvatar}
+                        />
+                        <div>
+                          <span>
+                            {formatAddress(item.address)}
+                            {isSelf && (
+                              <span style={{ color: "#FBCA04" }}>(Self)</span>
+                            )}
+                          </span>
+                          {from === "panel" && <div style={{ height: 2 }} />}
+                          <Level level={item.level} />
+                        </div>
+                      </div>
+
+                      <div className={styles.type + " " + styles[item.type]}>
+                        {item.type}
+                      </div>
+
+                      <div className={styles.value}>
+                        {item.sol_amount &&
+                          simplifyNum(
+                            new Big(item.sol_amount).div(10 ** 9).toNumber()
+                          )}
+                      </div>
+
+                      <div className={styles.vva}>
+                        {item.token_amount &&
+                          simplifyNum(
+                            new Big(item.token_amount).div(10 ** 6).toNumber()
+                          )}
+                      </div>
+
+                      <div
+                        className={`${styles.link} button`}
+                        style={{ textAlign: "right" }}
+                        onClick={() => {
+                          window.open(
+                            `https://solscan.io/tx/${item.tx_hash}${
+                              isDevnet ? "?cluster=devnet" : ""
+                            }`
+                          );
+                        }}
+                      >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 14 14"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M6 1H2C1.44772 1 1 1.44772 1 2V12C1 12.5523 1.44772 13 2 13H7H12C12.5523 13 13 12.5523 13 12V8"
+                            stroke="#9290B1"
+                            strokeWidth="1.2"
+                          />
+                          <path
+                            d="M9 1H13V5"
+                            stroke="#9290B1"
+                            strokeWidth="1.2"
+                          />
+                          <path
+                            d="M12.9999 1L5.19995 8.8"
+                            stroke="#9290B1"
+                            strokeWidth="1.2"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {(!list || list.length === 0) && (
+                  <Empty height={from === "panel" ? 200 : 300} text="No Data" />
+                )}
+              </div>
+            </>
+          )}
+
+          {/* {data?.status === 3 && (
+            <iframe
+              style={{
+                height: from === "panel" ? 296 : "calc(100vh - 210px)"
+              }}
+              id="dexscreener-embed"
+              title="Dexscreener Trading Chart"
+              width="100%"
+              height="800"
+              frameBorder="none"
+              src={`https://dexscreener.com/near/refv1-4276?embed=1&theme=${"dark"}&info=0&trades=1&chart=0`}
+            ></iframe>
+          )} */}
+
+          {data?.status === 3 && pair && (
+            <iframe
+              style={{
+                height: from === "panel" ? 296 : "calc(100vh - 210px)"
+              }}
+              width="100%"
+              height="800"
+              frameBorder="none"
+              src={`https://dexscreener.com/solana/${pair}?embed=1&loadChartSettings=0&tabs=0&info=0&chartLeftToolbar=0&chartTheme=dark&theme=dark&chartStyle=0&chartType=usd&interval=3&chart=0`}
+            ></iframe>
+          )}
+        </div>
+      )}
     </div>
   );
 }
