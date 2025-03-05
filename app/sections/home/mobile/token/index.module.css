@@ -15,6 +15,16 @@
   width: 100%;
 }
 
+.TopBg {
+  width: 100vw;
+  height: 50px;
+  background: "linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0) 81%)";
+  position: absolute;
+  top: 48px;
+  left: 0px;
+  z-index: 3;
+}
+
 .BottomBg {
   width: 100vw;
   height: 175px;
@@ -43,5 +53,19 @@
   width: 100%;
   height: 100%;
   position: relative;
+  z-index: 5;
+}
+
+.SpecFrame {
+  position: absolute;
+  width: 100%;
+  height: calc(100% - 46px);
+  z-index: 1;
+}
+
+.TokenContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
   z-index: 5;
 }
