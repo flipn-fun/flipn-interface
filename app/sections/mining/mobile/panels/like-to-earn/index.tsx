@@ -7,9 +7,11 @@ import Popover, {
   PopoverPlacement,
   PopoverTrigger
 } from "@/app/components/popover";
+import { useUserAgent } from "@/app/context/user-agent";
 
 export default function LikeToEarn({ info, userInfo }: any) {
   const router = useRouter();
+  const { isMobile } = useUserAgent();
   const remainingNum = useMemo(
     () => userInfo?.like_num - userInfo?.using_like_num,
     [userInfo]
@@ -39,7 +41,7 @@ export default function LikeToEarn({ info, userInfo }: any) {
                   per day.
                 </div>
               }
-              trigger={PopoverTrigger.Hover}
+              trigger={isMobile ? PopoverTrigger.Click : PopoverTrigger.Hover}
               placement={PopoverPlacement.Top}
               closeDelayDuration={0}
             >

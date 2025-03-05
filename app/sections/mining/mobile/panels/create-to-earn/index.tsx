@@ -9,10 +9,12 @@ import Popover, {
   PopoverTrigger
 } from "@/app/components/popover";
 import dayjs from "dayjs";
+import { useUserAgent } from "@/app/context/user-agent";
 
 export default function CreateToEarn({ airdropEndTime, info }: any) {
   const { userInfo } = useAuth();
   const router = useRouter();
+  const { isMobile } = useUserAgent();
 
   return (
     <div
@@ -38,7 +40,7 @@ export default function CreateToEarn({ airdropEndTime, info }: any) {
                   30% integral amplification for the first creation
                 </div>
               }
-              trigger={PopoverTrigger.Hover}
+              trigger={isMobile ? PopoverTrigger.Click : PopoverTrigger.Hover}
               placement={PopoverPlacement.Top}
               closeDelayDuration={0}
             >
