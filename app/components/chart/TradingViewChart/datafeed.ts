@@ -121,7 +121,7 @@ const datafeed: (
 
       const { data = [], hasNextPage } = await fetchData(
         address,
-        getGranularityByResolution(resolution),
+        ["1", "5"].includes(resolution) ? Number(resolution) * 60 : 5 * 60,
         pageRef.current
       );
 
