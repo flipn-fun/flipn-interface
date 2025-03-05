@@ -18,9 +18,9 @@
 .TopBg {
   width: 100vw;
   height: 50px;
-  background: "linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0) 81%)";
+  background: linear-gradient(to bottom, #000, rgba(0, 0, 0, 0));
   position: absolute;
-  top: 48px;
+  top: 46px;
   left: 0px;
   z-index: 3;
 }
