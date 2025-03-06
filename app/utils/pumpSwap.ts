@@ -27,7 +27,6 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
             tokenAccountInfo = await connection.getAccountInfo(tokenAccountAddress);
         } catch (e) { }
 
-
         let tokenAccount: PublicKey;
         if (!tokenAccountInfo) {
             txBuilder.add(
@@ -45,16 +44,10 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
         const solInLamports = solIn * LAMPORTS_PER_SOL;
 
-        // const tokenOut = Math.floor(solInLamports * coinData["virtual_token_reserves"] / coinData["virtual_sol_reserves"]);
-        const tokenOut = new Big(solInLamports).mul(virtualTokenReserves).div(virtualSolReserves).minus(10 ** 6).toFixed(0, 0);
+        const tokenOut = new Big(solInLamports).mul(1 - 0.01).mul(virtualTokenReserves).div(virtualSolReserves).toFixed(0, 0);
 
-        // const _tokenOut = Math.floor(tokenOut);
         const maxSolCost = Math.floor(solInLamports * (1 + slippageDecimal));
 
-        // console.log('tokenOut:', tokenOut, 34649670000, Math.floor(solInLamports * (1 + slippageDecimal)), 1010000)
-
-        // const _tokenOut = 34649670000;
-        // const maxSolCost = 1010000;
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
         // const BONDING_CURVE = new PublicKey(coinData['bonding_curve']);
@@ -133,7 +126,7 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
             tokenAccount = tokenAccountAddress;
         }
 
-        const minSolOutput = Math.floor(tokenBalance! * (1 - slippageDecimal) * virtualSolReserves / virtualTokenReserves);
+        const minSolOutput = new Big(tokenBalance).mul(1 - slippageDecimal).mul(virtualSolReserves).div(virtualTokenReserves).mul(1 - 0.01).toFixed(0, 0);
 
         const keys = [
             { pubkey: GLOBAL, isSigner: false, isWritable: false },
