@@ -52,7 +52,7 @@ export default function LaunchesStatus({ data }: any) {
           )}
         </div>
         <div className={styles.priceUnitSol}>
-          <div><ZeroFormat value={data.price} /> SOL</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 5 }}><ZeroFormat value={data.price} /> SOL</div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: 9, fontWeight: 300, color: "#9290B1", }}>$<ZeroFormat value={Number(config.SolPrice) * Number(data.price)} /></div>
         </div>
       </div>
