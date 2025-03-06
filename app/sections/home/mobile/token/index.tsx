@@ -15,6 +15,7 @@ import LikeToEarn from "./like-to-earn";
 import { useState, useRef } from "react";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useHome } from "../context";
+import SpecFrame from "../../spec-frame";
 
 export default function Token({
   isCurrent,
@@ -42,108 +43,116 @@ export default function Token({
           ...style
         }}
       >
-        {token?.icon && (
-          <div
-            className={styles.Bg}
-            style={{ backgroundImage: `url(${token.icon})` }}
-          />
-        )}
         {token?.id && (
           <div className={styles.Content}>
-            <div className={styles.BottomBg} />
-            {token.status === 0 && !isPreview && <LikeToEarn token={token} />}
-            <Media
-              imgHeight="100%"
-              data={token}
-              mediaId={mediaId || token.id}
-              videoProgressStyle={
-                isCurrent ? { position: "fixed", left: 16, bottom: 72 } : null
-              }
-            />
-            <div className={styles.Bottom}>
-              {isCurrent && <Danmaku id={token.id} />}
-
-              {token.status === 0 ? (
-                !token.isSuperLike ? (
-                  <Flip
-                    token={token}
-                    onSuccess={(params: any) => {
-                      onUpdate?.({ ...token, ...params }, "flip");
-                    }}
-                    onClick={() => {
-                      if (isPreview) return;
-                      if (!window.sexAddress) {
-                        window.connect();
-                        return;
-                      }
-                      setShowFlipModal(true);
-                    }}
-                    id={isCurrent ? "guid-tour-flip" : token.id}
-                  />
-                ) : (
-                  <Flipped token={token} />
-                )
-              ) : (
-                dataAvailable && (
-                  <Trade
-                    token={token}
-                    isCurrent={isCurrent}
-                    onClick={() => {
-                      if (isPreview) return;
-                      if (!window.sexAddress) {
-                        window.connect();
-                        return;
-                      }
-
-                      setShowTradeModal(true);
-                    }}
-                  />
-                )
-              )}
-              <div className={styles.Desc} ref={descContentRef}>
-                <Desc token={token} />
-              </div>
-            </div>
-            {dataAvailable && (
-              <Actions
-                token={token}
-                onClick={(type: any, params: any) => {
-                  if (isPreview) return;
-                  if (type === "comments") {
-                    setShowCommentsModal(true);
-                    return;
-                  }
-
-                  if (type === "detail") {
-                    goDetail(token, params);
-                    return;
-                  }
-
-
-                  if (!window.sexAddress) {
-                    window.connect();
-                    return;
-                  }
-                  if (type === "flip") {
-                    setShowFlipModal(true);
-                  }
-                  if (type === "trade") {
-                    setShowTradeModal(true);
-                  }
-                }}
-                onSuccess={(type: string) => {
-                  if (type === "launched_like") {
-                    token.is_launched_like = true;
-                    token.launched_like = token.launched_like + 1;
-                  }
-                  onUpdate?.(token, type);
-                }}
-                isCurrent={isCurrent}
-                isPreview={isPreview}
-                isPreviewNoOpacity={isPreviewNoOpacity}
-                disabled={isPreview}
+            {!!token.boost_time && (
+              <SpecFrame
+                className={styles.SpecFrame}
+                width={innerWidth}
+                height={innerHeight}
+                id={token.id}
               />
             )}
+            <div className={styles.TokenContent}>
+              <div
+                className={styles.Bg}
+                style={{ backgroundImage: `url(${token.icon})` }}
+              />
+              <div className={styles.TopBg} />
+              <div className={styles.BottomBg} />
+              {token.status === 0 && !isPreview && <LikeToEarn token={token} />}
+              <Media
+                imgHeight="100%"
+                data={token}
+                mediaId={mediaId || token.id}
+                videoProgressStyle={
+                  isCurrent ? { position: "fixed", left: 16, bottom: 72 } : null
+                }
+              />
+              <div className={styles.Bottom}>
+                {isCurrent && <Danmaku id={token.id} />}
+
+                {token.status === 0 ? (
+                  !token.isSuperLike ? (
+                    <Flip
+                      token={token}
+                      onSuccess={(params: any) => {
+                        onUpdate?.({ ...token, ...params }, "flip");
+                      }}
+                      onClick={() => {
+                        if (isPreview) return;
+                        if (!window.sexAddress) {
+                          window.connect();
+                          return;
+                        }
+                        setShowFlipModal(true);
+                      }}
+                      id={isCurrent ? "guid-tour-flip" : token.id}
+                    />
+                  ) : (
+                    <Flipped token={token} />
+                  )
+                ) : (
+                  dataAvailable && (
+                    <Trade
+                      token={token}
+                      isCurrent={isCurrent}
+                      onClick={() => {
+                        if (isPreview) return;
+                        if (!window.sexAddress) {
+                          window.connect();
+                          return;
+                        }
+
+                        setShowTradeModal(true);
+                      }}
+                    />
+                  )
+                )}
+                <div className={styles.Desc} ref={descContentRef}>
+                  <Desc token={token} />
+                </div>
+              </div>
+              {dataAvailable && (
+                <Actions
+                  token={token}
+                  onClick={(type: any, params: any) => {
+                    if (isPreview) return;
+                    if (type === "comments") {
+                      setShowCommentsModal(true);
+                      return;
+                    }
+
+                    if (type === "detail") {
+                      goDetail(token, params);
+                      return;
+                    }
+
+                    if (!window.sexAddress) {
+                      window.connect();
+                      return;
+                    }
+                    if (type === "flip") {
+                      setShowFlipModal(true);
+                    }
+                    if (type === "trade") {
+                      setShowTradeModal(true);
+                    }
+                  }}
+                  onSuccess={(type: string) => {
+                    if (type === "launched_like") {
+                      token.is_launched_like = true;
+                      token.launched_like = token.launched_like + 1;
+                    }
+                    onUpdate?.(token, type);
+                  }}
+                  isCurrent={isCurrent}
+                  isPreview={isPreview}
+                  isPreviewNoOpacity={isPreviewNoOpacity}
+                  disabled={isPreview}
+                />
+              )}
+            </div>
           </div>
         )}
       </div>

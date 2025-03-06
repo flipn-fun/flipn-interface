@@ -6,12 +6,15 @@ import VideoPlayer from "@/app/components/video";
 import { isVideoFile } from "@/app/utils/common";
 import clsx from "clsx";
 import LastKing from "./last-king";
+import BlueChipBg from "./blue-chip-bg";
+import BlueChipIcon from "./blue-chip-icon";
 
 export default function TokenIcon({
   token,
   onClick = () => {},
   className,
-  isPlayButton
+  isPlayButton,
+  style
 }: any) {
   const progress = useMemo(() => {
     if (token.status === 3) return 0;
@@ -25,65 +28,73 @@ export default function TokenIcon({
       className={clsx(styles.Container, className, "button")}
       onClick={onClick}
       style={{
+        ...style,
         width: token.status === 3 ? 44 : 50,
         height: token.status === 3 ? 44 : 50,
         backgroundColor: token.status === 3 ? "#fff" : "#00000099"
       }}
     >
-      {!!progress && (
-        <svg
-          width="48"
-          height="48"
-          viewBox="0 0 48 48"
-          className={styles.Progress}
-        >
-          <circle
-            cx="24"
-            cy="24"
-            r="22"
-            fill="none"
-            stroke={token.status === 0 ? "#FF2681" : "#C9FF5D"}
-            strokeWidth="2"
-            strokeDasharray={`${progress}, 138.23`}
-            strokeLinecap="round"
-            transform="rotate(-90 24 24)"
-          />
-        </svg>
+      {!!token.boost_time && (
+        <>
+          <BlueChipBg className={styles.BlueChipBg} />
+          <BlueChipIcon className={styles.BlueChipIcon} />
+        </>
       )}
-      {isVideoFile(token?.icon) ? (
-        <VideoPlayer
-          key={token.icon}
-          id={token.id}
-          src={token.icon}
-          type={getVideoExt(token.icon)}
-          className={styles.Icon}
-          token={token}
-          mediaId={token.id}
-          style={{
-            borderRadius: 20
-          }}
-        />
-      ) : (
-        <div className={styles.IconImgContainer}>
-          <img
-            src={token?.icon || "/img/token-placeholder.png"}
+
+      <div className={styles.Content}>
+        {!!progress && (
+          <svg
+            width="48"
+            height="48"
+            viewBox="0 0 48 48"
+            className={styles.Progress}
+          >
+            <circle
+              cx="24"
+              cy="24"
+              r="22"
+              fill="none"
+              stroke={token.status === 0 ? "#FF2681" : "#C9FF5D"}
+              strokeWidth="2"
+              strokeDasharray={`${progress}, 138.23`}
+              strokeLinecap="round"
+              transform="rotate(-90 24 24)"
+            />
+          </svg>
+        )}
+        {isVideoFile(token?.icon) ? (
+          <VideoPlayer
+            key={token.icon}
+            id={token.id}
+            src={token.icon}
+            type={getVideoExt(token.icon)}
             className={styles.Icon}
-            loading="lazy"
+            token={token}
+            mediaId={token.id}
+            style={{
+              borderRadius: 20
+            }}
           />
-          {isPlayButton && isVideoFile(token?.video) && (
-            <div className={styles.IconImgPlay}>
-              <img
-                src="/img/icon-play.svg"
-                alt=""
-                className={styles.IconImgPlayButton}
-              />
-            </div>
-          )}
-        </div>
-      )}
-      {
-        token.is_king && (
-          token.ranking === 1 ? (
+        ) : (
+          <div className={styles.IconImgContainer}>
+            <img
+              src={token?.icon || "/img/token-placeholder.png"}
+              className={styles.Icon}
+              loading="lazy"
+            />
+            {isPlayButton && isVideoFile(token?.video) && (
+              <div className={styles.IconImgPlay}>
+                <img
+                  src="/img/icon-play.svg"
+                  alt=""
+                  className={styles.IconImgPlayButton}
+                />
+              </div>
+            )}
+          </div>
+        )}
+        {token.is_king &&
+          (token.ranking === 1 ? (
             <div className={styles.King}>
               👑
               <Image
@@ -96,9 +107,8 @@ export default function TokenIcon({
             </div>
           ) : (
             <LastKing className={styles.LastKing} id={token.id} />
-          )
-        )
-      }
+          ))}
+      </div>
     </div>
   );
 }
