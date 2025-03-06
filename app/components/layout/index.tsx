@@ -45,7 +45,7 @@ export default function Layout(props: any) {
           Date.now() + AIRDROP_STAGE.PREVIEW.endTime >
             res.data.AirdropStartTime;
 
-        const airdropReady = Date.now() > res.data.AirdropStartTime;
+        const airdropReady = res.data.AirdropStartTime && (Date.now() > res.data.AirdropStartTime);
 
         configStore.set({
           config: {
