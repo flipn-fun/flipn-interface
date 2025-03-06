@@ -50,7 +50,7 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
         const tokenOut = new Big(solInLamports).mul(virtualTokenReserves).div(virtualSolReserves).toFixed(0, 0);
         const maxSolCost = new Big(solInLamports).mul(1 + slippageDecimal).mul(1 + 0.01).toFixed(0, 0);
 
-
+        console.log('maxSolCost:', maxSolCost, maxSolCost)
 
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
