@@ -48,7 +48,7 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
         const maxSolCost = Math.floor(solInLamports * (1 + slippageDecimal));
 
-        
+
 
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
