@@ -73,7 +73,7 @@ function UserItem({ item, type }: any) {
 
         <div className={styles.userInfo}>
           <div className={styles.userName}>
-            <span>{item.name ? item.name : formatAddress(item.address)}</span>
+            <span>{item.name ? item.name.length > 8 ? formatAddress(item.address) : item.name : formatAddress(item.address)}</span>
             <Level level={item.level} />
           </div>
           <div className={styles.followers}>

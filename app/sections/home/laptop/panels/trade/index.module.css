@@ -20,7 +20,7 @@
 
 .DataWrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .MarketCapWrapper {
