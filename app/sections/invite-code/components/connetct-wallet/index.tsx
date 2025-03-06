@@ -21,6 +21,7 @@ const InviteCodeConnectWallet: React.FC<any> = (props) => {
   const { accountRefresher } = useAuth();
 
   const loopTimer = useRef<any>(null);
+  const currentBannerIndex = useRef<any>(null);
   const [banner, setBanner] = useState<any>();
 
   const { run: setBannerDelay } = useDebounceFn((_banner: any) => {
@@ -32,10 +33,11 @@ const InviteCodeConnectWallet: React.FC<any> = (props) => {
       const getNext = (cb: any) => {
         const nextIndex = getNextIndex();
         const next = LoginBannerList[nextIndex];
-        if (!next || next.key === banner?.key) {
+        if (!next || nextIndex === currentBannerIndex.current) {
           getNext(cb);
           return;
         }
+        currentBannerIndex.current = nextIndex;
         cb(next);
       };
 
