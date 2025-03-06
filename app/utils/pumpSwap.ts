@@ -4,6 +4,7 @@ import { createTransaction, sendAndConfirmTransactionWrapper, bufferFromUInt64 }
 import { GLOBAL, FEE_RECIPIENT, SYSTEM_PROGRAM_ID, RENT, PUMP_FUN_ACCOUNT, PUMP_FUN_PROGRAM, ASSOC_TOKEN_ACC_PROG } from '@/app/utils/config';
 import { Idl, Program } from '@coral-xyz/anchor';
 import IDL from '@/app/hooks/pump.json';
+import Big from 'big.js';
 
 export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any) {
     try {
@@ -45,11 +46,15 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
         const solInLamports = solIn * LAMPORTS_PER_SOL;
 
         // const tokenOut = Math.floor(solInLamports * coinData["virtual_token_reserves"] / coinData["virtual_sol_reserves"]);
-        const tokenOut = Math.floor(solInLamports * virtualTokenReserves / virtualSolReserves);
+        const tokenOut = new Big(solInLamports).mul(virtualTokenReserves).div(virtualSolReserves).minus(10 ** 6).toFixed(0, 0);
 
-
-        const _tokenOut = Math.floor(tokenOut);
+        // const _tokenOut = Math.floor(tokenOut);
         const maxSolCost = Math.floor(solInLamports * (1 + slippageDecimal));
+
+        // console.log('tokenOut:', tokenOut, 34649670000, Math.floor(solInLamports * (1 + slippageDecimal)), 1010000)
+
+        // const _tokenOut = 34649670000;
+        // const maxSolCost = 1010000;
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
         // const BONDING_CURVE = new PublicKey(coinData['bonding_curve']);
@@ -72,7 +77,7 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
         const data = Buffer.concat([
             bufferFromUInt64("16927863322537952870"),
-            bufferFromUInt64(_tokenOut),
+            bufferFromUInt64(tokenOut),
             bufferFromUInt64(maxSolCost)
         ]);
 
