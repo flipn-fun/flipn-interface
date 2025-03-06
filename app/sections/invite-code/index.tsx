@@ -43,6 +43,11 @@ const InviteCodeView: React.FC<any> = (props) => {
     }
   }, [airdropUserData, pathname]);
 
+  useEffect(() => {
+    // Close the login modal
+    window.connect?.();
+  }, []);
+
   return (
     <div className={isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop}>
       {

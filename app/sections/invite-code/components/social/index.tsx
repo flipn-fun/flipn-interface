@@ -8,13 +8,18 @@ const Social: React.FC<any> = (props) => {
 
   return (
     <div className={clsx(styles.SocialContainer, className)}>
-      {
-        Links.map((item, index) => (
-          <a key={index} target="_blank" href={item.href} className={styles.SocialItem} rel="nofollow">
-            <img src={item.icon} alt="" className={styles.SocialItemIcon} />
-          </a>
-        ))
-      }
+      <div className={styles.SocialItemBuilt}>
+        Build on Solana
+      </div>
+      <div className={styles.SocialLinks}>
+        {
+          Links.map((item, index) => (
+            <a key={index} target="_blank" href={item.href} className={styles.SocialItem} rel="nofollow">
+              <img src={item.icon} alt="" className={styles.SocialItemIcon} />
+            </a>
+          ))
+        }
+      </div>
     </div>
   );
 };
