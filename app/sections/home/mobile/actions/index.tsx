@@ -44,6 +44,7 @@ export default function Actions({
           onClick={() => {
             onClick("detail");
           }}
+          showBlueChip={true}
         />
       ) : (
         <TipsButton tips="Details">
@@ -52,6 +53,7 @@ export default function Actions({
             onClick={() => {
               onClick("detail");
             }}
+            showBlueChip={true}
           />
         </TipsButton>
       )}

@@ -89,8 +89,8 @@
 
 .BlueChipBg {
   position: absolute;
-  left: -50%;
-  top: -50%;
+  left: calc(-50% - 6px);
+  top: calc(-50% - 10px);
   z-index: 2;
 }
 

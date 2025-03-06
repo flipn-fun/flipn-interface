@@ -12,7 +12,7 @@ export default function Summary({ data, showAddress, from }: any) {
   return (
     <div className={styles.tokenSummary}>
       <div className={styles.tokenSummaryContent}>
-        <TokenIcon token={data} />
+        <TokenIcon token={data} showBlueChip={from !== "panel"} />
         <div className={styles.tokenSummaryInfo}>
           <div className={styles.tokenSummaryTitle}>{data.tokenName}</div>
           <div className={styles.tokenSummaryDesc}>
