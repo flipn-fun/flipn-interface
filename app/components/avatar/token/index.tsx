@@ -29,10 +29,7 @@ export default function TokenIcon({
       className={clsx(styles.Container, className, "button")}
       onClick={onClick}
       style={{
-        ...style,
-        width: token.status === 3 ? 44 : 50,
-        height: token.status === 3 ? 44 : 50,
-        backgroundColor: token.status === 3 ? "#fff" : "#00000099"
+        ...style
       }}
     >
       {!!token.boost_time && showBlueChip && (
@@ -42,7 +39,14 @@ export default function TokenIcon({
         </>
       )}
 
-      <div className={styles.Content}>
+      <div
+        className={styles.Content}
+        style={{
+          width: token.status === 3 ? 44 : 50,
+          height: token.status === 3 ? 44 : 50,
+          backgroundColor: token.status === 3 ? "#fff" : "#00000099"
+        }}
+      >
         {!!progress && (
           <svg
             width="48"
