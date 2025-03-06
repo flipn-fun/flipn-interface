@@ -33,8 +33,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
       { wait: 2000 }
     );
 
-  const getAirdropData = async () => {
-    setAirdropDataLoading(true);
+  const getAirdropData = async (params?: { isLoading?: boolean; }) => {
+    const { isLoading = true } = params ?? {};
+    isLoading && setAirdropDataLoading(true);
     const res = await httpAuthGet("/airdrop/data");
     if (res.code !== 0) {
       setAirdropDataLoading(false);
@@ -72,7 +73,8 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     <AirdropContext.Provider
       value={{
         airdropUserData,
-        airdropDataLoading
+        airdropDataLoading,
+        getAirdropData
       }}
     >
       {children}
@@ -96,4 +98,5 @@ interface IAirdropContext {
     allow_login: boolean;
   };
   airdropDataLoading: boolean;
+  getAirdropData(params?: { isLoading?: boolean; }): Promise<void>;
 }

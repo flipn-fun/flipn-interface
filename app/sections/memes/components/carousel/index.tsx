@@ -18,6 +18,8 @@ interface CarouselProps {
   className?: string;
   data: any[];
   duration?: number;
+  holders?: Record<string, number>;
+  holdersLoading?: Record<string, boolean>;
 }
 
 const isVideoFile = (url: string) => {
@@ -81,7 +83,9 @@ const MediaItem = ({ item, onLoad }: { item: any; onLoad?: () => void; }) => {
 const Carousel: React.FC<CarouselProps> = ({
   className,
   data,
-  duration = 10000
+  duration = 10000,
+  holders,
+  holdersLoading,
 }) => {
   const router = useRouter();
   const { isMobile } = useUserAgent();
@@ -230,7 +234,11 @@ const Carousel: React.FC<CarouselProps> = ({
                           value={(item.kind === "Hot" ? item.launched_like : item.like) || 0}
                         />
                       )}
-                      <SummaryItem type="user" value={item.holder} />
+                      <SummaryItem
+                        type="user"
+                        value={holders?.[item.address]}
+                        loading={holdersLoading?.[item.address]}
+                      />
                     </div>
                     <div
                       className={clsx(
@@ -241,7 +249,7 @@ const Carousel: React.FC<CarouselProps> = ({
                       )}
                     >
                       <div className={styles.CarouselMarketCapTop}>
-                        <div className={styles.CarouselMarketCapValue}>
+                        <div className={Big(item?.market_cap_24h_usd || 0).gte(0) ? styles.CarouselMarketCapValue : styles.CarouselMarketCapValueDown}>
                           <div>
                             {numberFormatter(item?.market_cap, 1, true, {
                               prefix: "$",
@@ -249,14 +257,16 @@ const Carousel: React.FC<CarouselProps> = ({
                               isShortUppercase: true
                             })}
                           </div>
-                          <div className={styles.CarouselMarketCapChange}>
+                          <div
+                            className={Big(item?.market_cap_24h_usd || 0).gte(0) ? styles.CarouselMarketCapChange : styles.CarouselMarketCapChangeDown}
+                          >
                             {
                               Big(item?.market_cap_24h_usd || 0).gte(0)
                                 ? "+"
                                 : "-"
                             }
                             {numberFormatter(
-                              item?.market_cap_24h_usd,
+                              Math.abs(item?.market_cap_24h_usd || 0),
                               2,
                               true,
                               {

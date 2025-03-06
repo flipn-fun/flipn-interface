@@ -27,7 +27,7 @@ const MemesView = (props: any) => {
         {isMobile && (
           <PageHeader from="memes" style={{ position: "static" }} title="" />
         )}
-        <Carousel data={carouselData} />
+        <Carousel data={carouselData} holders={data.memesListHolders} holdersLoading={data.memesListHoldersLoading} />
         <MemesTabs />
       </div>
     </MemesContext.Provider>

@@ -125,7 +125,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
           }
         ]
       }).then((res) => {
-        const holders = res?.length || 0;
+        const holders = res?.filter?.((it: any) => Big(it.account?.data?.parsed?.info?.tokenAmount?.amount ?? 0).gt(0))?.length || 0;
         setMemesListHolders({ [address]: holders });
         resolve(holders);
       }).catch((err) => {
