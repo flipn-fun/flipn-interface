@@ -4,7 +4,10 @@ import { ProgressBar } from "antd-mobile";
 import ZeroFormat from "@/app/components/zeroFomat";
 import Big from "big.js";
 import { numberFormatter } from "@/app/utils/common";
+import { useConfig } from "@/app/store/useConfig";
 export default function LaunchesStatus({ data }: any) {
+  const { config }: any = useConfig();
+
   return (
     <div className={styles.panel}>
       {data.status === 1 && (
@@ -48,7 +51,10 @@ export default function LaunchesStatus({ data }: any) {
             </div>
           )}
         </div>
-        <div className={styles.priceUnit}>$<ZeroFormat value={data.price} /> </div>
+        <div className={styles.priceUnitSol}>
+          <div><ZeroFormat value={data.price} /> SOL</div>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", fontSize: 9, fontWeight: 300, color: "#9290B1", }}>$<ZeroFormat value={Number(config.SolPrice) * Number(data.price)} /></div>
+        </div>
       </div>
     </div>
   );
