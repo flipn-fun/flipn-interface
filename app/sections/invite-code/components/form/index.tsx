@@ -71,7 +71,8 @@ const InviteCodeForm: React.FC<any> = (props) => {
     const timer = setTimeout(async () => {
       clearTimeout(timer);
       await getAirdropData?.({ isLoading: false });
-      router.replace('/');
+      const redirectTarget = searchParams.get("redirect");
+      router.replace(redirectTarget || "/");
       setStartLoading(false);
     }, 300);
   };
