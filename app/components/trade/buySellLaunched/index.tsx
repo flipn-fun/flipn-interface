@@ -382,6 +382,7 @@ export default function BuySellLaunched({
             >
               <div className={styles.inputArea}>
                 <input
+                  placeholder="Enter a amount"
                   value={valInput}
                   onChange={(e) => {
                     setValInput(e.target.value);

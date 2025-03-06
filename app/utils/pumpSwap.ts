@@ -6,7 +6,6 @@ import { Idl, Program } from '@coral-xyz/anchor';
 import IDL from '@/app/hooks/pump.json';
 
 export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any) {
-    
     try {
         
         const { virtualTokenReserves, virtualSolReserves, bondingCurve, associatedBondingCurve } = await getCoinData(mintStr, connection)
@@ -178,21 +177,9 @@ export async function getCoinData(mintStr: string, connection: Connection) {
     });
 
     const mintAddressPublicKey = new PublicKey(mintStr)
-
     const bondingCurve = getBondingCurveAddress(mintAddressPublicKey);
-
     const associatedBondingCurve = getAssociatedBondingCurveAddress(bondingCurve, mintAddressPublicKey);
-
     const accountData: any = await program.account.bondingCurve.fetch(bondingCurve);
-
-    // @ts-ignore
-    console.log('accountData:', 
-        accountData, 
-        accountData.virtualSolReserves.toNumber(), 
-        accountData.virtualTokenReserves.toNumber(), 
-        bondingCurve.toBase58(), 
-        associatedBondingCurve.toBase58()
-    )
 
     return {
         bondingCurve,

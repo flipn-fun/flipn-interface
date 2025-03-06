@@ -37,7 +37,7 @@ export default function Desc({
   const userName = useMemo(() => {
     if (data?.creater) {
       if (data.creater.name) {
-        return data.creater.name;
+        return data.creater.name.length > 8 ? formatAddress(data.creater.address) : data.creater.name;
       }
 
       if (data.creater.address) {
@@ -330,7 +330,7 @@ export default function Desc({
         )}
       </div>
 
-      {data.status! === 1 &&
+      {data.status! === 1 && data.DApp === 'sexy' &&
         ((from === "panel" && data.kingProgress) || from !== "panel") && (
           <div
             className={styles.singleProgress}

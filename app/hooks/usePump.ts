@@ -15,14 +15,6 @@ export default function usePump({ tokenAddress }: Props) {
   const { connection } = useConnection();
   const { walletProvider } = useAccount();
 
-  // const program = useMemo(() => {
-  //   return new Program(IDL as Idl, PUMP_FUN_PROGRAM, {
-  //     connection
-  //   });
-  // }, [connection]);
-
-
-  
 
   const buy = useCallback(
     async (amount: number, slippageDecimal: number) => {
