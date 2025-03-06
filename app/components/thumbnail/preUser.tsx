@@ -149,7 +149,7 @@ function UserItem({ item, type }: any) {
               ? new Big(item.buy_amount)
                   .div(1 - 0.015)
                   .div(10 ** 9)
-                  .toString()
+                  .toFixed(2, 0)
               : 0}{" "}
             SOL
           </span>
