@@ -15,6 +15,7 @@ import LikeToEarn from "./like-to-earn";
 import { useState, useRef } from "react";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useHome } from "../context";
+import useHolders from "@/app/sections/home/mobile/hooks/use-holders";
 
 export default function Token({
   isCurrent,
@@ -32,6 +33,7 @@ export default function Token({
   const [showTradeModal, setShowTradeModal] = useState(false);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const { goDetail } = useHome();
+  const { total: totalHolders } = useHolders(token, dataAvailable);
 
   return (
     <>
@@ -119,7 +121,6 @@ export default function Token({
                     return;
                   }
 
-
                   if (!window.sexAddress) {
                     window.connect();
                     return;
@@ -142,6 +143,7 @@ export default function Token({
                 isPreview={isPreview}
                 isPreviewNoOpacity={isPreviewNoOpacity}
                 disabled={isPreview}
+                totalHolders={totalHolders}
               />
             )}
           </div>
