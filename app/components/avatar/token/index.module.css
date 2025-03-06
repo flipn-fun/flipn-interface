@@ -4,6 +4,9 @@
   border-radius: 50%;
   position: relative;
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .Content {
@@ -89,8 +92,8 @@
 
 .BlueChipBg {
   position: absolute;
-  left: calc(-50% - 6px);
-  top: calc(-50% - 10px);
+  left: -50%;
+  top: -50%;
   z-index: 2;
 }
 
