@@ -1,12 +1,22 @@
+import { motion } from "framer-motion";
+
 export default function BlueChipBg({ id, className }: any) {
   return (
-    <svg
+    <motion.svg
       xmlns="http://www.w3.org/2000/svg"
       width="102"
       height="102"
       viewBox="0 0 102 102"
       fill="none"
       className={className}
+      animate={{
+        rotateZ: 180
+      }}
+      transition={{
+        duration: 2,
+        ease: "linear",
+        repeat: Infinity
+      }}
     >
       <path
         fillRule="evenodd"
@@ -27,6 +37,6 @@ export default function BlueChipBg({ id, className }: any) {
           <stop offset="1" stopColor="#FBCA04" stopOpacity="0" />
         </radialGradient>
       </defs>
-    </svg>
+    </motion.svg>
   );
 }

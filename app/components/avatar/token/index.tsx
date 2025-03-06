@@ -14,7 +14,8 @@ export default function TokenIcon({
   onClick = () => {},
   className,
   isPlayButton,
-  style
+  style,
+  showBlueChip = false
 }: any) {
   const progress = useMemo(() => {
     if (token.status === 3) return 0;
@@ -34,7 +35,7 @@ export default function TokenIcon({
         backgroundColor: token.status === 3 ? "#fff" : "#00000099"
       }}
     >
-      {!!token.boost_time && (
+      {!!token.boost_time && showBlueChip && (
         <>
           <BlueChipBg className={styles.BlueChipBg} />
           <BlueChipIcon className={styles.BlueChipIcon} />
