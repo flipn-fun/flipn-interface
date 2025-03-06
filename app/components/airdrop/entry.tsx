@@ -49,7 +49,7 @@ const AirdropEntry = (props: any) => {
     // not connected wallet
     setConnectVisibleDelayCancel();
     if (!address || !accountRefresher) {
-      setConnectVisibleDelay();
+      // setConnectVisibleDelay();
       return false;
     }
     if (address.toString() === search.get("referral")) return false;
@@ -63,7 +63,8 @@ const AirdropEntry = (props: any) => {
   }, [isMobile, pathname, airdropVisible]);
 
   useEffect(() => {
-    setAirdropVisible(isAirdrop);
+    // TODO disable the automatic pop-up of the airdrop window temporarily
+    // setAirdropVisible(isAirdrop);
   }, [isAirdrop]);
 
   useEffect(() => {

@@ -149,7 +149,7 @@ export const useProjects = create(
             });
           }
 
-          if (Date.now() - item.fetched_time > 5 * 60 * 1000) {
+          if (Date.now() - item.fetched_time > 1 * 60 * 1000) {
             needUpdateProjects.push(item.id);
           }
         });
