@@ -17,7 +17,7 @@ interface Props {
   isBigIcon?: boolean;
   id?: string;
   onClick: () => void;
-  actionChildren?: React.ReactNode;
+  actionChildren?: any;
   content?: React.ReactNode;
   onHide?: () => void;
   onSuccess?(): void;
@@ -127,7 +127,7 @@ export default function SmokeBtn({
     <>
       {actionChildren ? (
         <div className="button" onClick={onButtonClick}>
-          {actionChildren}
+          {typeof actionChildren === "function" ? actionChildren({ disabled: isDisabled }) : actionChildren}
         </div>
       ) : (
         <SmokeButton

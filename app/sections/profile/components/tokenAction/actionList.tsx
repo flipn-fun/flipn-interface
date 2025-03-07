@@ -66,9 +66,10 @@ export default function ActionList(props: Props) {
                     )
                   ) : (
                     <SmokeHot
-                      actionChildren={
+                      actionChildren={(_params: any) => (
                         <button
                           className={`${styles.ActionBtn} ${styles.ProfileFlip} button`}
+                          disabled={_params.disabled}
                         >
                           <img
                             src="/img/profile/icon-flip.svg"
@@ -78,7 +79,7 @@ export default function ActionList(props: Props) {
                           />
                           <span>Flip</span>
                         </button>
-                      }
+                      )}
                       token={token}
                       onClick={() => {}}
                       onSuccess={onWithdrawSuccess}
