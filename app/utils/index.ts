@@ -1,7 +1,6 @@
 import dayjs from "./dayjs";
 import type { Project } from "../type";
 import { fail } from "./toast";
-import { clearAll } from "./listStore";
 import { Connection } from "@solana/web3.js";
 // import Cropper from "cropperjs";
 // @ts-ignore

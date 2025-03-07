@@ -16,7 +16,7 @@ export default function useNotice() {
     Toast.show({
       content: (
         <div style={{ color: "#AAFF00", wordBreak: "break-word" }}>
-          {notice.content_2} you liked has been launched!
+          {notice.content_2} you liked has been listed!
         </div>
       ),
       position: "top",

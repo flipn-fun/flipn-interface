@@ -8,7 +8,7 @@ export default function FinalLike({ token, onClose }: any) {
         <div className={styles.Title}>Thanks for your final like❤️</div>
         <div className={styles.Desc}>
           <img className={styles.Avatar} src={token.tokenIcon} />
-          <div>{token.tokenName} IS LAUNCHING!</div>
+          <div>{token.tokenName} IS TICKING!</div>
         </div>
       </div>
       <img
