@@ -1,6 +1,5 @@
 import { useRef, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "ahooks";
-import { BN } from "@coral-xyz/anchor";
 import Big from "big.js";
 import styles from "../trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
