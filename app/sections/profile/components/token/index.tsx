@@ -235,7 +235,7 @@ export default function Token({
           />
           {
             (videoReg.test(data.token_video || "") && !!data.token_icon && !videoReg.test(data.token_icon || "")) && (
-              <div className={styles.tokenVideoWrapper}>
+              <div className={styles.tokenVideoWrapper} style={{ display: "none" }}>
                 <img src="/img/icon-play.svg" alt="" className={styles.tokenVideoPlayIcon} />
               </div>
             )
