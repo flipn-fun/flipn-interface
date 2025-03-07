@@ -284,6 +284,7 @@ export async function initAuthorization() {
 }
 
 export function logOut() {
+  console.log("%cLogOut: %o", "background:#B82132;color:#fff;", window.sexAddress);
   window.walletProvider = null;
   window.sexAddress = undefined;
   window.localStorage.removeItem(AUTH_KEY);
