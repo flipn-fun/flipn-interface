@@ -29,9 +29,10 @@ export default function CustomizeLink({ show, onClose }: any) {
           <div className={styles.Amount}>{20 - inputVal.length}</div>
         </div>
         <input
-          className={styles.Input}
+          className={`${styles.Input} ${styles.InputError}`}
           placeholder="Please enter your own invite link"
         />
+        <div className={styles.ErrorHints}>This link has been used</div>
         <div className={styles.Bottom}>
           <div className={styles.Hints}>Can be customized only once</div>
           <button className={clsx(styles.Button, "button")} onClick={() => {}}>
