@@ -20,10 +20,12 @@ export default function updatePriceMarker({
     priceMarkerId = undefined;
   }
 
+  if (!lastPrice) return;
+
   const res = chart.createShape(
     { time, price },
     {
-      shape: price > lastPrice ? "arrow_up" : "arrow_down",
+      shape: Number(price) > Number(lastPrice) ? "arrow_up" : "arrow_down",
       lock: true,
       disableSelection: true,
       disableSave: true,

@@ -1,7 +1,6 @@
 import dayjs from "./dayjs";
 import type { Project } from "../type";
 import { fail } from "./toast";
-import { clearAll } from "./listStore";
 import { Connection } from "@solana/web3.js";
 // import Cropper from "cropperjs";
 // @ts-ignore
@@ -230,6 +229,7 @@ export async function initAuthorization() {
   // }
 
   if (window?.isInitingAuthorization) {
+    window.connecting = false;
     return;
   }
   // @ts-ignore
@@ -237,6 +237,7 @@ export async function initAuthorization() {
 
   if (!walletProvider || !sexAddress) {
     // await connect();
+    window.connecting = false;
     return;
   }
 
@@ -275,6 +276,8 @@ export async function initAuthorization() {
     watingQuene.length = 0;
     window.disconnect?.();
     logOut();
+  } finally {
+    window.connecting = false;
   }
 
   window.isInitingAuthorization = false;

@@ -17,9 +17,16 @@ import { useContext, useMemo, useState } from "react";
 import Big from "big.js";
 import { useRouter } from "next/navigation";
 import { MemesContext } from "@/app/sections/memes/context";
+import { Tab, TABS } from "@/app/sections/memes/config";
 
-const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
-  const { className, token } = props;
+const TokenItem = (props: {
+  className?: string;
+  token: Hot | Meme;
+  holders?: number;
+  holdersLoading?: boolean;
+  currentTab?: Tab;
+}) => {
+  const { className, token, holders = 0, holdersLoading, currentTab } = props;
 
   const { isMobile } = useUserAgent();
   const router = useRouter();
@@ -108,7 +115,8 @@ const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
             </div>
             <div className={styles.TokenItemLaptopAvatarProfileRight}>
               <div className={styles.TokenItemCreateAt}>
-                {token.created2Now?.replace(/ago$/i, "")}
+                {token.created2Now?.split?.(" ")?.[0]}
+                {token.created2Now?.split?.(" ")?.[1]?.slice?.(0, 1)}
               </div>
             </div>
           </div>
@@ -169,22 +177,27 @@ const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
             <div className={styles.TokenItemProfile}>
               <div className={styles.TokenItemName}>
                 <div>{formatLongText(token.token_symbol, 6, 6)}</div>
-                {token.is_king ? (
-                  <div className={styles.TokenItemNameIcon}>👑</div>
-                ) : (
-                  !!token.last_king_time && (
+                {token.is_king &&
+                  token.kind === "Hot" &&
+                  (token.ranking <= 3 ? (
+                    <div className={styles.TokenItemNameIcon}>👑</div>
+                  ) : (
                     <img
                       src="/img/trends/crown-second.svg"
                       alt=""
                       className={styles.TokenItemNameIconCrown}
                     />
-                  )
-                )}
+                  ))}
               </div>
               <TokenItemMarketCap token={token} />
             </div>
             <div className={styles.TokenItemFoot}>
-              <TokenItemSummaries token={token} />
+              <TokenItemSummaries
+                token={token}
+                holders={holders}
+                holdersLoading={holdersLoading}
+                currentTab={currentTab}
+              />
               <div className={styles.TokenItemCreateAt}>
                 {token.created2Now}
               </div>
@@ -194,7 +207,12 @@ const TokenItem = (props: { className?: string; token: Hot | Meme }) => {
       ) : (
         <div className={styles.TokenItemLaptopFooter}>
           <TokenItemMarketCap token={token} />
-          <TokenItemSummaries token={token} />
+          <TokenItemSummaries
+            token={token}
+            holders={holders}
+            holdersLoading={holdersLoading}
+            currentTab={currentTab}
+          />
         </div>
       )}
     </div>
@@ -270,11 +288,11 @@ export const TokenItemLoading = (props: any) => {
 };
 
 export const TokenItemSummaries = (props: any) => {
-  const { className, token } = props;
+  const { className, token, holders, holdersLoading, currentTab } = props;
 
   return (
     <div className={clsx(styles.TokenItemSummaries, className)}>
-      {token.kind === "Hot" && (
+      {currentTab?.value !== TABS[1].value && (
         <>
           {[0, 1, 2].includes(token.status) ? (
             <SummaryItem
@@ -292,11 +310,12 @@ export const TokenItemSummaries = (props: any) => {
           <SummaryItem
             className={styles.TokenItemSummary}
             type="user"
-            value={token.holder || 0}
+            value={holders || 0}
+            loading={holdersLoading}
           />
         </>
       )}
-      {token.kind === "Meme" && (
+      {currentTab?.value === TABS[1].value && (
         <>
           <SummaryItem
             className={styles.TokenItemSummary}

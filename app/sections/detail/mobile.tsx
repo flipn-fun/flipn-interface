@@ -132,6 +132,8 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
     );
   }
 
+
+
   return (
     <div>
       <SexPullToRefresh

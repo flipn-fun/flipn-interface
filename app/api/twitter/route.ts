@@ -1,15 +1,15 @@
-import { URL } from "url";
 import { NextRequest } from "next/server";
+import { urlFormat } from "@/app/utils/urlFormat";
 
 export const runtime = "edge";
-
 export async function GET(request: Request | NextRequest) {
-  const parsedUrl = new URL(request.url as string);
-  const imgUrl = parsedUrl.searchParams.get("imgUrl");
-  const tokenName = parsedUrl.searchParams.get("tokenName");
-  const about = parsedUrl.searchParams.get("about");
-  const tokenAddress = parsedUrl.searchParams.get("address");
-  const referral = parsedUrl.searchParams.get("referral");
+  const queryParams = urlFormat(request.url);
+
+  const imgUrl = queryParams["imgUrl"];
+  const tokenName = queryParams["tokenName"];
+  const about = queryParams["about"];
+  const tokenAddress = queryParams["address"];
+  const referral = queryParams["referral"];
   const domain = process.env.NEXT_PUBLIC_DOMAIN || "https://stage.flipn.fun";
   const s3Domain =
     process.env.NEXT_PUBLIC_S3_URL_PREFIX ||
@@ -27,7 +27,7 @@ export async function GET(request: Request | NextRequest) {
             <meta name="twitter:title" content="${tokenName}">
             <meta name="twitter:description" content="${about}">
             <meta name="twitter:image" content="${s3Domain}/${s3Dir}${imgUrl}"> <!-- Image URL for sharing -->
-            <meta http-equiv="refresh" content="0; url=${domain}/detail?address=${tokenAddress}&a=DcTcE9wSsKk8okrwk3fCxKnvMK3nQ4WGnfh23YKJauvV">
+            <meta http-equiv="refresh" content="0; url=${domain}/detail?address=${tokenAddress}&from=${referral}">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta property="og:image:width" content="375">
             <meta property="og:image:height" content="625">

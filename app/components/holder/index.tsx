@@ -3,10 +3,9 @@ import Level from "../level/simple";
 import styles from "./index.module.css";
 import SexInfiniteScroll from "../sexInfiniteScroll";
 import Empty from "../empty";
-import { getHoldersByToken, getTokenMeta } from "@/app/utils/solanaScanApi";
 import { formatAddress, httpGet, simplifyNum } from "@/app/utils";
 import Big from "big.js";
-import { defaultAvatar } from "@/app/utils/config";
+import { defaultAvatar, total_supply } from "@/app/utils/config";
 import { numberFormatter } from "@/app/utils/common";
 import { useDebounceFn } from "ahooks";
 import { PublicKey } from "@solana/web3.js";
@@ -37,36 +36,33 @@ export default function Holder({ from, address, showAvatar, style = {} }: any) {
       // if (_page === 1) setIsLoading(true);
       try {
         let res = null;
-        if (process.env.NEXT_PUBLIC_NET === "Devnet") {
-          const tokenAccounts = await connection.getTokenLargestAccounts(
-            new PublicKey(address),
-            "confirmed"
-          );
 
-          const result: any = {
-            items: []
-          };
+        const tokenAccounts = await connection.getTokenLargestAccounts(
+          new PublicKey(address),
+          "confirmed"
+        );
 
-          const accounts = await connection.getMultipleParsedAccounts(
-            tokenAccounts.value.map((item: any) => item.address)
-          );
+        const result: any = {
+          items: []
+        };
 
-          for (let i = 0; i < tokenAccounts.value.length; i++) {
-            const item = tokenAccounts.value[i];
+        const accounts = await connection.getMultipleParsedAccounts(
+          tokenAccounts.value.map((item: any) => item.address)
+        );
 
-            result.items.push({
-              // @ts-ignore
-              owner: accounts.value[i].data?.parsed?.info?.owner?.toString(),
-              amount: item.uiAmount?.toString(),
-              decimals: item.decimals,
-              rank: i + 1
-            });
-          }
+        for (let i = 0; i < tokenAccounts.value.length; i++) {
+          const item = tokenAccounts.value[i];
 
-          res = result;
-        } else {
-          res = await getHoldersByToken(address, _page, pageSize);
+          result.items.push({
+            // @ts-ignore
+            owner: accounts.value[i].data?.parsed?.info?.owner?.toString(),
+            amount: item.uiAmount?.toString(),
+            decimals: item.decimals,
+            rank: i + 1
+          });
         }
+
+        res = result;
 
         if (res?.items && res.items.length) {
           const addressList = res.items
@@ -95,6 +91,10 @@ export default function Holder({ from, address, showAvatar, style = {} }: any) {
             setHasMore(true);
           }
         }
+
+        
+        
+
       } catch (err) {
         console.log("err:", err);
         if (_page === 1) setList([]);
@@ -107,16 +107,11 @@ export default function Holder({ from, address, showAvatar, style = {} }: any) {
 
   const getTokenInfo = useCallback(async () => {
     if (address) {
-      if (process.env.NEXT_PUBLIC_NET === "Devnet") {
-        const tokenSupply = await connection.getTokenSupply(
-          new PublicKey(address),
-          "confirmed"
-        );
-        setSupply(tokenSupply.value.uiAmount || 0);
-      } else {
-        const tokenInfo = await getTokenMeta(address);
-        setSupply(tokenInfo.data.supply);
-      }
+      const tokenSupply = await connection.getTokenSupply(
+        new PublicKey(address),
+        "confirmed"
+      );
+      setSupply(Number(tokenSupply.value.uiAmountString) || 0);
     }
   }, [address]);
 

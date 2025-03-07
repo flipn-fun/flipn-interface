@@ -15,7 +15,6 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
   const [refresher, setRefresher] = useState(0);
   const { accountRefresher } = useAuth();
   const projectsStore = useProjects();
-  const mountedRef = useRef(false);
   const fetchingRef = useRef(false);
   const prePageRef = useRef<any>([]);
   const { address } = useAccount();
@@ -151,37 +150,23 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
   const { run: debounceList } = useDebounceFn(
     () => {
       if (projectsStore.address !== (address || "")) {
-        projectsStore.clearList(launchType);
         projectsStore.clearProjects();
-        if (projectsStore.address) {
-          projectsStore.setIndex(launchType, 0);
-        }
         setIsLoading(true);
       }
 
       initList();
-
-      mountedRef.current = true;
     },
     { wait: 1500 }
   );
 
   useEffect(() => {
-    if (!mountedRef.current || !isCurrentTab) return;
-    if (projectsStore.address !== (address || "")) {
-      projectsStore.clearList(launchType);
-      if (projectsStore.address) {
-        projectsStore.setIndex(launchType, 0);
-      }
-      setIsLoading(true);
-    }
+    if (!isCurrentTab) return;
     initList();
   }, [isCurrentTab]);
 
   useEffect(() => {
     if (!isCurrentTab) {
       setIsLoading(false);
-      mountedRef.current = true;
       return;
     }
     debounceList();

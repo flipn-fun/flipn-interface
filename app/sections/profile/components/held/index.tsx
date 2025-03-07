@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import styles from "./held.module.css";
-import { getTokenByHolder, getTokenMeta } from "@/app/utils/solanaScanApi";
 import { useAccount } from "@/app/hooks/useAccount";
 import Big from "big.js";
 import { httpGet, simplifyNum } from "@/app/utils";
@@ -52,6 +51,7 @@ export default function Held({ from, address }: any) {
         programId: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
       })
       console.log('res:', res)
+
       const tokenList = res.value.map((account, index) => {
         const data = AccountLayout.decode(account.account.data);
         // console.log(`Token ${index + 1}:`);

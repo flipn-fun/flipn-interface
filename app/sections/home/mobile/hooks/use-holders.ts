@@ -1,26 +1,35 @@
 import { useCallback, useEffect, useState } from "react";
-import { getHoldersByToken } from "@/app/utils/solanaScanApi";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 
-export default function useHolders(token: any) {
+export default function useHolders(token: any, dataAvailable?: boolean) {
   const [total, setTotal] = useState(0);
   const { connection } = useConnection();
   const onQuery = useCallback(async () => {
     try {
-      if (process.env.NEXT_PUBLIC_NET === "Devnet") {
-        const tokenAccounts = await connection.getTokenLargestAccounts(
-          new PublicKey(token.address),
-          "confirmed"
-        );
+      const tokenAccounts = await connection.getParsedProgramAccounts(
+        new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+        {
+          filters: [
+            {
+              dataSize: 165
+            },
+            {
+              memcmp: {
+                offset: 0,
+                bytes: token.address
+              }
+            }
+          ]
+        }
+      );
 
-        const size = tokenAccounts.value.filter((item) => Number(item.amount) > 0).length;
+      const size = tokenAccounts.filter(
+        // @ts-ignore
+        (item) => Number(item.account.data.parsed.info.tokenAmount.amount) > 0
+      ).length;
 
-        setTotal(size);
-      } else {
-        const response = await getHoldersByToken(token.address, 1, 10);
-        setTotal(response.total);
-      }
+      setTotal(size);
     } catch (err) {
       console.log("err:", err);
       setTotal(0);
@@ -28,9 +37,11 @@ export default function useHolders(token: any) {
   }, [token]);
 
   useEffect(() => {
-    if (token?.status === 0 || !token?.address) return;
+    if (token?.status === 0 || !token?.address || dataAvailable === false)
+      return;
+
     onQuery();
-  }, [token]);
+  }, [token, dataAvailable]);
 
   return { total };
 }
