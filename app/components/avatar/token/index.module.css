@@ -2,12 +2,23 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
   padding: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  z-index: 10;
 }
 
 .Progress {
@@ -77,4 +88,18 @@
   right: -8px;
   top: -7px;
   transform: rotate(16deg);
+}
+
+.BlueChipBg {
+  position: absolute;
+  left: -50%;
+  top: -50%;
+  z-index: 2;
+}
+
+.BlueChipIcon {
+  position: absolute;
+  left: -6px;
+  bottom: -6px;
+  z-index: 11;
 }

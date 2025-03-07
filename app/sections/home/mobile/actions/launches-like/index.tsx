@@ -47,7 +47,7 @@ export default function LaunchesLike({
           }, 6000);
         }
       }}
-      style={{ position: "relative" }}
+      style={{ position: "relative", zIndex: 5 }}
     >
       <button className={buttonClassName}>
         <RocketIcon isActive={mergedLiked} />
