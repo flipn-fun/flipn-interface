@@ -9,7 +9,6 @@ import { logOut } from "@/app/utils";
 import LoginModal from "@/app/components/loginModal";
 import SignatureModal from "../components/signature-modal";
 import type { ReactNode } from "react";
-import { useShare } from "../hooks/use-share";
 
 const AuthContext = React.createContext<any | null>(null);
 
@@ -23,7 +22,7 @@ export const AuthProvider: React.FC<{
   const router = useRouter();
   const pathname = usePathname();
   const [showSignatureModal, setShowSignatureModal] = useState(false);
-  useShare();
+
   const [accountRefresher, setAccountRefresher] = useState(0);
   const { onQueryInfo, setUserInfo, fecthUserInfo } = useUserInfo(
     address,

@@ -108,7 +108,9 @@ export default function Trade({
             <div className={styles.switchToken}>
               <div className={styles.inputToken}>
                 <img src="/img/trade/balance.svg" />
-                <div className={styles.tokenName}>{numberFormatter(solBalance, 2, true)} SOL</div>
+                <div className={styles.tokenName}>
+                  {numberFormatter(solBalance, 2, true)} SOL
+                </div>
               </div>
             </div>
             <div className={styles.slippage}>Maximum {max} SOL</div>
@@ -133,7 +135,14 @@ export default function Trade({
                 className={styles.input}
               />
               <div className={styles.sol}>SOL</div>
-              <div className={styles.price}>${numberFormatter(Number(config.SolPrice) * Number(inputVal), 2, true)}</div>
+              <div className={styles.price}>
+                $
+                {numberFormatter(
+                  Number(config.SolPrice) * Number(inputVal),
+                  2,
+                  true
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -155,8 +164,9 @@ export default function Trade({
               setInputVal(amount.toString());
               set({ flipMax: amount });
             }}
-            className={`${styles.percentTag} ${inputVal === amount.toString() ? styles.active : ""
-              } button`}
+            className={`${styles.percentTag} ${
+              inputVal === amount.toString() ? styles.active : ""
+            } button`}
           >
             {amount}
           </div>
@@ -178,11 +188,10 @@ export default function Trade({
             </div>
           ) : (
             <div className={styles.receiveTitle}>
-              You will auto-buy in at the average price when this meme
-              launching.{" "}
+              You will auto-buy in at the average price when this meme ticking.{" "}
               {/* {delayTime
                 ? `You can refund after ${delayTime}.`
-                : "You can refund anytime before launching."} */}
+                : "You can refund anytime before ticking."} */}
             </div>
           )}
         </div>
@@ -224,7 +233,12 @@ export default function Trade({
                 setIsLoading(false);
               }
             }}
-            style={{ backgroundColor: "#FBCA04", color: "#000", height: 50, fontWeight: 500 }}
+            style={{
+              backgroundColor: "#FBCA04",
+              color: "#000",
+              height: 50,
+              fontWeight: 500
+            }}
           >
             Flip
           </MainBtn>
