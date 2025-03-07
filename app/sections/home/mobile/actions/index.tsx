@@ -58,7 +58,7 @@ export default function Actions({
         </TipsButton>
       )}
       {token.status === 0 && (
-        <Timer time={token.created_at} isPreview={isPreview} />
+        <Timer time={token.timeLeft} isPreview={isPreview} />
       )}
       {token.status === 0 ? (
         <>
