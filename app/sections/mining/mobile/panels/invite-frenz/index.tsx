@@ -4,14 +4,14 @@ import { useReferStore } from "@/app/store/useRefer";
 import { useAuth } from "@/app/context/auth";
 import { useState } from "react";
 import InfoIcon from "../info-icon";
-import InviteCodes from "../../../component/invite-codes";
-import useInviteCodes from "../../../use-invite-codes";
+import EditIcon from "./edit-icon";
+import InviteCodes from "./customize-link";
+import { fail, success } from "@/app/utils/toast";
 
 export default function InviteFrenz({ rate }: any) {
   const store = useReferStore();
   const { userInfo } = useAuth();
-  const [showInviteCodes, setShowInviteCodes] = useState(false);
-  const { list, loading, onCopyAll, onQuery } = useInviteCodes();
+  const [showCustomModal, setShowCustomModal] = useState(false);
   return (
     <>
       <div
@@ -28,44 +28,56 @@ export default function InviteFrenz({ rate }: any) {
           }}
         />
         <div className={styles.ItemContent}>
-          <div className={styles.ItemHeader}>
-            <div className={styles.ItemTitle}>
-              <span>Invite Frenz</span>
-              <InfoIcon
+          <div>
+            <div className={styles.ItemHeader}>
+              <div className={styles.ItemTitle}>
+                <span>Invite Frenz</span>
+                <InfoIcon
+                  onClick={() => {
+                    if (!window.sexAddress) {
+                      //@ts-ignore
+                      window.connect();
+                      return;
+                    }
+                    store.setVisible(true);
+                  }}
+                />
+              </div>
+              <EditIcon
                 onClick={() => {
-                  if (!window.sexAddress) {
-                    //@ts-ignore
-                    window.connect();
-                    return;
-                  }
-                  store.setVisible(true);
+                  setShowCustomModal(true);
                 }}
               />
             </div>
-          </div>
-          <div className={styles.ItemDesc}>
-            You will get {rate || "-"}%{" "}
-            <span className={styles.ThemeColor}>$FUN</span> of Airdrops from
+            <div className={styles.ItemDesc}>
+              You will get {rate || "-"}%{" "}
+              <span className={styles.ThemeColor}>$FUN</span> of Airdrops from
+            </div>
           </div>
           <div className={styles.ItemBottom}>
-            <div>10 invite code</div>
-            <div className={styles.ItemBottomButtons}>
-              <button
-                disabled={!list?.length}
-                className={styles.LinkButton}
-                onClick={onCopyAll}
-              >
-                Copy
-              </button>
+            <div className={styles.InviteLink}>
+              {/* TODO */}
+              app.flipn.fun/ref/B2WpzSJdDF6XSWXo46bxHjdUx4mRgybcYcUfZEAAfFpq
+            </div>
+            <div
+              className={styles.ItemBottomButtons}
+              style={{ alignSelf: "flex-end" }}
+            >
               {userInfo?.address ? (
                 <button
                   type="button"
                   className={styles.Button}
-                  onClick={() => {
-                    setShowInviteCodes(true);
+                  onClick={async () => {
+                    try {
+                      // TODO
+                      await navigator.clipboard.writeText("");
+                      success("Copied successfully!");
+                    } catch (err) {
+                      fail("Copied failed!");
+                    }
                   }}
                 >
-                  Open
+                  Copy
                 </button>
               ) : (
                 <WalletModalButton className={styles.Button}>
@@ -77,13 +89,9 @@ export default function InviteFrenz({ rate }: any) {
         </div>
       </div>
       <InviteCodes
-        show={showInviteCodes}
-        list={list}
-        loading={loading}
-        onCopyAll={onCopyAll}
-        onQuery={onQuery}
+        show={showCustomModal}
         onClose={() => {
-          setShowInviteCodes(false);
+          setShowCustomModal(false);
         }}
       />
     </>
