@@ -1,11 +1,26 @@
 .SocialContainer {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: 29px;
+  gap: 18px;
   position: fixed;
   bottom: 15px;
   width: 100%;
+}
+.SocialLinks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 29px;
+}
+.SocialItemBuilt {
+  color: #FFF;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 .SocialItem {}
 .SocialItemIcon {

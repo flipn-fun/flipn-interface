@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { httpAuthGet } from "@/app/utils";
 import { useAccount } from "@/app/hooks/useAccount";
 import { useAuth } from "@/app/context/auth";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useDebounceFn } from "ahooks";
 import { useReferralStore } from '@/app/store/useReferral';
 import { useUser } from '@/app/store/useUser';
@@ -13,6 +13,7 @@ const AirdropContext = React.createContext<Partial<IAirdropContext>>({});
 export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { setReferral } = useReferralStore();
   const { setReferer } = useUser();
 
@@ -28,7 +29,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
       () => {
         setAirdropDataLoading(false);
         if (["/invite-code", "/"].includes(pathname) || isTerms) return;
-        router.replace("/invite-code");
+        const _searchParams = new URLSearchParams();
+        _searchParams.set("redirect", pathname + "?" + searchParams.toString());
+        router.replace(`/invite-code?${_searchParams.toString()}`);
       },
       { wait: 2000 }
     );
@@ -51,7 +54,9 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
       !isTerms &&
       !["/invite-code", "/"].includes(pathname)
     ) {
-      router.replace("/invite-code");
+      const _searchParams = new URLSearchParams();
+      _searchParams.set("redirect", pathname + "?" + searchParams.toString());
+      router.replace(`/invite-code?${_searchParams.toString()}`);
     }
     setAirdropDataLoading(false);
   };
