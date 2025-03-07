@@ -189,7 +189,7 @@ export default function Token({
       style={{
         width: from === "page" ? 340 : "100%",
         backgroundColor:
-          from === "page" ? "transparent" : "rgba(255, 255, 255, 0.08)",
+          from === "page" ? "transparent" : (isMobile ? "" : "rgba(255, 255, 255, 0.08)"),
         flexDirection: from === "page" ? "column" : "row",
         gap: from === "page" ? 10 : 0,
         padding: from === "page" ? 0 : "10px 15px",
