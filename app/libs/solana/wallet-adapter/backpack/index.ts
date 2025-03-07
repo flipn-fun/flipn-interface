@@ -77,7 +77,7 @@ export class BackpackWalletAdapter extends BaseMessageSignerWalletAdapter {
 
     if (this._readyState !== WalletReadyState.Unsupported) {
       if (isIosAndRedirectable()) {
-        // when in iOS (not webview), set Phantom as loadable instead of checking for install
+        // when in iOS (not webview), set Backpack as loadable instead of checking for install
         this._readyState = WalletReadyState.Loadable;
         this.emit('readyStateChange', this._readyState);
       } else {
@@ -126,7 +126,7 @@ export class BackpackWalletAdapter extends BaseMessageSignerWalletAdapter {
         // this will open the current URL in the Phantom in-wallet browser
         const url = encodeURIComponent(window.location.href);
         const ref = encodeURIComponent(window.location.origin);
-        window.location.href = `https://backpack.app/ul/browse/${url}?ref=${ref}`;
+        window.location.href = `https://backpack.app`;
         return;
       }
 

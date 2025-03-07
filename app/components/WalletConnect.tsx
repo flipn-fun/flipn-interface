@@ -85,6 +85,7 @@ export default function WalletConnect({
             new OkxWalletAdapter(),
             new PhantomWalletAdapter(),
             new SolflareWalletAdapter(),
+            new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
               network,
               options: WALLET_CONNECT_OPTIONS
