@@ -11,7 +11,7 @@ export default function Top1() {
     <div
       className={`${styles.Container} button`}
       onClick={() => {
-        router.push(`/detail?address=${top1?.address}&from=trends`);
+        router.push(`/detail?address=${top1?.address}&from=memes`);
       }}
     >
       <div className={styles.IconWrapper}>
