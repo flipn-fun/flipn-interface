@@ -83,9 +83,6 @@ export default function ActionList(props: Props) {
                       token={token}
                       onClick={() => {}}
                       onSuccess={onWithdrawSuccess}
-                      smokePanelClassName={styles.SmokePanelContainer}
-                      smokePanelInputContainerClassName={styles.SmokePanelInputContainerClassName}
-                      smokePanelInputClassName={styles.SmokePanelInputClassName}
                       isLaptopModal={true}
                     />
                   ))}

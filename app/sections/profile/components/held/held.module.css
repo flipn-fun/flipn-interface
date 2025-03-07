@@ -1,6 +1,9 @@
 .main {
   height: 100%;
   overflow: auto;
+  @media screen and (max-width: 768px) {
+    min-height: calc(-274px + 100dvh);
+  }
   .heldToken {
     display: flex;
     align-items: center;

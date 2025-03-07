@@ -12,7 +12,24 @@ import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
 import clsx from 'clsx';
 
-export default function FlipPanel({ from, token, onClose, onSuccess, className, inputClassName, inputContainerClassName }: any) {
+export default function FlipPanel(props: any) {
+  const {
+    from,
+    token,
+    onClose,
+    onSuccess,
+    className,
+    inputClassName,
+    inputContainerClassName,
+    inputBoxClassName,
+    valueClassName,
+    tagsClassName,
+    descWrapperClassName,
+    buttonClassName,
+    isMaxLimit,
+    isFlipTips,
+    flipButtonText,
+  } = props;
   const { flipMax, set }: any = useSetting();
   const [inputVal, setInputVal] = useState("0");
   const { solBalance } = useBalance({
@@ -80,7 +97,7 @@ export default function FlipPanel({ from, token, onClose, onSuccess, className, 
           <WalletIcon />
           <div>{numberFormatter(solBalance, 2, true)} SOL</div>
         </div>
-        <div className={styles.InputBox}>
+        <div className={clsx(styles.InputBox, inputBoxClassName)}>
           <input
             className={clsx(styles.Input, inputClassName)}
             value={inputVal}
@@ -95,9 +112,16 @@ export default function FlipPanel({ from, token, onClose, onSuccess, className, 
           />
           <div>SOL</div>
         </div>
+        {
+          isMaxLimit && (
+            <div className={styles.MaxLimit}>
+              Maximum 1 SOL
+            </div>
+          )
+        }
       </div>
-      <div className={styles.DescWrapper}>
-        <div className={styles.Tags}>
+      <div className={clsx(styles.DescWrapper, descWrapperClassName)}>
+        <div className={clsx(styles.Tags, tagsClassName)}>
           {[0.1, 0.5, 1].map((item) => (
             <div
               key={item}
@@ -120,23 +144,30 @@ export default function FlipPanel({ from, token, onClose, onSuccess, className, 
             Max
           </div>
         </div>
-        <div className={styles.Value}>
+        <div className={clsx(styles.Value, valueClassName)}>
           {" "}
           $
           {numberFormatter(Number(config.SolPrice) * Number(inputVal), 2, true)}
         </div>
       </div>
+      {
+        isFlipTips && (
+          <div className={styles.FlipTips}>
+            <strong>Flip:</strong> You will auto-buy in when this meme launched.<br /> You can withdraw anytime before launching.
+          </div>
+        )
+      }
       {address ? (
         <button
-          className={`${styles.Button} button`}
+          className={`${clsx(styles.Button, buttonClassName)} button`}
           disabled={loading || !!errorTips}
           onClick={onFlip}
         >
-          {loading ? <CircleLoading size={16} /> : errorTips || "Flip it!"}
+          {loading ? <CircleLoading size={16} /> : errorTips || flipButtonText || "Flip it!"}
         </button>
       ) : (
         <button
-          className={`${styles.Button} button`}
+          className={`${clsx(styles.Button, buttonClassName)} button`}
           onClick={() => {
             window?.connect();
           }}
