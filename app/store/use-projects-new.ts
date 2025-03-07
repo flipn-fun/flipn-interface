@@ -135,7 +135,8 @@ export const useProjects = create(
         const startI = index - 5 < 0 ? 0 : index - 5;
         const endI = index + 5 > list.length - 1 ? list.length - 1 : index + 5;
 
-        const availableProjects = list.slice(startI, endI);
+        const availableProjects =
+          startI === endI ? list : list.slice(startI, endI);
 
         const cachedVideos: any = [];
         const needUpdateProjects: any = [];
@@ -168,13 +169,11 @@ export const useProjects = create(
           res.data?.forEach((item: any, i: number) => {
             if (["genesis", "ticking"].includes(type)) {
               const currentItem = currentProjects[item.id];
-              if (currentItem) {
-                if (item.status !== currentItem.status) {
-                  const i = list.findIndex((slip: any) => slip === item.id);
-                  repeatCount++;
-                  if (i < index) minus++;
-                  list.splice(i, 1);
-                }
+              if (currentItem && item.status !== currentItem.status) {
+                const i = list.findIndex((slip: any) => slip === item.id);
+                repeatCount++;
+                if (i < index) minus++;
+                list.splice(i, 1);
               }
             }
             currentProjects[item.id] = {
@@ -208,7 +207,7 @@ export const useProjects = create(
       },
       clearProjects() {
         set({
-          projects: {}
+          ...init
         });
       }
     }),

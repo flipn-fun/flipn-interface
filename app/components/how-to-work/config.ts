@@ -4,7 +4,7 @@ export default [
     items: [
       "Set Up: Build your project profile with engaging visuals, descriptions, and social links—think of it like a Tinder profile for tokens.",
       "Engage: Share your project profile with your audience to gain likes and onboard new users.",
-      "Launch: Achieve the required likes to graduate to the launching phase and progress through the bonding curve system."
+      "Launch: Achieve the required likes to graduate to the ticking phase and progress through the bonding curve system."
     ]
   },
   {

@@ -5,6 +5,7 @@ import Main from "@/app/sections/home/laptop";
 import Menu from "./menu";
 import { useAuth } from "@/app/context/auth";
 import useNotice from "../../../hooks/use-notice";
+import { useShare } from "../../../hooks/use-share";
 import { useSetting } from "@/app/store/use-setting";
 import Refer from "@/app/components/layout/laptop/user/refer";
 import Header from "./header";
@@ -22,12 +23,12 @@ const SmartDetailPage = dynamic(() => import("@/app/smartDetail/page"));
 const InviteCodeView = dynamic(() => import("@/app/sections/invite-code"));
 const Landing = dynamic(() => import("@/app/landing/page"));
 
-
 export default function Laptop({ children }: any) {
   const { userInfo, address, updateCurrentUserInfo, logout, pathname } =
     useAuth();
   const settingStore: any = useSetting();
   useNotice();
+  useShare();
 
   if (pathname === "/landing") {
     return <Landing />;
@@ -62,7 +63,9 @@ export default function Laptop({ children }: any) {
         )}
         {pathname === "/detail" && <DetailPage />}
         {pathname === "/messages" && <MessagePage />}
-        {pathname === "/smartTopDetail" && SHOW_COPY_TRADE && <SmartTopDetailPage />}
+        {pathname === "/smartTopDetail" && SHOW_COPY_TRADE && (
+          <SmartTopDetailPage />
+        )}
         {pathname === "/smartDetail" && SHOW_COPY_TRADE && <SmartDetailPage />}
         {pathname === "/invite-code" && <InviteCodeView />}
       </div>
