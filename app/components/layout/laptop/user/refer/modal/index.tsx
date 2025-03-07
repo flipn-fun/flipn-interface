@@ -193,7 +193,7 @@ const ReferModalContent = (props: any) => {
                 {...props}
                 label="EARNED"
                 value={numberFormatter(airdropData?.airdrop_points, 4, true, { isShort: true })}
-                unit="Points"
+                unit="$FUN"
                 tab={2}
                 current={currentTab}
                 onClick={() => handleTab(2)}
