@@ -17,8 +17,9 @@ interface Props {
   isBigIcon?: boolean;
   id?: string;
   onClick: () => void;
-  actionChildren?: React.ReactNode;
+  actionChildren?: any;
   content?: React.ReactNode;
+  isLaptopModal?: boolean;
   onHide?: () => void;
   onSuccess?(): void;
 }
@@ -31,7 +32,8 @@ export default function SmokeBtn({
   content,
   onHide,
   id,
-  onSuccess
+  onSuccess,
+  isLaptopModal
 }: Props) {
   const [panelShow, setPanelShow] = useState(false);
   const [vipShow, setVipShow] = useState(false);
@@ -127,7 +129,7 @@ export default function SmokeBtn({
     <>
       {actionChildren ? (
         <div className="button" onClick={onButtonClick}>
-          {actionChildren}
+          {typeof actionChildren === "function" ? actionChildren({ disabled: isDisabled }) : actionChildren}
         </div>
       ) : (
         <SmokeButton
@@ -157,6 +159,7 @@ export default function SmokeBtn({
         onHide={() => {
           setPanelShow(false);
         }}
+        isLaptopModal={isLaptopModal}
       />
 
       <Modal
