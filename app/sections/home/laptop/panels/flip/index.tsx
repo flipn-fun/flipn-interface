@@ -65,7 +65,7 @@ export default function FlipPanel({ from, token, onClose, onSuccess }: any) {
 
   const errorTips = useMemo(() => {
     if (isPrePaid) {
-      const flipNumFormatted = numberFormatter(new Big(token.total_amount).div(10 ** 9).div(1 - 0.015).toString(), 2, true, { isShort: true })
+      const flipNumFormatted = numberFormatter(new Big(token.total_amount).div(10 ** 9).toString(), 2, true, { isShort: true })
       return `You've fliped ${flipNumFormatted} SOL!`;
     }
     if (Big(inputVal || 0).eq(0)) return "Enter an amount";

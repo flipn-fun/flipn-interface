@@ -1,6 +1,5 @@
 import { useRef, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "ahooks";
-import { BN } from "@coral-xyz/anchor";
 import Big from "big.js";
 import styles from "../trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
@@ -19,6 +18,7 @@ import useBalance from "@/app/hooks/useBalance";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
+import useMeteora from "@/app/hooks/useMeteora";
 
 type Token = {
   tokenName: string;
@@ -90,6 +90,8 @@ export default function BuySellLaunched({
   const [sellOut, setSellOut] = useState("0");
   const [sellOutSol, setSellOutSol] = useState("0");
   const [reFreshBalnace, setReFreshBalnace] = useState(1);
+  // 0 jupiter 1 meteora
+  const [dexType, setDexType] = useState(0);
 
   const { userInfo }: any = useUser();
   const { connection } = useConnection();
@@ -113,8 +115,13 @@ export default function BuySellLaunched({
   }, [initType, show]);
 
   const { trade, getQoute, qoute } = useJupiter({
-    tokenAddress: token.address
+    tokenAddress: token.address,
+    token
   });
+
+  const { getQoute: getMeteoraQoute, trade: tradeMeteora } = useMeteora({
+    token
+  })
 
   const TOKEN_PERCENT_LIST = useMemo(() => {
     return [25, 50, 75, 100];
@@ -143,9 +150,10 @@ export default function BuySellLaunched({
 
             getQoute(buyIn, "buy", slip * 100)
               .then((res: any) => {
-                if (res.quoteResponse) {
+                if (res.quoteResponse && res.quoteResponse.otherAmountThreshold) {
+                  setDexType(0);
                   setBuyIn(
-                    new Big(res.quoteResponse?.otherAmountThreshold)
+                    new Big(res.quoteResponse.otherAmountThreshold)
                       .div(10 ** desToken.tokenDecimals)
                       .toFixed(desToken.tokenDecimals)
                   );
@@ -159,10 +167,35 @@ export default function BuySellLaunched({
                   }
 
                   setIsError(false);
+                  setIsLoading(false);
                 } else {
-                  setIsError(true);
+
+                  getMeteoraQoute(buyIn, "buy", slip * 100)
+                    .then((res: any) => {
+                      console.log('meteora res:', res)
+                      if (res > 0) {
+                        setDexType(1);
+                        setBuyIn(
+                          new Big(res)
+                            .div(10 ** desToken.tokenDecimals)
+                            .toFixed(desToken.tokenDecimals)
+                        );
+                        setBuyInSol(buyIn);
+                        setIsError(false);
+                        setIsLoading(false);
+                      } else {
+                        setIsError(true);
+                        setIsLoading(false);
+                      }
+                    })
+                    .catch((e) => {
+                      console.log('meteora error:', e)
+                      setIsError(true);
+                      setIsLoading(false);
+                    })
+
                 }
-                setIsLoading(false);
+
               })
               .catch((e) => {
                 console.log(e);
@@ -214,7 +247,8 @@ export default function BuySellLaunched({
 
             getQoute(sellOut, "sell", slip * 100)
               .then((res: any) => {
-                if (res.quoteResponse) {
+                if (res.quoteResponse && res.quoteResponse?.otherAmountThreshold) {
+                  setDexType(0);
                   setSellOutSol(
                     new Big(res.quoteResponse?.otherAmountThreshold)
                       .div(10 ** SOL.tokenDecimals)
@@ -222,10 +256,32 @@ export default function BuySellLaunched({
                   );
                   setSellOut(sellOut);
                   setIsError(false);
+                  setIsLoading(false);
                 } else {
-                  setIsError(true);
+
+                  getMeteoraQoute(sellOut, "sell", slip * 100)
+                    .then((res: any) => {
+                      if (res > 0) {
+                        setDexType(1);
+                        setSellOutSol(new Big(res)
+                          .div(10 ** SOL.tokenDecimals)
+                          .toFixed(SOL.tokenDecimals))
+                        setSellOut(sellOut);
+                        setIsError(false);
+                        setIsLoading(false);
+                      } else {
+                        setIsError(true);
+                        setIsLoading(false);
+                      }
+                    })
+                    .catch((e) => {
+                      console.log('meteora error:', e)
+                      setIsLoading(false);
+                      setIsError(true);
+                    })
+
                 }
-                setIsLoading(false);
+
               })
               .catch((e) => {
                 console.log(e);
@@ -356,7 +412,7 @@ export default function BuySellLaunched({
                     : numberFormatter(solBalance, 2, true) + " SOL"}
                 </div>
               </div>
-              
+
 
               {from === "panel" ? (
                 <></>
@@ -589,11 +645,16 @@ export default function BuySellLaunched({
                     }
 
                     let hash;
-                    let showBuyInToken: any =
-                      Number(buyIn) * 10 ** token.tokenDecimals!;
+                    let showBuyInToken: any = Number(buyIn) * 10 ** token.tokenDecimals!;
                     setIsLoading(true);
                     if (activeIndex === 0) {
-                      hash = await trade(buyInSol, "buy", slip * 100);
+                      if (dexType === 0) {
+                        hash = await trade(buyInSol, "buy", slip * 100);
+                      } else {
+                        console.log('buyInSol:', buyInSol)
+
+                        hash = await tradeMeteora(buyInSol, "buy", slip * 100);
+                      }
                       if (hash) {
                         const _showBuyInToken = await getTransaction(
                           connection,
@@ -613,7 +674,11 @@ export default function BuySellLaunched({
                         }
                       }
                     } else if (activeIndex === 1) {
-                      hash = await trade(sellOut, "sell", slip * 100);
+                      if (dexType === 0) {
+                        hash = await trade(sellOut, "sell", slip * 100);
+                      } else {
+                        hash = await tradeMeteora(sellOut, "sell", slip * 100);
+                      }
                     }
                     setIsLoading(false);
                     onSuccess?.();

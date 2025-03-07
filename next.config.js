@@ -16,7 +16,7 @@ const nextConfig = {
     }
   ],
 
-  webpack: (config, { dev, isServer }) => {
+  webpack: (config, { dev, isServer, webpack }) => {
     if (!dev && !isServer) {
       config.optimization = {
         ...config.optimization,
@@ -56,6 +56,38 @@ const nextConfig = {
     }
     //https://docs.reown.com/appkit/next/core/installation#extra-configuration
     config.externals.push("pino-pretty", "lokijs", "encoding");
+
+    // Fixes npm packages that depend on `fs` module
+
+
+    if (config.resolve.fallback) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        "node:fs": false,
+        "node:fs/promises": false
+      }
+    } else {
+      config.resolve.fallback = { 
+        fs: false,
+        "node:fs": false,
+        "node:fs/promises": false
+      }
+    }
+
+    if (config.externals) {
+      config.externals.push({ "node:fs": "commonjs node:fs" })
+    }
+
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        /^node:/,
+        (resource) => {
+          resource.request = resource.request.replace(/^node:/, '');
+        },
+      ),
+    );
+
     return config;
   },
   images: {
