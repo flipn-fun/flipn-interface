@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import SmokPanel from "./smoke-panel";
 import type { Project } from "@/app/type";
 import { Modal } from "antd-mobile";
@@ -22,9 +22,10 @@ interface Props {
   isLaptopModal?: boolean;
   onHide?: () => void;
   onSuccess?(): void;
+  onOpenClick?(): void;
 }
 
-export default function SmokeBtn({
+function SmokeBtn({
   onClick,
   token,
   isBigIcon = false,
@@ -33,8 +34,9 @@ export default function SmokeBtn({
   onHide,
   id,
   onSuccess,
-  isLaptopModal
-}: Props) {
+  isLaptopModal,
+  onOpenClick
+}: Props, ref: any) {
   const [panelShow, setPanelShow] = useState(false);
   const [vipShow, setVipShow] = useState(false);
   const { userInfo }: any = useUser();
@@ -123,7 +125,13 @@ export default function SmokeBtn({
       return;
     }
     setPanelShow(true);
+    onOpenClick?.();
   };
+
+  const refs = {
+    setPanelShow,
+  };
+  useImperativeHandle(ref, () => refs);
 
   return (
     <>
@@ -174,3 +182,5 @@ export default function SmokeBtn({
     </>
   );
 }
+
+export default React.forwardRef(SmokeBtn);
