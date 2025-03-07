@@ -21,7 +21,7 @@ export const useMemesStore = create(persist<MemesState>((set) => ({
   setCurrentFilter: (filter) => set((state) => ({ ...state, currentFilter: filter })),
 }), {
   name: '_memes_tab',
-  version: 0.1,
+  version: 0.2,
   storage: createJSONStorage(() => localStorage),
   partialize: (state) => ({
     currentTab: state.currentTab,
