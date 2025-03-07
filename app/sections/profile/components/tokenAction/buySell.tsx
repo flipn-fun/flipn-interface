@@ -4,9 +4,10 @@ import type { Project } from "@/app/type";
 
 interface Props {
   token: Project;
+  onOpenClick?(type?: any, token?: any): void;
 }
 
-export default function BuySell({ token }: Props) {
+export default function BuySell({ token, onOpenClick }: Props) {
   const { onClick, showTradeModal } = useTokenActions();
 
   return (
@@ -15,6 +16,7 @@ export default function BuySell({ token }: Props) {
         className={`${styles.ActionBtn} ${styles.BuySell} button`}
         onClick={() => {
           onClick("trade", token);
+          onOpenClick?.("trade", token);
         }}
       >
         <BuySellIcon />
