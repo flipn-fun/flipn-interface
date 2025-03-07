@@ -19,9 +19,6 @@ interface Props {
   onClick: () => void;
   actionChildren?: any;
   content?: React.ReactNode;
-  smokePanelClassName?: string;
-  smokePanelInputClassName?: string;
-  smokePanelInputContainerClassName?: string;
   isLaptopModal?: boolean;
   onHide?: () => void;
   onSuccess?(): void;
@@ -36,9 +33,6 @@ export default function SmokeBtn({
   onHide,
   id,
   onSuccess,
-  smokePanelClassName,
-  smokePanelInputClassName,
-  smokePanelInputContainerClassName,
   isLaptopModal
 }: Props) {
   const [panelShow, setPanelShow] = useState(false);
@@ -165,9 +159,6 @@ export default function SmokeBtn({
         onHide={() => {
           setPanelShow(false);
         }}
-        className={smokePanelClassName}
-        inputClassName={smokePanelInputClassName}
-        inputContainerClassName={smokePanelInputContainerClassName}
         isLaptopModal={isLaptopModal}
       />
 

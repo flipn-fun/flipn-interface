@@ -215,7 +215,7 @@ export default function Token({
             data={{
               ...data,
               // fix#REF-10095
-              tokenImg: videoReg.test(data.token_video || "") ? (data.token_icon || data.token_video) : data.token_video,
+              tokenImg: videoReg.test(data.token_video || "") ? (data.token_icon || data.token_video) : (data.token_video || data.token_icon),
             }}
             imgHeight={84}
             autoPlay={false}
