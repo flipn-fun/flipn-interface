@@ -103,7 +103,7 @@ export default function List({
           left: tabIndex * innerWidth
         }}
       >
-        <div
+        {/* <div
           style={{
             position: "absolute",
             left: 0,
@@ -118,7 +118,7 @@ export default function List({
           <div>
             {type} Len: {list.length}
           </div>
-        </div>
+        </div> */}
         <div
           className={styles.List}
           ref={listRef}

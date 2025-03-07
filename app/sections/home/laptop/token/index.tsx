@@ -34,7 +34,7 @@ export default function Token({
   const { innerHeight, innerWidth } = useUserAgent();
   const descContentRef = useRef<any>();
 
-  const { total: totalHolders } = useHolders(token, dataAvailable);
+  const { total: totalHolders } = useHolders(token, isCurrent);
 
   return (
     <div
