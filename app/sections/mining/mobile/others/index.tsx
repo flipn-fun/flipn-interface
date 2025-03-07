@@ -12,7 +12,7 @@ export default function Others({ info }: any) {
       }}
     >
       <div className={isMobile ? styles.Item : styles.ItemPc}>
-        <div className={styles.Label}>Launched Projects</div>
+        <div className={styles.Label}>Listed Projects</div>
         <div
           className={styles.Value}
           style={{

@@ -1,11 +1,10 @@
-import Cookies from "js-cookie";
 import { httpAuthPost } from "@/app/utils/";
 import { useEffect } from "react";
-import { useAccount } from "./useAccount";
+import { useAuth } from "../context/auth";
 import { useSearchParams } from "next/navigation";
 
 export function useShare() {
-  const { address } = useAccount();
+  const { accountRefresher } = useAuth();
   const searchParams = useSearchParams();
 
   const reportReferral = async () => {
@@ -14,14 +13,10 @@ export function useShare() {
 
     if (project && user) {
       try {
-        const v = await httpAuthPost(
+        await httpAuthPost(
           `/project/share?token_address=${project}&account_address=${user}`,
           { token_address: project, account_address: user }
         );
-        if (v.code === 0) {
-          Cookies.remove("referral_upload_project");
-          Cookies.remove("referral_upload_user");
-        }
       } catch (err) {
         console.error("Failed to report referral:", err);
       }
@@ -29,8 +24,8 @@ export function useShare() {
   };
 
   useEffect(() => {
-    if (address) {
+    if (accountRefresher) {
       reportReferral();
     }
-  }, [address]);
+  }, [accountRefresher]);
 }
