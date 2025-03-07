@@ -2,10 +2,10 @@ import styles from "./index.module.css";
 import clsx from 'clsx';
 import { motion } from 'framer-motion';
 import Loading from '@/app/components/icons/loading';
-import React, { useState } from 'react';
+import React, { useImperativeHandle, useState } from 'react';
 import { useUserAgent } from '@/app/context/user-agent';
 
-const CouponCard = (props: any) => {
+const CouponCard = (props: any, ref: any) => {
   const { className, children, disabled, loading, buttonText, onClick, renderButton } = props;
 
   const { isMobile } = useUserAgent();
@@ -16,6 +16,11 @@ const CouponCard = (props: any) => {
     setIsStarted(true);
     onClick?.();
   };
+
+  const refs = {
+    setIsStarted,
+  };
+  useImperativeHandle(ref, () => refs);
 
   return (
     <div className={clsx(isMobile ? styles.CouponCardContainer : styles.CouponCardContainerLaptop, className)}>
@@ -64,4 +69,4 @@ const CouponCard = (props: any) => {
   );
 };
 
-export default CouponCard;
+export default React.forwardRef(CouponCard);
