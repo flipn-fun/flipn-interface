@@ -565,13 +565,17 @@ export function useTokenTrade({
     }) => {
       const transaction = new Transaction();
 
-      const program = new Program<any>(idl, programId, walletProvider as any);
+      const program = new Program<any>(idl, programId, {
+        connection: connection
+      } as any);
 
       const keys = await getCreateKeys(name, symbol);
 
       if (!keys) {
         throw "Create keys error";
       }
+
+      const stateData: any = await program.account.launchpad.fetch(keys.launchpad);
 
       const createAccountInstruction: any = await program.methods
         .createTokenAccount({
@@ -694,6 +698,12 @@ export function useTokenTrade({
       if (amount && Number(amount) > 0) {
         lamports += Number(amount);
       }
+
+      if (stateData.createTokenFee.toNumber() > 0) {
+        lamports += stateData.createTokenFee.toNumber();
+      }
+
+      console.log('lamports:', lamports, stateData.createTokenFee.toNumber())
 
       const instruction1 = SystemProgram.transfer({
         fromPubkey: walletProvider.publicKey!,
@@ -994,10 +1004,10 @@ export function useTokenTrade({
         const program = new Program<any>(idl, programId, {
           connection: connection
         } as any);
-        return await _getRate(program, pool[0], amountParam);
+        return await _getRate(program, pool[0], state[0], amountParam);
       }
     },
-    [programId, pool, connection]
+    [programId, pool, state, connection]
   );
 
   const getConfig = useCallback(async () => {
@@ -1115,18 +1125,20 @@ export function useTokenTrade({
 async function _getRate(
   program: Program,
   pool: PublicKey,
+  state: PublicKey,
   { solAmount, tokenAmount, type }: { solAmount?: string; tokenAmount?: string, type: string }
 ) {
   const poolData: any = await program.account.pool.fetch(pool);
-
+  const stateData: any = await program.account.launchpad.fetch(state);
   const poolToken = new Big(poolData!.virtualTokenAmount.toNumber());
   const solToken = new Big(poolData!.virtualWsolAmount.toNumber());
+
 
   const maxBuy = poolToken.minus(295_840_542_120_770)
 
   // buy
   if (solAmount && type === 'buy') {
-    const _solAmount = new Big(solAmount).mul(1 - 0.01);
+    const _solAmount = new Big(solAmount).mul(1 - stateData.buyFeeRate / 10000);
     const result = poolToken
       .mul(_solAmount)
       .div(solToken.plus(_solAmount))
@@ -1158,7 +1170,7 @@ async function _getRate(
     const result = solToken
       .mul(_tokenAmount)
       .div(poolToken.minus(_tokenAmount))
-      .div(1 - 0.05)
+      .div(1 - stateData.buyFeeRate / 10000)
       .toFixed(0, 0);
 
     return {
@@ -1170,10 +1182,11 @@ async function _getRate(
 
   // sell
   if (tokenAmount && type === 'sell') {
-    const _tokenAmount = new Big(tokenAmount).mul(1 - 0.015);
+    const _tokenAmount = new Big(tokenAmount);
     const result = solToken
       .mul(_tokenAmount)
       .div(poolToken.plus(_tokenAmount))
+      .mul(1 - stateData.sellFeeRate / 10000)
       .toFixed(0, 0);
     return {
       result,

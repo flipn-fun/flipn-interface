@@ -10,6 +10,7 @@ import Details from "../details";
 import Comments from "../comments";
 import { numberFormatter } from "@/app/utils/common";
 import ZeroFormat from "@/app/components/zeroFomat";
+import { useConfig } from "@/app/store/useConfig";
 
 const TABS = [
   {
@@ -42,6 +43,8 @@ export default function LaunchesTradePanel({
   onSuccess,
   isCurrent
 }: any) {
+  const { config }: any = useConfig();
+
   return (
     <div className={styles.Container}>
       <Header
@@ -100,9 +103,10 @@ export default function LaunchesTradePanel({
                     <div className={styles.DataLabel}>Current Price</div>
                     <div
                       className={styles.DataValue}
-                      style={{ display: "flex", alignItems: "center" }}
+                      style={{ }}
                     >
-                      $<ZeroFormat value={token.price} />
+                      <div style={{ display: "flex", alignItems: "center", gap: 2 }}><ZeroFormat value={token.price} />SOL</div>
+                      <div style={{ display: "flex", alignItems: "center", fontSize: 9, fontWeight: 300, color: "#9290B1" }}>$<ZeroFormat value={Number(token.price) * Number(config.SolPrice)} /></div>
                     </div>
                   </div>
                 </div>
