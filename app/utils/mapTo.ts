@@ -38,7 +38,7 @@ export function mapDataToProject(currentToken: any): Project {
     kingProgress: currentToken.king_progress,
     isKing: currentToken.is_king,
     lastKingTime: currentToken.last_king_time,
-    timeLeft: currentToken.time + 3 * 60 * 60 * 1000,
+    timeLeft: currentToken.created_at + 3 * 60 * 60 * 1000,
     price: currentToken.price,
     tx: currentToken.tx,
     sells24hUsd: currentToken.sells_24h_usd,
