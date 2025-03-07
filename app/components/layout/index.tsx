@@ -42,8 +42,7 @@ export default function Layout(props: any) {
       if (res.code === 0) {
         const showAirdropEntry =
           res.data.AirdropStartTime &&
-          Date.now() + AIRDROP_STAGE.PREVIEW.endTime >
-            res.data.AirdropStartTime;
+          Date.now() > res.data.AirdropStartTime;
 
         const airdropReady = res.data.AirdropStartTime && (Date.now() > res.data.AirdropStartTime);
 

@@ -1,6 +1,7 @@
 .follwerActions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
   .follwerItem {
     padding: 12px 0;
     display: flex;

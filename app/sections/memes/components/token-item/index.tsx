@@ -58,7 +58,7 @@ const TokenItem = (props: { className?: string; token: Hot | Meme; holders?: num
                     className={styles.TokenItemLaptopAvatarBanner}
                     loading="lazy"
                   />
-                  <div className={styles.TokenItemLaptopAvatarBannerPlayButtonContainer}>
+                  <div className={styles.TokenItemLaptopAvatarBannerPlayButtonContainer} style={{ display: "none" }}>
                     <img src="/img/icon-play.svg" alt="" className={styles.TokenItemLaptopAvatarBannerPlayButton} />
                   </div>
                 </div>
@@ -128,6 +128,7 @@ const TokenItem = (props: { className?: string; token: Hot | Meme; holders?: num
                     src="/img/memes/icon-crown.svg"
                     alt=""
                     className={styles.TokenItemLaptopAvatarCrownIcon}
+                    style={{ display: "none" }}
                   />
                 ) : (
                   <img
