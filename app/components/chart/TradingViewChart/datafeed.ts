@@ -4,12 +4,7 @@ import {
   type ResolutionString,
   type LibrarySymbolInfo
 } from "@/public/libs/charting_library";
-import dayjs from "@/app/utils/dayjs";
-import {
-  fetchData,
-  fetchLastData,
-  getGranularityByResolution
-} from "../fetch-data";
+import { fetchData, fetchLastData } from "../fetch-data";
 import addPriceMarker from "./add-price-marker";
 
 let lastPrice = 0;
@@ -164,7 +159,7 @@ const datafeed: (
       clearTimeout(pullingQueryPriceTimer);
 
       if (!currentSymbolInfo?.name) return;
-      const item = await fetchLastData(address, resolution);
+      const item = await fetchLastData(address, "1");
       if (!item?.[6]) {
         pullingQueryPriceTimer = setTimeout(fetchPrice, 5000);
         lastPrice = 0;
@@ -187,16 +182,14 @@ const datafeed: (
       onRealtimeCallback(bar);
 
       setTimeout(() => {
-        if (lastPrice) {
-          addPriceMarker({
-            price: item[1],
-            lastPrice,
-            time: item[6],
-            tvWidgetRef
-          });
-        }
+        addPriceMarker({
+          price: item[4],
+          lastPrice,
+          time: item[6],
+          tvWidgetRef
+        });
 
-        lastPrice = item[1];
+        lastPrice = item[4];
       }, 30);
       pullingQueryPriceTimer = setTimeout(fetchPrice, 5000);
     };

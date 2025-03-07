@@ -231,7 +231,7 @@ export default function TotalPanel({ info, userInfo }: any) {
                 isMobile ? styles.StatisticsItem : styles.StatisticsItemPc
               }
             >
-              <div className={styles.StatisticsLabel}>Launched Projects</div>
+              <div className={styles.StatisticsLabel}>Listed Projects</div>
               <div className={clsx(styles.StatisticsValue, "button")}>
                 <LimitProject list={info?.launched_project} />
               </div>

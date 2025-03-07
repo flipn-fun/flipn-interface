@@ -10,8 +10,9 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { numberFormatter } from "@/app/utils/common";
 import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
+import clsx from 'clsx';
 
-export default function FlipPanel({ from, token, onClose, onSuccess }: any) {
+export default function FlipPanel({ from, token, onClose, onSuccess, className, inputClassName, inputContainerClassName }: any) {
   const { flipMax, set }: any = useSetting();
   const [inputVal, setInputVal] = useState("0");
   const { solBalance } = useBalance({
@@ -73,15 +74,15 @@ export default function FlipPanel({ from, token, onClose, onSuccess }: any) {
   }, [solBalance, inputVal, isPrePaid]);
 
   return (
-    <div className={styles.Container}>
-      <div className={styles.InputWrapper}>
+    <div className={clsx(styles.Container, className)}>
+      <div className={clsx(styles.InputWrapper, inputContainerClassName)}>
         <div className={styles.BalanceWrapper}>
           <WalletIcon />
           <div>{numberFormatter(solBalance, 2, true)} SOL</div>
         </div>
         <div className={styles.InputBox}>
           <input
-            className={styles.Input}
+            className={clsx(styles.Input, inputClassName)}
             value={inputVal}
             onChange={(e) => {
               setInputVal(e.target.value);
