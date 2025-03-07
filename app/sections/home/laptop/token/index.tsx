@@ -89,7 +89,7 @@ export default function Token({
               }
             />
             <div className={styles.Bottom}>
-              {isCurrent && <Danmaku id={token.id} />}
+              {isCurrent && !isPreview && <Danmaku id={token.id} />}
 
               {token.status === 0 ? (
                 !token.isSuperLike ? (
