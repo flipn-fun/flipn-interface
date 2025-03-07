@@ -1,15 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './index.module.css';
-import clsx from 'clsx';
 import { useDebounceFn } from 'ahooks';
 import { httpAuthPost } from '@/app/utils';
 import { trim } from 'lodash-es';
 import { fail, success } from "@/app/utils/toast";
-import Loading from '@/app/components/icons/loading';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
 import { useUserAgent } from '@/app/context/user-agent';
 import { useAirdropContext } from '@/app/context/airdrop';
+import CouponCard from '@/app/sections/invite-code/components/coupon-card';
 
 const InviteCodeForm: React.FC<any> = (props) => {
   const { className } = props;
@@ -25,7 +23,6 @@ const InviteCodeForm: React.FC<any> = (props) => {
   const [code, setCode] = useState<string>();
   const [pending, setPending] = useState<boolean>();
   const [codeValid, setCodeValid] = useState<boolean>();
-  const [isStarted, setIsStarted] = useState<boolean>(false);
   const [startLoading, setStartLoading] = useState<boolean>(false);
 
   const handleCodeChange=  (value?: string) => {
@@ -66,7 +63,6 @@ const InviteCodeForm: React.FC<any> = (props) => {
   });
 
   const handleStart = () => {
-    setIsStarted(true);
     setStartLoading(true);
     const timer = setTimeout(async () => {
       clearTimeout(timer);
@@ -85,60 +81,35 @@ const InviteCodeForm: React.FC<any> = (props) => {
   }, [codeParam]);
 
   return (
-    <div className={clsx(isMobile ? styles.InviteCodeFormContainer : styles.InviteCodeFormContainerLaptop, className)}>
-      <div className={styles.InviteCodeFormTop}>
-        <img src="/img/logo.svg" alt="" className={styles.InviteCodeFormLogo} />
-        <div className={styles.InviteCodeFormTips}>
-          Launch & trade memecoins as easy as scrolling through socials media
-        </div>
-        <div className={styles.InviteCodeFormLabel}>
-          Invite Code
-        </div>
-        <div className={styles.InviteCodeFormControlWrapper}>
-          <input
-            ref={inputRef}
-            type="text"
-            disabled={pending || codeValid}
-            className={codeValid === false ? styles.InviteCodeFormControlInvalid : styles.InviteCodeFormControl}
-            value={code}
-            onChange={(e) => handleCodeChange(e.target.value)}
-            onBlur={(e) => handleCodeVerify(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.code === "Enter") {
-                // @ts-ignore
-                handleCodeVerify(e.target.value);
-              }
-            }}
-            onFocus={handleCodeVerifyCancel}
-          />
-        </div>
+    <CouponCard
+      className={className}
+      disabled={pending || !codeValid || startLoading}
+      loading={pending || startLoading}
+      onClick={handleStart}
+      buttonText="Start!"
+    >
+      <div className={styles.InviteCodeFormLabel}>
+        Invite Code
       </div>
-      <motion.div
-        className={styles.InviteCodeFormBottom}
-        animate={{
-          rotate: isStarted ? 5 : 0,
-        }}
-        transition={{
-          type: 'spring',
-          stiffness: 200,
-          damping: 15
-        }}
-      >
-        <button
-          disabled={pending || !codeValid || startLoading}
-          type="button"
-          className={styles.InviteCodeFormButton}
-          onClick={handleStart}
-        >
-          {
-            (pending || startLoading) && (
-              <Loading size={16} />
-            )
-          }
-          <div>Start!</div>
-        </button>
-      </motion.div>
-    </div>
+      <div className={styles.InviteCodeFormControlWrapper}>
+        <input
+          ref={inputRef}
+          type="text"
+          disabled={pending || codeValid}
+          className={codeValid === false ? styles.InviteCodeFormControlInvalid : styles.InviteCodeFormControl}
+          value={code}
+          onChange={(e) => handleCodeChange(e.target.value)}
+          onBlur={(e) => handleCodeVerify(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.code === "Enter") {
+              // @ts-ignore
+              handleCodeVerify(e.target.value);
+            }
+          }}
+          onFocus={handleCodeVerifyCancel}
+        />
+      </div>
+    </CouponCard>
   );
 };
 
