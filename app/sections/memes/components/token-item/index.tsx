@@ -128,6 +128,7 @@ const TokenItem = (props: { className?: string; token: Hot | Meme; holders?: num
                     src="/img/memes/icon-crown.svg"
                     alt=""
                     className={styles.TokenItemLaptopAvatarCrownIcon}
+                    style={{ display: "none" }}
                   />
                 ) : (
                   <img
