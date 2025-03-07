@@ -241,6 +241,11 @@ export default function Token({
             )
           }
           <LaunchTag type={data.status as number} />
+          {
+            data.DApp === "pump" && (
+              <img src="/img/profile/icon-pump.svg" alt="" className={styles.PumpIcon} />
+            )
+          }
         </div>
 
         <div
