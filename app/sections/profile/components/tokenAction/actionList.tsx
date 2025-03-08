@@ -1,12 +1,14 @@
 import type { Project } from "@/app/type";
 import styles from "./index.module.css";
 import SmokeHot from "@/app/components/smokHot";
-import { useState } from "react";
+import { useState } from 'react';
 import BuySell from "./buySell";
 import Withdraw from "./withdraw";
 import Claim from "./claim";
 import Big from "big.js";
 import { useUserAgent } from "@/app/context/user-agent";
+import { useTokenActions } from '@/app/sections/profile/token-context';
+import { useSmokeHotStore } from '@/app/components/smokHot/store';
 
 interface Props {
   token: Project;
@@ -38,6 +40,8 @@ export default function ActionList(props: Props) {
   } = props;
 
   const { isMobile } = useUserAgent();
+  const { onCloseTradeModal } = useTokenActions();
+  const { setPanelShow } = useSmokeHotStore();
 
   const [isClaimed, setIsClaimed] = useState(false);
 
@@ -84,6 +88,9 @@ export default function ActionList(props: Props) {
                       onClick={() => {}}
                       onSuccess={onWithdrawSuccess}
                       isLaptopModal={true}
+                      onOpenClick={() => {
+                        onCloseTradeModal?.();
+                      }}
                     />
                   ))}
               </>
@@ -102,7 +109,14 @@ export default function ActionList(props: Props) {
       )}
 
       {[1, 3].includes(Number(token.status)) &&
-        (!(isPrepaid && !isOther) || isClaimed) && <BuySell token={token} />}
+        (!(isPrepaid && !isOther) || isClaimed) && (
+          <BuySell
+            token={token}
+            onOpenClick={() => {
+              setPanelShow?.(false);
+            }}
+          />
+        )}
     </div>
   );
 }
