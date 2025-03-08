@@ -155,7 +155,7 @@ function Card({ token, show, onClose }: Props, ref: any) {
       } else {
         setQrcodeCanvas(false)
         setShareUrl('')
-        setImgUrl('')
+        // setImgUrl('')
       }
     })();
   }, [token, show]);
