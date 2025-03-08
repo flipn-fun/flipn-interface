@@ -29,7 +29,7 @@
   text-transform: capitalize;
   padding-left: 12px;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.5);
+  color: #9290b1;
   transition: 0.3s;
   position: relative;
 }
@@ -45,7 +45,6 @@
 }
 
 .ItemIcon {
-  transform: scale(0.74);
   width: 30px;
   height: 30px;
   display: flex;
@@ -104,18 +103,15 @@
   margin-bottom: 25px;
 }
 
-
-
 .copyDot {
   width: 10px;
   height: 10px;
-  background: #FF2681;
+  background: #ff2681;
   border-radius: 50%;
   position: absolute;
   top: 0px;
   right: 20%;
 }
-
 
 .ComingSoon {
   position: absolute;
@@ -124,7 +120,6 @@
   z-index: 100;
   width: 50px;
 }
-
 
 .ComingSoonWrapper {
   composes: Item;

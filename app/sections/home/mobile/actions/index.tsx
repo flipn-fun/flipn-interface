@@ -11,7 +11,6 @@ import { actionLikeTrigger } from "@/app/components/timesLike/ActionTrigger";
 import { useMessage } from "@/app/context/messageContext";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useAuth } from "@/app/context/auth";
-import useHolders from "../hooks/use-holders";
 import { numberFormatter } from "@/app/utils/common";
 import Timer from "./timer";
 import TipsButton from "@/app/sections/home/laptop/tips-button";
@@ -23,12 +22,13 @@ export default function Actions({
   isCurrent,
   disabled,
   isPreview,
-  isPreviewNoOpacity
+  isPreviewNoOpacity,
+  totalHolders
 }: any) {
   const { showShare } = useMessage();
   const { isMobile } = useUserAgent();
   const { updateUserLikeNum } = useAuth();
-  const { total: totalHolders } = useHolders(token);
+
   return (
     <div
       className={`${styles.Actions} ${
@@ -44,6 +44,7 @@ export default function Actions({
           onClick={() => {
             onClick("detail");
           }}
+          showBlueChip={true}
         />
       ) : (
         <TipsButton tips="Details">
@@ -52,11 +53,12 @@ export default function Actions({
             onClick={() => {
               onClick("detail");
             }}
+            showBlueChip={true}
           />
         </TipsButton>
       )}
       {token.status === 0 && (
-        <Timer time={token.created_at} isPreview={isPreview} />
+        <Timer time={token.timeLeft} isPreview={isPreview} />
       )}
       {token.status === 0 ? (
         <>

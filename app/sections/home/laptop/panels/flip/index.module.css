@@ -91,3 +91,27 @@
   line-height: normal;
   margin-top: 20px;
 }
+
+.MaxLimit {
+  color: #9290B1;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  position: absolute;
+  right: 23px;
+  transform: translateY(6px);
+}
+
+.FlipTips {
+  margin-top: 29px;
+  color: #FBCA04;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 150%;
+  text-align: left;
+}

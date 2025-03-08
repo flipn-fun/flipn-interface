@@ -1,0 +1,91 @@
+.LaptopContainer {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  z-index: 10;
+  width: 396px;
+  max-height: calc(100vh - 70px);
+  background-color: #252328;
+  border: 1px solid #3b3b3b;
+  border-radius: 16px 16px 0px 0px;
+}
+.Title {
+  color: #fff;
+  font-family: Unbounded;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  padding: 0 12px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.Content {
+  height: calc(100dvh - 125px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+.Img {
+  width: 120px;
+}
+.Token {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #FFF;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #353339;
+}
+.SmokePanelContainer {
+  background: #252328;
+  padding: 10px 15px;
+}
+.SmokePanelInputContainerClassName {
+  flex-direction: column;
+  align-items: stretch;
+}
+.SmokePanelInputClassName {
+  width: 288px;
+  color: #FFF;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+.InputBoxClassName {
+  flex-direction: column;
+  align-items: center;
+  margin-top: 102px;
+}
+.ValueClassName {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  transform: translateY(-92px);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 10px;
+}
+.DescWrapperClassName {
+  margin-top: 80px;
+}
+.TagsClassName {
+  width: 100%;
+  flex: 1;
+  justify-content: center;
+}
+.ButtonClassName {
+  height: 50px;
+}

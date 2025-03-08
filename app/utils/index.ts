@@ -1,7 +1,6 @@
 import dayjs from "./dayjs";
 import type { Project } from "../type";
 import { fail } from "./toast";
-import { clearAll } from "./listStore";
 import { Connection } from "@solana/web3.js";
 // import Cropper from "cropperjs";
 // @ts-ignore
@@ -285,6 +284,7 @@ export async function initAuthorization() {
 }
 
 export function logOut() {
+  console.log("%cLogOut: %o", "background:#B82132;color:#fff;", window.sexAddress);
   window.walletProvider = null;
   window.sexAddress = undefined;
   window.localStorage.removeItem(AUTH_KEY);

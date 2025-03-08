@@ -24,7 +24,7 @@ export const TABS: Tab[] = [
     filters: [
       { value: 'virtual_volume', label: 'Volume', order: Order.Desc },
       { value: 'market_cap', label: 'MCap', order: Order.Desc },
-      { value: 'holder', label: 'Holders', order: Order.Desc },
+      // { value: 'holder', label: 'Holders', order: Order.Desc },
     ],
   },
   {

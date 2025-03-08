@@ -48,7 +48,7 @@ export default function Statistics({ itemStyle, style, info }: any) {
         </div>
       </div>
       <div className={styles.statisticsItem} style={itemStyle}>
-        <div className={styles.statisticsTitle}>Launching Rate</div>
+        <div className={styles.statisticsTitle}>Ticking Rate</div>
         <div
           className={styles.value}
           style={{
@@ -59,7 +59,7 @@ export default function Statistics({ itemStyle, style, info }: any) {
         </div>
       </div>
       <div className={styles.statisticsItem} style={itemStyle}>
-        <div className={styles.statisticsTitle}>Launched Projects</div>
+        <div className={styles.statisticsTitle}>Listed Projects</div>
         <div style={{ marginTop: 5 }}>
           <LimitProject list={info?.launched_project} />
         </div>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, useCallback } from "react";
+import React, { useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { useDebounceFn } from "ahooks";
 import { useUser } from "@/app/store/useUser";
 import useUserInfo from "@/app/hooks/useUserInfo";
@@ -9,7 +9,6 @@ import { logOut } from "@/app/utils";
 import LoginModal from "@/app/components/loginModal";
 import SignatureModal from "../components/signature-modal";
 import type { ReactNode } from "react";
-import { useShare } from "../hooks/use-share";
 
 const AuthContext = React.createContext<any | null>(null);
 
@@ -23,7 +22,8 @@ export const AuthProvider: React.FC<{
   const router = useRouter();
   const pathname = usePathname();
   const [showSignatureModal, setShowSignatureModal] = useState(false);
-  useShare();
+
+  const timer = useRef<any>();
   const [accountRefresher, setAccountRefresher] = useState(0);
   const { onQueryInfo, setUserInfo, fecthUserInfo } = useUserInfo(
     address,
@@ -38,6 +38,7 @@ export const AuthProvider: React.FC<{
     async () => {
       window.walletProvider = walletProvider;
       window.sexAddress = address;
+      console.log("%cWindow.sexAddress: %o", "background:#B82132;color:#fff;", window.sexAddress);
 
       if (address === userStore.userInfo?.address) {
         setAccountRefresher(1);
@@ -92,8 +93,10 @@ export const AuthProvider: React.FC<{
   useEffect(() => {
     if (!address) {
       setAccountRefresher(0);
-      setTimeout(() => {
+      timer.current = setTimeout(() => {
+        console.log("%cBefore logout - Window.sexAddress: %o", "background:#B82132;color:#fff;", window.sexAddress);
         if (!window.sexAddress) {
+          console.log("%cTriggered logout - Window.sexAddress: %o", "background:#B82132;color:#fff;", window.sexAddress);
           logout();
         }
       }, 5000);
@@ -101,6 +104,11 @@ export const AuthProvider: React.FC<{
     }
 
     updateAccount();
+    clearTimeout(timer.current);
+
+    return () => {
+      clearTimeout(timer.current);
+    };
   }, [address]);
 
   return (

@@ -28,7 +28,7 @@
   font-weight: 400;
   text-transform: capitalize;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.5);
+  color: #9290b1;
   transition: 0.3s;
   position: relative;
 }
@@ -44,7 +44,6 @@
 }
 
 .ItemIcon {
-  transform: scale(0.74);
   margin-top: -4px;
 }
 
@@ -83,21 +82,20 @@
 .copyDot {
   width: 10px;
   height: 10px;
-  background: #FF2681;
+  background: #ff2681;
   border-radius: 50%;
   position: absolute;
   top: 0px;
   right: 15%;
 }
 
-
 .ComingSoon {
   position: absolute;
   top: 0px;
   z-index: 100;
-  left: -100%;
+  left: -34%;
+  transform: scale(0.5);
 }
-
 
 .ComingSoonWrapper {
   composes: Item;

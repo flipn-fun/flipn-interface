@@ -15,6 +15,7 @@ import { useRef } from "react";
 import useHolders from "@/app/sections/home/mobile/hooks/use-holders";
 import { useUserAgent } from "@/app/context/user-agent";
 import TipsButton from "@/app/sections/home/laptop/tips-button";
+import SpecFrame from "../../spec-frame";
 
 export default function Token({
   isCurrent,
@@ -34,7 +35,7 @@ export default function Token({
   const { innerHeight, innerWidth } = useUserAgent();
   const descContentRef = useRef<any>();
 
-  const { total: totalHolders } = useHolders(token);
+  const { total: totalHolders } = useHolders(token, isCurrent);
 
   return (
     <div
@@ -61,6 +62,14 @@ export default function Token({
               height: innerHeight
             }}
           >
+            {!!token.boost_time && (
+              <SpecFrame
+                className={styles.SpecFrame}
+                width={innerWidth}
+                height={innerHeight}
+                id={token.id}
+              />
+            )}
             <div className={styles.BottomBg} />
             {token?.icon && (
               <div
@@ -80,7 +89,7 @@ export default function Token({
               }
             />
             <div className={styles.Bottom}>
-              {isCurrent && <Danmaku id={token.id} />}
+              {isCurrent && !isPreview && <Danmaku id={token.id} />}
 
               {token.status === 0 ? (
                 !token.isSuperLike ? (

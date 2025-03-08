@@ -189,7 +189,7 @@ export default function Token({
       style={{
         width: from === "page" ? 340 : "100%",
         backgroundColor:
-          from === "page" ? "transparent" : "rgba(255, 255, 255, 0.08)",
+          from === "page" ? "transparent" : (isMobile ? "" : "rgba(255, 255, 255, 0.08)"),
         flexDirection: from === "page" ? "column" : "row",
         gap: from === "page" ? 10 : 0,
         padding: from === "page" ? 0 : "10px 15px",
@@ -215,7 +215,7 @@ export default function Token({
             data={{
               ...data,
               // fix#REF-10095
-              tokenImg: videoReg.test(data.token_video || "") ? (data.token_icon || data.token_video) : data.token_video,
+              tokenImg: videoReg.test(data.token_video || "") ? (data.token_icon || data.token_video) : (data.token_video || data.token_icon),
             }}
             imgHeight={84}
             autoPlay={false}
@@ -235,12 +235,17 @@ export default function Token({
           />
           {
             (videoReg.test(data.token_video || "") && !!data.token_icon && !videoReg.test(data.token_icon || "")) && (
-              <div className={styles.tokenVideoWrapper}>
+              <div className={styles.tokenVideoWrapper} style={{ display: "none" }}>
                 <img src="/img/icon-play.svg" alt="" className={styles.tokenVideoPlayIcon} />
               </div>
             )
           }
           <LaunchTag type={data.status as number} />
+          {
+            data.DApp === "pump" && (
+              <img src="/img/profile/icon-pump.svg" alt="" className={styles.PumpIcon} />
+            )
+          }
         </div>
 
         <div

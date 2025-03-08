@@ -8,7 +8,7 @@ import InviteCodeForm from '@/app/sections/invite-code/components/form';
 import { useAccount } from '@/app/hooks/useAccount';
 import { useAuth } from '@/app/context/auth';
 import { useDebounceFn } from 'ahooks';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAirdropContext } from '@/app/context/airdrop';
 import { useUserAgent } from '@/app/context/user-agent';
 
@@ -19,6 +19,7 @@ const InviteCodeView: React.FC<any> = (props) => {
   const { airdropDataLoading, airdropUserData } = useAirdropContext();
   const { isMobile } = useUserAgent();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const [pageLoading, setPageLoading] = useState(true);
 
@@ -37,9 +38,15 @@ const InviteCodeView: React.FC<any> = (props) => {
 
   useEffect(() => {
     if (airdropUserData?.allow_login && pathname === "/invite-code") {
-      router.replace('/');
+      const redirectTarget = searchParams.get("redirect");
+      router.replace(redirectTarget || "/");
     }
   }, [airdropUserData, pathname]);
+
+  useEffect(() => {
+    // Close the login modal
+    window.connect?.();
+  }, []);
 
   return (
     <div className={isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop}>

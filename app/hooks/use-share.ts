@@ -1,31 +1,31 @@
-import Cookies from 'js-cookie';
-import { httpAuthGet, httpAuthPost } from '@/app/utils/';
-import { useEffect } from 'react';
-import { useAccount } from './useAccount';
+import { httpAuthPost } from "@/app/utils/";
+import { useEffect } from "react";
+import { useAuth } from "../context/auth";
+import { useSearchParams } from "next/navigation";
 
 export function useShare() {
-  const { address } = useAccount();
+  const { accountRefresher } = useAuth();
+  const searchParams = useSearchParams();
 
   const reportReferral = async () => {
-    const project = Cookies.get('referral_upload_project');
-    const user = Cookies.get('referral_upload_user');
+    const project = searchParams.get("address");
+    const user = searchParams.get("from");
 
     if (project && user) {
       try {
-        const v = await httpAuthPost(`/project/share?token_address=${project}&account_address=${user}`, { token_address: project, account_address: user });
-        if (v.code === 0) {
-          Cookies.remove('referral_upload_project');
-          Cookies.remove('referral_upload_user');
-        }
+        await httpAuthPost(
+          `/project/share?token_address=${project}&account_address=${user}`,
+          { token_address: project, account_address: user }
+        );
       } catch (err) {
-        console.error('Failed to report referral:', err);
+        console.error("Failed to report referral:", err);
       }
     }
   };
 
   useEffect(() => {
-    if (address) {
+    if (accountRefresher) {
       reportReferral();
     }
-  }, [address]);
+  }, [accountRefresher]);
 }
