@@ -28,7 +28,6 @@ import { fail } from "@/app/utils/toast";
 import { getShortUrl, shareToX } from "@/app/utils/share";
 import Modal from "../modal";
 import useHolders from "@/app/sections/home/mobile/hooks/use-holders";
-import useMcWithPump from "@/app/hooks/use-mc-with-pump";
 import Big from "big.js";
 import { useUser } from "@/app/store/useUser";
 import { useUserAgent } from "@/app/context/user-agent";
@@ -56,7 +55,6 @@ function Card({ token, show, onClose }: Props, ref: any) {
   const [isSharing, setIsSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
   const { total: totalHolders } = useHolders(token);
-  const pumpMc = useMcWithPump(token);
   const [imgUrl, setImgUrl] = useState('');
   const canvasRef = useRef<any>(null);
   const [qrcodeCanvas, setQrcodeCanvas] = useState<boolean>(false);
@@ -281,10 +279,10 @@ function Card({ token, show, onClose }: Props, ref: any) {
                     <div className={styles.statsFlipText}>
                       <span className={styles.statsFlipTextTitle}>Marketcap</span>
                       <span className={styles.statsFlipTextCount}>
-                        {pumpMc === 0 || pumpMc === "0" || pumpMc === "-" ? (
+                        {!token.mc ? (
                           <div>$-</div>
                         ) : (
-                          <div>${simplifyNum(pumpMc as number, 2)}</div>
+                          <div>${simplifyNum(Number(token.mc || 0), 2)}</div>
                         )}
                       </span>
                     </div>
