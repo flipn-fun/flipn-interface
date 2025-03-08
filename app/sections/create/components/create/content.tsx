@@ -133,6 +133,13 @@ export default function Create({
         return
       } 
 
+      if (Number(solBalance) - 0.03 < 0) {
+        setErrorMsg('Insufficient balance')
+        totalRef.current.isError = true;
+        setIsError(true);
+        return
+      }
+
       if (Number(debounceVal) > Number(solBalance) - 0.03) {
         setErrorMsg('Reserve at least 0.03 SOL')
         totalRef.current.isError = true;
@@ -158,7 +165,7 @@ export default function Create({
 
   const submit = useCallback(async (ignorePrepaid: number) => {
     try {
-      if (isLoading || totalRef.current.isError) {
+      if (isLoading || totalRef.current.isError || Number(solBalance) < 0.03) {
         return;
       }
 
