@@ -503,8 +503,8 @@ export default function BuySellLaunched({
                       <div
                         onClick={() => {
                           if (item === "Max") {
-                            setSolPercent(new Big(solBalance).minus(0.03).toNumber());
-                            setValInput(getFullNum(new Big(solBalance).minus(0.03).toNumber()));
+                            setSolPercent(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0));
+                            setValInput(getFullNum(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0)));
                           } else {
                             setSolPercent(item as number);
                             setValInput(getFullNum(item as number));

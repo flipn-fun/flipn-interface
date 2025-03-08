@@ -52,6 +52,7 @@ export default function Laptop() {
             animate={{ opacity: 1 }}
             className={styles.EditWrapper}
           >
+            <div style={{ height: step === 1 ? '60px' : '0px' }}></div>
             <CreateNode
                 ref={createRef}
                 step={step}
