@@ -1,13 +1,14 @@
 import type { Project } from "@/app/type";
 import styles from "./index.module.css";
 import SmokeHot from "@/app/components/smokHot";
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import BuySell from "./buySell";
 import Withdraw from "./withdraw";
 import Claim from "./claim";
 import Big from "big.js";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useTokenActions } from '@/app/sections/profile/token-context';
+import { useSmokeHotStore } from '@/app/components/smokHot/store';
 
 interface Props {
   token: Project;
@@ -40,8 +41,7 @@ export default function ActionList(props: Props) {
 
   const { isMobile } = useUserAgent();
   const { onCloseTradeModal } = useTokenActions();
-
-  const smokeHotRef = useRef<any>();
+  const { setPanelShow } = useSmokeHotStore();
 
   const [isClaimed, setIsClaimed] = useState(false);
 
@@ -70,7 +70,6 @@ export default function ActionList(props: Props) {
                     )
                   ) : (
                     <SmokeHot
-                      ref={smokeHotRef}
                       actionChildren={(_params: any) => (
                         <button
                           className={`${styles.ActionBtn} ${styles.ProfileFlip} button`}
@@ -114,7 +113,7 @@ export default function ActionList(props: Props) {
           <BuySell
             token={token}
             onOpenClick={() => {
-              smokeHotRef.current?.setPanelShow?.(false);
+              setPanelShow?.(false);
             }}
           />
         )}

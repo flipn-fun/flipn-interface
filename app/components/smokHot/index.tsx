@@ -11,6 +11,7 @@ import SmokeButton from "./smoke-button";
 import Big from "big.js";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import { numberFormatter } from "@/app/utils/common";
+import { useSmokeHotStore } from '@/app/components/smokHot/store';
 
 interface Props {
   token: Project;
@@ -37,13 +38,19 @@ function SmokeBtn({
   isLaptopModal,
   onOpenClick
 }: Props, ref: any) {
-  const [panelShow, setPanelShow] = useState(false);
-  const [vipShow, setVipShow] = useState(false);
+  const {
+    panelShow,
+    setPanelShow,
+    vipShow,
+    setVipShow,
+    flipNum,
+    setFlipNum,
+  } = useSmokeHotStore();
+
   const { userInfo }: any = useUser();
   const { address } = useAccount();
   const [boostSuperNoTimesShow, setBoostSuperNoTimesShow] = useState(false);
   const { prepaidDelayTime } = usePrepaidDelayTimeStore();
-  const [flipNum, setFlipNum] = useState(0);
 
   const { getMC, pool, checkPrePayed } = useTokenTrade({
     tokenName: token?.tokenName as string,
