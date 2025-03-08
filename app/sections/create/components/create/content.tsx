@@ -217,7 +217,7 @@ export default function Create({
         fail("Create token error");
       }
     }
-  }, [totalRef, isError])
+  }, [totalRef, isError, solBalance])
 
 
   return (
