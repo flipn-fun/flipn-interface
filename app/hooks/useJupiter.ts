@@ -29,8 +29,6 @@ export default function useJupiter({ tokenAddress, token }: Params) {
   const { publicKey, walletProvider } = useAccount();
   const [qoute, setQoute] = useState(1);
 
-  
-
   useEffect(() => {
     if (tokenAddress) {
       fetch(`https://api.jup.ag/price/v2?vsToken=${wsol}&ids=${tokenAddress}`)
