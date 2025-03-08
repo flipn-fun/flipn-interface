@@ -150,7 +150,7 @@ function UserItem({ item, type }: any) {
               ? numberFormatter(new Big(item.buy_amount)
                   // .div(1 - 0.015)
                   .div(10 ** 9)
-                  .toFixed(2, 0), 2, true)
+                  .toNumber(), 4, true)
               : 0}{" "}
             SOL
           </span>
