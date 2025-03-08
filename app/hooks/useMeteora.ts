@@ -65,7 +65,9 @@ export default function useMeteora({ token }: Params) {
                 minSwapOutAmount,
             );
 
-            const hash = await walletProvider?.signAndSendTransaction(swapTx, {}, { canJitoable: true })
+            const hash = await walletProvider?.signAndSendTransaction(swapTx, {}, {
+                canJitoable: true
+            })
 
             console.log('hash:', hash)
 
