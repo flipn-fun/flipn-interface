@@ -1,4 +1,5 @@
 import { fetchSwapInfo } from "@/app/hooks/useJupiter";
+import { getMeteoraPool } from "@/app/hooks/useMeteora";
 import type { Project } from "@/app/type";
 import { useEffect, useState } from "react";
 
@@ -12,6 +13,14 @@ export function usePair({ token, type }: { token: Project; type: number }) {
         if (res && res.quoteResponse?.routePlan && res.quoteResponse.routePlan.length > 0 && res.quoteResponse.routePlan[0].swapInfo?.ammKey) {
           setPair(res.quoteResponse.routePlan[0].swapInfo.ammKey);
         } else {
+          getMeteoraPool(token).then((res: any) => {
+            if (res) {
+              setPair(res);
+            } else {
+              setPair(null);
+            }
+          });
+
           setPair(null);
         }
       }).catch((err) => {
