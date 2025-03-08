@@ -85,7 +85,7 @@ export default function LaunchesTradePanel({
                       </div>
                       <div className={styles.MarketCap24}>
                         {Number(token.marketCap24hUsd) > 0 ? "+" : "-"}$
-                        {numberFormatter(token.marketCap24hUsd, 2, true, {
+                        {numberFormatter(Math.abs(Number(token.marketCap24hUsd)), 2, true, {
                           isShort: true
                         })}
                       </div>

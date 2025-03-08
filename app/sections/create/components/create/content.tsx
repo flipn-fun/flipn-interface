@@ -49,7 +49,7 @@ export default function Create({
   const { connection } = useConnection();
   const { userInfo }: any = useUser();
 
-  const { isMobile } = useUserAgent();
+  const { isMobile, innerHeight } = useUserAgent();
   const [infoData, setInfoData] = useState<Project>({
     tokenName: tokenName,
     ticker: data.ticker,
@@ -69,6 +69,7 @@ export default function Create({
   const [pointByVolume, setPointByVolume] = useState('0')
   
   const [isLoading, setIsLoading] = useState(false);
+
 
   const [solPercent, setSolPercent] = useState<any>(0);
   const [valInput, setValInput] = useState("0");
@@ -218,7 +219,7 @@ export default function Create({
          !modalShow && <div
          className={styles.Container + ' ' + (isMobile ? styles.ContainerMobile : styles.ContainerPc) }
          style={{
-           height: isMobile ? 'calc(100vh - 190px)' : '450px'
+           height: isMobile ? innerHeight - 200 : '450px'
          }}
        >
          <div className={styles.quickAction}>
