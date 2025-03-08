@@ -49,7 +49,7 @@ export default function Create({
   const { connection } = useConnection();
   const { userInfo }: any = useUser();
 
-  const { isMobile } = useUserAgent();
+  const { isMobile, innerHeight } = useUserAgent();
   const [infoData, setInfoData] = useState<Project>({
     tokenName: tokenName,
     ticker: data.ticker,
@@ -69,6 +69,7 @@ export default function Create({
   const [pointByVolume, setPointByVolume] = useState('0')
   
   const [isLoading, setIsLoading] = useState(false);
+
 
   const [solPercent, setSolPercent] = useState<any>(0);
   const [valInput, setValInput] = useState("0");
@@ -132,6 +133,13 @@ export default function Create({
         return
       } 
 
+      if (Number(solBalance) - 0.03 < 0) {
+        setErrorMsg('Insufficient balance')
+        totalRef.current.isError = true;
+        setIsError(true);
+        return
+      }
+
       if (Number(debounceVal) > Number(solBalance) - 0.03) {
         setErrorMsg('Reserve at least 0.03 SOL')
         totalRef.current.isError = true;
@@ -157,7 +165,7 @@ export default function Create({
 
   const submit = useCallback(async (ignorePrepaid: number) => {
     try {
-      if (isLoading || totalRef.current.isError) {
+      if (isLoading || totalRef.current.isError || Number(solBalance) < 0.03) {
         return;
       }
 
@@ -209,7 +217,7 @@ export default function Create({
         fail("Create token error");
       }
     }
-  }, [totalRef, isError])
+  }, [totalRef, isError, solBalance])
 
 
   return (
@@ -218,7 +226,7 @@ export default function Create({
          !modalShow && <div
          className={styles.Container + ' ' + (isMobile ? styles.ContainerMobile : styles.ContainerPc) }
          style={{
-           height: isMobile ? 'calc(100vh - 190px)' : '450px'
+           height: isMobile ? innerHeight - 200 : '450px'
          }}
        >
          <div className={styles.quickAction}>

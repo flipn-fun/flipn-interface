@@ -43,7 +43,13 @@ export function useAccount() {
         signAndSendTransaction: async (
           transaction: any,
           sendOptions: any = {},
-          isVersionedTransaction: boolean = false
+          {
+            isVersionedTransaction = false,
+            canJitoable = false
+          }: {
+            isVersionedTransaction?: boolean,
+            canJitoable?: boolean
+          } = {}
         ) => {
           const confirmationStrategy: any = {
             skipPreflight: true,
@@ -180,7 +186,13 @@ export function useAccount() {
       signAndSendTransaction: async (
         transaction: any,
         sendOptions: any = {},
-        isVersionedTransaction: boolean = false,
+        {
+          isVersionedTransaction = false,
+          canJitoable = false
+        }: {
+          isVersionedTransaction?: boolean,
+          canJitoable?: boolean
+        } = {}
       ) => {
         const confirmationStrategy: any = {
           skipPreflight: true,
@@ -193,7 +205,7 @@ export function useAccount() {
         let _transaction: any = transaction
         const jitoClient = new JitoJsonRpcClient('https://mainnet.block-engine.jito.wtf/api/v1', "");
         if (!isVersionedTransaction) {
-          if (jitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
+          if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
             const jitoTipAccounts = await jitoClient.getTipAccounts();
             transaction.add(
               SystemProgram.transfer({
@@ -222,8 +234,6 @@ export function useAccount() {
             })
           );
 
-         
-
           if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
             const lookupTableAccount = (
               await connection.getAddressLookupTable(lookupTableAddress)
@@ -235,7 +245,6 @@ export function useAccount() {
               instructions: transaction.instructions, // Instructions to be included in the transaction
             }).compileToV0Message([lookupTableAccount!])
 
-
             const versionedTransaction = new VersionedTransaction(message)
 
             _transaction = versionedTransaction
@@ -243,7 +252,7 @@ export function useAccount() {
         }
 
         let tx
-        if (jitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') { 
+        if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') { 
           const signedTransaction = await signTransaction!(_transaction)
           const serializedTransaction = signedTransaction.serialize();
           const base58Transaction = bs58.encode(serializedTransaction);

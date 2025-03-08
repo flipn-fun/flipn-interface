@@ -52,7 +52,7 @@ export default function SecondTimeLike({ data, onClose, onShare }: Props) {
 
         <div className={styles.learnTip}>
           Learn about{" "}
-          <a className={styles.learnLink} href="#">
+          <a className={styles.learnLink} target="_blank" href="https://docs.flipn.fun/">
             {"‘"}How to trade{"’"}
           </a>
         </div>

@@ -15,17 +15,16 @@ import {
 import { useAccount } from "./useAccount";
 import { useCallback, useEffect, useState } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
-
-import * as anchor from "@coral-xyz/anchor";
-
+import { Project } from "../type";
 interface Params {
   tokenAddress: string | undefined;
+  token: Project
 }
 
 const API_PREFIX = "https://quote-api.jup.ag";
 const wsol = "So11111111111111111111111111111111111111112";
 
-export default function useJupiter({ tokenAddress }: Params) {
+export default function useJupiter({ tokenAddress, token }: Params) {
   const { connection } = useConnection();
   const { publicKey, walletProvider } = useAccount();
   const [qoute, setQoute] = useState(1);
@@ -73,7 +72,9 @@ export default function useJupiter({ tokenAddress }: Params) {
         const hash = await walletProvider.signAndSendTransaction(
           vTransaction,
           {},
-          true
+          {
+            isVersionedTransaction: true,
+          }
         );
 
         console.log("hash", hash);

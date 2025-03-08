@@ -6,16 +6,15 @@ import { numberFormatter } from "@/app/utils/common";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const netParam = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? '' : '?cluster=devnet'
 export default function HoldItem(props: any) {
     const { item, from, tokenInfo, tokenPrice } = props;
     const router = useRouter();
     const [icon, setIcon] = useState('');
 
     useEffect(() => {
-        const type = checkFileType(item.token_icon);
+        const type = checkFileType(tokenInfo[item.token_address].token_icon);
         if (type === 'image') {
-            setIcon(item.token_icon);
+            setIcon(tokenInfo[item.token_address].token_icon);
         } else {
             httpGet("/project", { address: item.token_address }).then((res) => {
                 if (res.code === 0 && res.data && res.data.length) {
@@ -29,20 +28,19 @@ export default function HoldItem(props: any) {
         className={`${styles.heldToken} ${from === "page" && styles.PageHeldToken
             }`}
         onClick={() => {
-            // console.log(item)
             router.push(
                 "/detail?address=" + item.token_address + "&from=profile"
             );
-            // window.open('https://solscan.io/account/' + item.token_account)
         }}
         key={item.token_address}
     >
         <div className={styles.tokenMsg}>
             <Media
                 data={{
-                    tokenImg: icon || item.token_icon || "/img/token-placeholder.png"
+                    tokenImg: icon || tokenInfo[item.token_address].token_icon
                 }}
                 imgHeight={46}
+                imgWidth={46}
                 autoPlay={false}
                 imgStyle={{
                     width: 46,
@@ -64,14 +62,14 @@ export default function HoldItem(props: any) {
             />
             <div className={styles.tokenNames}>
                 <div className={styles.name}>
-                    {item.token_name}
+                    {tokenInfo[item.token_address].token_name}
                 </div>
                 <div
                     className={styles.viewCoin}
                     onClick={(e) => {
                         e.stopPropagation()
                         window.open(
-                            'https://solscan.io/account/' + item.token_account + netParam
+                            "https://solscan.io/account/" + item.token_account
                         );
                     }}
                 >
@@ -95,7 +93,7 @@ export default function HoldItem(props: any) {
         <div className={styles.tokenValue}>
             <div className={styles.tokenAmount}>
                 {simplifyNum(
-                    new Big(item.token_balance)
+                    new Big(item.amount)
                         .div(10 ** item.token_decimals)
                         .toNumber(),
                     2
@@ -105,7 +103,7 @@ export default function HoldItem(props: any) {
                 {tokenPrice[item.token_address]
                     ? numberFormatter(
                         Big(tokenPrice[item.token_address]).times(
-                            Big(item.token_balance).div(10 ** item.token_decimals)
+                            Big(item.amount).div(10 ** item.token_decimals)
                         ),
                         4,
                         true

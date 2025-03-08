@@ -91,3 +91,8 @@
   align-items: center;
   gap: 0;
 }
+
+.priceUnitSol {
+  font-size: 12px;
+  text-align: right;
+}

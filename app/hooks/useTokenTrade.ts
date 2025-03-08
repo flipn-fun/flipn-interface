@@ -437,7 +437,9 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction);
+      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
+        canJitoable: true
+      });
 
       return hash;
     },
@@ -494,7 +496,9 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction);
+      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
+        canJitoable: true
+      });
 
       return hash;
     },
@@ -543,7 +547,10 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction);
+      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
+        canJitoable: true
+      });
+      
       return hash;
     },
     [connection, walletProvider, programId]
