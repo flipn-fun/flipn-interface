@@ -67,6 +67,7 @@ const TokenItem = (props: {
                   className={
                     styles.TokenItemLaptopAvatarBannerPlayButtonContainer
                   }
+                  style={{ display: "none" }}
                 >
                   <img
                     src="/img/icon-play.svg"

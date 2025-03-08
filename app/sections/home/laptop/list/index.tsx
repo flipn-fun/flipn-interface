@@ -128,7 +128,7 @@ export default function List({ type, isCurrentTab }: any) {
         ref={listRef}
         style={{
           transform: `translate(${
-            tokenPanelStatusStore.hasShow(type)
+            tokenPanelStatusStore.hasShow(type) && currentToken
               ? "calc(50vw - 600px)"
               : "calc(50vw - 300px)"
           }, ${y}px)`,

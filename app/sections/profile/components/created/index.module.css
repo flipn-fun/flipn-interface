@@ -92,4 +92,8 @@
 
 .ProfileCreatedContainer {
   height: 100%;
+  @media screen and (max-width: 768px) {
+    min-height: calc(-274px + 100dvh);
+    background: rgba(255, 255, 255, 0.08);
+  }
 }
