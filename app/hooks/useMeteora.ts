@@ -21,9 +21,7 @@ export default function useMeteora({ token }: Params) {
     useEffect(() => {
         (async () => {
             if (token && token.status === 3 && token.DApp === 'sexy') {
-                console.log('token:', token)
                 const pools = await AmmImpl.searchPoolsByToken(connection, new PublicKey(token.address as string))
-                console.log('pools:', pools)
                 if (pools.length > 0) {
                     const pool = pools[0]
                     const constantProductPool = await AmmImpl.create(connection, pool.publicKey);
@@ -35,20 +33,20 @@ export default function useMeteora({ token }: Params) {
                 }
             }
         })()
-    }, [token]);
+    }, [token.address]);
 
     const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
-        console.log('getQoute:', meteoraPool, meteoraPoolRef, slip)
-
         if (meteoraPool && meteoraPoolRef.current) {
             const inTokenMint = type === "buy" ? new PublicKey(wsol) : new PublicKey(token.address as string)
-            const { swapOutAmount } = meteoraPoolRef.current.getSwapQuote(
+            const x = meteoraPoolRef.current.getSwapQuote(
                 inTokenMint,
                 new BN(amount),
                 Number(slip),
             );
 
-            return swapOutAmount.toNumber()
+            console.log('x:', x.swapOutAmount.toNumber(), x.priceImpact.toNumber(), x.fee.toNumber())
+
+            return x.swapOutAmount.toNumber()
         }
         return null
     }, [meteoraPool, token])

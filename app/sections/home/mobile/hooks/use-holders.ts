@@ -1,35 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
+import { getTokenMeta } from "@/app/utils/solanaScanApi";
 
 export default function useHolders(token: any, dataAvailable?: boolean) {
   const [total, setTotal] = useState(0);
-  const { connection } = useConnection();
   const onQuery = useCallback(async () => {
     try {
-      const tokenAccounts = await connection.getParsedProgramAccounts(
-        new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
-        {
-          filters: [
-            {
-              dataSize: 165
-            },
-            {
-              memcmp: {
-                offset: 0,
-                bytes: token.address
-              }
-            }
-          ]
-        }
-      );
-
-      const size = tokenAccounts.filter(
-        // @ts-ignore
-        (item) => Number(item.account.data.parsed.info.tokenAmount.amount) > 0
-      ).length;
-
-      setTotal(size);
+      const tokenMeta = await getTokenMeta(token.address)
+      setTotal(tokenMeta.data.holder);
     } catch (err) {
       console.log("err:", err);
       setTotal(0);

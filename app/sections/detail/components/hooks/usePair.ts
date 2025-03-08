@@ -19,7 +19,7 @@ export function usePair({ token, type }: { token: Project; type: number }) {
       });
     }
 
-  }, [token, type]);
+  }, [token.address, type]);
 
   return {
     pair,
