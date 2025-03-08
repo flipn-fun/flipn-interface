@@ -25,9 +25,6 @@ export default function useMeteora({ token }: Params) {
                 if (pools.length > 0) {
                     const pool = pools[0]
                     const constantProductPool = await AmmImpl.create(connection, pool.publicKey);
-
-                    console.log('constantProductPool:', constantProductPool)
-
                     setMeteoraPool(pool)
                     meteoraPoolRef.current = constantProductPool
                 }
@@ -83,3 +80,20 @@ export default function useMeteora({ token }: Params) {
         trade
     }
 }   
+
+export const getMeteoraPool = async (token: Project) => {
+    try {
+        if (token.status !== 3 || token.DApp !== 'sexy') {
+            return null;    
+        }
+        const response = await fetch(`https://amm-v2.meteora.ag/pools/search?page=0&size=1&pool_type=dynamic&include_token_mints=${token.address}`);
+        const res = await response.json();
+        if (res?.data?.length > 0) {
+            return res.data[0].pool_address;
+        }
+        return null;
+    } catch (err) {
+        console.log("get Meteora Pool failed:", err);
+        return null;
+    }
+}
