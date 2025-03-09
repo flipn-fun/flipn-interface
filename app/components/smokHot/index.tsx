@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useImperativeHandle, useMemo, useState } from 'react';
 import SmokPanel from "./smoke-panel";
 import type { Project } from "@/app/type";
 import { Modal } from "antd-mobile";
@@ -11,6 +11,7 @@ import SmokeButton from "./smoke-button";
 import Big from "big.js";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import { numberFormatter } from "@/app/utils/common";
+import { useSmokeHotStore } from '@/app/components/smokHot/store';
 
 interface Props {
   token: Project;
@@ -22,9 +23,10 @@ interface Props {
   isLaptopModal?: boolean;
   onHide?: () => void;
   onSuccess?(): void;
+  onOpenClick?(): void;
 }
 
-export default function SmokeBtn({
+function SmokeBtn({
   onClick,
   token,
   isBigIcon = false,
@@ -33,15 +35,22 @@ export default function SmokeBtn({
   onHide,
   id,
   onSuccess,
-  isLaptopModal
-}: Props) {
-  const [panelShow, setPanelShow] = useState(false);
-  const [vipShow, setVipShow] = useState(false);
+  isLaptopModal,
+  onOpenClick
+}: Props, ref: any) {
+  const {
+    panelShow,
+    setPanelShow,
+    vipShow,
+    setVipShow,
+    flipNum,
+    setFlipNum,
+  } = useSmokeHotStore();
+
   const { userInfo }: any = useUser();
   const { address } = useAccount();
   const [boostSuperNoTimesShow, setBoostSuperNoTimesShow] = useState(false);
   const { prepaidDelayTime } = usePrepaidDelayTimeStore();
-  const [flipNum, setFlipNum] = useState(0);
 
   const { getMC, pool, checkPrePayed } = useTokenTrade({
     tokenName: token?.tokenName as string,
@@ -123,7 +132,13 @@ export default function SmokeBtn({
       return;
     }
     setPanelShow(true);
+    onOpenClick?.();
   };
+
+  const refs = {
+    setPanelShow,
+  };
+  useImperativeHandle(ref, () => refs);
 
   return (
     <>
@@ -174,3 +189,5 @@ export default function SmokeBtn({
     </>
   );
 }
+
+export default React.forwardRef(SmokeBtn);
