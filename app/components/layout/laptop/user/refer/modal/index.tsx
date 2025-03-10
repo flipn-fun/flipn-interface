@@ -222,9 +222,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10K pts",
+                      label: "10K $FUN",
                       amount: "1K",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     },
                     {
@@ -233,9 +233,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "100K pts",
+                      label: "100K $FUN",
                       amount: "10K",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     },
                     {
@@ -244,9 +244,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "1M pts",
+                      label: "1M $FUN",
                       amount: "100K",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     },
                     {
@@ -255,9 +255,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10M pts",
+                      label: "10M $FUN",
                       amount: "1M",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     }
                   ]}
@@ -291,7 +291,7 @@ const ReferModalContent = (props: any) => {
                 <strong className={styles.InviteTextPrimary}>
                   extra 10%
                 </strong>{" "}
-                of their points.
+                of their $FUN.
               </motion.div>
             )}
           </AnimatePresence>
