@@ -45,8 +45,8 @@ export default function CardContainer() {
   }, [walletAddress,refreshing,lastCopyTradeTime]);
 
 
-  // const isTopTrader = copyTradersUserInfo?.isTopTrader;
-  const isTopTrader = true;
+  const isTopTrader = copyTradersUserInfo?.isTopTrader;
+  // const isTopTrader = true;
   const isCopyier = copyTradersUserInfo && +copyTradersUserInfo?.tradeInfo?.totalInvestment > 0;
 
   // if (!walletAddress) {
