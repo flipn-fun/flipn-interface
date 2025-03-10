@@ -75,7 +75,12 @@ export const useProjects = create(
         const list = {
           ...currentProjects,
           ...projects.reduce(
-            (acc: any, curr: any) => ({ ...acc, [curr.id]: curr }),
+            (acc: any, curr: any) => ({
+              ...acc,
+              [curr.data_type === "top_trade"
+                ? "top_trade" + curr.id
+                : curr.id]: curr
+            }),
             {}
           )
         };
@@ -141,19 +146,21 @@ export const useProjects = create(
         const cachedVideos: any = [];
         const needUpdateProjects: any = [];
 
-        availableProjects.forEach((itemId: any) => {
-          const item = get().projects[itemId];
-          if (item.video && videoReg.test(item.video)) {
-            cachedVideos.push({
-              url: item.video,
-              name: item.id
-            });
-          }
+        availableProjects
+          .filter((itemId: any) => !String(itemId).includes("top_trade"))
+          .forEach((itemId: any) => {
+            const item = get().projects[itemId];
+            if (item.video && videoReg.test(item.video)) {
+              cachedVideos.push({
+                url: item.video,
+                name: item.id
+              });
+            }
 
-          if (Date.now() - item.fetched_time > 1 * 60 * 1000) {
-            needUpdateProjects.push(item.id);
-          }
-        });
+            if (Date.now() - item.fetched_time > 1 * 60 * 1000) {
+              needUpdateProjects.push(item.id);
+            }
+          });
         mediaStore.fetchFiles(cachedVideos);
 
         set({ [type + "Index"]: index });

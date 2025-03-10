@@ -52,7 +52,10 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
         setHasNext(false);
         return [];
       }
-      const ids = res.data?.list.map((item: any) => item.id) || [];
+      const ids =
+        res.data?.list.map((item: any) =>
+          item.data_type === "top_trade" ? "top_trade" + item.id : item.id
+        ) || [];
 
       projectsStore.setProjects(res.data?.list, address);
 
@@ -90,16 +93,15 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
       handleList(false);
       return;
     }
-
+    const currentToken = projectsStore.getProjectById(
+      _list[projectsStore.getIndex(launchType)]
+    );
     if (
       isCurrentTab &&
-      projectsStore.getProjectById(_list[projectsStore.getIndex(launchType)])
-        ?.address
+      currentToken?.address &&
+      currentToken.data_type === "project"
     ) {
-      queryAndUpdateDetail(
-        projectsStore.getProjectById(_list[projectsStore.getIndex(launchType)])
-          .address
-      );
+      queryAndUpdateDetail(currentToken.address);
     }
 
     if (_list.length - projectsStore.getIndex(launchType) > left_num) {
