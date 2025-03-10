@@ -1,8 +1,17 @@
 import styles from "./index.module.css";
 import { useUserAgent } from "@/app/context/user-agent";
+import TradeStream from "@/app/sections/smart/components/TradeStream";
+import { useAccount } from "@/app/hooks/useAccount";
 export default function TopTrade({ opacity, data }: any) {
   const { innerHeight, innerWidth, isMobile } = useUserAgent();
+  const { address: walletAddress } = useAccount();
 
+  const streamInfo = {
+    topTraderAddress: 'BNbMH2fwdPz2Lqv1kNv79x2EAyM2HdiSe8FFLqUyE8kk', // get from api
+    isOther: walletAddress !== 'BNbMH2fwdPz2Lqv1kNv79x2EAyM2HdiSe8FFLqUyE8kk',
+    wrapperWidth: innerWidth,
+    wrapperHeight: innerHeight
+  }
   return (
     <div
       className={styles.Container}
@@ -14,7 +23,7 @@ export default function TopTrade({ opacity, data }: any) {
         padding: isMobile ? "96px 0px 72px" : 0
       }}
     >
-      {/* TODO add component here */}
+      <TradeStream streamInfo={streamInfo} />
     </div>
   );
 }
