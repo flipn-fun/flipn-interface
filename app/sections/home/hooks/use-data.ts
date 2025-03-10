@@ -104,7 +104,7 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
     if (
       isCurrentTab &&
       currentToken?.address &&
-      currentToken.data_type === "project"
+      ["project", "top_project"].includes(currentToken.data_type)
     ) {
       queryAndUpdateDetail(currentToken.address);
     }
