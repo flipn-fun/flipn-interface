@@ -78,7 +78,7 @@ export const useProjects = create(
             (acc: any, curr: any) => ({
               ...acc,
               [curr.data_type === "top_trade"
-                ? "top_trade" + curr.id
+                ? "top_trade#" + curr.id
                 : curr.id]: curr
             }),
             {}

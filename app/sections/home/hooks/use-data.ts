@@ -5,6 +5,7 @@ import { useAuth } from "@/app/context/auth";
 import { useDebounceFn } from "ahooks";
 import { useAccount } from "@/app/hooks/useAccount";
 import { useUserAgent } from "@/app/context/user-agent";
+import { SHOW_COPY_TRADE } from "@/app/utils/config";
 
 const limit = 10;
 const left_num = 5;
@@ -53,9 +54,13 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
         return [];
       }
       const ids =
-        res.data?.list.map((item: any) =>
-          item.data_type === "top_trade" ? "top_trade" + item.id : item.id
-        ) || [];
+        res.data?.list
+          .filter((item: any) =>
+            item.data_type === "top_trade" ? SHOW_COPY_TRADE : true
+          )
+          .map((item: any) =>
+            item.data_type === "top_trade" ? "top_trade#" + item.id : item.id
+          ) || [];
 
       projectsStore.setProjects(res.data?.list, address);
 
