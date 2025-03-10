@@ -152,7 +152,7 @@ const TokenItem = (props: { className?: string; token: Hot | Meme; holders?: num
                 icon: isVideoFile(_token.video) ? (_token.icon || _token.video) : _token.video,
                 is_king: false
               }}
-              isPlayButton={true}
+              isPlayButton={false}
             />
           </div>
           <div className={styles.TokenItemRight}>
