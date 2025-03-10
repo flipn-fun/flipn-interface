@@ -63,8 +63,7 @@ const AirdropEntry = (props: any) => {
   }, [isMobile, pathname, airdropVisible]);
 
   useEffect(() => {
-    // TODO disable the automatic pop-up of the airdrop window temporarily
-    // setAirdropVisible(isAirdrop);
+    setAirdropVisible(isAirdrop);
   }, [isAirdrop]);
 
   useEffect(() => {

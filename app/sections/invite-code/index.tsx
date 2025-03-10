@@ -11,8 +11,11 @@ import { useDebounceFn } from 'ahooks';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAirdropContext } from '@/app/context/airdrop';
 import { useUserAgent } from '@/app/context/user-agent';
+import InviterConnect from '@/app/sections/invite-code/components/inviter-connect';
 
 const InviteCodeView: React.FC<any> = (props) => {
+  const { inviteLink } = props;
+
   const { address } = useAccount();
   const { accountRefresher } = useAuth();
   const router = useRouter();
@@ -37,7 +40,7 @@ const InviteCodeView: React.FC<any> = (props) => {
   }, [address, accountRefresher]);
 
   useEffect(() => {
-    if (airdropUserData?.allow_login && pathname === "/invite-code") {
+    if (airdropUserData?.allow_login && [/^\/invite-code$/, /^\/ref\/[^\/]+$/].some((reg) => reg.test(pathname))) {
       const redirectTarget = searchParams.get("redirect");
       router.replace(redirectTarget || "/");
     }
@@ -51,11 +54,17 @@ const InviteCodeView: React.FC<any> = (props) => {
   return (
     <div className={isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop}>
       {
-       !pageLoading && (
-          (!address || !accountRefresher || airdropDataLoading || airdropUserData?.allow_login) ? (
-            <InviteCodeConnectWallet loading={pageLoading || airdropDataLoading} />
-          ) : (
-            <InviteCodeForm />
+        !inviteLink ? (
+          !pageLoading && (
+            (!address || !accountRefresher || airdropDataLoading || airdropUserData?.allow_login) ? (
+              <InviteCodeConnectWallet loading={pageLoading || airdropDataLoading} />
+            ) : (
+              <InviteCodeForm />
+            )
+          )
+        ) : (
+          !pageLoading && (
+            <InviterConnect />
           )
         )
       }
