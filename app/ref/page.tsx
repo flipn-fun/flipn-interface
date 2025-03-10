@@ -1,9 +1,7 @@
 import React from "react";
 import InviteCodeView from "@/app/sections/invite-code";
 
-export const runtime = "edge";
-
-const InviteCode: React.FC<any> = (props) => {
+const InviteCode: React.FC<any> = () => {
   return <InviteCodeView inviteLink={true} />;
 };
 

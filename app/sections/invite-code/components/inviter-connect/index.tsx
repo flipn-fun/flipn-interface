@@ -1,31 +1,26 @@
 import styles from "./index.module.css";
-import CouponCard from '@/app/sections/invite-code/components/coupon-card';
-import React, { useEffect, useMemo, useRef } from 'react';
-import { formatLongText } from '@/app/utils/common';
-import { useWalletModal } from '@/app/libs/solana/wallet-adapter/modal';
-import { removeAuth } from '@/app/utils';
-import { useParams } from 'next/navigation';
-import { useAccount } from '@/app/hooks/useAccount';
-import { useAuth } from '@/app/context/auth';
-import { useBind } from '@/app/sections/invite-code/hooks/use-bind';
-import { useAirdropContext } from '@/app/context/airdrop';
+import CouponCard from "@/app/sections/invite-code/components/coupon-card";
+import React, { useEffect, useMemo, useRef } from "react";
+import { formatLongText } from "@/app/utils/common";
+import { useWalletModal } from "@/app/libs/solana/wallet-adapter/modal";
+import { removeAuth } from "@/app/utils";
+import { useSearchParams } from "next/navigation";
+import { useAccount } from "@/app/hooks/useAccount";
+import { useAuth } from "@/app/context/auth";
+import { useBind } from "@/app/sections/invite-code/hooks/use-bind";
+import { useAirdropContext } from "@/app/context/airdrop";
 
 const InviterConnect = (props: any) => {
   const { className } = props;
 
   const { visible, setVisible } = useWalletModal();
-  const params = useParams();
+  const params = useSearchParams();
   const { address } = useAccount();
   const { accountRefresher } = useAuth();
-  const {
-    pending,
-    codeValid,
-    codeValidMessage,
-    handleBindDelay,
-  } = useBind();
+  const { pending, codeValid, codeValidMessage, handleBindDelay } = useBind();
   const { getAirdropData } = useAirdropContext();
 
-  const inviteCode = params.code as string;
+  const inviteCode = params.get("code") as string;
 
   const couponCardRef = useRef<any>();
 
@@ -79,11 +74,13 @@ const InviterConnect = (props: any) => {
       buttonText={buttonText}
     >
       <div className={styles.InviterContainer}>
-        <div className={styles.InviterLabel}>
-          Inviter:
-        </div>
+        <div className={styles.InviterLabel}>Inviter:</div>
         <div className={styles.InviterAvatarWrapper}>
-          <img src="/img/token-icon-placeholder.svg" alt="" className={styles.InviterAvatar} />
+          <img
+            src="/img/token-icon-placeholder.svg"
+            alt=""
+            className={styles.InviterAvatar}
+          />
         </div>
         <div className={styles.InviterName}>
           {formatLongText("Baddies 🐸", 10, 8)}
