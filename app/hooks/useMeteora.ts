@@ -44,9 +44,9 @@ export default function useMeteora({ token }: Params) {
                 0,
             );
 
-            console.log('x:', x, x.swapOutAmount.toNumber(), x.minSwapOutAmount.toNumber(), x.fee.toNumber(), x.minSwapOutAmount.toNumber() - x.fee.toNumber())
+            // console.log('x:', x, x.swapOutAmount.toNumber(), x.minSwapOutAmount.toNumber(), x.fee.toNumber(), x.minSwapOutAmount.toNumber() - x.fee.toNumber())
 
-            return x.swapOutAmount.toNumber()
+            return x.minSwapOutAmount.toNumber()
         }
         return null
     }, [meteoraPool, token])
