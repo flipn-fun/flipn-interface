@@ -28,7 +28,7 @@ export default function CustomizeLink({ show, onClose, info }: any) {
       >
         <div className={styles.ConfigContainer}>
           <div className={styles.ConfigLink}>
-            app.flipn.fun/ref/{info?.code}
+            app.flipn.fun/ref?code={info?.code}
           </div>
           <div className={styles.CofigDesc}>
             You can customize your invite link at the first time, once the URL
@@ -50,7 +50,7 @@ export default function CustomizeLink({ show, onClose, info }: any) {
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(
-                    `${window.location.origin}/ref/${info?.code}`
+                    `${window.location.origin}/ref?code=${info?.code}`
                   );
                   success("Copied successfully!");
                 } catch (err) {
@@ -81,7 +81,7 @@ export default function CustomizeLink({ show, onClose, info }: any) {
             <span>Customize my invite link</span>
           </div>
           <div className={styles.InputHeader}>
-            <div className={styles.BasicLink}>app.flipn.fun/ref/{code}</div>
+            <div className={styles.BasicLink}>app.flipn.fun/?code={code}</div>
             <div className={styles.Amount}>{20 - code.length}</div>
           </div>
           <input

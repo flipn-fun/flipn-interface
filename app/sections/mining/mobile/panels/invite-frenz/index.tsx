@@ -50,7 +50,7 @@ export default function InviteFrenz({ rate, codeInfo }: any) {
           </div>
           <div className={styles.ItemBottom}>
             <div className={styles.InviteLink}>
-              app.flipn.fun/ref/{codeInfo?.code}
+              app.flipn.fun/ref?code={codeInfo?.code}
             </div>
             <div
               className={styles.ItemBottomButtons}
