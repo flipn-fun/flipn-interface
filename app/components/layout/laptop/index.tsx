@@ -34,6 +34,10 @@ export default function Laptop({ children }: any) {
     return <Landing />;
   }
 
+  if (pathname === "/ref") {
+    return <InviteCodeView inviteLink={true} />;
+  }
+
   return (
     <div className={styles.Container}>
       <RightActions logout={logout} userInfo={userInfo} />
