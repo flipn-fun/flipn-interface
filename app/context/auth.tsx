@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{
 
   useEffect(() => {
     window.connect = () => {
-      if (["/invite-code"].includes(pathname)) {
+      if ([/^\/invite-code$/, /^\/invite\/[^\/]+$/].some((reg) => reg.test(pathname))) {
         setShowLoginModal(false);
         return;
       }

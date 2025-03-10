@@ -16,11 +16,15 @@ import { AIRDROP_STAGE } from "@/app/config/airdrop";
 import { AirdropContextProvider } from '@/app/context/airdrop';
 
 const UnWrappedPath = [
-  AIRDROP_STAGE.PREVIEW.path,
-  "/invite-code",
-  "/privacy-policy",
-  "/terms-and-conditions"
+  new RegExp(`^${AIRDROP_STAGE.PREVIEW.path}$`),
+  /^\/invite-code$/,
+  /^\/privacy-policy$/,
+  /^\/terms-and-conditions$/,
+  /^\/invite\/[^\/]+$/
 ];
+const checkUnWrappedPath = (pathname: string) => {
+  return UnWrappedPath.some((path) => path.test(pathname));
+};
 
 export default function Layout(props: any) {
   const { isMobile } = useUserAgent();
@@ -70,7 +74,7 @@ export default function Layout(props: any) {
           <AirdropContextProvider>
             {isMobile ? (
               <Mobile {...props} />
-            ) : UnWrappedPath.includes(pathname) ? (
+            ) : checkUnWrappedPath(pathname) ? (
               props.children
             ) : (
               <Laptop {...props} />
