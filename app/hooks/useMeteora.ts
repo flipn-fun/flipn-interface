@@ -37,15 +37,16 @@ export default function useMeteora({ token }: Params) {
             console.log('slip:', slip)
 
             const inTokenMint = type === "buy" ? new PublicKey(wsol) : new PublicKey(token.address as string)
+
             const x = meteoraPoolRef.current.getSwapQuote(
                 inTokenMint,
                 new BN(amount),
-                Number(slip / 100),
+                0,
             );
 
             console.log('x:', x, x.swapOutAmount.toNumber(), x.minSwapOutAmount.toNumber(), x.fee.toNumber(), x.minSwapOutAmount.toNumber() - x.fee.toNumber())
 
-            return x.minSwapOutAmount.toNumber() - x.fee.toNumber()
+            return x.swapOutAmount.toNumber()
         }
         return null
     }, [meteoraPool, token])

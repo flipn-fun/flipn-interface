@@ -50,7 +50,7 @@ export default function useJupiter({ tokenAddress, token }: Params) {
       if (tokenAddress) {
         const inputToken = type === "buy" ? wsol : tokenAddress;
         const outToken = type === "buy" ? tokenAddress : wsol;
-        const swapInfo = await fetchSwapInfo(inputToken, outToken, amount, slip);
+        const swapInfo = await fetchSwapInfo(inputToken, outToken, amount, 0);
 
         return swapInfo;
       }
@@ -143,7 +143,7 @@ export async function fetchSwapTransaction(
 
   if (jitoable) {
     requestBody.prioritizationFeeLamports = {
-      jitoTipLamports: 1000000,
+      jitoTipLamports: 5000000,
     }
   } else {
     requestBody.prioritizationFeeLamports = {
