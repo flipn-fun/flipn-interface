@@ -4,13 +4,19 @@ import clsx from "clsx";
 import { useUserAgent } from "@/app/context/user-agent";
 import useBindingInviteCode from "./use-binding";
 import CircleLoading from "@/app/components/icons/loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { fail, success } from "@/app/utils/toast";
 
-export default function CustomizeLink({ show, onClose }: any) {
+export default function CustomizeLink({ show, onClose, info }: any) {
   const { isMobile } = useUserAgent();
   const [showEditModal, setShowEditModal] = useState(false);
   const { loading, onBind, code, setCode, errorMsg } = useBindingInviteCode();
+
+  useEffect(() => {
+    if (info?.code) {
+      setCode(info.code);
+    }
+  }, [info]);
 
   return (
     <>
@@ -21,7 +27,9 @@ export default function CustomizeLink({ show, onClose }: any) {
         forceNoCloseIcon={isMobile}
       >
         <div className={styles.ConfigContainer}>
-          <div className={styles.ConfigLink}>app.flipn.fun/ref?=qwe123</div>
+          <div className={styles.ConfigLink}>
+            app.flipn.fun/ref/{info?.code}
+          </div>
           <div className={styles.CofigDesc}>
             You can customize your invite link at the first time, once the URL
             has been used, it can’t be changed.
@@ -30,8 +38,10 @@ export default function CustomizeLink({ show, onClose }: any) {
             <button
               className={clsx(styles.ConfigButton, "button")}
               onClick={() => {
+                if (info?.revise_number !== 0) return;
                 setShowEditModal(true);
               }}
+              disabled={info?.revise_number !== 0}
             >
               Customize
             </button>
@@ -39,8 +49,9 @@ export default function CustomizeLink({ show, onClose }: any) {
               className={clsx(styles.ConfigButton, "button")}
               onClick={async () => {
                 try {
-                  // TODO
-                  await navigator.clipboard.writeText("");
+                  await navigator.clipboard.writeText(
+                    `${window.location.origin}/ref/${info?.code}`
+                  );
                   success("Copied successfully!");
                 } catch (err) {
                   fail("Copied failed!");
@@ -70,7 +81,7 @@ export default function CustomizeLink({ show, onClose }: any) {
             <span>Customize my invite link</span>
           </div>
           <div className={styles.InputHeader}>
-            <div className={styles.BasicLink}>app.flipn.fun/ref/</div>
+            <div className={styles.BasicLink}>app.flipn.fun/ref/{code}</div>
             <div className={styles.Amount}>{20 - code.length}</div>
           </div>
           <input

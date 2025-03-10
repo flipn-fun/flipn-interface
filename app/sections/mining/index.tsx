@@ -7,19 +7,22 @@ import useReferralRate from "./use-referral-rate";
 import useUserMining from "./use-user-mining";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useAuth } from "@/app/context/auth";
+import useInviteCodes from "./use-invite-code";
 
 export default memo(function Mining(props: any) {
   const { isMobile } = useUserAgent();
   const { info, loading: infoLoading } = useUserMining();
   const { isLoading: rateLoading, rate } = useReferralRate();
   const { userInfo } = useAuth();
+  const { codeInfo } = useInviteCodes();
 
   const params = {
     info,
     infoLoading,
     rate,
     rateLoading,
-    userInfo
+    userInfo,
+    codeInfo
   };
 
   return isMobile ? (

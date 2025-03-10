@@ -4,13 +4,13 @@ import { useReferStore } from "@/app/store/useRefer";
 import { useAuth } from "@/app/context/auth";
 import { useState } from "react";
 import InfoIcon from "../info-icon";
-import InviteCodes from "./customize-link";
+import CustomizeLink from "./customize-link";
 
-export default function InviteFrenz({ rate, info }: any) {
+export default function InviteFrenz({ rate, codeInfo }: any) {
   const store = useReferStore();
   const { userInfo } = useAuth();
   const [showCustomModal, setShowCustomModal] = useState(false);
-  console.log("info", info);
+
   return (
     <>
       <div
@@ -50,8 +50,7 @@ export default function InviteFrenz({ rate, info }: any) {
           </div>
           <div className={styles.ItemBottom}>
             <div className={styles.InviteLink}>
-              {/* TODO */}
-              app.flipn.fun/ref/B2WpzSJdDF6XSWXo46bxHjdUx4mRgybcYcUfZEAAfFpq
+              app.flipn.fun/ref/{codeInfo?.code}
             </div>
             <div
               className={styles.ItemBottomButtons}
@@ -76,8 +75,9 @@ export default function InviteFrenz({ rate, info }: any) {
           </div>
         </div>
       </div>
-      <InviteCodes
+      <CustomizeLink
         show={showCustomModal}
+        info={codeInfo}
         onClose={() => {
           setShowCustomModal(false);
         }}
