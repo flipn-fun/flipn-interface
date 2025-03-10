@@ -1,0 +1,99 @@
+.CouponCardContainer {
+  margin: 0 auto;
+  width: 350px;
+  padding-top: 45px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.CouponCardContainerLaptop {
+  composes: CouponCardContainer;
+}
+.CouponCardTop {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transform: translateY(3px);
+}
+.CouponCardTopTop {
+  width: 100%;
+  background: url("/img/invite-code/coupon-top.svg") no-repeat bottom / 100% auto;
+  height: 142px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+.CouponCardTopMid {
+  width: 100%;
+  background: url("/img/invite-code/coupon-mid.svg") repeat-y top / 100% 1px;
+  min-height: 100px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(-1px);
+  padding-bottom: 24px;
+}
+.CouponCardTopBot {
+  width: 100%;
+  background: url("/img/invite-code/coupon-bot.svg") no-repeat top / 100% auto;
+  height: 7px;
+  flex-shrink: 0;
+  transform: translateY(-2px);
+}
+.CouponCardBottom {
+  margin-top: -1px;
+  width: 100%;
+  height: 124px;
+  background: url("/img/invite-code/coupon-bottom.svg") no-repeat bottom / contain;
+  padding-top: 38px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: left top;
+}
+.CouponCardLogo {
+  width: 127.257px;
+  height: 46px;
+  flex-shrink: 0;
+  transform: translateY(-15px);
+}
+.CouponCardTips {
+  width: 100%;
+  margin-top: 20px;
+  color: #000;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  white-space: wrap;
+}
+.CouponCardButton {
+  width: 259px;
+  height: 50px;
+  flex-shrink: 0;
+  border-radius: 100px;
+  border: 2px solid #000;
+  background: #FBCA04;
+  color: #000;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.15s;
+}
+.CouponCardButton:disabled {
+  background: #866906;
+  cursor: not-allowed;
+}
