@@ -7,11 +7,11 @@ export default function TopTrade({ opacity, data }: any) {
   const { address: walletAddress } = useAccount();
 
   const streamInfo = {
-    topTraderAddress: 'BNbMH2fwdPz2Lqv1kNv79x2EAyM2HdiSe8FFLqUyE8kk', // get from api
-    isOther: walletAddress !== 'BNbMH2fwdPz2Lqv1kNv79x2EAyM2HdiSe8FFLqUyE8kk',
+    topTraderAddress: data.address, // get from api
+    isOther: walletAddress !== data.address,
     wrapperWidth: innerWidth,
     wrapperHeight: innerHeight
-  }
+  };
   return (
     <div
       className={styles.Container}
