@@ -20,7 +20,7 @@ const UnWrappedPath = [
   /^\/invite-code$/,
   /^\/privacy-policy$/,
   /^\/terms-and-conditions$/,
-  /^\/invite\/[^\/]+$/
+  /^\/ref\/[^\/]+$/
 ];
 const checkUnWrappedPath = (pathname: string) => {
   return UnWrappedPath.some((path) => path.test(pathname));

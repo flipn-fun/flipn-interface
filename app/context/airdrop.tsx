@@ -111,7 +111,7 @@ export const checkUnRedirectPathname = (pathname: string) => {
   const unRedirectPathname = [
     /^\/invite-code$/,
     /^\/$/,
-    /^\/invite\/[^\/]+$/
+    /^\/ref\/[^\/]+$/
   ];
   return unRedirectPathname.some((item) => item.test(pathname));
 };
