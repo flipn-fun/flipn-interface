@@ -61,6 +61,7 @@ export default function InviteFrenz({ rate }: any) {
                 <button
                   type="button"
                   className={styles.Button}
+                  disabled={!list?.length}
                   onClick={() => {
                     setShowInviteCodes(true);
                   }}

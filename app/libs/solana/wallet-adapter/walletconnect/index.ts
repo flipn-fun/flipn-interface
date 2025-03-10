@@ -23,6 +23,7 @@ import {
   type TransactionVersion,
   type VersionedTransaction,
 } from '@solana/web3.js';
+import { BackpackWalletAdapter } from '@/app/libs/solana/wallet-adapter/backpack';
 
 export const WalletConnectWalletName = 'WalletConnect' as WalletName<'WalletConnect'>;
 
@@ -72,7 +73,11 @@ export class WalletConnectWalletAdapter extends BaseSignerWalletAdapter {
     this.walletInfo = {};
 
     const solanaWeb3JsAdapter = new SolanaAdapter({
-      wallets: [new PhantomWalletAdapter(), new SolflareWalletAdapter()] as any,
+      wallets: [
+        new PhantomWalletAdapter(),
+        new SolflareWalletAdapter(),
+        new BackpackWalletAdapter()
+      ] as any,
     });
 
     this._appKit = createAppKit({

@@ -13,8 +13,9 @@ export default function useInviteCodes() {
       setLoading(true);
       const response = await httpAuthGet("/airdrop/code");
 
-      setList(response.data);
+      setList(response.data.beta_code_list);
     } catch (err) {
+      setList([]);
     } finally {
       setLoading(false);
     }
