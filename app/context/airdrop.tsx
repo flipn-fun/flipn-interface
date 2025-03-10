@@ -39,7 +39,7 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const getAirdropData = async (params?: { isLoading?: boolean; }) => {
     const { isLoading = true } = params ?? {};
     isLoading && setAirdropDataLoading(true);
-    const res = await httpAuthGet("/airdrop/data");
+    const res = await httpAuthGet(`/airdrop/data?address=${address}`);
     if (res.code !== 0) {
       setAirdropDataLoading(false);
       return false;
