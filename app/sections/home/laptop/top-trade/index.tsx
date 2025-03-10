@@ -14,7 +14,7 @@ export default function TopTrade({ opacity, data }: any) {
         padding: isMobile ? "96px 0px 72px" : 0
       }}
     >
-      Top Trade
+      {/* TODO add component here */}
     </div>
   );
 }
