@@ -40,7 +40,7 @@ export const WalletModal: FC<WalletModalProps> = (props) => {
   const ref = useRef<HTMLDivElement>(null);
   const { wallets, select, connect } = useWallet();
   const { setVisible } = useWalletModal();
-  const { privyVisible } = useContext(PrivyWalletContext);
+  const { privyVisible, setPrivyVisible } = useContext(PrivyWalletContext);
 
   const [expanded, setExpanded] = useState(true);
   const [fadeIn, setFadeIn] = useState(false);
@@ -190,7 +190,7 @@ export const WalletModal: FC<WalletModalProps> = (props) => {
             </button>
             <h1 className="wallet-adapter-modal-title">Connect Wallet</h1>
             <h2 className="wallet-adapter-modal-sub-title">
-              You need to connect a solana wallet.
+              You need to <span onClick={() => { setPrivyVisible?.(!privyVisible) }}>connect</span> a solana wallet.
             </h2>
             {
               privyVisible && (

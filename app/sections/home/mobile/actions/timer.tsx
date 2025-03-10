@@ -1,24 +1,19 @@
-import { useEffect, useState } from "react";
 import styles from "./timer.module.css";
-import useTimeLeft from "@/app/hooks/useTimeLeft";
+import { useCountDown } from "ahooks";
 
 export default function Timer({ time, isPreview }: any) {
-  const [startTime, setStartTime] = useState(0);
-  const { timeFormat } = useTimeLeft({
-    time: startTime
+  const [timeLeft, { days, hours, minutes, seconds }] = useCountDown({
+    targetDate: time || 0,
+    interval: 1000
   });
-
-  useEffect(() => {
-    setStartTime(time + 1000 * 60 * 60 * 3);
-
-    return () => {
-      setStartTime(0);
-    };
-  }, []);
 
   if (isPreview) return <div className={styles.Container}>03:00:00</div>;
 
-  if (!startTime || !timeFormat) return null;
+  if (!timeLeft) return null;
 
-  return <div className={styles.Container}>{timeFormat}</div>;
+  return (
+    <div className={styles.Container}>
+      {hours} : {minutes} : {seconds}
+    </div>
+  );
 }
