@@ -44,10 +44,10 @@ export default function Laptop({
           <Panel isTape={false} className={styles.PanelWrapper}>
             <div className={styles.PanelTitle}>Earn</div>
             <div className={styles.Panels}>
-              <InviteFrenz rate={rate} />
+              <InviteFrenz rate={rate} info={info} />
               <LikeToEarn info={info} userInfo={userInfo} />
               <FollowX />
-              {true && (
+              {showCreateToEarn && (
                 <CreateToEarn
                   airdropEndTime={configStore.AirdropEndTime}
                   info={info}

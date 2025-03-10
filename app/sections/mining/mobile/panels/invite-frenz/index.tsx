@@ -4,14 +4,13 @@ import { useReferStore } from "@/app/store/useRefer";
 import { useAuth } from "@/app/context/auth";
 import { useState } from "react";
 import InfoIcon from "../info-icon";
-import EditIcon from "./edit-icon";
 import InviteCodes from "./customize-link";
-import { fail, success } from "@/app/utils/toast";
 
-export default function InviteFrenz({ rate }: any) {
+export default function InviteFrenz({ rate, info }: any) {
   const store = useReferStore();
   const { userInfo } = useAuth();
   const [showCustomModal, setShowCustomModal] = useState(false);
+  console.log("info", info);
   return (
     <>
       <div
@@ -43,11 +42,6 @@ export default function InviteFrenz({ rate }: any) {
                   }}
                 />
               </div>
-              <EditIcon
-                onClick={() => {
-                  setShowCustomModal(true);
-                }}
-              />
             </div>
             <div className={styles.ItemDesc}>
               You will get {rate || "-"}%{" "}
@@ -68,16 +62,10 @@ export default function InviteFrenz({ rate }: any) {
                   type="button"
                   className={styles.Button}
                   onClick={async () => {
-                    try {
-                      // TODO
-                      await navigator.clipboard.writeText("");
-                      success("Copied successfully!");
-                    } catch (err) {
-                      fail("Copied failed!");
-                    }
+                    setShowCustomModal(true);
                   }}
                 >
-                  Copy
+                  Invite
                 </button>
               ) : (
                 <WalletModalButton className={styles.Button}>
