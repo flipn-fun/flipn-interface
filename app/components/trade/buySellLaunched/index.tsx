@@ -663,12 +663,6 @@ export default function BuySellLaunched({
                           userInfo.address
                         );
 
-                        console.log(
-                          "showBuyInToken:",
-                          showBuyInToken,
-                          _showBuyInToken
-                        );
-
                         if (_showBuyInToken) {
                           showBuyInToken = _showBuyInToken;
                         }
@@ -681,6 +675,7 @@ export default function BuySellLaunched({
                       }
                     }
                     setIsLoading(false);
+                    setReFreshBalnace(reFreshBalnace + 1);
                     onSuccess?.();
                     if (hash) {
                       const volume =
