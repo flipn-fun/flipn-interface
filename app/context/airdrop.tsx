@@ -27,11 +27,11 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const { run: goToInviteCodeDelay, cancel: goToInviteCodeDelayCancel } =
     useDebounceFn(
       () => {
-        setAirdropDataLoading(false);
-        if (["/invite-code", "/"].includes(pathname) || isTerms) return;
-        const _searchParams = new URLSearchParams();
-        _searchParams.set("redirect", pathname + "?" + searchParams.toString());
-        router.replace(`/invite-code?${_searchParams.toString()}`);
+        // setAirdropDataLoading(false);
+        // if (["/invite-code", "/"].includes(pathname) || isTerms) return;
+        // const _searchParams = new URLSearchParams();
+        // _searchParams.set("redirect", pathname + "?" + searchParams.toString());
+        // router.replace(`/invite-code?${_searchParams.toString()}`);
       },
       { wait: 2000 }
     );
