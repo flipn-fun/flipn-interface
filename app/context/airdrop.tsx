@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { httpAuthGet } from "@/app/utils";
 import { useAccount } from "@/app/hooks/useAccount";
 import { useAuth } from "@/app/context/auth";
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useDebounceFn } from "ahooks";
 import { useReferralStore } from '@/app/store/useReferral';
 import { useUser } from '@/app/store/useUser';
@@ -12,7 +12,6 @@ import { UN_REDIRECT_PATH } from '@/app/config/invite';
 const AirdropContext = React.createContext<Partial<IAirdropContext>>({});
 
 export const AirdropContextProvider: React.FC<any> = ({ children }) => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { setReferral } = useReferralStore();
@@ -32,7 +31,7 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
         if (checkUnRedirectPathname(pathname) || isTerms) return;
         const _searchParams = new URLSearchParams();
         _searchParams.set("redirect", pathname + "?" + searchParams.toString());
-        router.replace(`/invite-code?${_searchParams.toString()}`);
+        // router.replace(`/invite-code?${_searchParams.toString()}`);
       },
       { wait: 2000 }
     );
@@ -57,7 +56,7 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     ) {
       const _searchParams = new URLSearchParams();
       _searchParams.set("redirect", pathname + "?" + searchParams.toString());
-      router.replace(`/invite-code?${_searchParams.toString()}`);
+      // router.replace(`/invite-code?${_searchParams.toString()}`);
     }
     setAirdropDataLoading(false);
     return res.data;
