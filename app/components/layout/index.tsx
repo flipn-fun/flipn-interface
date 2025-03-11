@@ -14,13 +14,13 @@ import { usePathname } from "next/navigation";
 import { useWhitelist } from "@/app/components/airdrop/hooks/use-whitelist";
 import { AIRDROP_STAGE } from "@/app/config/airdrop";
 import { AirdropContextProvider } from '@/app/context/airdrop';
+import { UN_REDIRECT_PATH } from '@/app/config/invite';
 
 const UnWrappedPath = [
   new RegExp(`^${AIRDROP_STAGE.PREVIEW.path}$`),
-  /^\/invite-code$/,
   /^\/privacy-policy$/,
   /^\/terms-and-conditions$/,
-  /^\/ref$/
+  ...UN_REDIRECT_PATH
 ];
 const checkUnWrappedPath = (pathname: string) => {
   return UnWrappedPath.some((path) => path.test(pathname));
