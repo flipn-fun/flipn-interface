@@ -5,6 +5,7 @@ import { useAuth } from "@/app/context/auth";
 import { useDebounceFn } from "ahooks";
 import { useAccount } from "@/app/hooks/useAccount";
 import { useUserAgent } from "@/app/context/user-agent";
+import { SHOW_COPY_TRADE } from "@/app/utils/config";
 
 const limit = 10;
 const left_num = 5;
@@ -52,7 +53,14 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
         setHasNext(false);
         return [];
       }
-      const ids = res.data?.list.map((item: any) => item.id) || [];
+      const ids =
+        res.data?.list
+          .filter((item: any) =>
+            item.data_type === "top_trade" ? SHOW_COPY_TRADE : true
+          )
+          .map((item: any) =>
+            item.data_type === "top_trade" ? "top_trade#" + item.id : item.id
+          ) || [];
 
       projectsStore.setProjects(res.data?.list, address);
 
@@ -90,16 +98,15 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
       handleList(false);
       return;
     }
-
+    const currentToken = projectsStore.getProjectById(
+      _list[projectsStore.getIndex(launchType)]
+    );
     if (
       isCurrentTab &&
-      projectsStore.getProjectById(_list[projectsStore.getIndex(launchType)])
-        ?.address
+      currentToken?.address &&
+      ["project", "top_project"].includes(currentToken.data_type)
     ) {
-      queryAndUpdateDetail(
-        projectsStore.getProjectById(_list[projectsStore.getIndex(launchType)])
-          .address
-      );
+      queryAndUpdateDetail(currentToken.address);
     }
 
     if (_list.length - projectsStore.getIndex(launchType) > left_num) {
