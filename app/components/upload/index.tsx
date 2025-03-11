@@ -58,15 +58,22 @@ export function Upload({
 
   const uploadImg = useCallback(
     async (file: File) => {
-      if (file.size > 10 * 1000 * 1000) {
+      if (!imgReg.test(file.name) && !videoReg.test(file.name)) {
+        fail("File type not supported");
+        return {
+          url: ""
+        };
+      }
+
+      if (imgReg.test(file.name) &&file.size > 10 * 1000 * 1000) {
         fail("File size too large");
         return {
           url: ""
         };
       }
 
-      if (!imgReg.test(file.name) && !videoReg.test(file.name)) {
-        fail("File type not supported");
+      if (videoReg.test(file.name) &&file.size > 50 * 1000 * 1000) {
+        fail("File size too large");
         return {
           url: ""
         };
