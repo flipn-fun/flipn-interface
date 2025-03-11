@@ -211,7 +211,7 @@ export function useAccount() {
               SystemProgram.transfer({
                 fromPubkey: publicKey!,
                 toPubkey: new PublicKey(jitoTipAccounts[0]),
-                lamports: 1000,
+                lamports: 5000000,
               }),
             )
           }
