@@ -67,6 +67,7 @@ export function useBind(props?: any) {
         return false;
       }
       setInviterData(res.data);
+      setLoadingInviterData(false);
       return res.data;
     } catch (err: any) {
       console.log('Get inviter by code failed: %o');
