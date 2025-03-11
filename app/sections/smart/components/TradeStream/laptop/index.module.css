@@ -1,0 +1,261 @@
+.container {
+    /* height: 100%;
+    overflow-y: auto;
+    padding-top: 50px;
+    padding-bottom: 80px;
+    overflow-x: hidden; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.userName {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.smartDetailContent {
+    padding: 16px;
+    padding-right: 0;
+}
+
+.statsContainer {
+    background-color: #000;
+    border-radius: 12px;
+    color: #fff;
+}
+
+
+.smartDetailContentTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 21px;
+}
+
+.statsRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.statsRow:last-child {
+    margin-bottom: 0;
+}
+
+.statItem {
+    flex: 1;
+    gap: 6px;
+}
+
+.statLabel {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+    margin-bottom: 4px;
+    font-weight: 400;
+}
+
+.statValue {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.statValueBig {
+    font-size: 26px;
+    font-weight: 500;
+}
+
+.highlight {
+    color: #CAFF33; 
+}
+
+.detailValueCurrency {
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.5);
+    margin-left: 4px;
+}
+
+
+
+.performance {
+    padding: 16px;
+    background: linear-gradient(180deg, #FBCA04 0%,#FBCA04 50%, rgba(255, 255, 255, 0.05) 100%);
+    border-radius: 12px;
+    min-height: 305px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 10;
+  }
+  
+  .performanceContent {
+    width: 100%;
+    height: 211px;
+    background: #1B1B1B;
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .gridItem {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+  }
+  
+  .value {
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+  }
+  
+  .amount {
+    color: #C9FF5D;
+    margin-right: 4px;
+  }
+
+  .amountLessThanZero {
+    color: #FF2681;
+    margin-right: 4px;
+  }
+  
+  .unit {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 300;
+  }
+
+  .sellAmount {
+    margin-left: 4px;
+    color: #FF2681;
+  }
+  
+  .copierDetail {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: space-between;
+  }
+  
+  .copierAmount {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    color: #C9FF5D;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .copierTokenImgContent {
+    text-align: right;
+    max-width: calc(100% - 100px);
+    height: 24px;
+    overflow: hidden;
+  }
+
+  .copierTokenImg {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+
+  .copierTokenImg:not(:first-child) {
+    margin-left: -4px;
+  }
+
+  .btnGroup {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+    align-items: center; 
+    width: 100%;
+  }
+
+  .btnProfile {
+    color: #fff;
+    border-radius: 30px;
+    text-align: center;
+    border: 1px solid #FBCA04;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .btnCopyTrade {
+    color: #000;
+    border-radius: 30px;
+    text-align: center;
+    background-color: #FBCA04;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+
+  .topTradersIcon {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .topTradersInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;  
+    margin-top: 12px;
+  }
+
+  .topTradersInfoName {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .topTradersInfoNameContent {
+    display: flex;
+    gap: 6px;
+    flex-direction: column;
+  }
+  
+  

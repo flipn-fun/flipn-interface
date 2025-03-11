@@ -131,6 +131,7 @@
   line-height: normal;
 }
 
+.LinkButton:disabled,
 .Button:disabled {
   opacity: 0.5;
 }

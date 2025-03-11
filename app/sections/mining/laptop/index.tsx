@@ -50,7 +50,7 @@ export default function Laptop({
                 onCopyShareLink={onCopyShareLink}
               />
               <LikeToEarn info={info} userInfo={userInfo} />
-              <FollowX />
+              {/* <FollowX /> */}
               {showCreateToEarn && (
                 <CreateToEarn
                   airdropEndTime={configStore.AirdropEndTime}

@@ -45,7 +45,7 @@ export default function SeenAll({ show, onClose }: Props) {
 
             <div className={styles.learnTip}>
               Learn about{" "}
-              <a className={styles.learnLink} href="#">
+              <a className={styles.learnLink} target="_blank" href="https://docs.flipn.fun/how-to-trade">
                 {"‘"}How to trade{"’"}
               </a>
             </div>

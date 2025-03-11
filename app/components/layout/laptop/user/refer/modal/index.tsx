@@ -19,6 +19,7 @@ import Big from "big.js";
 import { SOL } from "@/app/components/trade/buySellPump";
 import { numberFormatter } from "@/app/utils/common";
 import useReferralRate from "@/app/sections/mining/use-referral-rate";
+import { httpAuthGet } from '@/app/utils';
 
 const ReferModal = (props: any) => {
   const { isMobile } = props;
@@ -115,35 +116,50 @@ const ReferModalContent = (props: any) => {
     });
   }, [rate]);
 
-  // const handleCopy = async () => {
-  //   if (loading) return;
-  //   setLoading(true);
-  //   const shareLink = new URL(window?.location?.origin);
-  //   shareLink.searchParams.set("referral", address ?? "");
-  //   if (currentTab === 2) {
-  //     // this api had been deleted
-  //     // const res = await httpAuthGet("/airdrop/referral/code", {
-  //     //   find: false
-  //     // });
-  //     // if (res.code !== 0) {
-  //     //   fail("Failed to obtain the invitation code");
-  //     //   setLoading(false);
-  //     //   return;
-  //     // }
-  //     shareLink.searchParams.set("airdrop", "1");
-  //   }
-  //   navigator.clipboard
-  //     .writeText(shareLink.toString())
-  //     .then(() => {
-  //       success("Copied share link!", { maskStyle: { zIndex: 2000 } });
-  //     })
-  //     .catch((err) => {
-  //       fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
-  //     })
-  //     .finally(() => {
-  //       setLoading(false);
-  //     });
-  // };
+  const handleCopy = async () => {
+    if (loading) return;
+    setLoading(true);
+    const shareLink = new URL(window?.location?.origin);
+    shareLink.searchParams.set("referral", address ?? "");
+    if (currentTab === 2) {
+      // this api had been deleted
+      // const res = await httpAuthGet("/airdrop/referral/code", {
+      //   find: false
+      // });
+      // if (res.code !== 0) {
+      //   fail("Failed to obtain the invitation code");
+      //   setLoading(false);
+      //   return;
+      // }
+      // 03/10,25# Now there's a new api of get an airdrop code
+      try {
+        const res = await httpAuthGet("/airdrop/code");
+        if (res.code !== 0 || !res.data?.code_list || !res.data?.code_list.length) {
+          fail("Failed to obtain the invitation code");
+          setLoading(false);
+          return;
+        }
+        const currentCode = res.data.code_list[0];
+        shareLink.searchParams.set("airdrop", currentCode.code);
+      } catch (err: any) {
+        console.log("get airdrop code failed: %o", err);
+        fail("Failed to obtain the invitation code");
+        setLoading(false);
+        return;
+      }
+    }
+    navigator.clipboard
+      .writeText(shareLink.toString())
+      .then(() => {
+        success("Copied share link!", { maskStyle: { zIndex: 2000 } });
+      })
+      .catch((err) => {
+        fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   const handleTab = (tab: number) => {
     if (currentTab === tab) return;
@@ -228,9 +244,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10K pts",
+                      label: "10K $FUN",
                       amount: "1K",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     },
                     {
@@ -239,9 +255,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "100K pts",
+                      label: "100K $FUN",
                       amount: "10K",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     },
                     {
@@ -250,9 +266,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "1M pts",
+                      label: "1M $FUN",
                       amount: "100K",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     },
                     {
@@ -261,9 +277,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10M pts",
+                      label: "10M $FUN",
                       amount: "1M",
-                      unit: "pts",
+                      unit: "$FUN",
                       perUnit: "Extra"
                     }
                   ]}
@@ -299,7 +315,7 @@ const ReferModalContent = (props: any) => {
                 <strong className={styles.InviteTextPrimary}>
                   extra 10%
                 </strong>{" "}
-                of their points.
+                of their $FUN.
               </motion.div>
             )}
           </AnimatePresence>

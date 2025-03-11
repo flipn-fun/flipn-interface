@@ -17,6 +17,7 @@ import LoginModal from "@/app/components/loginModal";
 import SignatureModal from "../components/signature-modal";
 import CustomizeLink from "@/app/sections/mining/component/customize-link";
 import type { ReactNode } from "react";
+import { UN_REDIRECT_PATH } from '@/app/config/invite';
 
 const AuthContext = React.createContext<any | null>(null);
 
@@ -67,7 +68,7 @@ export const AuthProvider: React.FC<{
 
   useEffect(() => {
     window.connect = () => {
-      if (["/invite-code"].includes(pathname)) {
+      if (UN_REDIRECT_PATH.some((reg) => reg.test(pathname))) {
         setShowLoginModal(false);
         return;
       }

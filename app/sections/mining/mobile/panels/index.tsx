@@ -43,9 +43,9 @@ export default function Panels({
         <Swiper.Item>
           <LikeToEarn info={info} userInfo={userInfo} />
         </Swiper.Item>
-        <Swiper.Item>
+        {/* <Swiper.Item>
           <FollowX />
-        </Swiper.Item>
+        </Swiper.Item> */}
         {showCreateToEarn ? (
           <Swiper.Item>
             <CreateToEarn

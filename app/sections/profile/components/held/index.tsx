@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import styles from "./held.module.css";
+import { getTokenByHolder, getTokenMeta } from "@/app/utils/solanaScanApi";
 import { useAccount } from "@/app/hooks/useAccount";
 import Big from "big.js";
 import { httpGet, simplifyNum } from "@/app/utils";
@@ -25,6 +26,7 @@ export default function Held({ from, address }: any) {
   const [pageIndex, setPageIndex] = useState(1);
   const [tokenInfo, setTokenInfo] = useState<any>({});
   const [tokenPrice, setTokenPrice] = useState<any>({});
+  const [tokenSelf, setTokenSelf] = useState<any>({});
   const { connection } = useConnection();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -44,84 +46,45 @@ export default function Held({ from, address }: any) {
     [tokenPrice]
   );
 
+  const getTokenSelf = useCallback(async (address: string[]) => {
+    const v = await httpGet(`/project/address/list?address_list=${address.join(",")}`);
+    console.log('v:', v)
+    if (v.code === 0 && v.data) {
+      v.data.forEach((item: any) => {
+        tokenSelf[item.address] = item;
+      })
+
+      setTokenSelf(tokenSelf);
+    }
+  }, []);  
+
   const loadMore = useCallback(async () => {
     if (address) {
       setIsLoading(true);
-      const res = await connection.getTokenAccountsByOwner(new PublicKey(address), {
-        programId: new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'),
-      })
-      console.log('res:', res)
+      return getTokenByHolder(address, pageIndex, pageSize).then((res) => {
+        const newList = [...list, ...(res.data || [])];
+        setList(newList);
+        const newTokenInfo = {
+          ...res.metadata.tokens,
+          ...tokenInfo
+        };
+        setTokenInfo(newTokenInfo);
+        getTokenSelf(newList.map((item) => item.token_address));
+        getTokenPrice(newList.map((item) => item.token_address));
 
-      const tokenList = res.value.map((account, index) => {
-        const data = AccountLayout.decode(account.account.data);
-        // console.log(`Token ${index + 1}:`);
-        console.log('data:', data)
-        // console.log("  Mint Address:", new PublicKey(data.mint).toBase58());
-        // console.log("  Token Account:", account.pubkey.toBase58());
-        // console.log("  Balance:", Number(data.amount));
-        return {
-          ...data,
-          token_account: account.pubkey.toBase58(),
+        if (res.data) {
+          if (res.data.length < pageSize) {
+            setHasMore(false);
+          } else {
+            setPageIndex(pageIndex + 1);
+            setHasMore(true);
+          }
         }
-      }).filter((item: any) => Number(item.amount) > 0)
 
-      const mintList = tokenList.map((data) => {
-        return new PublicKey(data.mint)
-      })
-
-      const metaplex = Metaplex.make(connection);
-      
-      // const metadataList = await metaplex.nfts().findAllByMintList({ mints: mintList })
-
-      // console.log('metadataList:', metadataList)
-
-      const tokenListWithMetadata = await Promise.all(tokenList.map(async token => {
-
-        const metadataAccount = await metaplex
-                .nfts()
-                .findByMint({ mintAddress: token.mint });
-        // const metadata = metadataList.find((item: any) => item.mintAddress.toBase58() === token.mint.toBase58())
-        return {
-          // ...token,
-          // metadata,
-          token_address: token.mint.toBase58(),
-          token_account: token.token_account,
-          token_balance: Number(token.amount),
-          token_icon: metadataAccount?.uri,
-          token_name: metadataAccount?.name,
-          token_symbol: metadataAccount?.symbol,
-          token_decimals: metadataAccount?.mint.decimals, 
-        }
-      }))
-
-       console.log('tokenListWithMetadata:', tokenListWithMetadata)
-
-      await getTokenPrice(tokenListWithMetadata.map((item) => item.token_address));
-
-      setList(tokenListWithMetadata);
-      setIsLoading(false);
-
-      // return getTokenByHolder(address, pageIndex, pageSize).then((res) => {
-      //   const newList = [...list, ...(res.data || [])];
-      //   setList(newList);
-      //   const newTokenInfo = {
-      //     ...res.metadata.tokens,
-      //     ...tokenInfo
-      //   };
-      //   setTokenInfo(newTokenInfo);
-
-      //   getTokenPrice(newList.map((item) => item.token_address));
-
-      //   if (res.data) {
-      //     if (res.data.length < pageSize) {
-      //       setHasMore(false);
-      //     } else {
-      //       setPageIndex(pageIndex + 1);
-      //       setHasMore(true);
-      //     }
-      //   }
-      // });
+        setIsLoading(false);
+      });
     }
+    setHasMore(false);
   }, [address, list, tokenInfo, pageIndex]);
 
   useEffect(() => {
@@ -132,7 +95,6 @@ export default function Held({ from, address }: any) {
     return <div style={{ paddingTop: 116 }} ><Loading /></div>
   }
 
-
   if (list.length === 0) {
     return (
       <div style={{ paddingTop: 116 }}>
@@ -140,7 +102,6 @@ export default function Held({ from, address }: any) {
       </div>
     );
   }
-
 
   return (
     <div
@@ -151,7 +112,10 @@ export default function Held({ from, address }: any) {
       }}
     >
       {list.map((item: any) => {
-        return <HoldItem key={item.token_address} item={item} from={from} tokenInfo={tokenInfo} tokenPrice={tokenPrice} />;
+        if (tokenSelf[item.token_address]) {
+          return <HoldItem key={item.token_address} item={item} from={from} tokenInfo={tokenInfo} tokenPrice={tokenPrice} tokenSelf={tokenSelf} />;
+        }
+        return null;
       })}
 
       {/* <SexInfiniteScroll loadMore={loadMore} hasMore={hasMore} /> */}

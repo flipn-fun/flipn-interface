@@ -15,8 +15,8 @@ import LikeToEarn from "./like-to-earn";
 import { useState, useRef } from "react";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useHome } from "../context";
-import SpecFrame from "../../spec-frame";
 import useHolders from "@/app/sections/home/mobile/hooks/use-holders";
+import SpecFrame from "../../spec-frame";
 
 export default function Token({
   isCurrent,
@@ -47,7 +47,7 @@ export default function Token({
       >
         {token?.id && (
           <div className={styles.Content}>
-            {!!token.boost_time && (
+            {token.data_type === "top_project" && (
               <SpecFrame
                 className={styles.SpecFrame}
                 width={innerWidth}
@@ -115,47 +115,47 @@ export default function Token({
                   <Desc token={token} />
                 </div>
               </div>
-              {dataAvailable && (
-                <Actions
-                  token={token}
-                  onClick={(type: any, params: any) => {
-                    if (isPreview) return;
-                    if (type === "comments") {
-                      setShowCommentsModal(true);
-                      return;
-                    }
-
-                    if (type === "detail") {
-                      goDetail(token, params);
-                      return;
-                    }
-
-                    if (!window.sexAddress) {
-                      window.connect();
-                      return;
-                    }
-                    if (type === "flip") {
-                      setShowFlipModal(true);
-                    }
-                    if (type === "trade") {
-                      setShowTradeModal(true);
-                    }
-                  }}
-                  onSuccess={(type: string) => {
-                    if (type === "launched_like") {
-                      token.is_launched_like = true;
-                      token.launched_like = token.launched_like + 1;
-                    }
-                    onUpdate?.(token, type);
-                  }}
-                  isCurrent={isCurrent}
-                  isPreview={isPreview}
-                  isPreviewNoOpacity={isPreviewNoOpacity}
-                  disabled={isPreview}
-                  totalHolders={totalHolders}
-                />
-              )}
             </div>
+            {dataAvailable && (
+              <Actions
+                token={token}
+                onClick={(type: any, params: any) => {
+                  if (isPreview) return;
+                  if (type === "comments") {
+                    setShowCommentsModal(true);
+                    return;
+                  }
+
+                  if (type === "detail") {
+                    goDetail(token, params);
+                    return;
+                  }
+
+                  if (!window.sexAddress) {
+                    window.connect();
+                    return;
+                  }
+                  if (type === "flip") {
+                    setShowFlipModal(true);
+                  }
+                  if (type === "trade") {
+                    setShowTradeModal(true);
+                  }
+                }}
+                onSuccess={(type: string) => {
+                  if (type === "launched_like") {
+                    token.is_launched_like = true;
+                    token.launched_like = token.launched_like + 1;
+                  }
+                  onUpdate?.(token, type);
+                }}
+                isCurrent={isCurrent}
+                isPreview={isPreview}
+                isPreviewNoOpacity={isPreviewNoOpacity}
+                disabled={isPreview}
+                totalHolders={totalHolders}
+              />
+            )}
           </div>
         )}
       </div>

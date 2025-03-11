@@ -15,20 +15,21 @@ import {
 import { useAccount } from "./useAccount";
 import { useCallback, useEffect, useState } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
-
-import * as anchor from "@coral-xyz/anchor";
-
+import { Project } from "../type";
+import { useSetting } from "../store/use-setting";
 interface Params {
   tokenAddress: string | undefined;
+  token: Project
 }
 
-const API_PREFIX = "https://quote-api.jup.ag";
+const API_PREFIX = "https://api.jup.ag/swap/v1";
 const wsol = "So11111111111111111111111111111111111111112";
 
-export default function useJupiter({ tokenAddress }: Params) {
+export default function useJupiter({ tokenAddress, token }: Params) {
   const { connection } = useConnection();
   const { publicKey, walletProvider } = useAccount();
   const [qoute, setQoute] = useState(1);
+  const settingStore: any = useSetting();
 
   useEffect(() => {
     if (tokenAddress) {
@@ -64,7 +65,7 @@ export default function useJupiter({ tokenAddress }: Params) {
         const swapInfo = await getQoute(amount, type, slip);
 
         const { swapTransaction, lastValidBlockHeight } =
-          await fetchSwapTransaction(publicKey.toBase58(), slip, swapInfo);
+          await fetchSwapTransaction(publicKey.toBase58(), slip, swapInfo, settingStore.jitoable);
 
         const vTransaction: any = VersionedTransaction.deserialize(
           Buffer.from(swapTransaction, "base64")
@@ -73,7 +74,10 @@ export default function useJupiter({ tokenAddress }: Params) {
         const hash = await walletProvider.signAndSendTransaction(
           vTransaction,
           {},
-          true
+          {
+            isVersionedTransaction: true,
+            canJitoable: settingStore.jitoable
+          }
         );
 
         console.log("hash", hash);
@@ -81,7 +85,7 @@ export default function useJupiter({ tokenAddress }: Params) {
         return hash;
       }
     },
-    [publicKey, walletProvider]
+    [publicKey, walletProvider, settingStore]
   );
 
   return {
@@ -113,29 +117,45 @@ export async function fetchSwapInfo(
 export async function fetchSwapTransaction(
   userWalletPublicKey: string,
   slip: number,
-  swapInfo: any
+  swapInfo: any,
+  jitoable: boolean
 ) {
-  const requestBody = {
+  const requestBody: any = {
     userPublicKey: userWalletPublicKey,
     wrapAndUnwrapSol: true,
     dynamicComputeUnitLimit: true,
     correctLastValidBlockHeight: true,
     asLegacyTransaction: false,
     allowOptimizedWrappedSolTokenAccount: true,
-    prioritizationFeeLamports: {
-      priorityLevelWithMaxLamports: {
-        maxLamports: 4000000,
-        global: false,
-        priorityLevel: "veryHigh"
-      }
-    },
+    // prioritizationFeeLamports: {
+    //   jitoTipLamports: 1000000,
+    //   priorityLevelWithMaxLamports: {
+    //     maxLamports: 4000000,
+    //     global: false,
+    //     priorityLevel: "veryHigh"
+    //   }
+    // },
     dynamicSlippage: {
       maxBps: slip || 300
     },
     quoteResponse: swapInfo.quoteResponse
   };
 
-  const response = await fetch(`${API_PREFIX}/v6/swap`, {
+  if (jitoable) {
+    requestBody.prioritizationFeeLamports = {
+      jitoTipLamports: 5000000,
+    }
+  } else {
+    requestBody.prioritizationFeeLamports = {
+      priorityLevelWithMaxLamports: {
+        maxLamports: 4000000,
+        global: false,
+        priorityLevel: "veryHigh"
+      }
+    }
+  }
+
+  const response = await fetch(`${API_PREFIX}/swap`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -144,5 +164,8 @@ export async function fetchSwapTransaction(
   });
 
   const { swapTransaction, lastValidBlockHeight } = await response.json();
+
+  console.log('swapTransaction:', swapTransaction)
+
   return { swapTransaction, lastValidBlockHeight };
 }

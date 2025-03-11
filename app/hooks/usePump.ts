@@ -2,10 +2,6 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { useCallback, useMemo } from "react";
 import { pumpFunBuy, pumpFunSell, getCoinData } from "../utils/pumpSwap";
 import { useAccount } from "./useAccount";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { Idl, Program } from "@coral-xyz/anchor";
-import IDL from './pump.json'
-import { PUMP_FUN_PROGRAM } from '@/app/utils/config'
 
 interface Props {
   tokenAddress: string;

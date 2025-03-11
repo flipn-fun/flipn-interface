@@ -1,6 +1,5 @@
 import { useRef, useEffect, useMemo, useState } from "react";
 import { useDebounce } from "ahooks";
-import { BN } from "@coral-xyz/anchor";
 import Big from "big.js";
 import styles from "../trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
@@ -530,8 +529,8 @@ export default function BuySell({
                     <div
                       onClick={() => {
                         if (item === "Max") {
-                          setSolPercent(new Big(solBalance).minus(0.03).toNumber());
-                          setValInput(getFullNum(new Big(solBalance).minus(0.03).toNumber()));
+                          setSolPercent(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0));
+                          setValInput(getFullNum(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0)));
                         } else {
                           setSolPercent(item as number);
                           setValInput(getFullNum(item as number));

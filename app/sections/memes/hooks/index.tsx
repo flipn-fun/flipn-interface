@@ -11,6 +11,7 @@ import { MemesState, useMemesStore } from '@/app/sections/memes/store';
 import { Order, TABS } from '@/app/sections/memes/config';
 import { useThrottleFn } from 'ahooks';
 import { fetchData, getGranularityByResolution } from '@/app/components/chart/fetch-data';
+import { getTokenMeta } from '@/app/utils/solanaScanApi';
 
 export function useMemes(props?: { isLoadData?: boolean; }): Memes {
   const { isLoadData } = props ?? {};
@@ -112,20 +113,8 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     setHoldersLoading(true);
     setMemesListHoldersLoading({ [address]: true });
     return new Promise((resolve) => {
-      connection.getParsedProgramAccounts(new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), {
-        "filters": [
-          {
-            "dataSize": 165
-          },
-          {
-            "memcmp": {
-              "offset": 0,
-              "bytes": address
-            }
-          }
-        ]
-      }).then((res) => {
-        const holders = res?.filter?.((it: any) => Big(it.account?.data?.parsed?.info?.tokenAmount?.amount ?? 0).gt(0))?.length || 0;
+      getTokenMeta(address).then((res) => {
+        const holders = res?.data?.holder || 0;
         setMemesListHolders({ [address]: holders });
         resolve(holders);
       }).catch((err) => {

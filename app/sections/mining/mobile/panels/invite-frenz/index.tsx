@@ -57,6 +57,7 @@ export default function InviteFrenz({ rate, codeInfo, onCopyShareLink }: any) {
                 <button
                   type="button"
                   className={styles.Button}
+                  disabled={!list?.length}
                   onClick={onCopyShareLink}
                 >
                   Invite
