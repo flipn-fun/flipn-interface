@@ -7,6 +7,7 @@ import { useDebounceFn } from "ahooks";
 import { useReferralStore } from '@/app/store/useReferral';
 import { useUser } from '@/app/store/useUser';
 import Cookies from 'js-cookie';
+import { UN_REDIRECT_PATH } from '@/app/config/invite';
 
 const AirdropContext = React.createContext<Partial<IAirdropContext>>({});
 
@@ -109,9 +110,8 @@ interface IAirdropContext {
 
 export const checkUnRedirectPathname = (pathname: string) => {
   const unRedirectPathname = [
-    /^\/invite-code$/,
     /^\/$/,
-    /^\/ref\/[^\/]+$/
+    ...UN_REDIRECT_PATH
   ];
   return unRedirectPathname.some((item) => item.test(pathname));
 };
