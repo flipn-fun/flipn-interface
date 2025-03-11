@@ -24,7 +24,7 @@ export function useBind(props?: any) {
       if (res.code !== 0) {
         setPending(false);
         const msg = res.message || 'Failed to verify code';
-        if (msg.toLowerCase() !== "inviter account error") {
+        if (!["inviter account error", "account duplicate invitation error"].includes(msg.toLowerCase())) {
           fail(
             (
               <ToastMsg title="Invalid" msg={msg} />
