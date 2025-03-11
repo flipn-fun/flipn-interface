@@ -40,7 +40,7 @@ const InviteCodeView: React.FC<any> = (props) => {
   }, [address, accountRefresher]);
 
   useEffect(() => {
-    if (airdropUserData?.allow_login && [/^\/invite-code$/, /^\/ref\/[^\/]+$/].some((reg) => reg.test(pathname))) {
+    if (airdropUserData?.allow_login && [/^\/invite-code$/, /^\/ref$/].some((reg) => reg.test(pathname))) {
       const redirectTarget = searchParams.get("redirect");
       router.replace(redirectTarget || "/");
     }
