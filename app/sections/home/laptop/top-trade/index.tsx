@@ -10,7 +10,7 @@ export default function TopTrade({ opacity, data }: any) {
     topTraderAddress: data.address, // get from api
     isOther: walletAddress !== data.address,
     wrapperWidth: innerWidth,
-    wrapperHeight: innerHeight
+    wrapperHeight: isMobile ? innerHeight - 168 : innerHeight
   };
   return (
     <div
