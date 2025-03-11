@@ -3,9 +3,6 @@ import { simplifyNum } from "@/app/utils";
 import TradeButton from "./button";
 
 export default function Trade({ token, isCurrent, onClick }: any) {
-
-  console.log('token:', token)
-
   return (
     <div className={`${styles.Container}`} onClick={onClick}>
       {token.bondingProgress < 100 && token.status !== 3 ? (
