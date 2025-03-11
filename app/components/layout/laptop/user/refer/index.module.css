@@ -30,7 +30,7 @@
 .Card {
   width: 356px;
   height: 88px;
-  background: #FCFFEA;
+  background: #fcffea;
   border: 1px solid #000;
   position: absolute;
   z-index: 11;
@@ -123,4 +123,12 @@
 }
 .ReferEntryIcon {
   transform-origin: 0 50px !important;
+}
+.RulesButton {
+  color: #000;
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }

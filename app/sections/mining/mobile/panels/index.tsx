@@ -12,7 +12,7 @@ export default function Panels({
   rate,
   userInfo,
   codeInfo,
-  onQuery
+  onCopyShareLink
 }: any) {
   const configStore: any = useConfig((store: any) => store.config);
 
@@ -34,7 +34,11 @@ export default function Panels({
         indicator={() => null}
       >
         <Swiper.Item>
-          <InviteFrenz rate={rate} codeInfo={codeInfo} onSuccess={onQuery} />
+          <InviteFrenz
+            rate={rate}
+            codeInfo={codeInfo}
+            onCopyShareLink={onCopyShareLink}
+          />
         </Swiper.Item>
         <Swiper.Item>
           <LikeToEarn info={info} userInfo={userInfo} />

@@ -1,13 +1,21 @@
-import React, { useContext, useEffect, useState, useCallback, useRef } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  useRef
+} from "react";
 import { useDebounceFn } from "ahooks";
 import { useUser } from "@/app/store/useUser";
 import useUserInfo from "@/app/hooks/useUserInfo";
 import { useAccount } from "@/app/hooks/useAccount";
 import { usePathname, useRouter } from "next/navigation";
 import { useWallet } from "@/app/hooks/use-wallet";
+import useInviteCode from "../hooks/use-invite-code";
 import { logOut } from "@/app/utils";
 import LoginModal from "@/app/components/loginModal";
 import SignatureModal from "../components/signature-modal";
+import CustomizeLink from "@/app/sections/mining/component/customize-link";
 import type { ReactNode } from "react";
 
 const AuthContext = React.createContext<any | null>(null);
@@ -22,7 +30,7 @@ export const AuthProvider: React.FC<{
   const router = useRouter();
   const pathname = usePathname();
   const [showSignatureModal, setShowSignatureModal] = useState(false);
-
+  const [showCustomizeLinkModal, setShowCustomizeLinkModal] = useState(false);
   const timer = useRef<any>();
   const [accountRefresher, setAccountRefresher] = useState(0);
   const { onQueryInfo, setUserInfo, fecthUserInfo } = useUserInfo(
@@ -30,6 +38,8 @@ export const AuthProvider: React.FC<{
     true,
     0
   );
+  const { codeInfo, onCopyShareLink, onUpdateCode } =
+    useInviteCode(accountRefresher);
   const isTerms = ["/privacy-policy", "/terms-and-conditions"].includes(
     pathname
   );
@@ -38,7 +48,11 @@ export const AuthProvider: React.FC<{
     async () => {
       window.walletProvider = walletProvider;
       window.sexAddress = address;
-      console.log("%cWindow.sexAddress: %o", "background:#B82132;color:#fff;", window.sexAddress);
+      console.log(
+        "%cWindow.sexAddress: %o",
+        "background:#B82132;color:#fff;",
+        window.sexAddress
+      );
 
       if (address === userStore.userInfo?.address) {
         setAccountRefresher(1);
@@ -94,9 +108,17 @@ export const AuthProvider: React.FC<{
     if (!address) {
       setAccountRefresher(0);
       timer.current = setTimeout(() => {
-        console.log("%cBefore logout - Window.sexAddress: %o", "background:#B82132;color:#fff;", window.sexAddress);
+        console.log(
+          "%cBefore logout - Window.sexAddress: %o",
+          "background:#B82132;color:#fff;",
+          window.sexAddress
+        );
         if (!window.sexAddress) {
-          console.log("%cTriggered logout - Window.sexAddress: %o", "background:#B82132;color:#fff;", window.sexAddress);
+          console.log(
+            "%cTriggered logout - Window.sexAddress: %o",
+            "background:#B82132;color:#fff;",
+            window.sexAddress
+          );
           logout();
         }
       }, 5000);
@@ -125,6 +147,14 @@ export const AuthProvider: React.FC<{
           userStore.setUserInfo({
             using_like_num: num
           });
+        },
+        codeInfo,
+        onCopyShareLink() {
+          if (codeInfo?.revise_number === 0) {
+            setShowCustomizeLinkModal(true);
+          } else {
+            onCopyShareLink();
+          }
         }
       }}
     >
@@ -143,6 +173,15 @@ export const AuthProvider: React.FC<{
           setShowSignatureModal,
           accountRefresher
         }}
+      />
+      <CustomizeLink
+        show={showCustomizeLinkModal}
+        info={codeInfo}
+        onClose={() => {
+          setShowCustomizeLinkModal(false);
+        }}
+        onSuccess={onUpdateCode}
+        onCopyShareLink={onCopyShareLink}
       />
     </AuthContext.Provider>
   );

@@ -11,7 +11,7 @@ export default function Mining({
   infoLoading,
   userInfo,
   rate,
-  rateLoading,
+  onCopyShareLink,
   onQuery,
   codeInfo
 }: any) {
@@ -33,6 +33,7 @@ export default function Mining({
             userInfo={userInfo}
             onQuery={onQuery}
             codeInfo={codeInfo}
+            onCopyShareLink={onCopyShareLink}
           />
           <TotalPanel info={info} userInfo={userInfo} />
           <Others info={info} />

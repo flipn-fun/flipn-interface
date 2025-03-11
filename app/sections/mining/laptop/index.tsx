@@ -17,8 +17,7 @@ export default function Laptop({
   userInfo,
   codeInfo,
   rate,
-  rateLoading,
-  onQuery
+  onCopyShareLink
 }: any) {
   const configStore: any = useConfig((store: any) => store.config);
 
@@ -48,7 +47,7 @@ export default function Laptop({
               <InviteFrenz
                 rate={rate}
                 codeInfo={codeInfo}
-                onSuccess={onQuery}
+                onCopyShareLink={onCopyShareLink}
               />
               <LikeToEarn info={info} userInfo={userInfo} />
               <FollowX />

@@ -5,9 +5,14 @@ import { useUserAgent } from "@/app/context/user-agent";
 import useBindingInviteCode from "./use-binding";
 import CircleLoading from "@/app/components/icons/loading";
 import { useEffect, useState } from "react";
-import { fail, success } from "@/app/utils/toast";
 
-export default function CustomizeLink({ show, onClose, info, onSuccess }: any) {
+export default function CustomizeLink({
+  show,
+  onClose,
+  info,
+  onSuccess,
+  onCopyShareLink
+}: any) {
   const { isMobile } = useUserAgent();
   const [showEditModal, setShowEditModal] = useState(false);
   const { loading, onBind, code, setCode, errorMsg } =
@@ -49,14 +54,7 @@ export default function CustomizeLink({ show, onClose, info, onSuccess }: any) {
             <button
               className={clsx(styles.ConfigButton, "button")}
               onClick={async () => {
-                try {
-                  await navigator.clipboard.writeText(
-                    `${window.location.origin}/ref?code=${info?.code}`
-                  );
-                  success("Copied successfully!");
-                } catch (err) {
-                  fail("Copied failed!");
-                }
+                onCopyShareLink();
               }}
             >
               Copy

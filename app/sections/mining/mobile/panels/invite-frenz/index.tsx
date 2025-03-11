@@ -2,14 +2,11 @@ import styles from "../index.module.css";
 import { WalletModalButton } from "@/app/libs/solana/wallet-adapter/modal";
 import { useReferStore } from "@/app/store/useRefer";
 import { useAuth } from "@/app/context/auth";
-import { useState } from "react";
 import InfoIcon from "../info-icon";
-import CustomizeLink from "./customize-link";
 
-export default function InviteFrenz({ rate, codeInfo, onSuccess }: any) {
+export default function InviteFrenz({ rate, codeInfo, onCopyShareLink }: any) {
   const store = useReferStore();
   const { userInfo } = useAuth();
-  const [showCustomModal, setShowCustomModal] = useState(false);
 
   return (
     <>
@@ -60,9 +57,7 @@ export default function InviteFrenz({ rate, codeInfo, onSuccess }: any) {
                 <button
                   type="button"
                   className={styles.Button}
-                  onClick={async () => {
-                    setShowCustomModal(true);
-                  }}
+                  onClick={onCopyShareLink}
                 >
                   Invite
                 </button>
@@ -75,14 +70,6 @@ export default function InviteFrenz({ rate, codeInfo, onSuccess }: any) {
           </div>
         </div>
       </div>
-      <CustomizeLink
-        show={showCustomModal}
-        info={codeInfo}
-        onClose={() => {
-          setShowCustomModal(false);
-        }}
-        onSuccess={onSuccess}
-      />
     </>
   );
 }

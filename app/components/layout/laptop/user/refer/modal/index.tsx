@@ -8,16 +8,17 @@ import Tab, {
   AnimateVariants,
   TabTitle
 } from "@/app/components/layout/laptop/user/refer/modal/tab";
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Loading from "@/app/components/icons/loading";
 import { useAirdrop } from "@/app/components/airdrop/hooks";
-import { useUser } from '@/app/store/useUser';
-import useUserInfo from '@/app/hooks/useUserInfo';
-import Big from 'big.js';
-import { SOL } from '@/app/components/trade/buySellPump';
-import { numberFormatter } from '@/app/utils/common';
-import useReferralRate from '@/app/sections/mining/use-referral-rate';
+import { useUser } from "@/app/store/useUser";
+import useUserInfo from "@/app/hooks/useUserInfo";
+import { useAuth } from "@/app/context/auth";
+import Big from "big.js";
+import { SOL } from "@/app/components/trade/buySellPump";
+import { numberFormatter } from "@/app/utils/common";
+import useReferralRate from "@/app/sections/mining/use-referral-rate";
 
 const ReferModal = (props: any) => {
   const { isMobile } = props;
@@ -50,8 +51,7 @@ const SOL_REFERRAL_LIST = [
     key: 1,
     value: 25,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
     label: "Vol.50k",
     volume: 50000,
     amount: 0,
@@ -62,8 +62,7 @@ const SOL_REFERRAL_LIST = [
     key: 2,
     value: 50,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
     label: "Vol.250k",
     volume: 250000,
     amount: 0,
@@ -74,8 +73,7 @@ const SOL_REFERRAL_LIST = [
     key: 1,
     value: 75,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
     label: "Vol.500k",
     volume: 500000,
     amount: 0,
@@ -86,8 +84,7 @@ const SOL_REFERRAL_LIST = [
     key: 1,
     value: 100,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
     label: "Vol.1m",
     volume: 1000000,
     amount: 0,
@@ -103,46 +100,50 @@ const ReferModalContent = (props: any) => {
   const userStore: any = useUser();
   const { fecthUserInfo } = useUserInfo(address, true, 0);
   const { rate, isLoading: rateLoading } = useReferralRate();
-
+  const { onCopyShareLink } = useAuth();
   const [currentTab, setCurrentTab] = useState(isInvite ? 2 : 1);
   const [loading, setLoading] = useState(false);
 
   const solReferralList = useMemo(() => {
     return SOL_REFERRAL_LIST.map((it) => {
-      it.amount = numberFormatter(Big(it.volume).times(0.01).times(Big(rate).div(100)), 2, true);
+      it.amount = numberFormatter(
+        Big(it.volume).times(0.01).times(Big(rate).div(100)),
+        2,
+        true
+      );
       return it;
     });
   }, [rate]);
 
-  const handleCopy = async () => {
-    if (loading) return;
-    setLoading(true);
-    const shareLink = new URL(window?.location?.origin);
-    shareLink.searchParams.set("referral", address ?? "");
-    if (currentTab === 2) {
-      // this api had been deleted
-      // const res = await httpAuthGet("/airdrop/referral/code", {
-      //   find: false
-      // });
-      // if (res.code !== 0) {
-      //   fail("Failed to obtain the invitation code");
-      //   setLoading(false);
-      //   return;
-      // }
-      shareLink.searchParams.set("airdrop", "1");
-    }
-    navigator.clipboard
-      .writeText(shareLink.toString())
-      .then(() => {
-        success("Copied share link!", { maskStyle: { zIndex: 2000 } });
-      })
-      .catch((err) => {
-        fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  // const handleCopy = async () => {
+  //   if (loading) return;
+  //   setLoading(true);
+  //   const shareLink = new URL(window?.location?.origin);
+  //   shareLink.searchParams.set("referral", address ?? "");
+  //   if (currentTab === 2) {
+  //     // this api had been deleted
+  //     // const res = await httpAuthGet("/airdrop/referral/code", {
+  //     //   find: false
+  //     // });
+  //     // if (res.code !== 0) {
+  //     //   fail("Failed to obtain the invitation code");
+  //     //   setLoading(false);
+  //     //   return;
+  //     // }
+  //     shareLink.searchParams.set("airdrop", "1");
+  //   }
+  //   navigator.clipboard
+  //     .writeText(shareLink.toString())
+  //     .then(() => {
+  //       success("Copied share link!", { maskStyle: { zIndex: 2000 } });
+  //     })
+  //     .catch((err) => {
+  //       fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   const handleTab = (tab: number) => {
     if (currentTab === tab) return;
@@ -168,9 +169,7 @@ const ReferModalContent = (props: any) => {
           Referral Earning
         </div>
         <div className={isMobile ? styles.ContentMobile : styles.Content}>
-          <div
-            className={styles.EarnedWrapper}
-          >
+          <div className={styles.EarnedWrapper}>
             <div
               className={isMobile ? styles.EarnedTabsMobile : styles.EarnedTabs}
             >
@@ -183,7 +182,12 @@ const ReferModalContent = (props: any) => {
               <TabTitle
                 {...props}
                 label="EARNED"
-                value={numberFormatter(Big(userInfo?.referralFee || 0).div(10 ** SOL.tokenDecimals), 4, true, { isShort: true })}
+                value={numberFormatter(
+                  Big(userInfo?.referralFee || 0).div(10 ** SOL.tokenDecimals),
+                  4,
+                  true,
+                  { isShort: true }
+                )}
                 unit="SOL"
                 tab={1}
                 current={currentTab}
@@ -192,7 +196,9 @@ const ReferModalContent = (props: any) => {
               <TabTitle
                 {...props}
                 label="EARNED"
-                value={numberFormatter(airdropData?.airdrop_points, 4, true, { isShort: true })}
+                value={numberFormatter(airdropData?.airdrop_points, 4, true, {
+                  isShort: true
+                })}
                 unit="$FUN"
                 tab={2}
                 current={currentTab}
@@ -274,9 +280,11 @@ const ReferModalContent = (props: any) => {
                 className={styles.InviteText}
                 {...AnimateVariants}
               >
-                Users invite more than <strong className={styles.InviteTextPrimary}>1,000</strong> people and get <strong
-                className={styles.InviteTextPrimary}
-              >50%</strong> Referral kickback
+                Users invite more than{" "}
+                <strong className={styles.InviteTextPrimary}>1,000</strong>{" "}
+                people and get{" "}
+                <strong className={styles.InviteTextPrimary}>50%</strong>{" "}
+                Referral kickback
               </motion.div>
             )}
             {currentTab === 2 && (
@@ -301,7 +309,7 @@ const ReferModalContent = (props: any) => {
         <button
           type="button"
           className={styles.InviteBtn}
-          onClick={handleCopy}
+          onClick={onCopyShareLink}
           disabled={loading}
         >
           {loading && <Loading size={16} />}
