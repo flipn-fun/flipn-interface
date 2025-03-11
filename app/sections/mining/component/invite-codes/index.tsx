@@ -43,7 +43,7 @@ export default function InviteCodes({
             ? [...new Array(10)].map((item, idx) => (
                 <Skeleton key={idx} animated className={styles.CodeItem} />
               ))
-            : list?.map((item: any) => (
+            : list?.map?.((item: any) => (
                 <div className={styles.CodeItem} key={item.code}>
                   <span>{item.code}</span>
                   <Copyed value={item.code} />

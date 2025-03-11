@@ -4,6 +4,8 @@ import styles from './index.module.css'
 import { useUserAgent } from '@/app/context/user-agent'
 import TopTraderDetailM from '../topTraderDetailM'
 import TopTraderDetailPC from '../topTraderDetailPC'
+import TradeStream from '../TradeStream'
+
 export default function TopTraderDetailContent() {
   const { isMobile } = useUserAgent();
   console.log('isMobile', isMobile)
