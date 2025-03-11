@@ -9,18 +9,31 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useAuth } from "@/app/context/auth";
 import { useBind } from "@/app/sections/invite-code/hooks/use-bind";
 import { useAirdropContext } from "@/app/context/airdrop";
+import { INVITERS } from '@/app/config/invite';
+import { Skeleton } from 'antd-mobile';
 
 const InviterConnect = (props: any) => {
-  const { className } = props;
+  const { className, type } = props;
+
+  const staticInviter = INVITERS[type];
 
   const { visible, setVisible } = useWalletModal();
   const params = useSearchParams();
   const { address } = useAccount();
   const { accountRefresher } = useAuth();
-  const { pending, codeValid, codeValidMessage, handleBindDelay } = useBind();
+  const {
+    pending,
+    codeValid,
+    codeValidMessage,
+    handleBindDelay,
+    inviterData,
+    loadingInviterData,
+    setLoadingInviterData,
+    getInviterByCode
+  } = useBind();
   const { getAirdropData } = useAirdropContext();
 
-  const inviteCode = params.get("code") as string;
+  const inviteCode = staticInviter?.code ?? params.get("code") as string;
 
   const couponCardRef = useRef<any>();
 
@@ -40,21 +53,25 @@ const InviterConnect = (props: any) => {
   };
 
   useEffect(() => {
+    if (!address || !accountRefresher) {
+      couponCardRef.current?.setIsStarted?.(false);
+      return;
+    }
     if (typeof codeValid === "boolean") {
       couponCardRef.current?.setIsStarted?.(true);
     }
-  }, [codeValid]);
+  }, [codeValid, address, accountRefresher]);
 
   useEffect(() => {
     if (!address || !accountRefresher) {
       return;
     }
-    if (!inviteCode) {
+    if (!inviteCode || loadingInviterData) {
       return;
     }
     // Bind inviter
     handleBindDelay(inviteCode);
-  }, [address, accountRefresher, inviteCode]);
+  }, [address, accountRefresher, inviteCode, loadingInviterData]);
 
   useEffect(() => {
     if (!codeValid) {
@@ -63,6 +80,14 @@ const InviterConnect = (props: any) => {
     // check bind
     getAirdropData?.();
   }, [codeValid]);
+
+  useEffect(() => {
+    if (!inviteCode || !!staticInviter) {
+      setLoadingInviterData(false);
+      return;
+    }
+    getInviterByCode(inviteCode);
+  }, [inviteCode, staticInviter]);
 
   return (
     <CouponCard
@@ -76,14 +101,30 @@ const InviterConnect = (props: any) => {
       <div className={styles.InviterContainer}>
         <div className={styles.InviterLabel}>Inviter:</div>
         <div className={styles.InviterAvatarWrapper}>
-          <img
-            src="/img/token-icon-placeholder.svg"
-            alt=""
-            className={styles.InviterAvatar}
-          />
+          {
+            loadingInviterData ? (
+              <Skeleton
+                animated
+                className={styles.InviterAvatarLoading}
+              />
+            ) : (
+              <img
+                src={staticInviter ? staticInviter.logo : (inviterData?.account_icon || "/img/token-icon-placeholder.svg")}
+                alt=""
+                className={styles.InviterAvatar}
+              />
+            )
+          }
         </div>
         <div className={styles.InviterName}>
-          {formatLongText("Baddies 🐸", 10, 8)}
+          {
+            loadingInviterData ? (
+              <Skeleton
+                animated
+                className={styles.InviterNameLoading}
+              />
+            ) : formatLongText(staticInviter ? staticInviter.name : (inviterData?.account_name || "Unknown"), 10, 8)
+          }
         </div>
       </div>
     </CouponCard>

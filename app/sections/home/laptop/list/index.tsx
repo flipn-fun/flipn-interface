@@ -129,7 +129,9 @@ export default function List({ type, isCurrentTab }: any) {
         ref={listRef}
         style={{
           transform: `translate(${
-            tokenPanelStatusStore.hasShow(type) && currentToken
+            tokenPanelStatusStore.hasShow(type) &&
+            currentToken &&
+            currentToken.data_type !== "top_trade"
               ? "calc(50vw - 600px)"
               : "calc(50vw - 300px)"
           }, ${y}px)`,

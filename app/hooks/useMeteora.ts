@@ -34,16 +34,19 @@ export default function useMeteora({ token }: Params) {
 
     const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
         if (meteoraPool && meteoraPoolRef.current) {
+            console.log('slip:', slip)
+
             const inTokenMint = type === "buy" ? new PublicKey(wsol) : new PublicKey(token.address as string)
+
             const x = meteoraPoolRef.current.getSwapQuote(
                 inTokenMint,
                 new BN(amount),
-                Number(slip),
+                0,
             );
 
-            console.log('x:', x.swapOutAmount.toNumber(), x.priceImpact.toNumber(), x.fee.toNumber())
+            // console.log('x:', x, x.swapOutAmount.toNumber(), x.minSwapOutAmount.toNumber(), x.fee.toNumber(), x.minSwapOutAmount.toNumber() - x.fee.toNumber())
 
-            return x.swapOutAmount.toNumber()
+            return x.minSwapOutAmount.toNumber()
         }
         return null
     }, [meteoraPool, token])
@@ -55,7 +58,7 @@ export default function useMeteora({ token }: Params) {
             const { minSwapOutAmount } = meteoraPoolRef.current.getSwapQuote(
                 inTokenMint,
                 inAmountLamport,
-                Number(slip),
+                Number(slip / 100),
             )
 
             const swapTx = await meteoraPoolRef.current.swap(

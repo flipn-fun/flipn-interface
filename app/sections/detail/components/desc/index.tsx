@@ -314,8 +314,8 @@ export default function Desc({
         )}
       </div>
 
-      {data.status! === 1 && data.DApp === 'sexy' &&
-        ((from === "panel" && data.kingProgress) || from !== "panel") && (
+      {/* ((from === "panel" && data.kingProgress) || from !== "panel") */}
+      {data.status! === 1 && data.DApp === 'sexy' && (
           <div
             className={styles.singleProgress}
             style={{

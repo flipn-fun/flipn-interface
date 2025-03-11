@@ -150,6 +150,7 @@ export const useProjects = create(
           .filter((itemId: any) => !String(itemId).includes("top_trade"))
           .forEach((itemId: any) => {
             const item = get().projects[itemId];
+            if (!item) return;
             if (item.video && videoReg.test(item.video)) {
               cachedVideos.push({
                 url: item.video,

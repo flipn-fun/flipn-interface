@@ -60,6 +60,7 @@ export default function Held({ from, address }: any) {
 
   const loadMore = useCallback(async () => {
     if (address) {
+      setIsLoading(true);
       return getTokenByHolder(address, pageIndex, pageSize).then((res) => {
         const newList = [...list, ...(res.data || [])];
         setList(newList);
@@ -68,10 +69,8 @@ export default function Held({ from, address }: any) {
           ...tokenInfo
         };
         setTokenInfo(newTokenInfo);
-
-        getTokenPrice(newList.map((item) => item.token_address));
-
         getTokenSelf(newList.map((item) => item.token_address));
+        getTokenPrice(newList.map((item) => item.token_address));
 
         if (res.data) {
           if (res.data.length < pageSize) {
@@ -81,6 +80,8 @@ export default function Held({ from, address }: any) {
             setHasMore(true);
           }
         }
+
+        setIsLoading(false);
       });
     }
     setHasMore(false);
