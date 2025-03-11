@@ -533,11 +533,16 @@ export async function postUpload(
         return null;
       }
 
-      console.log(
-        `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`
-      );
+      const url = `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`
 
-      return `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`;
+      const checkImgRes = await httpAuthGet('/check/image?url=' + url)
+
+      if (checkImgRes.code === 0 && checkImgRes.data) {
+        return url
+      } else {
+        fail("Upload fail");
+        return null;
+      }
     }
   } catch (e) {
     fail("Upload fail");

@@ -174,7 +174,7 @@ const TokenItem = (props: {
                   : _token.video,
                 is_king: false
               }}
-              isPlayButton={true}
+              isPlayButton={false}
             />
           </div>
           <div className={styles.TokenItemRight}>

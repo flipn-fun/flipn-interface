@@ -23,7 +23,7 @@ export default function useBalance({ reFreshBalnace, mint, tokenDecimals }
                 }
             });
         }
-    }, [connection, walletProvider]);
+    }, [connection, walletProvider, reFreshBalnace]);
 
     useEffect(() => {
         if (connection && mint && tokenDecimals) {
