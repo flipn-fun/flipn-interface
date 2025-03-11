@@ -11,6 +11,7 @@ import { useBind } from "@/app/sections/invite-code/hooks/use-bind";
 import { useAirdropContext } from "@/app/context/airdrop";
 import { INVITERS } from '@/app/config/invite';
 import { Skeleton } from 'antd-mobile';
+import clsx from 'clsx';
 
 const InviterConnect = (props: any) => {
   const { className, type } = props;
@@ -100,7 +101,7 @@ const InviterConnect = (props: any) => {
     >
       <div className={styles.InviterContainer}>
         <div className={styles.InviterLabel}>Inviter:</div>
-        <div className={styles.InviterAvatarWrapper}>
+        <div className={clsx((!staticInviter && !inviterData?.account_icon) ? styles.InviterAvatarWrapperEmpty : styles.InviterAvatarWrapper)}>
           {
             loadingInviterData ? (
               <Skeleton
@@ -109,7 +110,7 @@ const InviterConnect = (props: any) => {
               />
             ) : (
               <img
-                src={staticInviter ? staticInviter.logo : (inviterData?.account_icon || "/img/token-icon-placeholder.svg")}
+                src={staticInviter ? staticInviter.logo : (inviterData?.account_icon || "/img/avatar.png")}
                 alt=""
                 className={styles.InviterAvatar}
               />
