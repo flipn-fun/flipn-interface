@@ -10,6 +10,7 @@ import { useAuth } from "@/app/context/auth";
 import { useBind } from "@/app/sections/invite-code/hooks/use-bind";
 import { useAirdropContext } from "@/app/context/airdrop";
 import { INVITERS } from '@/app/config/invite';
+import { Skeleton } from 'antd-mobile';
 
 const InviterConnect = (props: any) => {
   const { className, type } = props;
@@ -20,7 +21,16 @@ const InviterConnect = (props: any) => {
   const params = useSearchParams();
   const { address } = useAccount();
   const { accountRefresher } = useAuth();
-  const { pending, codeValid, codeValidMessage, handleBindDelay } = useBind();
+  const {
+    pending,
+    codeValid,
+    codeValidMessage,
+    handleBindDelay,
+    inviterData,
+    loadingInviterData,
+    setLoadingInviterData,
+    getInviterByCode
+  } = useBind();
   const { getAirdropData } = useAirdropContext();
 
   const inviteCode = staticInviter?.code ?? params.get("code") as string;
@@ -56,12 +66,12 @@ const InviterConnect = (props: any) => {
     if (!address || !accountRefresher) {
       return;
     }
-    if (!inviteCode) {
+    if (!inviteCode || loadingInviterData) {
       return;
     }
     // Bind inviter
     handleBindDelay(inviteCode);
-  }, [address, accountRefresher, inviteCode]);
+  }, [address, accountRefresher, inviteCode, loadingInviterData]);
 
   useEffect(() => {
     if (!codeValid) {
@@ -70,6 +80,14 @@ const InviterConnect = (props: any) => {
     // check bind
     getAirdropData?.();
   }, [codeValid]);
+
+  useEffect(() => {
+    if (!inviteCode || !!staticInviter) {
+      setLoadingInviterData(false);
+      return;
+    }
+    getInviterByCode(inviteCode);
+  }, [inviteCode, staticInviter]);
 
   return (
     <CouponCard
@@ -83,14 +101,30 @@ const InviterConnect = (props: any) => {
       <div className={styles.InviterContainer}>
         <div className={styles.InviterLabel}>Inviter:</div>
         <div className={styles.InviterAvatarWrapper}>
-          <img
-            src={staticInviter ? staticInviter.logo : "/img/token-icon-placeholder.svg"}
-            alt=""
-            className={styles.InviterAvatar}
-          />
+          {
+            loadingInviterData ? (
+              <Skeleton
+                animated
+                className={styles.InviterAvatarLoading}
+              />
+            ) : (
+              <img
+                src={staticInviter ? staticInviter.logo : (inviterData?.account_icon || "/img/token-icon-placeholder.svg")}
+                alt=""
+                className={styles.InviterAvatar}
+              />
+            )
+          }
         </div>
         <div className={styles.InviterName}>
-          {formatLongText(staticInviter ? staticInviter.name : "Baddies 🐸", 10, 8)}
+          {
+            loadingInviterData ? (
+              <Skeleton
+                animated
+                className={styles.InviterNameLoading}
+              />
+            ) : formatLongText(staticInviter ? staticInviter.name : (inviterData?.account_name || "Unknown"), 10, 8)
+          }
         </div>
       </div>
     </CouponCard>
