@@ -45,7 +45,11 @@ export default function Laptop({
           <Panel isTape={false} className={styles.PanelWrapper}>
             <div className={styles.PanelTitle}>Earn</div>
             <div className={styles.Panels}>
-              <InviteFrenz rate={rate} codeInfo={codeInfo} />
+              <InviteFrenz
+                rate={rate}
+                codeInfo={codeInfo}
+                onSuccess={onQuery}
+              />
               <LikeToEarn info={info} userInfo={userInfo} />
               <FollowX />
               {showCreateToEarn && (

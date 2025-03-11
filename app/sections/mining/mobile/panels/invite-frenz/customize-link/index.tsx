@@ -7,10 +7,11 @@ import CircleLoading from "@/app/components/icons/loading";
 import { useEffect, useState } from "react";
 import { fail, success } from "@/app/utils/toast";
 
-export default function CustomizeLink({ show, onClose, info }: any) {
+export default function CustomizeLink({ show, onClose, info, onSuccess }: any) {
   const { isMobile } = useUserAgent();
   const [showEditModal, setShowEditModal] = useState(false);
-  const { loading, onBind, code, setCode, errorMsg } = useBindingInviteCode();
+  const { loading, onBind, code, setCode, errorMsg } =
+    useBindingInviteCode(onSuccess);
 
   useEffect(() => {
     if (info?.code) {

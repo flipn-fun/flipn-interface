@@ -6,7 +6,7 @@ import { useState } from "react";
 import InfoIcon from "../info-icon";
 import CustomizeLink from "./customize-link";
 
-export default function InviteFrenz({ rate, codeInfo }: any) {
+export default function InviteFrenz({ rate, codeInfo, onSuccess }: any) {
   const store = useReferStore();
   const { userInfo } = useAuth();
   const [showCustomModal, setShowCustomModal] = useState(false);
@@ -81,6 +81,7 @@ export default function InviteFrenz({ rate, codeInfo }: any) {
         onClose={() => {
           setShowCustomModal(false);
         }}
+        onSuccess={onSuccess}
       />
     </>
   );
