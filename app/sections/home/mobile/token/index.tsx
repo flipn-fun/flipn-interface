@@ -51,7 +51,6 @@ export default function Token({
               <SpecFrame
                 className={styles.SpecFrame}
                 width={innerWidth}
-                height={innerHeight}
                 id={token.id}
               />
             )}
