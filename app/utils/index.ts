@@ -534,15 +534,20 @@ export async function postUpload(
       }
 
       const url = `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`
+      
+      if (/^image\/(jpg|jpeg|png|gif|bmp|webp|svg|tiff|tif)$/.test(type)) {
 
-      const checkImgRes = await httpAuthGet('/check/image?url=' + url)
+        const checkImgRes = await httpAuthGet('/check/image?url=' + url)
 
-      if (checkImgRes.code === 0 && checkImgRes.data) {
-        return url
-      } else {
-        fail("Upload fail");
-        return null;
+        if (checkImgRes.code === 0 && checkImgRes.data) {
+          return url
+        } else {
+          fail("Upload fail");
+          return null;
+        }
       }
+
+      return url 
     }
   } catch (e) {
     fail("Upload fail");
