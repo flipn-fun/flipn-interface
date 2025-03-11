@@ -10,6 +10,7 @@ import { useSetting } from "@/app/store/use-setting";
 import Refer from "@/app/components/layout/laptop/user/refer";
 import Header from "./header";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
+import { INVITE_TYPE } from '@/app/config/invite';
 
 const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
 const MemesPage = dynamic(() => import("@/app/sections/memes"));
@@ -35,7 +36,7 @@ export default function Laptop({ children }: any) {
   }
 
   if (pathname === "/ref") {
-    return <InviteCodeView inviteLink={true} />;
+    return <InviteCodeView type={INVITE_TYPE.REF} />;
   }
 
   return (

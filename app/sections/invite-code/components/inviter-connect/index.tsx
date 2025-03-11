@@ -9,9 +9,12 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useAuth } from "@/app/context/auth";
 import { useBind } from "@/app/sections/invite-code/hooks/use-bind";
 import { useAirdropContext } from "@/app/context/airdrop";
+import { INVITERS } from '@/app/config/invite';
 
 const InviterConnect = (props: any) => {
-  const { className } = props;
+  const { className, type } = props;
+
+  const staticInviter = INVITERS[type];
 
   const { visible, setVisible } = useWalletModal();
   const params = useSearchParams();
@@ -20,7 +23,7 @@ const InviterConnect = (props: any) => {
   const { pending, codeValid, codeValidMessage, handleBindDelay } = useBind();
   const { getAirdropData } = useAirdropContext();
 
-  const inviteCode = params.get("code") as string;
+  const inviteCode = staticInviter?.code ?? params.get("code") as string;
 
   const couponCardRef = useRef<any>();
 
@@ -40,10 +43,14 @@ const InviterConnect = (props: any) => {
   };
 
   useEffect(() => {
+    if (!address || !accountRefresher) {
+      couponCardRef.current?.setIsStarted?.(false);
+      return;
+    }
     if (typeof codeValid === "boolean") {
       couponCardRef.current?.setIsStarted?.(true);
     }
-  }, [codeValid]);
+  }, [codeValid, address, accountRefresher]);
 
   useEffect(() => {
     if (!address || !accountRefresher) {
@@ -77,13 +84,13 @@ const InviterConnect = (props: any) => {
         <div className={styles.InviterLabel}>Inviter:</div>
         <div className={styles.InviterAvatarWrapper}>
           <img
-            src="/img/token-icon-placeholder.svg"
+            src={staticInviter ? staticInviter.logo : "/img/token-icon-placeholder.svg"}
             alt=""
             className={styles.InviterAvatar}
           />
         </div>
         <div className={styles.InviterName}>
-          {formatLongText("Baddies 🐸", 10, 8)}
+          {formatLongText(staticInviter ? staticInviter.name : "Baddies 🐸", 10, 8)}
         </div>
       </div>
     </CouponCard>
