@@ -232,7 +232,6 @@ export default forwardRef(function PreviewNode(
             submitFnRef.current = submitFn
           }}
           goBackTo={() => {
-            console.log('goBackTo')
             goBackTo && goBackTo()
             // setStep(2)
           }}

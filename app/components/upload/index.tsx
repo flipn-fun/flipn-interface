@@ -19,6 +19,7 @@ interface Props {
   percent?: number;
   scala?: number;
   cropper?: boolean;
+  onChange?: (file: ImageUploadItem[]) => void;
 }
 
 export const imgReg = /(.+\.(jpg|jpeg|png|gif|bmp|webp|svg|tiff|tif))$/i;
@@ -49,6 +50,7 @@ export function Upload({
   type,
   percent = 1.5,
   scala = 2,
+  onChange,
   cropper = false
 }: Props, ref: React.Ref<any>) {
   const [isUplaod, setIsUpload] = useState(false);
@@ -180,6 +182,7 @@ export function Upload({
           onChange={(files) => {
             setDefaultFileList(files);
             setFileList(files);
+            onChange?.(files);
           }}
           upload={uploadImg}
         />
