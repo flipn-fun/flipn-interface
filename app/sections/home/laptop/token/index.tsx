@@ -104,7 +104,8 @@ export default function Token({
                         window.connect();
                         return;
                       }
-                      onOpenPanel("showFlip", true);
+                      onUpdateTradeTab("details");
+                      onOpenPanel("showTrade", true);
                     }}
                     id={isCurrent ? "guid-tour-flip" : token.id}
                   />
