@@ -94,7 +94,7 @@ export default function LaunchesTradePanel({
                   <div className={styles.DataItem} style={{ width: "25%" }}>
                     <div className={styles.DataLabel}>24h Volume</div>
                     <div className={styles.DataValue}>
-                      {numberFormatter(token.volume_24h_usd, 2, true, {
+                      ${numberFormatter(token.volume_24h_usd, 2, true, {
                         isShort: true
                       })}
                     </div>
