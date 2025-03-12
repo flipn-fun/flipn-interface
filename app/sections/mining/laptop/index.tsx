@@ -46,7 +46,7 @@ export default function Laptop({
             <div className={styles.Panels}>
               <InviteFrenz rate={rate} />
               <LikeToEarn info={info} userInfo={userInfo} />
-              {/* <FollowX /> */}
+              <FollowX />
               {showCreateToEarn && (
                 <CreateToEarn
                   airdropEndTime={configStore.AirdropEndTime}
