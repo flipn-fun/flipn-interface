@@ -99,7 +99,7 @@ export default function TokenIcon({
           </div>
         )}
         {token.is_king &&
-          (token.ranking === 1 ? (
+          (token.ranking <= 3 ? (
             <div className={styles.King}>
               👑
               <Image

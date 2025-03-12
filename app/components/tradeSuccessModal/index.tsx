@@ -75,7 +75,7 @@ export default function TradeSuccessModal({
             {numberFormatter(point, 6, true, {
               isShort: true
             })}{" "}
-            $FUN
+            MEMETICS
           </span>
         </div>
       </div>

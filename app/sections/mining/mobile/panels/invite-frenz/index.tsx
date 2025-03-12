@@ -44,8 +44,8 @@ export default function InviteFrenz({ rate }: any) {
             </div>
           </div>
           <div className={styles.ItemDesc}>
-            You will get {rate || "-"}%{" "}
-            <span className={styles.ThemeColor}>$FUN</span> of Airdrops from
+            and get <span className={styles.ThemeColor}>{rate || "-"}% </span>
+            revenue share $SOL kickback
           </div>
           <div className={styles.ItemBottom}>
             <div>10 invite code</div>

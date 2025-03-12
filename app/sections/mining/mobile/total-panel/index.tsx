@@ -71,7 +71,7 @@ export default function TotalPanel({ info, userInfo }: any) {
                   fontSize: 12
                 }}
               >
-                <span style={{ color: "#FBCA04" }}>$FUN</span> / Like
+                <span style={{ color: "#FBCA04" }}>MEMETICS</span> / Like
               </div>
               {isMobile && <LikeNum />}
             </div>
@@ -97,7 +97,7 @@ export default function TotalPanel({ info, userInfo }: any) {
                     fontSize: 12
                   }}
                 >
-                  My <span style={{ color: "#FBCA04" }}>$FUN</span>
+                  My <span style={{ color: "#FBCA04" }}>MEMETICS</span>
                 </div>
               </div>
             </div>
@@ -150,7 +150,7 @@ export default function TotalPanel({ info, userInfo }: any) {
                 }}
               >
                 +{simplifyNum(info?.referral_point, 2)}{" "}
-                <span style={{ color: "#FBCA04" }}>$FUN</span>
+                <span style={{ color: "#FBCA04" }}>MEMETICS</span>
               </span>
             </div>
           </div>

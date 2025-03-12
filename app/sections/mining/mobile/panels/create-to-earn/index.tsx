@@ -49,7 +49,7 @@ export default function CreateToEarn({ airdropEndTime, info }: any) {
           </div>
           <div className={styles.ItemSubTitle}>
             +{info?.total_point || 0}{" "}
-            <span className={styles.ThemeColor}>$FUN</span>
+            <span className={styles.ThemeColor}>MEMETICS</span>
           </div>
         </div>
         <div className={styles.ItemDesc}>
