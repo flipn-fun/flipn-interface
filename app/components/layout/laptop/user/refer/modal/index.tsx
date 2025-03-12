@@ -292,7 +292,7 @@ const ReferModalContent = (props: any) => {
               >
                 Users invite more than <strong className={styles.InviteTextPrimary}>1,000</strong> people and get <strong
                 className={styles.InviteTextPrimary}
-              >50%</strong> Referral kickback
+              >{rate}%</strong> Referral kickback
               </motion.div>
             )}
             {currentTab === 2 && (
