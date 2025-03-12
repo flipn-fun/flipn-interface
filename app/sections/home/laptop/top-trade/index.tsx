@@ -10,14 +10,14 @@ export default function TopTrade({ opacity, data }: any) {
     topTraderAddress: data.address, // get from api
     isOther: walletAddress !== data.address,
     wrapperWidth: innerWidth,
-    wrapperHeight: innerHeight
+    wrapperHeight: isMobile ? innerHeight - 168 : innerHeight
   };
   return (
     <div
       className={styles.Container}
       style={{
         opacity,
-        height: innerHeight,
+        height: isMobile ? innerHeight - 72 : innerHeight,
         width: innerWidth,
         borderRadius: isMobile ? 0 : 20,
         padding: isMobile ? "96px 0px 72px" : 0
