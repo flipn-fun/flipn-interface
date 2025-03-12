@@ -14,7 +14,7 @@ export default function FollowX() {
   const { loading } = useTwitterBind({
     onSuccess: () => {
       userStore.setUserInfo({
-        twitter_user_id: Date.now(),
+        twitter_user_id: Date.now()
       });
     },
     redirectUri
@@ -37,7 +37,7 @@ export default function FollowX() {
       <div className={styles.ItemContent}>
         <div className={styles.ItemHeader}>
           <div className={styles.ItemTitle}>
-            <span>Follow X</span>
+            <span>Follow FlipN on X</span>
           </div>
           <div className={styles.ItemSubTitle}>
             +10 <span className={styles.ThemeColor}>$FUN</span>
@@ -67,12 +67,12 @@ export default function FollowX() {
                     window.open(path, "_blank");
                   }}
                 >
-                  {loading ? <CircleLoading /> : "Authorize"}
+                  {loading ? <CircleLoading /> : "Verify"}
                 </button>
               ) : (
                 <div className={styles.Checked}>
                   <CheckedIcon />
-                  <span>Authorized</span>
+                  <span>Verified</span>
                 </div>
               )
             ) : (

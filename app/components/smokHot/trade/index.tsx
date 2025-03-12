@@ -120,7 +120,6 @@ export default function Trade({
               <input
                 value={inputVal}
                 onChange={(e) => {
-                  setInputVal(e.target.value);
                   const val = Number(e.target.value);
                   // Check if input value matches any percent tag
                   const isPercentMatch = SOL_PERCENT_LIST.some(
