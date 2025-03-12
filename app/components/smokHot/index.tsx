@@ -63,7 +63,7 @@ function SmokeBtn({
     checkPrePayed().then((res) => {
       setFlipNum(res);
     })
-  }, [checkPrePayed]);  
+  }, [pool]);
   
   const isDelay = useMemo(() => {
     if (
