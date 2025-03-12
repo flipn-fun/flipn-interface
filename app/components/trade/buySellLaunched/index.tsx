@@ -677,7 +677,7 @@ export default function BuySellLaunched({
             <div style={{ marginTop: 18 }}>
               <MainBtn
                 isLoading={isLoading}
-                isDisabled={isError}
+                isDisabled={false}
                 onClick={async () => {
                   try {
                     if (isLoading || isError) {
@@ -775,7 +775,8 @@ export default function BuySellLaunched({
                   color: activeIndex === 0 ? "#000" : "#fff",
                   background: activeIndex === 0 ? "#C9FF5D" : "#FF559D",
                   height: from === "panel" ? 36 : 60,
-                  width: "100%"
+                  width: "100%",
+                  cursor: isError ? "not-allowed" : "pointer"
                 }}
               >
                 {activeIndex === 0 ? "Buy" : "Sell"}
