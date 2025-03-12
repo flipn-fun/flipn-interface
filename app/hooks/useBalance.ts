@@ -50,6 +50,8 @@ export default function useBalance({ reFreshBalnace, mint, tokenDecimals }
                                     .toString();
 
                         setTokenBalance(balance)
+                    } else{
+                        setTokenBalance('0')
                     }
                 }).catch(() => {
                     setTokenBalance('0')
