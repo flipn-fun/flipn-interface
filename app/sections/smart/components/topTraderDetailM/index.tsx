@@ -174,7 +174,7 @@ export default function TopTraderDetailM() {
   if(copyTradersUserInfo && !copyTradersUserInfo.isTopTrader) {
     return (
       <div className={styles.notTopTraderContainer}>
-        <span>You are not a top trader!</span>
+        <span>Not a top trader!</span>
         <div className={styles.notTopTraderBack} onClick={() => router.push('/')}>
           <div className={styles.notTopTraderBackBtn}>Go Back</div>
         </div>
