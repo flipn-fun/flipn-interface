@@ -45,7 +45,7 @@ export default function Rank(props: any) {
             address: userInfo?.address,
             minted_amount: info?.minted
           }}
-          rank={info?.your_rank}
+          rank={info?.your_rank || "-"}
           className={styles.UserRank}
           isUser={true}
         />
