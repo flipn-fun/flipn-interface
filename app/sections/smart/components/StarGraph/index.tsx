@@ -16,6 +16,8 @@ interface StarGraphProps {
     image: string;
     pnl?: number;
   }>;
+  GrapWidth?: number;
+  GrapHeight?: number;
 }
 
 interface NodeType extends d3.SimulationNodeDatum {
@@ -31,7 +33,9 @@ interface NodeType extends d3.SimulationNodeDatum {
 
 const StarGraph: React.FC<StarGraphProps> = React.memo(function StarGraphFn({
   centerNode,
-  satellites
+  satellites,
+  GrapWidth,
+  GrapHeight
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,8 +46,8 @@ const StarGraph: React.FC<StarGraphProps> = React.memo(function StarGraphFn({
     // Clear previous content
     d3.select(svgRef.current).selectAll("*").remove();
 
-    const width = containerRef.current.clientWidth;
-    const height = 400;
+    const width = GrapWidth || containerRef.current.clientWidth;
+    const height = GrapHeight || 400;
 
     // Prepare data
     const nodes: NodeType[] = [
@@ -276,7 +280,7 @@ const StarGraph: React.FC<StarGraphProps> = React.memo(function StarGraphFn({
     <div
       ref={containerRef}
       className={styles.container}
-      style={{ width: "100vw", height: "400px" }}
+      style={{ width: GrapWidth || "100vw", height: GrapHeight || "400px" }}
     >
       <svg ref={svgRef} />
     </div>

@@ -7,6 +7,7 @@ import { useDebounceFn } from "ahooks";
 import { useReferralStore } from '@/app/store/useReferral';
 import { useUser } from '@/app/store/useUser';
 import Cookies from 'js-cookie';
+import { UN_REDIRECT_PATH } from '@/app/config/invite';
 
 const AirdropContext = React.createContext<Partial<IAirdropContext>>({});
 
@@ -28,7 +29,7 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     useDebounceFn(
       () => {
         setAirdropDataLoading(false);
-        if (["/invite-code", "/"].includes(pathname) || isTerms) return;
+        if (checkUnRedirectPathname(pathname) || isTerms) return;
         const _searchParams = new URLSearchParams();
         _searchParams.set("redirect", pathname + "?" + searchParams.toString());
         router.replace(`/invite-code?${_searchParams.toString()}`);
@@ -39,10 +40,10 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
   const getAirdropData = async (params?: { isLoading?: boolean; }) => {
     const { isLoading = true } = params ?? {};
     isLoading && setAirdropDataLoading(true);
-    const res = await httpAuthGet("/airdrop/data");
+    const res = await httpAuthGet(`/airdrop/data?address=${address}`);
     if (res.code !== 0) {
       setAirdropDataLoading(false);
-      return;
+      return false;
     }
     setAirdropUserData(res.data);
     setReferral(res.data.referral_account);
@@ -52,13 +53,14 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     if (
       !res.data?.allow_login &&
       !isTerms &&
-      !["/invite-code", "/"].includes(pathname)
+      !checkUnRedirectPathname(pathname)
     ) {
       const _searchParams = new URLSearchParams();
       _searchParams.set("redirect", pathname + "?" + searchParams.toString());
       router.replace(`/invite-code?${_searchParams.toString()}`);
     }
     setAirdropDataLoading(false);
+    return res.data;
   };
 
   const { address } = useAccount();
@@ -105,3 +107,11 @@ interface IAirdropContext {
   airdropDataLoading: boolean;
   getAirdropData(params?: { isLoading?: boolean; }): Promise<void>;
 }
+
+export const checkUnRedirectPathname = (pathname: string) => {
+  const unRedirectPathname = [
+    /^\/$/,
+    ...UN_REDIRECT_PATH
+  ];
+  return unRedirectPathname.some((item) => item.test(pathname));
+};

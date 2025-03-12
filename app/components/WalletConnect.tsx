@@ -22,6 +22,7 @@ import {
 } from "@/app/libs/solana/wallet-adapter/walletconnect";
 import "@/app/libs/solana/wallet-adapter/modal/index.css";
 import { getDeviceType } from "../utils";
+import { BackpackWalletAdapter } from '@/app/libs/solana/wallet-adapter/backpack';
 
 const WALLET_CONNECT_METADATA = {
   name: "FlipN",
@@ -74,6 +75,7 @@ export default function WalletConnect({
             new SolflareWalletAdapter(),
             new OkxWalletUIAdapter(),
             // new HotWalletAdapter(),
+            new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
               network,
               options: WALLET_CONNECT_OPTIONS,
@@ -83,6 +85,7 @@ export default function WalletConnect({
             new OkxWalletAdapter(),
             new PhantomWalletAdapter(),
             new SolflareWalletAdapter(),
+            new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
               network,
               options: WALLET_CONNECT_OPTIONS

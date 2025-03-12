@@ -28,16 +28,12 @@ export default function RankItem({
     >
       <div className={clsx(styles.ItemLeft, itemLeftClassName)}>
         <Avatar rank={rank} src={item.account_data?.icon} isUser={isUser} />
-        <div style={{ width: 120 }}>
-          <div className={styles.NameWrapper}>
-            <button className={`${styles.ItemTitle}`}>
-              {item.account_data?.name
-                ? item.account_data.name
-                : item.address
-                ? formatAddress(item.address, 4)
-                : ""}
-            </button>
-          </div>
+        <div style={{ width: 150 }} className={`${styles.ItemTitle}`}>
+          {item.account_data?.name
+            ? item.account_data.name
+            : item.address
+            ? formatAddress(item.address, 4)
+            : ""}
         </div>
       </div>
       <div className={clsx(styles.ItemRight, itemRightClassName)}>

@@ -169,16 +169,16 @@ export default function TopTraderDetailM() {
 
 
   // to do release
-  // if(copyTradersUserInfo && !copyTradersUserInfo.isTopTrader) {
-  //   return (
-  //     <div className={styles.notTopTraderContainer}>
-  //       <span>You are not a top trader!</span>
-  //       <div className={styles.notTopTraderBack} onClick={() => router.push('/')}>
-  //         <div className={styles.notTopTraderBackBtn}>Go Back</div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if(copyTradersUserInfo && !copyTradersUserInfo.isTopTrader) {
+    return (
+      <div className={styles.notTopTraderContainer}>
+        <span>You are not a top trader!</span>
+        <div className={styles.notTopTraderBack} onClick={() => router.push('/')}>
+          <div className={styles.notTopTraderBackBtn}>Go Back</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

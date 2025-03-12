@@ -18,6 +18,7 @@ import Big from 'big.js';
 import { SOL } from '@/app/components/trade/buySellPump';
 import { numberFormatter } from '@/app/utils/common';
 import useReferralRate from '@/app/sections/mining/use-referral-rate';
+import { httpAuthGet } from '@/app/utils';
 
 const ReferModal = (props: any) => {
   const { isMobile } = props;
@@ -129,7 +130,22 @@ const ReferModalContent = (props: any) => {
       //   setLoading(false);
       //   return;
       // }
-      shareLink.searchParams.set("airdrop", "1");
+      // 03/10,25# Now there's a new api of get an airdrop code
+      try {
+        const res = await httpAuthGet("/airdrop/code");
+        if (res.code !== 0 || !res.data?.code_list || !res.data?.code_list.length) {
+          fail("Failed to obtain the invitation code");
+          setLoading(false);
+          return;
+        }
+        const currentCode = res.data.code_list[0];
+        shareLink.searchParams.set("airdrop", currentCode.code);
+      } catch (err: any) {
+        console.log("get airdrop code failed: %o", err);
+        fail("Failed to obtain the invitation code");
+        setLoading(false);
+        return;
+      }
     }
     navigator.clipboard
       .writeText(shareLink.toString())
