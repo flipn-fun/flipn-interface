@@ -68,8 +68,8 @@ export default function Laptop({
             placeholder="Custom"
             value={customVal}
             onChange={(ev: any) => {
-              setCustomVal(ev.target.value);
               if (!isNaN(ev.target.value)) {
+                setCustomVal(ev.target.value);
                 onSlipDataChange?.(ev.target.value);
               }
             }}
@@ -77,28 +77,26 @@ export default function Laptop({
           <span>%</span>
         </div>
 
-
         <div className={styles.ProtectionItem}>
-            <div>Enable front-running protection:</div>
-            <div className={styles.ProtectionAction}>
-              <span>On</span>
-              <Switch
-                checked={settingStore.jitoable}
-                style={{
-                  "--checked-color": "#FBCA04",
-                  "--height": "20px",
-                  "--width": "36px"
-                }}
-                onChange={(val) => {
-                  settingStore.set({
-                    jitoable: val
-                  });
-                }}
-              />
-            </div>
+          <div>Enable front-running protection:</div>
+          <div className={styles.ProtectionAction}>
+            <span>On</span>
+            <Switch
+              checked={settingStore.jitoable}
+              style={{
+                "--checked-color": "#FBCA04",
+                "--height": "20px",
+                "--width": "36px"
+              }}
+              onChange={(val) => {
+                settingStore.set({
+                  jitoable: val
+                });
+              }}
+            />
           </div>
-          <div className={styles.ProtectionDesc}>
         </div>
+        <div className={styles.ProtectionDesc}></div>
       </motion.div>
     </AnimatePresence>,
     textRef.current

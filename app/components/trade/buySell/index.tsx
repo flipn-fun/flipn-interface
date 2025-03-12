@@ -4,7 +4,12 @@ import Big from "big.js";
 import styles from "../trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
-import { getFullNum, getPointByVolume, getTransaction, simplifyNum } from "@/app/utils";
+import {
+  getFullNum,
+  getPointByVolume,
+  getTransaction,
+  simplifyNum
+} from "@/app/utils";
 import { fail, success } from "@/app/utils/toast";
 import SlipPage from "../slippage";
 import TradeSuccessModal from "@/app/components/tradeSuccessModal";
@@ -51,7 +56,6 @@ export default function BuySell({
   onSuccess,
   show
 }: Props) {
-
   const { tokenName, tokenSymbol, tokenDecimals } = token;
   const [showSlip, setShowSlip] = useState(false);
   const { slip, set: setSlip }: any = useSlip();
@@ -147,7 +151,7 @@ export default function BuySell({
 
             getRate({
               solAmount: buyInSol,
-              type: 'buy'
+              type: "buy"
             }).then((res: any) => {
               const { result, isMax } = res;
               setIsMax(isMax);
@@ -187,7 +191,7 @@ export default function BuySell({
               tokenAmount: new Big(debounceVal)
                 .mul(10 ** token.tokenDecimals!)
                 .toFixed(0),
-              type: 'buy'
+              type: "buy"
             }).then((res: any) => {
               const { result, isMax, maxBuy } = res;
               setIsMax(isMax);
@@ -250,7 +254,7 @@ export default function BuySell({
               tokenAmount: new Big(debounceVal)
                 .mul(10 ** token.tokenDecimals!)
                 .toFixed(0),
-              type: 'sell'
+              type: "sell"
             }).then((res: any) => {
               const { result, isMax } = res;
               setIsMax(isMax);
@@ -317,7 +321,7 @@ export default function BuySell({
               onChangeTab={(index: number) => {
                 setActiveIndex(index);
                 setValInput("");
-                setIsMax(false)
+                setIsMax(false);
                 if (index === 1) {
                   setCurrentToken(desToken);
                   setTokenType(0);
@@ -353,7 +357,7 @@ export default function BuySell({
                 setCurrentToken(buyTokenType === 1 ? SOL : desToken);
                 setSolPercent(0);
                 setTokenPercent(0);
-                setIsMax(false)
+                setIsMax(false);
               }}
               className={[
                 styles.tab,
@@ -371,7 +375,7 @@ export default function BuySell({
                 setValInput("");
                 setSolPercent(0);
                 setTokenPercent(0);
-                setIsMax(false)
+                setIsMax(false);
               }}
               className={[
                 styles.tab,
@@ -461,14 +465,18 @@ export default function BuySell({
             </div>
 
             <div
-              className={`${styles.tokenBalanceBox} ${from === "panel" && styles.PanelInput
-                }`}
+              className={`${styles.tokenBalanceBox} ${
+                from === "panel" && styles.PanelInput
+              }`}
             >
               <div className={styles.inputArea}>
                 <input
                   placeholder="0"
                   value={valInput}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) {
+                      return;
+                    }
                     setValInput(e.target.value);
                     if (activeIndex === 1) {
                       setTokenPercent(0);
@@ -504,8 +512,13 @@ export default function BuySell({
                   </div>
                 </div>
                 <div className={styles.tokenPrice}>
-                  ${numberFormatter(
-                    currentToken.tokenName === "SOL" ? Number(config.SolPrice) * Number(valInput) : Number(token.price || 0) * Number(config.SolPrice) * Number(valInput),
+                  $
+                  {numberFormatter(
+                    currentToken.tokenName === "SOL"
+                      ? Number(config.SolPrice) * Number(valInput)
+                      : Number(token.price || 0) *
+                          Number(config.SolPrice) *
+                          Number(valInput),
                     2,
                     true
                   )}
@@ -514,7 +527,13 @@ export default function BuySell({
             </div>
 
             {activeIndex === 0 && tokenType === 1 && (
-              <div className={styles.tokenPercent + ' ' + (from === "panel" ? styles.PanelPercent : styles.Percent)}>
+              <div
+                className={
+                  styles.tokenPercent +
+                  " " +
+                  (from === "panel" ? styles.PanelPercent : styles.Percent)
+                }
+              >
                 <div
                   onClick={() => {
                     setSolPercent(0);
@@ -529,8 +548,20 @@ export default function BuySell({
                     <div
                       onClick={() => {
                         if (item === "Max") {
-                          setSolPercent(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0));
-                          setValInput(getFullNum(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0)));
+                          setSolPercent(
+                            Math.max(
+                              new Big(solBalance).minus(0.03).toNumber(),
+                              0
+                            )
+                          );
+                          setValInput(
+                            getFullNum(
+                              Math.max(
+                                new Big(solBalance).minus(0.03).toNumber(),
+                                0
+                              )
+                            )
+                          );
                         } else {
                           setSolPercent(item as number);
                           setValInput(getFullNum(item as number));
@@ -551,7 +582,13 @@ export default function BuySell({
             )}
 
             {activeIndex === 1 && (
-              <div className={styles.tokenPercent + ' ' + (from === "panel" ? styles.PanelPercent : styles.Percent)}>
+              <div
+                className={
+                  styles.tokenPercent +
+                  " " +
+                  (from === "panel" ? styles.PanelPercent : styles.Percent)
+                }
+              >
                 <div
                   onClick={() => {
                     setTokenPercent(0);
@@ -596,34 +633,51 @@ export default function BuySell({
               <div className={styles.receiveTokenAmount}>
                 <div className={styles.receiveTitle}>Received</div>
                 <div className={styles.receiveAmount}>
-                  {
-                    isMax && buyIn && (
-                      <div className={styles.topLimit}>
-                        <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M7.42045 8.83752L7.11364 4.77147L7.05682 3H8.94318L8.88636 4.77147L8.57955 8.83752H7.42045ZM8 12C7.71212 12 7.47348 11.9009 7.28409 11.7028C7.0947 11.5046 7 11.255 7 10.9538C7 10.6446 7.0947 10.391 7.28409 10.1929C7.47348 9.99472 7.71212 9.89564 8 9.89564C8.28788 9.89564 8.52652 9.99472 8.71591 10.1929C8.9053 10.391 9 10.6446 9 10.9538C9 11.255 8.9053 11.5046 8.71591 11.7028C8.52652 11.9009 8.28788 12 8 12Z" fill="#FBCA04" />
-                          <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9816 11.8125L8.77573 1.3125C8.43096 0.729167 7.56904 0.729167 7.22427 1.3125L1.01842 11.8125C0.673647 12.3958 1.10461 13.125 1.79415 13.125H14.2059C14.8954 13.125 15.3264 12.3958 14.9816 11.8125ZM9.55146 0.875C8.86192 -0.291667 7.13808 -0.291667 6.44854 0.875L0.242685 11.375C-0.446854 12.5417 0.41507 14 1.79415 14H14.2059C15.5849 14 16.4469 12.5417 15.7573 11.375L9.55146 0.875Z" fill="#FBCA04" />
-                        </svg>
-                        <div>Top Limit</div>
-                      </div>
-                    )
-                  }
+                  {isMax && buyIn && (
+                    <div className={styles.topLimit}>
+                      <svg
+                        width="16"
+                        height="14"
+                        viewBox="0 0 16 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.42045 8.83752L7.11364 4.77147L7.05682 3H8.94318L8.88636 4.77147L8.57955 8.83752H7.42045ZM8 12C7.71212 12 7.47348 11.9009 7.28409 11.7028C7.0947 11.5046 7 11.255 7 10.9538C7 10.6446 7.0947 10.391 7.28409 10.1929C7.47348 9.99472 7.71212 9.89564 8 9.89564C8.28788 9.89564 8.52652 9.99472 8.71591 10.1929C8.9053 10.391 9 10.6446 9 10.9538C9 11.255 8.9053 11.5046 8.71591 11.7028C8.52652 11.9009 8.28788 12 8 12Z"
+                          fill="#FBCA04"
+                        />
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M14.9816 11.8125L8.77573 1.3125C8.43096 0.729167 7.56904 0.729167 7.22427 1.3125L1.01842 11.8125C0.673647 12.3958 1.10461 13.125 1.79415 13.125H14.2059C14.8954 13.125 15.3264 12.3958 14.9816 11.8125ZM9.55146 0.875C8.86192 -0.291667 7.13808 -0.291667 6.44854 0.875L0.242685 11.375C-0.446854 12.5417 0.41507 14 1.79415 14H14.2059C15.5849 14 16.4469 12.5417 15.7573 11.375L9.55146 0.875Z"
+                          fill="#FBCA04"
+                        />
+                      </svg>
+                      <div>Top Limit</div>
+                    </div>
+                  )}
                   <div className={isMax ? styles.topLimit : ""}>
                     {buyIn
-                      ? numberFormatter(new Big(buyIn)
-                        .div(1 - slip / 100)
-                        .div(10 ** token.tokenDecimals!)
-                        .toFixed(token.tokenDecimals), token.tokenDecimals as number, true)
+                      ? numberFormatter(
+                          new Big(buyIn)
+                            .div(1 - slip / 100)
+                            .div(10 ** token.tokenDecimals!)
+                            .toFixed(token.tokenDecimals),
+                          token.tokenDecimals as number,
+                          true
+                        )
                       : ""}{" "}
                   </div>
-                  {
-                    from === "panel" ? <div>{token.tokenSymbol}</div> : (
-                      <div className={styles.receiveTokenImgBox}>
-                        <img
-                          src={desToken.tokenUri}
-                          className={styles.receiveTokenImg}
-                        />
-                      </div>
-                    )}
+                  {from === "panel" ? (
+                    <div>{token.tokenSymbol}</div>
+                  ) : (
+                    <div className={styles.receiveTokenImgBox}>
+                      <img
+                        src={desToken.tokenUri}
+                        className={styles.receiveTokenImg}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -632,33 +686,52 @@ export default function BuySell({
               <div className={styles.paid}>
                 <div>Payment</div>
                 <div className={styles.receiveAmount}>
-                  {
-                    isMax && buyInSol && (
-                      <div className={styles.topLimit}>
-                        <svg width="16" height="14" viewBox="0 0 16 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M7.42045 8.83752L7.11364 4.77147L7.05682 3H8.94318L8.88636 4.77147L8.57955 8.83752H7.42045ZM8 12C7.71212 12 7.47348 11.9009 7.28409 11.7028C7.0947 11.5046 7 11.255 7 10.9538C7 10.6446 7.0947 10.391 7.28409 10.1929C7.47348 9.99472 7.71212 9.89564 8 9.89564C8.28788 9.89564 8.52652 9.99472 8.71591 10.1929C8.9053 10.391 9 10.6446 9 10.9538C9 11.255 8.9053 11.5046 8.71591 11.7028C8.52652 11.9009 8.28788 12 8 12Z" fill="#FBCA04" />
-                          <path fill-rule="evenodd" clip-rule="evenodd" d="M14.9816 11.8125L8.77573 1.3125C8.43096 0.729167 7.56904 0.729167 7.22427 1.3125L1.01842 11.8125C0.673647 12.3958 1.10461 13.125 1.79415 13.125H14.2059C14.8954 13.125 15.3264 12.3958 14.9816 11.8125ZM9.55146 0.875C8.86192 -0.291667 7.13808 -0.291667 6.44854 0.875L0.242685 11.375C-0.446854 12.5417 0.41507 14 1.79415 14H14.2059C15.5849 14 16.4469 12.5417 15.7573 11.375L9.55146 0.875Z" fill="#FBCA04" />
-                        </svg>
-                        <div>Top Limit</div>
-                      </div>
-                    )
-                  }
+                  {isMax && buyInSol && (
+                    <div className={styles.topLimit}>
+                      <svg
+                        width="16"
+                        height="14"
+                        viewBox="0 0 16 14"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.42045 8.83752L7.11364 4.77147L7.05682 3H8.94318L8.88636 4.77147L8.57955 8.83752H7.42045ZM8 12C7.71212 12 7.47348 11.9009 7.28409 11.7028C7.0947 11.5046 7 11.255 7 10.9538C7 10.6446 7.0947 10.391 7.28409 10.1929C7.47348 9.99472 7.71212 9.89564 8 9.89564C8.28788 9.89564 8.52652 9.99472 8.71591 10.1929C8.9053 10.391 9 10.6446 9 10.9538C9 11.255 8.9053 11.5046 8.71591 11.7028C8.52652 11.9009 8.28788 12 8 12Z"
+                          fill="#FBCA04"
+                        />
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M14.9816 11.8125L8.77573 1.3125C8.43096 0.729167 7.56904 0.729167 7.22427 1.3125L1.01842 11.8125C0.673647 12.3958 1.10461 13.125 1.79415 13.125H14.2059C14.8954 13.125 15.3264 12.3958 14.9816 11.8125ZM9.55146 0.875C8.86192 -0.291667 7.13808 -0.291667 6.44854 0.875L0.242685 11.375C-0.446854 12.5417 0.41507 14 1.79415 14H14.2059C15.5849 14 16.4469 12.5417 15.7573 11.375L9.55146 0.875Z"
+                          fill="#FBCA04"
+                        />
+                      </svg>
+                      <div>Top Limit</div>
+                    </div>
+                  )}
 
                   <div className={isMax ? styles.topLimit : ""}>
                     {buyInSol &&
-                      numberFormatter(new Big(buyInSol)
-                        .div(1 + slip / 100)
-                        .div(10 ** SOL.tokenDecimals)
-                        .toFixed(SOL.tokenDecimals), SOL.tokenDecimals as number, true)}{" "}
+                      numberFormatter(
+                        new Big(buyInSol)
+                          .div(1 + slip / 100)
+                          .div(10 ** SOL.tokenDecimals)
+                          .toFixed(SOL.tokenDecimals),
+                        SOL.tokenDecimals as number,
+                        true
+                      )}{" "}
                   </div>
 
-                  {
-                    from === "panel" ? <div>{SOL.tokenSymbol}</div> : (
-                      <div className={styles.receiveTokenImgBox}>
-                        <img src={SOL.tokenUri} className={styles.receiveTokenImg} />
-                      </div>
-                    )
-                  }
+                  {from === "panel" ? (
+                    <div>{SOL.tokenSymbol}</div>
+                  ) : (
+                    <div className={styles.receiveTokenImgBox}>
+                      <img
+                        src={SOL.tokenUri}
+                        className={styles.receiveTokenImg}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -668,18 +741,25 @@ export default function BuySell({
                 <div className={styles.receiveTitle}>Received</div>
                 <div className={styles.receiveAmount}>
                   {sellOutSol && Number(sellOutSol) > 0
-                    ? numberFormatter(new Big(sellOutSol)
-                      .div(1 - slip / 100)
-                      .div(10 ** SOL.tokenDecimals)
-                      .toFixed(SOL.tokenDecimals), SOL.tokenDecimals as number, true)
+                    ? numberFormatter(
+                        new Big(sellOutSol)
+                          .div(1 - slip / 100)
+                          .div(10 ** SOL.tokenDecimals)
+                          .toFixed(SOL.tokenDecimals),
+                        SOL.tokenDecimals as number,
+                        true
+                      )
                     : 0}{" "}
-                  {
-                    from === "panel" ? <div>{SOL.tokenSymbol}</div> : (
-                      <div className={styles.receiveTokenImgBox}>
-                        <img src={SOL.tokenUri} className={styles.receiveTokenImg} />
-                      </div>
-                    )
-                  }
+                  {from === "panel" ? (
+                    <div>{SOL.tokenSymbol}</div>
+                  ) : (
+                    <div className={styles.receiveTokenImgBox}>
+                      <img
+                        src={SOL.tokenUri}
+                        className={styles.receiveTokenImg}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -716,7 +796,9 @@ export default function BuySell({
                         }
                       } else {
                         hash = await buyTokenWithFixedOutput(
-                          isMax ? new Big(buyIn).toFixed(0) : new Big(buyIn).toFixed(0),
+                          isMax
+                            ? new Big(buyIn).toFixed(0)
+                            : new Big(buyIn).toFixed(0),
                           buyInSol
                         );
                       }
