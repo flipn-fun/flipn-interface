@@ -9,7 +9,7 @@ export default function AvatarBox({ data, showTicker = true, showLaunchType }: a
     <div className={styles.avatarBox}>
       <div className={styles.tokenImgBox}>
         <img
-          style={{ opacity: data.tokenIcon ? 0.3 : 1 }}
+          style={{ opacity: 1 }}
           className={styles.tokenImg}
           src={data.tokenIcon || "/img/token-icon-placeholder.svg"}
         />
