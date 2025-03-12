@@ -30,7 +30,7 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useVip } from "./useVip";
 import {
   programId_address,
-  //   referral_address,
+  referral_address as proxy_address,
   total_supply
 } from "../utils/config";
 import { useReferralStore } from "../store/useReferral";
@@ -160,7 +160,7 @@ export function useTokenTrade({
     const instructions = [];
 
     let referral = new PublicKey(referral_address);
-    const proxy = new PublicKey("8GBcwJAfUU9noxPNh5jnfwkKipK8XRHUPS5va9TAXr5f");
+    const proxy = new PublicKey(proxy_address);
 
     const protocolSolAccount = await _getOrCreateAssociatedTokenAccount(
       wsol,
