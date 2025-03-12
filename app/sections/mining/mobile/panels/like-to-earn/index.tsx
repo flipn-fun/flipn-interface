@@ -57,7 +57,7 @@ export default function LikeToEarn({ info, userInfo }: any) {
               }
               trigger={isMobile ? PopoverTrigger.Click : PopoverTrigger.Hover}
               placement={PopoverPlacement.Top}
-              closeDelayDuration={0}
+              closeDelayDuration={2000}
             >
               <InfoIcon />
             </Popover>
