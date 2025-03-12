@@ -2,23 +2,25 @@ import styles from "../index.module.css";
 import { WalletModalButton } from "@/app/libs/solana/wallet-adapter/modal";
 import { useUser } from "@/app/store/useUser";
 import { useConfig } from "@/app/store/useConfig";
+import usePostTask from "@/app/hooks/use-post-task";
 import XButton from "./x-button";
-import CheckedIcon from "../checked-icon";
-import useTwitterBind from "@/app/hooks/use-twitter-bind";
+// import CheckedIcon from "../checked-icon";
+// import useTwitterBind from "@/app/hooks/use-twitter-bind";
 import CircleLoading from "@/app/components/icons/loading";
 
 export default function FollowX() {
   const userStore: any = useUser();
   const config = useConfig((store: any) => store.config);
-  const redirectUri = `${window.location.origin}${window.location.pathname}`;
-  const { loading } = useTwitterBind({
-    onSuccess: () => {
-      userStore.setUserInfo({
-        twitter_user_id: Date.now()
-      });
-    },
-    redirectUri
-  });
+  // const redirectUri = `${window.location.origin}${window.location.pathname}`;
+  const { onPost } = usePostTask();
+  // const { loading } = useTwitterBind({
+  //   onSuccess: () => {
+  //     userStore.setUserInfo({
+  //       twitter_user_id: Date.now()
+  //     });
+  //   },
+  //   redirectUri
+  // });
 
   return (
     <div
@@ -56,26 +58,40 @@ export default function FollowX() {
           )}
           <div className={styles.ItemBottomButtons}>
             {userStore?.userInfo?.address ? (
-              !userStore?.userInfo?.twitter_user_id ? (
-                <button
-                  type="button"
-                  className={styles.Button}
-                  disabled={loading}
-                  style={{ width: 104 }}
-                  onClick={() => {
-                    const path = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${config.TwitterClientID}&redirect_uri=${redirectUri}&scope=tweet.read%20users.read%20follows.read%20like.read&state=state&code_challenge=challenge&code_challenge_method=plain`;
-                    window.open(path, "_blank");
-                  }}
-                >
-                  {loading ? <CircleLoading /> : "Verify"}
-                </button>
-              ) : (
-                <div className={styles.Checked}>
-                  <CheckedIcon />
-                  <span>Verified</span>
-                </div>
-              )
+              <button
+                type="button"
+                className={styles.Button}
+                style={{ width: 104 }}
+                onClick={() => {
+                  onPost(1);
+                  window.open(
+                    "https://twitter.com/intent/follow?screen_name=flipndotfun",
+                    "_blank"
+                  );
+                }}
+              >
+                Follow
+              </button>
             ) : (
+              // !userStore?.userInfo?.twitter_user_id ? (
+              //   <button
+              //     type="button"
+              //     className={styles.Button}
+              //     disabled={loading}
+              //     style={{ width: 104 }}
+              //     onClick={() => {
+              //       const path = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${config.TwitterClientID}&redirect_uri=${redirectUri}&scope=tweet.read%20users.read%20follows.read%20like.read&state=state&code_challenge=challenge&code_challenge_method=plain`;
+              //       window.open(path, "_blank");
+              //     }}
+              //   >
+              //     {loading ? <CircleLoading /> : "Verify"}
+              //   </button>
+              // ) : (
+              //   <div className={styles.Checked}>
+              //     <CheckedIcon />
+              //     <span>Verified</span>
+              //   </div>
+              // )
               <WalletModalButton className={styles.Button}>
                 Connect
               </WalletModalButton>
