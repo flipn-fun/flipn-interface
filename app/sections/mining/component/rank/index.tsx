@@ -4,6 +4,7 @@ import CircleLoading from "@/app/components/icons/loading";
 import Header from "./header";
 import RankItem from "./item";
 import clsx from "clsx";
+import Empty from "@/app/components/empty";
 
 export default function Rank(props: any) {
   const {
@@ -27,7 +28,10 @@ export default function Rank(props: any) {
           height: isMobile ? "auto" : "calc(100% - 50px)"
         }}
       >
-        {info?.mining_rank?.map((item: any, index: number) => (
+        <div style={{ paddingTop: 100 }}>
+          <Empty text="No data" />
+        </div>
+        {/* {info?.mining_rank?.map((item: any, index: number) => (
           <RankItem
             key={index}
             rank={index + 1}
@@ -48,9 +52,9 @@ export default function Rank(props: any) {
           rank={info?.your_rank || "-"}
           className={styles.UserRank}
           isUser={true}
-        />
+        /> */}
       </div>
-      {loading && (
+      {/* {loading && (
         <div
           style={{
             paddingTop: 60,
@@ -59,7 +63,7 @@ export default function Rank(props: any) {
         >
           <CircleLoading size={30} />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

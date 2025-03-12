@@ -22,7 +22,7 @@ export default function Mining({
         <Header
           rank={info?.your_rank || "-"}
           onRankClick={() => {
-            setShowRank(true);
+            // setShowRank(true);
           }}
         />
         <div className={styles.Content}>
