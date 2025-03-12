@@ -648,7 +648,10 @@ export default function BuySellPump({
                       hash = await sell(Number(sellOut), slip / 100);
                     }
                     setIsLoading(false);
-                    setReFreshBalnace(reFreshBalnace + 1);
+                    setReFreshBalnace(Math.random());
+                    setTimeout(() => {
+                      setReFreshBalnace(Math.random());
+                    }, 2000);
                     onSuccess?.();
                     if (hash) {
                       const volume = activeIndex === 0 ? buyInSol : sellOutSol;

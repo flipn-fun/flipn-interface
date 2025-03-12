@@ -696,6 +696,7 @@ export default function BuySellLaunched({
 
                         hash = await tradeMeteora(buyInSol, "buy", slip * 100);
                       }
+
                       if (hash) {
                         const _showBuyInToken = await getTransaction(
                           connection,
@@ -703,7 +704,6 @@ export default function BuySellLaunched({
                           token.address as string,
                           userInfo.address
                         );
-
                         if (_showBuyInToken) {
                           showBuyInToken = _showBuyInToken;
                         }
@@ -716,8 +716,10 @@ export default function BuySellLaunched({
                       }
                     }
                     setIsLoading(false);
-                    setReFreshBalnace(reFreshBalnace + 1);
-                    onSuccess?.();
+                    setReFreshBalnace(Math.random());
+                    setTimeout(() => {
+                      setReFreshBalnace(Math.random());
+                    }, 2000);
                     if (hash) {
                       const volume =
                         activeIndex === 0
