@@ -290,7 +290,7 @@ const ReferModalContent = (props: any) => {
                 className={styles.InviteText}
                 {...AnimateVariants}
               >
-                Invite users to<br /> get <strong className={styles.InviteTextPrimary}>15%</strong> Referral kickback
+                Invite users to<br /> get <strong className={styles.InviteTextPrimary}>{rate}%</strong> Referral kickback
               </motion.div>
             )}
             {currentTab === 2 && (
