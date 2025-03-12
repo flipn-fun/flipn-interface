@@ -17,7 +17,7 @@ export default function TopTrade({ opacity, data }: any) {
       className={styles.Container}
       style={{
         opacity,
-        height: innerHeight,
+        height: isMobile ? innerHeight - 72 : innerHeight,
         width: innerWidth,
         borderRadius: isMobile ? 0 : 20,
         padding: isMobile ? "96px 0px 72px" : 0
