@@ -766,6 +766,7 @@ export default function BuySellLaunched({
                     } else {
                       fail("Transtion fail");
                     }
+                    setReFreshBalnace(reFreshBalnace + 1);
                   }
                 }}
                 style={{

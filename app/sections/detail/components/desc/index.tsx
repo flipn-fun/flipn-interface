@@ -193,6 +193,9 @@ export default function Desc({
           <div className={styles.nameWrapper}>
             <div className={styles.ticker}>Created by:</div>
             <div
+              style={{
+                cursor: address !== data.account ? "pointer" : "default"
+              }}
               onClick={() => {
                 if (address !== data.account)
                   router.push(

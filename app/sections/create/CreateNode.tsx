@@ -54,7 +54,7 @@ export default forwardRef(function CreateNode(
   const imgRef = useRef<any>(null);
   const [isImgUploaded, setIsImgUploaded] = useState(false);
   const [originIcon, setOriginIcon] = useState<string>('');
-  
+
 
   const [links, setLinks] = useState<any>({
     x: {
@@ -405,12 +405,17 @@ export default forwardRef(function CreateNode(
           setFileList={(fileList: any) => {
             setTokenImg(fileList)
             setIsImgUploaded(true)
+            const params = {
+              ...inValidVals,
+              tokenImg: '',
+            }
+            setInvaldVasl(params);
           }}
         />
         {
           !isMobile && !isImgUploaded && <div onClick={() => {
             imgRef.current?.open()
-          }}   className={styles.uploadIconPlus}>
+          }} className={styles.uploadIconPlus}>
             <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="15" cy="15" r="15" fill="#21252E" />
               <path d="M8.72964 15.9921C8.18125 15.8932 8.18125 15.1068 8.72964 15.0079L13.7073 14.1106C13.9127 14.0736 14.0736 13.9127 14.1106 13.7073L15.0079 8.72964C15.1068 8.18125 15.8932 8.18125 15.9921 8.72964L16.8894 13.7073C16.9264 13.9127 17.0873 14.0736 17.2927 14.1106L22.2704 15.0079C22.8187 15.1068 22.8187 15.8932 22.2704 15.9921L17.2927 16.8894C17.0873 16.9264 16.9264 17.0873 16.8894 17.2927L15.9921 22.2704C15.8932 22.8187 15.1068 22.8187 15.0079 22.2704L14.1106 17.2927C14.0736 17.0873 13.9127 16.9264 13.7073 16.8894L8.72964 15.9921Z" fill="white" />
@@ -420,7 +425,7 @@ export default forwardRef(function CreateNode(
       </div>
       <div className={styles.uploadImgWrapper}>
         <div className={styles.uploadTitle}>Video or image</div>
-        <div className={styles.uploadTip}>Support MOV/mp4/jpg/png/gif, <br />up to 10 MB</div>
+        <div className={styles.uploadTip}>Support MOV/mp4/jpg/png/gif, <br />up to 50 MB</div>
         {
           isMobile && <div className={styles.uploadAction} onClick={() => {
             if (!isImgUploaded) {
@@ -566,13 +571,21 @@ export default forwardRef(function CreateNode(
               setFileList={(fileList: any) => {
                 setTokenIcon(fileList)
                 setOriginIcon(fileList[0].originUrl)
+                const params = {
+                  ...inValidVals,
+                  tokenIcon: '',
+                }
                 if (!isImgUploaded) {
                   setTokenImg([
                     {
                       url: fileList[0].originUrl,
                     }
                   ])
+                  params.tokenImg = ''
                 }
+
+                setInvaldVasl(params);
+
               }}
             />
             <div>
