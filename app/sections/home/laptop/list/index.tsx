@@ -13,6 +13,7 @@ import { useDebounceFn } from "ahooks";
 import { useVideoPlayer } from "@/app/store/use-video-player";
 import { videoReg } from "@/app/components/upload";
 import RefreshIcon from "@/app/components/icons/refresh-icon";
+import TopTrade from "../top-trade";
 
 export default function List({ type, isCurrentTab }: any) {
   const {
@@ -128,7 +129,9 @@ export default function List({ type, isCurrentTab }: any) {
         ref={listRef}
         style={{
           transform: `translate(${
-            tokenPanelStatusStore.hasShow(type) && currentToken
+            tokenPanelStatusStore.hasShow(type) &&
+            currentToken &&
+            currentToken.data_type !== "top_trade"
               ? "calc(50vw - 600px)"
               : "calc(50vw - 300px)"
           }, ${y}px)`,
@@ -142,7 +145,14 @@ export default function List({ type, isCurrentTab }: any) {
             token = getProjectById(item);
           }
 
-          return (
+          return token?.data_type === "top_trade" ? (
+            <TopTrade
+              opacity={
+                index > i ? 0 : i - 1 === index && isCurrentTab ? 0.3 : 1
+              }
+              data={token}
+            />
+          ) : (
             <Token
               key={token?.address || item}
               token={token}

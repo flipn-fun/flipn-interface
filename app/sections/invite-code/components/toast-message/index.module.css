@@ -1,0 +1,19 @@
+.InviteCodeFormToast {
+  color: #FF2681;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.InviteCodeFormToastSuccess {
+  composes: InviteCodeFormToast;
+  color: #AAFF00;
+}
+.InviteCodeFormToastTitle {
+  font-size: 14px;
+  font-weight: 600;
+}
+.InviteCodeFormToastMsg {
+  margin-top: 6px;
+}

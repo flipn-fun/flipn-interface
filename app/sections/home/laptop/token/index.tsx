@@ -62,7 +62,7 @@ export default function Token({
               height: innerHeight
             }}
           >
-            {!!token.boost_time && (
+            {token.data_type === "top_project" && (
               <SpecFrame
                 className={styles.SpecFrame}
                 width={innerWidth}

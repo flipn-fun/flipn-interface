@@ -3,7 +3,6 @@ export default function SpecFrame({ id, width, height, className }: any) {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width={width}
-      height={height}
       viewBox="0 0 375 606"
       fill="none"
       className={className}
