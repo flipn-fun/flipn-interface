@@ -65,7 +65,6 @@ export default function BuySellLaunched({
   const { isMobile } = useUserAgent();
   const slippageTextRef = useRef<any>();
 
-
   const tokenUri =
     token.tokenIcon || token.tokenImg || "/img/token-icon-placeholder.svg";
 
@@ -722,17 +721,17 @@ export default function BuySellLaunched({
                       setReFreshBalnace(Math.random());
                     }, 2000);
                     if (hash) {
-                      const volume =
-                        activeIndex === 0
-                          ? new Big(buyInSol)
-                              .div(10 ** SOL.tokenDecimals)
-                              .toFixed(SOL.tokenDecimals)
-                          : sellOutSol;
+                      // const volume =
+                      //   activeIndex === 0
+                      //     ? new Big(buyInSol)
+                      //         .div(10 ** SOL.tokenDecimals)
+                      //         .toFixed(SOL.tokenDecimals)
+                      //     : sellOutSol;
 
-                      const pointByVolume = await getPointByVolume(
-                        Big(volume).toString(),
-                        token.DApp === "pump" ? "pump" : "sexy"
-                      );
+                      // const pointByVolume = await getPointByVolume(
+                      //   Big(volume).toString(),
+                      //   token.DApp === "pump" ? "pump" : "sexy"
+                      // );
 
                       const modalHandler = Modal.show({
                         content: (
@@ -748,7 +747,7 @@ export default function BuySellLaunched({
                             )
                               .div(10 ** token.tokenDecimals!)
                               .toFixed(2)}
-                            point={pointByVolume}
+                            point={'0'}
                             onClose={() => {
                               modalHandler.close();
                             }}
