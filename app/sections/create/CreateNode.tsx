@@ -206,11 +206,11 @@ export default forwardRef(function CreateNode(
 
   const validateAbout = useCallback((about: string) => {
     // if (!about) {
-    //   return "Discription cannot be empty";
+    //   return "Description cannot be empty";
     // }
 
     if (about.length > 1000) {
-      return "Discription cannot be length than 1000";
+      return "Description cannot be length than 1000";
     }
 
     return "";
@@ -701,7 +701,7 @@ export default forwardRef(function CreateNode(
         <div className={styles.group}>
           <div className={styles.groupTitle}>
             <div className={styles.linkTitle}>
-              <div>Discription</div>
+              <div>Description</div>
               <div className={styles.linkOptional}>Optional</div>
             </div>
             <div className={styles.requireSize}>{aboutLength}</div>
@@ -734,7 +734,7 @@ export default forwardRef(function CreateNode(
         {!isMobile && <>
           <div className={styles.groupTitle}>
             <div className={styles.linkTitle}>
-              <div>Linked infor / community</div>
+              <div>Linked info / community</div>
               <div className={styles.linkOptional}>Optional</div>
             </div>
 
