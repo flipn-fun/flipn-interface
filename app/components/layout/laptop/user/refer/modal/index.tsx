@@ -8,17 +8,17 @@ import Tab, {
   AnimateVariants,
   TabTitle
 } from "@/app/components/layout/laptop/user/refer/modal/tab";
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Loading from "@/app/components/icons/loading";
 import { useAirdrop } from "@/app/components/airdrop/hooks";
-import { useUser } from '@/app/store/useUser';
-import useUserInfo from '@/app/hooks/useUserInfo';
-import Big from 'big.js';
-import { SOL } from '@/app/components/trade/buySellPump';
-import { numberFormatter } from '@/app/utils/common';
-import useReferralRate from '@/app/sections/mining/use-referral-rate';
-import { httpAuthGet } from '@/app/utils';
+import { useUser } from "@/app/store/useUser";
+import useUserInfo from "@/app/hooks/useUserInfo";
+import Big from "big.js";
+import { SOL } from "@/app/components/trade/buySellPump";
+import { numberFormatter } from "@/app/utils/common";
+import useReferralRate from "@/app/sections/mining/use-referral-rate";
+import { httpAuthGet } from "@/app/utils";
 
 const ReferModal = (props: any) => {
   const { isMobile } = props;
@@ -51,9 +51,8 @@ const SOL_REFERRAL_LIST = [
     key: 1,
     value: 25,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.50k",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
+    label: "50K SOL",
     volume: 50000,
     amount: 0,
     unit: "SOL",
@@ -63,9 +62,8 @@ const SOL_REFERRAL_LIST = [
     key: 2,
     value: 50,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.250k",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
+    label: "250K SOL",
     volume: 250000,
     amount: 0,
     unit: "SOL",
@@ -75,9 +73,8 @@ const SOL_REFERRAL_LIST = [
     key: 1,
     value: 75,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.500k",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
+    label: "500K SOL",
     volume: 500000,
     amount: 0,
     unit: "SOL",
@@ -87,9 +84,8 @@ const SOL_REFERRAL_LIST = [
     key: 1,
     value: 100,
     icon: "/img/home/refer-modal-progress-node.svg",
-    iconActive:
-      "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.1m",
+    iconActive: "/img/home/refer-modal-progress-node-active.svg",
+    label: "1M SOL",
     volume: 1000000,
     amount: 0,
     unit: "SOL",
@@ -110,7 +106,11 @@ const ReferModalContent = (props: any) => {
 
   const solReferralList = useMemo(() => {
     return SOL_REFERRAL_LIST.map((it) => {
-      it.amount = numberFormatter(Big(it.volume).times(0.01).times(Big(rate).div(100)), 2, true);
+      it.amount = numberFormatter(
+        Big(it.volume).times(0.01).times(Big(rate).div(100)),
+        2,
+        true
+      );
       return it;
     });
   }, [rate]);
@@ -133,7 +133,11 @@ const ReferModalContent = (props: any) => {
       // 03/10,25# Now there's a new api of get an airdrop code
       try {
         const res = await httpAuthGet("/airdrop/code");
-        if (res.code !== 0 || !res.data?.code_list || !res.data?.code_list.length) {
+        if (
+          res.code !== 0 ||
+          !res.data?.code_list ||
+          !res.data?.code_list.length
+        ) {
           fail("Failed to obtain the invitation code");
           setLoading(false);
           return;
@@ -184,9 +188,7 @@ const ReferModalContent = (props: any) => {
           Referral Earning
         </div>
         <div className={isMobile ? styles.ContentMobile : styles.Content}>
-          <div
-            className={styles.EarnedWrapper}
-          >
+          <div className={styles.EarnedWrapper}>
             <div
               className={isMobile ? styles.EarnedTabsMobile : styles.EarnedTabs}
             >
@@ -199,7 +201,12 @@ const ReferModalContent = (props: any) => {
               <TabTitle
                 {...props}
                 label="EARNED"
-                value={numberFormatter(Big(userInfo?.referralFee || 0).div(10 ** SOL.tokenDecimals), 4, true, { isShort: true })}
+                value={numberFormatter(
+                  Big(userInfo?.referralFee || 0).div(10 ** SOL.tokenDecimals),
+                  4,
+                  true,
+                  { isShort: true }
+                )}
                 unit="SOL"
                 tab={1}
                 current={currentTab}
@@ -208,7 +215,9 @@ const ReferModalContent = (props: any) => {
               <TabTitle
                 {...props}
                 label="EARNED"
-                value={numberFormatter(airdropData?.airdrop_points, 4, true, { isShort: true })}
+                value={numberFormatter(airdropData?.airdrop_points, 4, true, {
+                  isShort: true
+                })}
                 unit="$FUN"
                 tab={2}
                 current={currentTab}
@@ -290,7 +299,10 @@ const ReferModalContent = (props: any) => {
                 className={styles.InviteText}
                 {...AnimateVariants}
               >
-                Invite users to<br /> get <strong className={styles.InviteTextPrimary}>15%</strong> Referral kickback
+                Invite users to
+                <br /> get{" "}
+                <strong className={styles.InviteTextPrimary}>15%</strong>{" "}
+                Referral kickback
               </motion.div>
             )}
             {currentTab === 2 && (
@@ -311,7 +323,7 @@ const ReferModalContent = (props: any) => {
           </AnimatePresence>
         </div>
       </div>
-      <div className={styles.Footer}>
+      {/* <div className={styles.Footer}>
         <button
           type="button"
           className={styles.InviteBtn}
@@ -321,7 +333,7 @@ const ReferModalContent = (props: any) => {
           {loading && <Loading size={16} />}
           <span>Invite now</span>
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

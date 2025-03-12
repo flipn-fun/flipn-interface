@@ -6,9 +6,10 @@ import { useReferStore } from "@/app/store/useRefer";
 import ReferModal from "@/app/components/layout/laptop/user/refer/modal";
 import { useAccount } from "@/app/hooks/useAccount";
 import { usePathname } from "next/navigation";
-import { WalletModalButton } from '@/app/libs/solana/wallet-adapter/modal';
-import { useAuth } from '@/app/context/auth';
-import { useSetting } from '@/app/store/use-setting';
+import { WalletModalButton } from "@/app/libs/solana/wallet-adapter/modal";
+import { useAuth } from "@/app/context/auth";
+import { useSetting } from "@/app/store/use-setting";
+import Icon from "@/app/components/points-label/Reicon";
 
 const Refer = (props: any) => {
   const { isMobile } = props;
@@ -52,7 +53,11 @@ const Refer = (props: any) => {
           </div>
         )
       ) : (
-        <div className={settingStore.menuExpand ? styles.EntryExpand : styles.Entry}>
+        <div
+          className={
+            settingStore.menuExpand ? styles.EntryExpand : styles.Entry
+          }
+        >
           <EntryAnimationLaptop
             onClick={handleEntryOpen}
             entryVisible={store.entryVisible}
@@ -60,7 +65,13 @@ const Refer = (props: any) => {
         </div>
       )}
       <motion.div
-        className={isMobile ? styles.CardMobile : (settingStore.menuExpand ? styles.CardExpand : styles.Card)}
+        className={
+          isMobile
+            ? styles.CardMobile
+            : settingStore.menuExpand
+            ? styles.CardExpand
+            : styles.Card
+        }
         variants={{
           visible: {
             opacity: 1,
@@ -106,30 +117,39 @@ const ReferContent = (props: any) => {
     <>
       <div className={isMobile ? styles.CardInnerMobile : styles.CardInner}>
         <div className={styles.Title}>
-          Invite frenz and {(userInfo?.address ? 'Earn' : (<WalletModalButton
-          style={{
-            cursor: 'default',
-            width: 'unset',
-            height: 'unset',
-            border: 0,
-            background: 'unset',
-            display: 'inline',
-            padding: 0,
-            margin: 0,
-            fontWeight: 400,
-            fontSize: 14,
-          }}
-          isPrivy
-        >Earn</WalletModalButton>))} up to
+          Invite frenz and{" "}
+          {userInfo?.address ? (
+            "Earn"
+          ) : (
+            <WalletModalButton
+              style={{
+                cursor: "default",
+                width: "unset",
+                height: "unset",
+                border: 0,
+                background: "unset",
+                display: "inline",
+                padding: 0,
+                margin: 0,
+                fontWeight: 400,
+                fontSize: 14
+              }}
+              isPrivy
+            >
+              Earn
+            </WalletModalButton>
+          )}
         </div>
         <div className={styles.Content}>
           <div className={styles.Rebates}>
-            <img
+            <Icon size={24} />
+            <div>$FUN</div>
+            {/* <img
               src="/img/home/refer-reward-amount.png"
               alt=""
               className={styles.RebatesValue}
-            />
-            <div className={styles.RebatesUnit}></div>
+            /> */}
+            {/* <div className={styles.RebatesUnit}></div> */}
           </div>
           <button
             type="button"
@@ -441,7 +461,7 @@ const EntryAnimationLaptop = (props: any) => {
           x: 20,
           y: 70,
           scale: 0.8
-        },
+        }
       }}
       initial="invisible"
       animate="visible"

@@ -42,7 +42,7 @@ export default function FollowX() {
             <span>Follow FlipN on X</span>
           </div>
           <div className={styles.ItemSubTitle}>
-            +10 <span className={styles.ThemeColor}>$FUN</span>
+            +5 <span className={styles.ThemeColor}>$FUN</span>
           </div>
         </div>
         <div className={styles.ItemDesc}></div>
