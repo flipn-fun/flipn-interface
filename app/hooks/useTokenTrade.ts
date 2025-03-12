@@ -2,7 +2,8 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-  ComputeBudgetProgram
+  ComputeBudgetProgram,
+  TransactionInstruction
 } from "@solana/web3.js";
 import Big from "big.js";
 import * as anchor from "@coral-xyz/anchor";
@@ -389,7 +390,7 @@ export function useTokenTrade({
     async (outputAmount: string | number, maxWsolAmount: string | number) => {
       const keysAndIns = await getKeys();
 
-      console.log('outputAmount:', outputAmount, 'maxWsolAmount:', maxWsolAmount)
+      const instructionsAll: any = {}
 
       if (!keysAndIns) {
         return;
@@ -402,6 +403,7 @@ export function useTokenTrade({
         toPubkey: keys.userWsolAccount,
         lamports: Number(maxWsolAmount)
       });
+
       const instruction2 = createSyncNativeInstruction(
         keys.userWsolAccount,
         TOKEN_PROGRAM_ID
@@ -424,8 +426,16 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (ins) {
+          if (instructionsAll[JSON.stringify(ins)]) {
+            return
+          }
+
+          transaction.add(ins);
+          instructionsAll[JSON.stringify(ins)] = true
+        }
       });
+
 
       transaction.add(instruction1).add(instruction2).add(buyInstruction);
 
@@ -449,7 +459,7 @@ export function useTokenTrade({
   const buyTokenWithFixedOutput = useCallback(
     async (outputAmount: string | number, maxWsolAmount: string | number) => {
       const keysAndIns = await getKeys();
-
+      const instructionsAll: any = {}
       if (!keysAndIns) {
         return;
       }
@@ -483,7 +493,14 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (ins) {
+          if (instructionsAll[JSON.stringify(ins)]) {
+            return
+          }
+
+          transaction.add(ins);
+          instructionsAll[JSON.stringify(ins)] = true
+        }
       });
 
       transaction.add(instruction1).add(instruction2).add(buyInstruction);
@@ -508,7 +525,7 @@ export function useTokenTrade({
   const sellToken = useCallback(
     async (amount: number | string, minWsolAmount: number | string) => {
       const keysAndIns = await getKeys();
-
+      const instructionsAll: any = {}
       if (!keysAndIns) {
         return;
       }
@@ -534,7 +551,14 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (ins) {
+          if (instructionsAll[JSON.stringify(ins)]) {
+            return
+          }
+
+          transaction.add(ins);
+          instructionsAll[JSON.stringify(ins)] = true
+        }
       });
 
       transaction.add(sellInstruction);
