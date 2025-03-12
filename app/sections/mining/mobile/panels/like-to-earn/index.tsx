@@ -38,8 +38,9 @@ export default function LikeToEarn({ info, userInfo }: any) {
               content={
                 <div className={styles.Tips}>
                   <div>
-                    Like Genesis videos to earn $FUN. The better memes = content
-                    you interact with, the more you earn for the next Like.
+                    Like Genesis videos to earn MEMETICS. The better memes =
+                    content you interact with, the more you earn for the next
+                    Like.
                   </div>
 
                   <div style={{ marginTop: 10 }}>

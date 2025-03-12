@@ -77,10 +77,9 @@ export default function TradeSuccessModal({
             {numberFormatter(point, 6, true, {
               isShort: true
             })}{" "}
-              $FUN
-            </span>
-          </div>
-        )}
+            MEMETICS
+          </span>
+        </div>
       </div>
 
       <div className={style.close} onClick={onClose}>

@@ -143,7 +143,7 @@ const ReferContent = (props: any) => {
         <div className={styles.Content}>
           <div className={styles.Rebates}>
             <Icon size={24} />
-            <div>$FUN</div>
+            <div>MEMETICS</div>
             {/* <img
               src="/img/home/refer-reward-amount.png"
               alt=""

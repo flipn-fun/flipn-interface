@@ -218,7 +218,7 @@ const ReferModalContent = (props: any) => {
                 value={numberFormatter(airdropData?.airdrop_points, 4, true, {
                   isShort: true
                 })}
-                unit="$FUN"
+                unit="MEMETICS"
                 tab={2}
                 current={currentTab}
                 onClick={() => handleTab(2)}
@@ -247,9 +247,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10K $FUN",
+                      label: "10K MEMETICS",
                       amount: "1K",
-                      unit: "$FUN",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     },
                     {
@@ -258,9 +258,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "100K $FUN",
+                      label: "100K MEMETICS",
                       amount: "10K",
-                      unit: "$FUN",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     },
                     {
@@ -269,9 +269,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "1M $FUN",
+                      label: "1M MEMETICS",
                       amount: "100K",
-                      unit: "$FUN",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     },
                     {
@@ -280,9 +280,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10M $FUN",
+                      label: "10M MEMETICS",
                       amount: "1M",
-                      unit: "$FUN",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     }
                   ]}
@@ -314,7 +314,7 @@ const ReferModalContent = (props: any) => {
                 <strong className={styles.InviteTextPrimary}>
                   extra 10%
                 </strong>{" "}
-                of their $FUN.
+                of their MEMETICS.
               </motion.div>
             )}
           </AnimatePresence>
