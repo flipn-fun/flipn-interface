@@ -47,15 +47,14 @@ export default function Token({
       >
         {token?.id && (
           <div className={styles.Content}>
-            {!!token.boost_time && (
-              <SpecFrame
-                className={styles.SpecFrame}
-                width={innerWidth}
-                height={innerHeight}
-                id={token.id}
-              />
-            )}
             <div className={styles.TokenContent}>
+              {token.data_type === "top_project" && (
+                <SpecFrame
+                  className={styles.SpecFrame}
+                  width={innerWidth}
+                  id={token.id}
+                />
+              )}
               <div
                 className={styles.Bg}
                 style={{ backgroundImage: `url(${token.icon})` }}

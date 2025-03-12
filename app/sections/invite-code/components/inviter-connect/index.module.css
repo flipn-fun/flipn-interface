@@ -1,0 +1,55 @@
+.InviterContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  padding-top: 22px;
+}
+.InviterLabel {
+  color: #000;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+.InviterAvatarWrapper {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 4px solid #121719;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.InviterAvatarWrapperEmpty {
+  composes: InviterAvatarWrapper;
+  border: 0;
+}
+.InviterAvatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.InviterName {
+  color: #000;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  white-space: nowrap;
+}
+.InviterAvatarLoading {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.InviterNameLoading {
+  width: 116px;
+  height: 22px;
+  border-radius: 6px;
+}

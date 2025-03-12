@@ -3,7 +3,12 @@ import { useDebounce } from "ahooks";
 import Big from "big.js";
 import styles from "../trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
-import { getFullNum, getPointByVolume, getTransaction, simplifyNum } from "@/app/utils";
+import {
+  getFullNum,
+  getPointByVolume,
+  getTransaction,
+  simplifyNum
+} from "@/app/utils";
 import { fail, success } from "@/app/utils/toast";
 import SlipPage from "../slippage";
 import TradeSuccessModal from "@/app/components/tradeSuccessModal";
@@ -121,7 +126,7 @@ export default function BuySellLaunched({
 
   const { getQoute: getMeteoraQoute, trade: tradeMeteora } = useMeteora({
     token
-  })
+  });
 
   const TOKEN_PERCENT_LIST = useMemo(() => {
     return [25, 50, 75, 100];
@@ -150,7 +155,10 @@ export default function BuySellLaunched({
 
             getQoute(buyIn, "buy", slip * 100)
               .then((res: any) => {
-                if (res.quoteResponse && res.quoteResponse.otherAmountThreshold) {
+                if (
+                  res.quoteResponse &&
+                  res.quoteResponse.otherAmountThreshold
+                ) {
                   setDexType(0);
                   setBuyIn(
                     new Big(res.quoteResponse.otherAmountThreshold)
@@ -169,10 +177,9 @@ export default function BuySellLaunched({
                   setIsError(false);
                   setIsLoading(false);
                 } else {
-
                   getMeteoraQoute(buyIn, "buy", slip * 100)
                     .then((res: any) => {
-                      console.log('meteora res:', res)
+                      console.log("meteora res:", res);
                       if (res > 0) {
                         setDexType(1);
                         setBuyIn(
@@ -189,13 +196,11 @@ export default function BuySellLaunched({
                       }
                     })
                     .catch((e) => {
-                      console.log('meteora error:', e)
+                      console.log("meteora error:", e);
                       setIsError(true);
                       setIsLoading(false);
-                    })
-
+                    });
                 }
-
               })
               .catch((e) => {
                 console.log(e);
@@ -247,7 +252,10 @@ export default function BuySellLaunched({
 
             getQoute(sellOut, "sell", slip * 100)
               .then((res: any) => {
-                if (res.quoteResponse && res.quoteResponse?.otherAmountThreshold) {
+                if (
+                  res.quoteResponse &&
+                  res.quoteResponse?.otherAmountThreshold
+                ) {
                   setDexType(0);
                   setSellOutSol(
                     new Big(res.quoteResponse?.otherAmountThreshold)
@@ -258,14 +266,15 @@ export default function BuySellLaunched({
                   setIsError(false);
                   setIsLoading(false);
                 } else {
-
                   getMeteoraQoute(sellOut, "sell", slip * 100)
                     .then((res: any) => {
                       if (res > 0) {
                         setDexType(1);
-                        setSellOutSol(new Big(res)
-                          .div(10 ** SOL.tokenDecimals)
-                          .toFixed(SOL.tokenDecimals))
+                        setSellOutSol(
+                          new Big(res)
+                            .div(10 ** SOL.tokenDecimals)
+                            .toFixed(SOL.tokenDecimals)
+                        );
                         setSellOut(sellOut);
                         setIsError(false);
                         setIsLoading(false);
@@ -275,13 +284,11 @@ export default function BuySellLaunched({
                       }
                     })
                     .catch((e) => {
-                      console.log('meteora error:', e)
+                      console.log("meteora error:", e);
                       setIsLoading(false);
                       setIsError(true);
-                    })
-
+                    });
                 }
-
               })
               .catch((e) => {
                 console.log(e);
@@ -413,7 +420,6 @@ export default function BuySellLaunched({
                 </div>
               </div>
 
-
               {from === "panel" ? (
                 <></>
               ) : (
@@ -433,14 +439,18 @@ export default function BuySellLaunched({
             </div>
 
             <div
-              className={`${styles.tokenBalanceBox} ${from === "panel" && styles.PanelInput
-                }`}
+              className={`${styles.tokenBalanceBox} ${
+                from === "panel" && styles.PanelInput
+              }`}
             >
               <div className={styles.inputArea}>
                 <input
                   placeholder="0"
                   value={valInput}
                   onChange={(e) => {
+                    if (isNaN(Number(e.target.value))) {
+                      return;
+                    }
                     setValInput(e.target.value);
                     if (activeIndex === 1) {
                       setTokenPercent(0);
@@ -477,8 +487,13 @@ export default function BuySellLaunched({
                 </div>
 
                 <div className={styles.tokenPrice}>
-                  ${numberFormatter(
-                    currentToken.tokenName === "SOL" ? Number(config.SolPrice) * Number(valInput) : Number(token.price || 0) * Number(config.SolPrice) * Number(valInput),
+                  $
+                  {numberFormatter(
+                    currentToken.tokenName === "SOL"
+                      ? Number(config.SolPrice) * Number(valInput)
+                      : Number(token.price || 0) *
+                          Number(config.SolPrice) *
+                          Number(valInput),
                     2,
                     true
                   )}
@@ -488,7 +503,13 @@ export default function BuySellLaunched({
 
             {activeIndex === 0 &&
               (tokenType === 1 ? (
-                <div className={styles.tokenPercent + ' ' + (from === "panel" ? styles.PanelPercent : styles.Percent)}>
+                <div
+                  className={
+                    styles.tokenPercent +
+                    " " +
+                    (from === "panel" ? styles.PanelPercent : styles.Percent)
+                  }
+                >
                   <div
                     onClick={() => {
                       setSolPercent(0);
@@ -503,8 +524,20 @@ export default function BuySellLaunched({
                       <div
                         onClick={() => {
                           if (item === "Max") {
-                            setSolPercent(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0));
-                            setValInput(getFullNum(Math.max(new Big(solBalance).minus(0.03).toNumber(), 0)));
+                            setSolPercent(
+                              Math.max(
+                                new Big(solBalance).minus(0.03).toNumber(),
+                                0
+                              )
+                            );
+                            setValInput(
+                              getFullNum(
+                                Math.max(
+                                  new Big(solBalance).minus(0.03).toNumber(),
+                                  0
+                                )
+                              )
+                            );
                           } else {
                             setSolPercent(item as number);
                             setValInput(getFullNum(item as number));
@@ -536,7 +569,13 @@ export default function BuySellLaunched({
               ))}
 
             {activeIndex === 1 && (
-              <div className={styles.tokenPercent + ' ' + (from === "panel" ? styles.PanelPercent : styles.Percent)}>
+              <div
+                className={
+                  styles.tokenPercent +
+                  " " +
+                  (from === "panel" ? styles.PanelPercent : styles.Percent)
+                }
+              >
                 <div
                   onClick={() => {
                     setTokenPercent(0);
@@ -583,15 +622,16 @@ export default function BuySellLaunched({
                 <div className={styles.receiveAmount}>
                   {buyIn && numberFormatter(buyIn, 6, true)}
 
-                  {
-                    from === "panel" ? <div>{token.tokenSymbol}</div> : (
-                      <div className={styles.receiveTokenImgBox}>
-                        <img
-                          src={desToken.tokenUri}
-                          className={styles.receiveTokenImg}
-                        />
-                      </div>
-                    )}
+                  {from === "panel" ? (
+                    <div>{token.tokenSymbol}</div>
+                  ) : (
+                    <div className={styles.receiveTokenImgBox}>
+                      <img
+                        src={desToken.tokenUri}
+                        className={styles.receiveTokenImg}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -601,16 +641,16 @@ export default function BuySellLaunched({
                 <div>Payment</div>
                 <div className={styles.receiveAmount}>
                   {buyInSol && numberFormatter(buyInSol, 9, true)}
-                  {
-                    from === "panel" ? <div>{SOL.tokenSymbol}</div> : (
-                      <div className={styles.receiveTokenImgBox}>
-                        <img
-                          src={SOL.tokenUri}
-                          className={styles.receiveTokenImg}
-                        />
-                      </div>
-                    )
-                  }
+                  {from === "panel" ? (
+                    <div>{SOL.tokenSymbol}</div>
+                  ) : (
+                    <div className={styles.receiveTokenImgBox}>
+                      <img
+                        src={SOL.tokenUri}
+                        className={styles.receiveTokenImg}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -620,16 +660,16 @@ export default function BuySellLaunched({
                 <div className={styles.receiveTitle}>Received</div>
                 <div className={styles.receiveAmount}>
                   {sellOutSol && numberFormatter(sellOutSol, 9, true)}
-                  {
-                    from === "panel" ? <div>{SOL.tokenSymbol}</div> : (
-                      <div className={styles.receiveTokenImgBox}>
-                        <img
-                          src={SOL.tokenUri}
-                          className={styles.receiveTokenImg}
-                        />
-                      </div>
-                    )
-                  }
+                  {from === "panel" ? (
+                    <div>{SOL.tokenSymbol}</div>
+                  ) : (
+                    <div className={styles.receiveTokenImgBox}>
+                      <img
+                        src={SOL.tokenUri}
+                        className={styles.receiveTokenImg}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -637,7 +677,7 @@ export default function BuySellLaunched({
             <div style={{ marginTop: 18 }}>
               <MainBtn
                 isLoading={isLoading}
-                isDisabled={isError}
+                isDisabled={false}
                 onClick={async () => {
                   try {
                     if (isLoading || isError) {
@@ -645,16 +685,18 @@ export default function BuySellLaunched({
                     }
 
                     let hash;
-                    let showBuyInToken: any = Number(buyIn) * 10 ** token.tokenDecimals!;
+                    let showBuyInToken: any =
+                      Number(buyIn) * 10 ** token.tokenDecimals!;
                     setIsLoading(true);
                     if (activeIndex === 0) {
                       if (dexType === 0) {
                         hash = await trade(buyInSol, "buy", slip * 100);
                       } else {
-                        console.log('buyInSol:', buyInSol)
+                        console.log("buyInSol:", buyInSol);
 
                         hash = await tradeMeteora(buyInSol, "buy", slip * 100);
                       }
+
                       if (hash) {
                         const _showBuyInToken = await getTransaction(
                           connection,
@@ -662,7 +704,6 @@ export default function BuySellLaunched({
                           token.address as string,
                           userInfo.address
                         );
-
                         if (_showBuyInToken) {
                           showBuyInToken = _showBuyInToken;
                         }
@@ -675,20 +716,22 @@ export default function BuySellLaunched({
                       }
                     }
                     setIsLoading(false);
-                    setReFreshBalnace(reFreshBalnace + 1);
-                    onSuccess?.();
+                    setReFreshBalnace(Math.random());
+                    setTimeout(() => {
+                      setReFreshBalnace(Math.random());
+                    }, 2000);
                     if (hash) {
-                      const volume =
-                        activeIndex === 0
-                          ? new Big(buyInSol)
-                            .div(10 ** SOL.tokenDecimals)
-                            .toFixed(SOL.tokenDecimals)
-                          : sellOutSol;
+                      // const volume =
+                      //   activeIndex === 0
+                      //     ? new Big(buyInSol)
+                      //         .div(10 ** SOL.tokenDecimals)
+                      //         .toFixed(SOL.tokenDecimals)
+                      //     : sellOutSol;
 
-                      const pointByVolume = await getPointByVolume(
-                        Big(volume).toString(),
-                        "sexy"
-                      );
+                      // const pointByVolume = await getPointByVolume(
+                      //   Big(volume).toString(),
+                      //   token.DApp === "pump" ? "pump" : "sexy"
+                      // );
 
                       const modalHandler = Modal.show({
                         content: (
@@ -704,7 +747,7 @@ export default function BuySellLaunched({
                             )
                               .div(10 ** token.tokenDecimals!)
                               .toFixed(2)}
-                            point={pointByVolume}
+                            point={'0'}
                             onClose={() => {
                               modalHandler.close();
                             }}
@@ -732,7 +775,8 @@ export default function BuySellLaunched({
                   color: activeIndex === 0 ? "#000" : "#fff",
                   background: activeIndex === 0 ? "#C9FF5D" : "#FF559D",
                   height: from === "panel" ? 36 : 60,
-                  width: "100%"
+                  width: "100%",
+                  cursor: isError ? "not-allowed" : "pointer"
                 }}
               >
                 {activeIndex === 0 ? "Buy" : "Sell"}

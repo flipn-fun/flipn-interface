@@ -1,4 +1,5 @@
 import Token from "../token";
+import TopTrade from "../../laptop/top-trade";
 import Empty from "@/app/components/empty";
 import Loading from "../loading";
 import useData from "@/app/sections/home/hooks/use-data";
@@ -168,7 +169,14 @@ export default function List({
               token = getProjectById(item);
             }
 
-            return (
+            return token?.data_type === "top_trade" ? (
+              <TopTrade
+                opacity={
+                  index > i ? 0 : i - 1 === index && isCurrentTab ? 0.3 : 1
+                }
+                data={token}
+              />
+            ) : (
               <Token
                 key={item}
                 token={token}
