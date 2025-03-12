@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import styles from "./index.module.css";
 import Token from "../../home/laptop/token";
 import useTokenDetail from "../use-token-detail";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useSearchParams } from "next/navigation";
 import BackIcon from "./back-icon";
@@ -14,6 +14,7 @@ export default function Laptop(props: any) {
   const detailStatusStore: any = useDetailStatus();
   const { innerWidth } = useUserAgent();
   const search = useSearchParams();
+  const timer = useRef<any>();
 
   const searchFrom = search.get("from") || "";
 
@@ -26,6 +27,15 @@ export default function Laptop(props: any) {
       detailStatusStore.setShow("showTrade", true);
     }
   }, [searchFrom]);
+
+  useEffect(() => {
+    timer.current = setInterval(() => {
+      getDetailInfo();
+    }, 3000);
+    return () => {
+      clearInterval(timer.current);
+    };
+  }, []);
 
   return (
     <motion.div
