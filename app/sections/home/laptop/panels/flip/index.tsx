@@ -86,8 +86,7 @@ export default function FlipPanel(props: any) {
       const flipNumFormatted = numberFormatter(
         new Big(token.total_amount).div(10 ** 9).toString(),
         4,
-        true,
-        { isShort: true }
+        true
       );
       return `You've fliped ${flipNumFormatted} SOL!`;
     }
