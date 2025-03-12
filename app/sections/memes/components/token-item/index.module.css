@@ -49,6 +49,10 @@
   font-weight: 400;
   line-height: normal;
 }
+.TokenItemMarketCapDown {
+  composes: TokenItemMarketCap;
+  color: #FF2681;
+}
 .TokenItemFoot {
   display: flex;
   align-items: center;
