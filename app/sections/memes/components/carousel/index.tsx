@@ -270,6 +270,7 @@ const Carousel: React.FC<CarouselProps> = ({
                               2,
                               true,
                               {
+                                prefix: "$",
                                 isShort: true,
                                 isShortUppercase: false
                               }

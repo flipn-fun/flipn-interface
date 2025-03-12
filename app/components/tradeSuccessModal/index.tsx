@@ -68,16 +68,15 @@ export default function TradeSuccessModal({
           <img className={style.userImg} src="/img/home/default-flipn.png" />
         </div>
 
-        {
-          token.status === 1 && (
-            <div className={style.tips}>
-              <span>{"You’ve got"}</span>
-          <span className={style.sexFi}>
-            {" "}
-            {numberFormatter(point, 6, true, {
-              isShort: true
-            })}{" "}
-              $FUN
+        {token.status === 1 && (
+          <div className={style.tips}>
+            <span>{"You’ve got"}</span>
+            <span className={style.sexFi}>
+              {" "}
+              {numberFormatter(point, 6, true, {
+                isShort: true
+              })}{" "}
+              MEMETICS
             </span>
           </div>
         )}

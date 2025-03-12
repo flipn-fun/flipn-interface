@@ -33,14 +33,16 @@ export default function CreateSuccessModal({
   const { isMobile } = useUserAgent();
 
   if (!isMobile && show) {
-    return <SuccessModal
-      token={token}
-      pointByVolume={pointByVolume}
-      onClose={() => {
-        onHide();
-      }}
-      onShare={onShare}
-    />;
+    return (
+      <SuccessModal
+        token={token}
+        pointByVolume={pointByVolume}
+        onClose={() => {
+          onHide();
+        }}
+        onShare={onShare}
+      />
+    );
   }
 
   return (
@@ -90,17 +92,29 @@ function SuccessModal({
     }
   }, [token]);
 
-  useInterval(() => {
-    launchConfetti()
-  }, 1000, { immediate: true })  
+  useInterval(
+    () => {
+      launchConfetti();
+    },
+    1000,
+    { immediate: true }
+  );
 
   return (
-    <div className={style.main + ' ' + (isMobile ? style.mainMobile : style.mainPc)} style={{ width: isMobile ? "90vw" : 432 }}>
+    <div
+      className={
+        style.main + " " + (isMobile ? style.mainMobile : style.mainPc)
+      }
+      style={{ width: isMobile ? "90vw" : 432 }}
+    >
       <div className={style.tokenInfo}>
         <div className={style.tokenTitle}>A Genesis Token is live!</div>
         <div className={style.tokenAmount}>
           You will get
-          <span className={style.tokenSymbol}> {numberFormatter(5950, 4, true)} $FUN </span>
+          <span className={style.tokenSymbol}>
+            {" "}
+            {numberFormatter(5950, 4, true)} MEMETICS{" "}
+          </span>
           when this token hit bonding curve.
         </div>
       </div>
