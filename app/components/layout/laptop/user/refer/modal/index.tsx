@@ -212,7 +212,7 @@ const ReferModalContent = (props: any) => {
                 current={currentTab}
                 onClick={() => handleTab(1)}
               />
-              <TabTitle
+              {/* <TabTitle
                 {...props}
                 label="EARNED"
                 value={numberFormatter(airdropData?.airdrop_points, 4, true, {
@@ -222,7 +222,7 @@ const ReferModalContent = (props: any) => {
                 tab={2}
                 current={currentTab}
                 onClick={() => handleTab(2)}
-              />
+              /> */}
             </div>
             <AnimatePresence mode="wait">
               {currentTab === 1 && (
@@ -299,7 +299,12 @@ const ReferModalContent = (props: any) => {
                 className={styles.InviteText}
                 {...AnimateVariants}
               >
-                Invite users to<br /> get <strong className={styles.InviteTextPrimary}>{rate}%</strong> Referral kickback
+                Invite users to
+                <br /> get{" "}
+                <strong className={styles.InviteTextPrimary}>
+                  {rate}%
+                </strong>{" "}
+                Referral kickback
               </motion.div>
             )}
             {currentTab === 2 && (
