@@ -48,7 +48,7 @@ export default function FlipPanel(props: any) {
     loadData: false
   });
 
-  const onFlip = useCallback(async () => {
+  const onFlip = async () => {
     if (!inputVal) return;
     try {
       setLoading(true);
@@ -69,7 +69,7 @@ export default function FlipPanel(props: any) {
     } finally {
       setLoading(false);
     }
-  }, [inputVal]);
+  };
 
   useEffect(() => {
     if (!address || address === token.account) {
@@ -84,7 +84,7 @@ export default function FlipPanel(props: any) {
   const errorTips = useMemo(() => {
     if (isPrePaid) {
       const flipNumFormatted = numberFormatter(
-        new Big(token.total_amount).div(10 ** 9).toString(),
+        new Big(token.total_amount).toString(),
         4,
         true
       );
@@ -92,6 +92,7 @@ export default function FlipPanel(props: any) {
     }
     if (isNaN(Number(inputVal)) || Big(inputVal || 0).eq(0))
       return "Enter an amount";
+    if (Number(inputVal) > 1) return "Maximum 1 SOL";
     return Big(inputVal || 0).gt(solBalance || 0) ? "Insufficient Balance" : "";
   }, [solBalance, inputVal, isPrePaid]);
 
@@ -116,7 +117,6 @@ export default function FlipPanel(props: any) {
           />
           <div>SOL</div>
         </div>
-        {isMaxLimit && <div className={styles.MaxLimit}>Maximum 1 SOL</div>}
       </div>
       <div className={clsx(styles.DescWrapper, descWrapperClassName)}>
         <div className={clsx(styles.Tags, tagsClassName)}>
