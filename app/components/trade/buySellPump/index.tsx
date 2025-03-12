@@ -615,10 +615,8 @@ export default function BuySellPump({
             <div style={{ marginTop: 18 }}>
               <MainBtn
                 isLoading={isLoading}
-                isDisabled={isError}
+                isDisabled={false}
                 onClick={async () => {
-                  // trade()
-
                   try {
                     if (isLoading || isError) {
                       return;
@@ -702,7 +700,8 @@ export default function BuySellPump({
                   color: "#000",
                   background: activeIndex === 0 ? "#C9FF5D" : "#FFC9F1",
                   height: from === "panel" ? 36 : 60,
-                  width: "100%"
+                  width: "100%",
+                  cursor: isError ? "not-allowed" : "pointer"
                 }}
               >
                 {activeIndex === 0 ? "Buy" : "Sell"}
