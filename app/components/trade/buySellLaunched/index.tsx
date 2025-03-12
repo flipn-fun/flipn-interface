@@ -65,6 +65,7 @@ export default function BuySellLaunched({
   const { isMobile } = useUserAgent();
   const slippageTextRef = useRef<any>();
 
+
   const tokenUri =
     token.tokenIcon || token.tokenImg || "/img/token-icon-placeholder.svg";
 
@@ -730,7 +731,7 @@ export default function BuySellLaunched({
 
                       const pointByVolume = await getPointByVolume(
                         Big(volume).toString(),
-                        "sexy"
+                        token.DApp === "pump" ? "pump" : "sexy"
                       );
 
                       const modalHandler = Modal.show({
