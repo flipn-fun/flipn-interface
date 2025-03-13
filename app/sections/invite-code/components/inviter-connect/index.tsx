@@ -123,7 +123,7 @@ const InviterConnect = (props: any) => {
                 animated
                 className={styles.InviterNameLoading}
               />
-            ) : formatLongText(staticInviter ? staticInviter.name : (inviterData?.account_name || "Unknown"), 10, 8)
+            ) : formatLongText(staticInviter ? staticInviter.name : (inviterData?.account_name || inviterData?.account_id || "Unknown"), 10, 8)
           }
         </div>
       </div>
