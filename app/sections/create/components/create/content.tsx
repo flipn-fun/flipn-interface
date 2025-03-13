@@ -22,6 +22,7 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useUser } from "@/app/store/useUser";
 import StepAction from "../stepAction";
+import { SpinLoading } from "antd-mobile";
 
 type Token = {
   tokenName: string;
@@ -212,13 +213,10 @@ export default function Create({
 
         const isSuccess = await onCreateTokenSuccess();
 
-        console.log('isSuccess', isSuccess)
 
         if (isSuccess) {
           setModalShow(true);
         }
-
-        console.log('setModalShow', isSuccess)
 
         setIsLoading(false);
         setIsSkipLoading(false);
@@ -348,38 +346,39 @@ export default function Create({
             </div>
           </div>
 
-          {
-            <StepAction
-              step={4}
-              disabled={isError || isSkipLoading || isLoading}
-              isLoading={isLoading}
-              isSkipLoading={isSkipLoading}
-              btnText={isError ? errorMsg : "Get"}
-              goBackTo={(number) => {
-                console.log("number", number, goBackTo);
-                goBackTo && goBackTo();
-              }}
-              onBack={() => {
-                // onBack();
-              }}
-              extendBtn={
-                <div
-                  className={styles.skipBtn}
-                  onClick={() => {
-                    submit(0);
-                  }}
-                >
-                  Skip
-                </div>
-              }
-              onSkip={() => {
-                submit(0);
-              }}
-              onNext={async () => {
-                submit(1);
-              }}
-            />
-          }
+          <StepAction
+            step={4}
+            disabled={isError || isSkipLoading || isLoading}
+            isLoading={isLoading}
+            isSkipLoading={isSkipLoading}
+            btnText={isError ? errorMsg : "Get"}
+            goBackTo={(number) => {
+              console.log("number", number, goBackTo);
+              goBackTo && goBackTo();
+            }}
+            onBack={() => {
+              // onBack();
+            }}
+            extendBtn={
+              <div
+                className={styles.skipBtn}
+                onClick={() => {
+                  submit(0);
+                }}
+              >
+                {isSkipLoading ? <SpinLoading
+                  color="#9290B1"
+                  style={{ "--size": "16px" }}
+                /> : 'Skip'}
+              </div>
+            }
+            onSkip={() => {
+              submit(0);
+            }}
+            onNext={async () => {
+              submit(1);
+            }}
+          />
         </div>
       )}
 

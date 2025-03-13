@@ -25,6 +25,7 @@ export async function getTokenMeta(address: string) {
         return null
     }
 
+
     const nowMinute = new Date().toLocaleString('zh-CN', { hour12: false }).slice(0, -3)
     const cacheKey = `${address}-${nowMinute}`
 
@@ -32,7 +33,7 @@ export async function getTokenMeta(address: string) {
         return tokenMetaCache.get(cacheKey)
     }
 
-    const res = fetch(`${api_prefix}/token/meta?address=${address}`, {
+    const res = fetch(`https://solscandev.minirpc.top/solscan/v2.0/token/meta?address=${address}`, {
         headers: {
             token: solana_api_key
         }
