@@ -125,7 +125,7 @@ function Card({ token, show, onClose }: Props, ref: any) {
         setIsSharing(true);
         const img = await getShareImg();
         if (!img) {
-          fail("Share fail");
+          // fail("Share fail");
           setIsSharing(false);
           return;
         }

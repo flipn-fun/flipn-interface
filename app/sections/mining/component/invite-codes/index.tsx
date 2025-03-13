@@ -26,7 +26,8 @@ export default function InviteCodes({
       <div
         className={styles.Container}
         style={{
-          borderRadius: isMobile ? "20px 20px 0px 0px" : 20
+          borderRadius: isMobile ? "20px 20px 0px 0px" : 20,
+          width: isMobile ? "100vw" : 486
         }}
       >
         <div className={styles.Header}>

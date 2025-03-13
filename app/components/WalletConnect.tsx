@@ -4,11 +4,11 @@ import React, { useMemo } from "react";
 import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
-  TorusWalletAdapter,
+  TorusWalletAdapter
 } from "@solana/wallet-adapter-wallets";
 import {
   ConnectionProvider,
-  WalletProvider,
+  WalletProvider
 } from "@solana/wallet-adapter-react";
 import { Adapter, WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { WalletModalProvider } from "@/app/libs/solana/wallet-adapter/modal";
@@ -18,17 +18,18 @@ import { OkxWalletUIAdapter } from "@/app/libs/solana/wallet-adapter/okx/ui";
 import { HotWalletAdapter } from "hot-wallet-sdk/adapter/solana";
 import {
   WalletConnectWalletAdapter,
-  WalletConnectWalletAdapterConfig,
+  WalletConnectWalletAdapterConfig
 } from "@/app/libs/solana/wallet-adapter/walletconnect";
 import "@/app/libs/solana/wallet-adapter/modal/index.css";
 import { getDeviceType } from "../utils";
-import { BackpackWalletAdapter } from '@/app/libs/solana/wallet-adapter/backpack';
+import { BackpackWalletAdapter } from "@/app/libs/solana/wallet-adapter/backpack";
+import { useSetting } from "../store/use-setting";
 
 const WALLET_CONNECT_METADATA = {
   name: "FlipN",
   description: "FlipN",
   url: "https://app.flipn.fun",
-  icons: ["https://app.flipn.fun/favicon.ico"],
+  icons: ["https://app.flipn.fun/favicon.ico"]
 };
 
 const WALLET_CONNECT_OPTIONS: WalletConnectWalletAdapterConfig["options"] = {
@@ -38,8 +39,8 @@ const WALLET_CONNECT_OPTIONS: WalletConnectWalletAdapterConfig["options"] = {
     analytics: false,
     email: false,
     socials: false,
-    emailShowWallets: false,
-  },
+    emailShowWallets: false
+  }
 };
 
 // @ts-ignore
@@ -47,22 +48,25 @@ const netType = WalletAdapterNetwork[process.env.NEXT_PUBLIC_NET || "Devnet"];
 
 function getEndpoint(netType: WalletAdapterNetwork) {
   if (netType === WalletAdapterNetwork.Mainnet) {
-    return (
-      process.env.NEXT_PUBLIC_ENDPOINT ||
-      "https://flipn.minirpc.top"
-    );
+    return process.env.NEXT_PUBLIC_ENDPOINT || "https://flipn.minirpc.top";
   }
 
   return clusterApiUrl(netType);
 }
 
 export default function WalletConnect({
-  children,
+  children
 }: {
   children: React.ReactNode;
 }) {
   const network = netType;
-  const endpoint = useMemo(() => getEndpoint(network), [network]);
+  const rpc = useSetting((store: any) => store.rpc);
+  const endpoint = useMemo(() => {
+    if (netType === WalletAdapterNetwork.Mainnet) {
+      return rpc.url;
+    }
+    return clusterApiUrl(netType);
+  }, [network]);
   const wallets = useMemo(() => {
     if (typeof window === "undefined") return [];
     console.log(getDeviceType());
@@ -76,8 +80,8 @@ export default function WalletConnect({
             new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
               network,
-              options: WALLET_CONNECT_OPTIONS,
-            }),
+              options: WALLET_CONNECT_OPTIONS
+            })
           ]
         : [
             new OkxWalletAdapter(),
