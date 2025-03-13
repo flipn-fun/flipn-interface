@@ -49,7 +49,7 @@ const InviteCodeView: React.FC<any> = (props) => {
 
   useEffect(() => {
     // Close the login modal
-    window.connect?.();
+    window.connect?.({ isClose: true });
   }, []);
 
   return (
