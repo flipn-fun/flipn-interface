@@ -16,7 +16,7 @@ export default function useTips() {
       const response = await httpGet("/bought/data");
       const temp = response.data;
 
-      if (temp.uuid !== cached.current.uuid) {
+      if (temp.uuid !== cached.current?.uuid) {
         if (temp.project_status === 0) {
           temp.trade_type = "flip";
         }
