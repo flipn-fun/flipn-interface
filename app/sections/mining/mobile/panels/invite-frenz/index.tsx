@@ -2,16 +2,12 @@ import styles from "../index.module.css";
 import { WalletModalButton } from "@/app/libs/solana/wallet-adapter/modal";
 import { useReferStore } from "@/app/store/useRefer";
 import { useAuth } from "@/app/context/auth";
-import { useState } from "react";
 import InfoIcon from "../info-icon";
-import InviteCodes from "../../../component/invite-codes";
-import useInviteCodes from "../../../use-invite-codes";
 
-export default function InviteFrenz({ rate }: any) {
+export default function InviteFrenz({ rate, codeInfo, onCopyShareLink }: any) {
   const store = useReferStore();
   const { userInfo } = useAuth();
-  const [showInviteCodes, setShowInviteCodes] = useState(false);
-  const { list, loading, onCopyAll, onQuery } = useInviteCodes();
+
   return (
     <>
       <div
@@ -48,25 +44,20 @@ export default function InviteFrenz({ rate }: any) {
             revenue share $SOL kickback
           </div>
           <div className={styles.ItemBottom}>
-            <div>10 invite code</div>
-            <div className={styles.ItemBottomButtons}>
-              <button
-                disabled={!list?.length}
-                className={styles.LinkButton}
-                onClick={onCopyAll}
-              >
-                Copy
-              </button>
+            <div className={styles.InviteLink}>
+              app.flipn.fun/ref?code={codeInfo?.code}
+            </div>
+            <div
+              className={styles.ItemBottomButtons}
+              style={{ alignSelf: "flex-end" }}
+            >
               {userInfo?.address ? (
                 <button
                   type="button"
                   className={styles.Button}
-                  disabled={!list?.length}
-                  onClick={() => {
-                    setShowInviteCodes(true);
-                  }}
+                  onClick={onCopyShareLink}
                 >
-                  Open
+                  Invite
                 </button>
               ) : (
                 <WalletModalButton className={styles.Button}>
@@ -77,16 +68,6 @@ export default function InviteFrenz({ rate }: any) {
           </div>
         </div>
       </div>
-      <InviteCodes
-        show={showInviteCodes}
-        list={list}
-        loading={loading}
-        onCopyAll={onCopyAll}
-        onQuery={onQuery}
-        onClose={() => {
-          setShowInviteCodes(false);
-        }}
-      />
     </>
   );
 }

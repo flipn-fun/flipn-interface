@@ -11,8 +11,9 @@ export default function Mining({
   infoLoading,
   userInfo,
   rate,
-  rateLoading,
-  onQuery
+  onCopyShareLink,
+  onQuery,
+  codeInfo
 }: any) {
   const [showRank, setShowRank] = useState(false);
 
@@ -31,6 +32,8 @@ export default function Mining({
             info={info}
             userInfo={userInfo}
             onQuery={onQuery}
+            codeInfo={codeInfo}
+            onCopyShareLink={onCopyShareLink}
           />
           <TotalPanel info={info} userInfo={userInfo} />
           <Others info={info} />

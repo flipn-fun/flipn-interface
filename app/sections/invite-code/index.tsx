@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import styles from './index.module.css';
-import InviteCodeConnectWallet from '@/app/sections/invite-code/components/connetct-wallet';
-import Social from '@/app/sections/invite-code/components/social';
-import InviteCodeForm from '@/app/sections/invite-code/components/form';
-import { useAccount } from '@/app/hooks/useAccount';
-import { useAuth } from '@/app/context/auth';
-import { useDebounceFn } from 'ahooks';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useAirdropContext } from '@/app/context/airdrop';
-import { useUserAgent } from '@/app/context/user-agent';
-import InviterConnect from '@/app/sections/invite-code/components/inviter-connect';
-import { INVITE_TYPE, UN_REDIRECT_PATH } from '@/app/config/invite';
+import React, { useEffect, useState } from "react";
+import styles from "./index.module.css";
+import InviteCodeConnectWallet from "@/app/sections/invite-code/components/connetct-wallet";
+import Social from "@/app/sections/invite-code/components/social";
+import InviteCodeForm from "@/app/sections/invite-code/components/form";
+import { useAccount } from "@/app/hooks/useAccount";
+import { useAuth } from "@/app/context/auth";
+import { useDebounceFn } from "ahooks";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useAirdropContext } from "@/app/context/airdrop";
+import { useUserAgent } from "@/app/context/user-agent";
+import InviterConnect from "@/app/sections/invite-code/components/inviter-connect";
+import { INVITE_TYPE, UN_REDIRECT_PATH } from "@/app/config/invite";
 
 const InviteCodeView: React.FC<any> = (props) => {
   const { type } = props;
@@ -27,9 +27,13 @@ const InviteCodeView: React.FC<any> = (props) => {
 
   const [pageLoading, setPageLoading] = useState(true);
 
-  const { run: setPageLoadingDelay, cancel: setPageLoadingDelayCancel } = useDebounceFn(() => {
-    setPageLoading(false);
-  }, { wait: 300 });
+  const { run: setPageLoadingDelay, cancel: setPageLoadingDelayCancel } =
+    useDebounceFn(
+      () => {
+        setPageLoading(false);
+      },
+      { wait: 300 }
+    );
 
   useEffect(() => {
     setPageLoadingDelayCancel();
@@ -41,7 +45,7 @@ const InviteCodeView: React.FC<any> = (props) => {
   }, [address, accountRefresher]);
 
   useEffect(() => {
-    if (airdropUserData?.allow_login && UN_REDIRECT_PATH.some((reg) => reg.test(pathname))) {
+    if (airdropUserData?.allow_login && pathname === "/invite-code") {
       const redirectTarget = searchParams.get("redirect");
       router.replace(redirectTarget || "/");
     }
@@ -53,22 +57,24 @@ const InviteCodeView: React.FC<any> = (props) => {
   }, []);
 
   return (
-    <div className={isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop}>
-      {
-        (!type || type === INVITE_TYPE.INVITE_CODE) ? (
-          !pageLoading && (
-            (!address || !accountRefresher || airdropDataLoading || airdropUserData?.allow_login) ? (
-              <InviteCodeConnectWallet loading={pageLoading || airdropDataLoading} />
-            ) : (
-              <InviteCodeForm />
-            )
-          )
-        ) : (
-          !pageLoading && (
-            <InviterConnect type={type} />
-          )
-        )
+    <div
+      className={
+        isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop
       }
+    >
+      {!type || type === INVITE_TYPE.INVITE_CODE
+        ? !pageLoading &&
+          (!address ||
+          !accountRefresher ||
+          airdropDataLoading ||
+          airdropUserData?.allow_login ? (
+            <InviteCodeConnectWallet
+              loading={pageLoading || airdropDataLoading}
+            />
+          ) : (
+            <InviteCodeForm />
+          ))
+        : !pageLoading && <InviterConnect type={type} />}
       <Social />
     </div>
   );

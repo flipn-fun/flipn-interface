@@ -12,14 +12,16 @@ export default memo(function Mining(props: any) {
   const { isMobile } = useUserAgent();
   const { info, loading: infoLoading } = useUserMining();
   const { isLoading: rateLoading, rate } = useReferralRate();
-  const { userInfo } = useAuth();
+  const { userInfo, codeInfo, onCopyShareLink } = useAuth();
 
   const params = {
     info,
     infoLoading,
     rate,
     rateLoading,
-    userInfo
+    userInfo,
+    codeInfo,
+    onCopyShareLink
   };
 
   return isMobile ? (

@@ -7,7 +7,13 @@ import { Swiper } from "antd-mobile";
 import { useConfig } from "@/app/store/useConfig";
 import { useMemo } from "react";
 
-export default function Panels({ info, rate, userInfo }: any) {
+export default function Panels({
+  info,
+  rate,
+  userInfo,
+  codeInfo,
+  onCopyShareLink
+}: any) {
   const configStore: any = useConfig((store: any) => store.config);
 
   const showCreateToEarn = useMemo(() => {
@@ -28,7 +34,11 @@ export default function Panels({ info, rate, userInfo }: any) {
         indicator={() => null}
       >
         <Swiper.Item>
-          <InviteFrenz rate={rate} />
+          <InviteFrenz
+            rate={rate}
+            codeInfo={codeInfo}
+            onCopyShareLink={onCopyShareLink}
+          />
         </Swiper.Item>
         <Swiper.Item>
           <LikeToEarn info={info} userInfo={userInfo} />

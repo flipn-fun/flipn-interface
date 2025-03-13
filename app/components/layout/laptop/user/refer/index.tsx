@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { WalletModalButton } from "@/app/libs/solana/wallet-adapter/modal";
 import { useAuth } from "@/app/context/auth";
 import { useSetting } from "@/app/store/use-setting";
-import Icon from "@/app/components/points-label/Reicon";
+import clsx from "clsx";
 
 const Refer = (props: any) => {
   const { isMobile } = props;
@@ -111,7 +111,7 @@ export default Refer;
 const ReferContent = (props: any) => {
   const { handleOpen, handleEntryClose, isMobile } = props;
 
-  const { userInfo } = useAuth();
+  const { userInfo, onCopyShareLink } = useAuth();
 
   return (
     <>
@@ -152,9 +152,15 @@ const ReferContent = (props: any) => {
             <div className={styles.RebatesUnit}></div>
           </div> */}
           <button
+            className={clsx(styles.RulesButton, "button")}
+            onClick={handleOpen}
+          >
+            Rules
+          </button>
+          <button
             type="button"
             className={styles.ReferBtn}
-            onClick={handleOpen}
+            onClick={onCopyShareLink}
           >
             Invite
           </button>

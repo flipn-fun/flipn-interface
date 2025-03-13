@@ -14,6 +14,7 @@ import Loading from "@/app/components/icons/loading";
 import { useAirdrop } from "@/app/components/airdrop/hooks";
 import { useUser } from "@/app/store/useUser";
 import useUserInfo from "@/app/hooks/useUserInfo";
+import { useAuth } from "@/app/context/auth";
 import Big from "big.js";
 import { SOL } from "@/app/components/trade/buySellPump";
 import { numberFormatter } from "@/app/utils/common";
@@ -100,7 +101,7 @@ const ReferModalContent = (props: any) => {
   const userStore: any = useUser();
   const { fecthUserInfo } = useUserInfo(address, true, 0);
   const { rate, isLoading: rateLoading } = useReferralRate();
-
+  const { onCopyShareLink } = useAuth();
   const [currentTab, setCurrentTab] = useState(isInvite ? 2 : 1);
   const [loading, setLoading] = useState(false);
 
@@ -115,54 +116,35 @@ const ReferModalContent = (props: any) => {
     });
   }, [rate]);
 
-  const handleCopy = async () => {
-    if (loading) return;
-    setLoading(true);
-    const shareLink = new URL(window?.location?.origin);
-    shareLink.searchParams.set("referral", address ?? "");
-    if (currentTab === 2) {
-      // this api had been deleted
-      // const res = await httpAuthGet("/airdrop/referral/code", {
-      //   find: false
-      // });
-      // if (res.code !== 0) {
-      //   fail("Failed to obtain the invitation code");
-      //   setLoading(false);
-      //   return;
-      // }
-      // 03/10,25# Now there's a new api of get an airdrop code
-      try {
-        const res = await httpAuthGet("/airdrop/code");
-        if (
-          res.code !== 0 ||
-          !res.data?.code_list ||
-          !res.data?.code_list.length
-        ) {
-          fail("Failed to obtain the invitation code");
-          setLoading(false);
-          return;
-        }
-        const currentCode = res.data.code_list[0];
-        shareLink.searchParams.set("airdrop", currentCode.code);
-      } catch (err: any) {
-        console.log("get airdrop code failed: %o", err);
-        fail("Failed to obtain the invitation code");
-        setLoading(false);
-        return;
-      }
-    }
-    navigator.clipboard
-      .writeText(shareLink.toString())
-      .then(() => {
-        success("Copied share link!", { maskStyle: { zIndex: 2000 } });
-      })
-      .catch((err) => {
-        fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  // const handleCopy = async () => {
+  //   if (loading) return;
+  //   setLoading(true);
+  //   const shareLink = new URL(window?.location?.origin);
+  //   shareLink.searchParams.set("referral", address ?? "");
+  //   if (currentTab === 2) {
+  //     // this api had been deleted
+  //     // const res = await httpAuthGet("/airdrop/referral/code", {
+  //     //   find: false
+  //     // });
+  //     // if (res.code !== 0) {
+  //     //   fail("Failed to obtain the invitation code");
+  //     //   setLoading(false);
+  //     //   return;
+  //     // }
+  //     shareLink.searchParams.set("airdrop", "1");
+  //   }
+  //   navigator.clipboard
+  //     .writeText(shareLink.toString())
+  //     .then(() => {
+  //       success("Copied share link!", { maskStyle: { zIndex: 2000 } });
+  //     })
+  //     .catch((err) => {
+  //       fail("Copy failed!", { maskStyle: { zIndex: 2000 } });
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //     });
+  // };
 
   const handleTab = (tab: number) => {
     if (currentTab === tab) return;
@@ -325,17 +307,17 @@ const ReferModalContent = (props: any) => {
           </AnimatePresence>
         </div>
       </div>
-      {/* <div className={styles.Footer}>
+      <div className={styles.Footer}>
         <button
           type="button"
           className={styles.InviteBtn}
-          onClick={handleCopy}
+          onClick={onCopyShareLink}
           disabled={loading}
         >
           {loading && <Loading size={16} />}
           <span>Invite now</span>
         </button>
-      </div> */}
+      </div>
     </div>
   );
 };

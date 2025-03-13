@@ -1,44 +1,43 @@
 import { httpAuthGet } from "@/app/utils";
-import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "@/app/context/auth";
+import { useEffect, useState } from "react";
 import { fail, success } from "@/app/utils/toast";
 
-export default function useInviteCodes() {
-  const { accountRefresher } = useAuth();
-  const [list, setList] = useState<any>([]);
+export default function useInviteCodes(accountRefresher: number) {
+  const [codeInfo, setCodeInfo] = useState<any>();
   const [loading, setLoading] = useState(false);
 
   const onQuery = async () => {
     try {
       setLoading(true);
       const response = await httpAuthGet("/airdrop/code");
-
-      setList(response.data.beta_code_list);
+      setCodeInfo(response.data.code_list[0]);
     } catch (err) {
-      setList([]);
+      setCodeInfo(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const onCopyAll = useCallback(async () => {
+  const onCopyShareLink = async () => {
+    if (!codeInfo?.code) return;
     try {
-      const text = list.map((item: any) => item.code).join(",");
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/ref?code=${codeInfo?.code}`
+      );
       success("Copied successfully!");
     } catch (err) {
       fail("Copied failed!");
     }
-  }, [list]);
+  };
 
   useEffect(() => {
     if (accountRefresher) onQuery();
   }, [accountRefresher]);
 
   return {
-    list,
+    codeInfo,
     loading,
-    onCopyAll,
-    onQuery
+    onCopyShareLink,
+    onUpdateCode: onQuery
   };
 }
