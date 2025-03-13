@@ -12,8 +12,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAirdropContext } from "@/app/context/airdrop";
 import { useUserAgent } from "@/app/context/user-agent";
 import InviterConnect from "@/app/sections/invite-code/components/inviter-connect";
-
-const IS_INVITE_LINK = true;
+import { INVITE_TYPE, UN_REDIRECT_PATH } from "@/app/config/invite";
 
 const InviteCodeView: React.FC<any> = (props) => {
   const { type } = props;
@@ -63,7 +62,7 @@ const InviteCodeView: React.FC<any> = (props) => {
         isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop
       }
     >
-      {!IS_INVITE_LINK
+      {!type || type === INVITE_TYPE.INVITE_CODE
         ? !pageLoading &&
           (!address ||
           !accountRefresher ||
@@ -75,7 +74,7 @@ const InviteCodeView: React.FC<any> = (props) => {
           ) : (
             <InviteCodeForm />
           ))
-        : !pageLoading && <InviterConnect />}
+        : !pageLoading && <InviterConnect type={type} />}
       <Social />
     </div>
   );

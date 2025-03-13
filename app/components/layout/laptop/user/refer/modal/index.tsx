@@ -19,6 +19,7 @@ import Big from "big.js";
 import { SOL } from "@/app/components/trade/buySellPump";
 import { numberFormatter } from "@/app/utils/common";
 import useReferralRate from "@/app/sections/mining/use-referral-rate";
+import { httpAuthGet } from "@/app/utils";
 
 const ReferModal = (props: any) => {
   const { isMobile } = props;

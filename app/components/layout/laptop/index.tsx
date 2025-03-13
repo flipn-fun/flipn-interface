@@ -72,7 +72,6 @@ export default function Laptop({ children }: any) {
           <SmartTopDetailPage />
         )}
         {pathname === "/smartDetail" && SHOW_COPY_TRADE && <SmartDetailPage />}
-        {pathname === "/invite-code" && <InviteCodeView />}
       </div>
       <Refer userInfo={userInfo} />
     </div>
