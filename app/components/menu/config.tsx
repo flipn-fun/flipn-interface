@@ -53,7 +53,7 @@ export const Links = [
   },
   {
     icon: "/img/community/telegram.svg",
-    href: "https://t.me/Flip_N"
+    href: "https://t.me/flipndotfun"
   }
   // {
   //   icon: "/img/community/discard.svg",
