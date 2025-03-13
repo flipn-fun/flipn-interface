@@ -103,8 +103,9 @@
 }
 .Content {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   margin-top: 10px;
+  justify-content: space-between;
 }
 .CloseBtn {
   width: 14px;
