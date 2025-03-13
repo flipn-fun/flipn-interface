@@ -15,12 +15,16 @@ export default function useTips() {
     try {
       const response = await httpGet("/bought/data");
       const temp = response.data;
-      if (temp.project_status === 0) {
-        temp.trade_type = "flip";
+
+      if (temp.uuid !== cached.current.uuid) {
+        if (temp.project_status === 0) {
+          temp.trade_type = "flip";
+        }
+        setTip(temp);
+        setPrevTip(cached.current);
+        cached.current = temp;
       }
-      setTip(temp);
-      setPrevTip(cached.current);
-      cached.current = temp;
+
       clearTimeout(timer.current);
       timer.current = setTimeout(() => {
         fetchTip();
