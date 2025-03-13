@@ -53,8 +53,8 @@ export const AuthProvider: React.FC<{
   );
 
   useEffect(() => {
-    window.connect = () => {
-      if (UN_REDIRECT_PATH.some((reg) => reg.test(pathname))) {
+    window.connect = (params?: { isClose?: boolean; }) => {
+      if (UN_REDIRECT_PATH.some((reg) => reg.test(pathname)) || params?.isClose) {
         setShowLoginModal(false);
         return;
       }
