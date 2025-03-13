@@ -15,8 +15,12 @@ export default function CustomizeLink({
 }: any) {
   const { isMobile } = useUserAgent();
   const [showEditModal, setShowEditModal] = useState(false);
-  const { loading, onBind, code, setCode, errorMsg } =
-    useBindingInviteCode(onSuccess);
+  const { loading, onBind, code, setCode, errorMsg } = useBindingInviteCode(
+    () => {
+      onSuccess();
+      setShowEditModal(false);
+    }
+  );
 
   useEffect(() => {
     if (info?.code) {

@@ -360,7 +360,7 @@ export default function Txs({ from, data }: any) {
           {data?.status === 3 && pair && (
             <iframe
               style={{
-                height: from === "panel" ? 296 : "calc(100vh - 210px)"
+                height: from === "panel" ? 360 : "calc(100vh - 210px)"
               }}
               width="100%"
               height="800"

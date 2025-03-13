@@ -21,9 +21,9 @@ export default function Mining({
     <>
       <div className={styles.Container}>
         <Header
-          rank={info?.your_rank}
+          rank={info?.your_rank || "-"}
           onRankClick={() => {
-            setShowRank(true);
+            // setShowRank(true);
           }}
         />
         <div className={styles.Content}>

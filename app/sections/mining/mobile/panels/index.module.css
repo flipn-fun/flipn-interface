@@ -65,7 +65,7 @@
   color: #fff;
   text-align: right;
   font-family: Unbounded;
-  font-size: 12px;
+  font-size: 10px;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -131,6 +131,7 @@
   line-height: normal;
 }
 
+.LinkButton:disabled,
 .Button:disabled {
   opacity: 0.5;
 }
@@ -158,6 +159,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  max-width: 400px;
 }
 
 .InviteLink {

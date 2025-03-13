@@ -119,7 +119,7 @@ const ReferContent = (props: any) => {
         <div className={styles.Title}>
           Invite frenz and{" "}
           {userInfo?.address ? (
-            "Earn"
+            "Earn $SOL"
           ) : (
             <WalletModalButton
               style={{
@@ -136,20 +136,21 @@ const ReferContent = (props: any) => {
               }}
               isPrivy
             >
-              Earn
+              Earn $SOL
             </WalletModalButton>
-          )}{" "}
-          up to
+          )}
         </div>
         <div className={styles.Content}>
-          <div className={styles.Rebates}>
+          {/* <div className={styles.Rebates}>
+            <Icon size={24} />
+            <div>MEMETICS</div>
             <img
               src="/img/home/refer-reward-amount.png"
               alt=""
               className={styles.RebatesValue}
             />
             <div className={styles.RebatesUnit}></div>
-          </div>
+          </div> */}
           <button
             className={clsx(styles.RulesButton, "button")}
             onClick={handleOpen}

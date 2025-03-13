@@ -172,7 +172,7 @@ const TokenItem = (props: {
                   : _token.video,
                 is_king: false
               }}
-              isPlayButton={true}
+              isPlayButton={false}
             />
           </div>
           <div className={styles.TokenItemRight}>
@@ -354,7 +354,7 @@ export const TokenItemMarketCap = (props: any) => {
           }}
         />
       ) : (
-        <div className={styles.TokenItemMarketCap}>
+        <div className={Big(token?.market_cap_24h_usd || 0).gte(0) ? styles.TokenItemMarketCap : styles.TokenItemMarketCapDown}>
           MC{" "}
           {numberFormatter(token.market_cap, 2, true, {
             prefix: "$",

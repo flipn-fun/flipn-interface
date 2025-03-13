@@ -24,26 +24,24 @@ export default function InviteFrenz({ rate, codeInfo, onCopyShareLink }: any) {
           }}
         />
         <div className={styles.ItemContent}>
-          <div>
-            <div className={styles.ItemHeader}>
-              <div className={styles.ItemTitle}>
-                <span>Invite Frenz</span>
-                <InfoIcon
-                  onClick={() => {
-                    if (!window.sexAddress) {
-                      //@ts-ignore
-                      window.connect();
-                      return;
-                    }
-                    store.setVisible(true);
-                  }}
-                />
-              </div>
+          <div className={styles.ItemHeader}>
+            <div className={styles.ItemTitle}>
+              <span>Invite Frenz</span>
+              <InfoIcon
+                onClick={() => {
+                  if (!window.sexAddress) {
+                    //@ts-ignore
+                    window.connect();
+                    return;
+                  }
+                  store.setVisible(true);
+                }}
+              />
             </div>
-            <div className={styles.ItemDesc}>
-              You will get {rate || "-"}%{" "}
-              <span className={styles.ThemeColor}>$FUN</span> of Airdrops from
-            </div>
+          </div>
+          <div className={styles.ItemDesc}>
+            and get <span className={styles.ThemeColor}>{rate || "-"}% </span>
+            revenue share $SOL kickback
           </div>
           <div className={styles.ItemBottom}>
             <div className={styles.InviteLink}>

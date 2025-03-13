@@ -85,7 +85,7 @@ export default function LaunchesTradePanel({
                       </div>
                       <div className={styles.MarketCap24}>
                         {Number(token.marketCap24hUsd) > 0 ? "+" : "-"}$
-                        {numberFormatter(token.marketCap24hUsd, 2, true, {
+                        {numberFormatter(Math.abs(Number(token.marketCap24hUsd)), 2, true, {
                           isShort: true
                         })}
                       </div>
@@ -94,7 +94,7 @@ export default function LaunchesTradePanel({
                   <div className={styles.DataItem} style={{ width: "25%" }}>
                     <div className={styles.DataLabel}>24h Volume</div>
                     <div className={styles.DataValue}>
-                      {numberFormatter(token.volume_24h_usd, 2, true, {
+                      ${numberFormatter(token.volume_24h_usd, 2, true, {
                         isShort: true
                       })}
                     </div>
@@ -106,7 +106,7 @@ export default function LaunchesTradePanel({
                       style={{ }}
                     >
                       <div style={{ display: "flex", alignItems: "center", gap: 2 }}><ZeroFormat value={token.price} />SOL</div>
-                      <div style={{ display: "flex", alignItems: "center", fontSize: 9, fontWeight: 300, color: "#9290B1" }}>$<ZeroFormat value={Number(token.price) * Number(config.SolPrice)} /></div>
+                      <div style={{ display: "flex", alignItems: "center", fontSize: 9, fontWeight: 300, color: "#9290B1", marginTop: -5 }}>$<ZeroFormat value={Number(token.price) * Number(config.SolPrice)} /></div>
                     </div>
                   </div>
                 </div>

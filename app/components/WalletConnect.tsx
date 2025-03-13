@@ -22,6 +22,7 @@ import {
 } from "@/app/libs/solana/wallet-adapter/walletconnect";
 import "@/app/libs/solana/wallet-adapter/modal/index.css";
 import { getDeviceType } from "../utils";
+import { BackpackWalletAdapter } from '@/app/libs/solana/wallet-adapter/backpack';
 
 const WALLET_CONNECT_METADATA = {
   name: "FlipN",
@@ -46,12 +47,10 @@ const netType = WalletAdapterNetwork[process.env.NEXT_PUBLIC_NET || "Devnet"];
 
 function getEndpoint(netType: WalletAdapterNetwork) {
   if (netType === WalletAdapterNetwork.Mainnet) {
-    // return 'https://swr.xnftdata.com/rpc-proxy/'
     return (
       process.env.NEXT_PUBLIC_ENDPOINT ||
-      "https://solana-mainnet.core.chainstack.com/26539386617197b730ed9e3c81b611df"
+      "https://flipn.minirpc.top"
     );
-    // return "https://pump-fe.helius-rpc.com/?api-key=1b8db865-a5a1-4535-9aec-01061440523b";
   }
 
   return clusterApiUrl(netType);
@@ -74,6 +73,7 @@ export default function WalletConnect({
             new SolflareWalletAdapter(),
             new OkxWalletUIAdapter(),
             // new HotWalletAdapter(),
+            new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
               network,
               options: WALLET_CONNECT_OPTIONS,
@@ -83,6 +83,7 @@ export default function WalletConnect({
             new OkxWalletAdapter(),
             new PhantomWalletAdapter(),
             new SolflareWalletAdapter(),
+            new BackpackWalletAdapter(),
             new WalletConnectWalletAdapter({
               network,
               options: WALLET_CONNECT_OPTIONS

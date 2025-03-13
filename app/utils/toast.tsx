@@ -7,9 +7,9 @@ const customStyle: any = {
 
 export function success(
   msg: string | React.ReactNode,
-  opts?: { maskStyle?: React.CSSProperties }
+  opts?: { maskStyle?: React.CSSProperties; duration?: number; }
 ) {
-  const { maskStyle } = opts ?? {};
+  const { maskStyle, duration = 2000 } = opts ?? {};
 
   Toast.show({
     content: <div style={{ color: "#AAFF00", ...customStyle }}>{msg}</div>,
@@ -31,16 +31,16 @@ export function success(
         />
       </svg>
     ),
-    duration: 2000,
+    duration,
     maskStyle
   });
 }
 
 export function fail(
   msg: string | React.ReactNode,
-  opts?: { maskStyle?: React.CSSProperties; isIcon?: boolean }
+  opts?: { maskStyle?: React.CSSProperties; isIcon?: boolean; duration?: number; }
 ) {
-  const { maskStyle, isIcon = true } = opts ?? {};
+  const { maskStyle, isIcon = true, duration = 2000 } = opts ?? {};
 
   Toast.show({
     content: <div style={{ color: "#FF2681", ...customStyle }}>{msg}</div>,
@@ -75,7 +75,7 @@ export function fail(
         />
       </svg>
     ),
-    duration: 2000,
+    duration,
     maskStyle
   });
 }

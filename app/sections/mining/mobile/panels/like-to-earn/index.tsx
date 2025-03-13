@@ -37,13 +37,27 @@ export default function LikeToEarn({ info, userInfo }: any) {
             <Popover
               content={
                 <div className={styles.Tips}>
-                  Like Genesis products to earn, {info?.like_num || 100} likes
-                  per day.
+                  <div>
+                    Like Genesis videos to earn MEMETICS. The better memes =
+                    content you interact with, the more you earn for the next
+                    Like.
+                  </div>
+
+                  <div style={{ marginTop: 10 }}>
+                    Read{" "}
+                    <a
+                      href="https://docs.flipn.fun/reward-mechanisms/trade-to-earn"
+                      className={styles.LinkButton}
+                    >
+                      docs
+                    </a>{" "}
+                    for more details.
+                  </div>
                 </div>
               }
               trigger={isMobile ? PopoverTrigger.Click : PopoverTrigger.Hover}
               placement={PopoverPlacement.Top}
-              closeDelayDuration={0}
+              closeDelayDuration={2000}
             >
               <InfoIcon />
             </Popover>

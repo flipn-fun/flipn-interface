@@ -118,6 +118,7 @@
 
 .uploadError {
   border: 1px solid var(--error-color);
+  border-radius: 8px;
 }
 
 .tokenSymbol {

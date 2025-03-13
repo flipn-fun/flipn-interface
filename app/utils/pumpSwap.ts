@@ -1,8 +1,6 @@
 import { ComputeBudgetProgram, Connection, LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction, clusterApiUrl } from '@solana/web3.js';
 import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, createCloseAccountInstruction } from '@solana/spl-token';
 import { createTransaction, sendAndConfirmTransactionWrapper, bufferFromUInt64 } from '../hooks/utils';
-
-
 import { GLOBAL, FEE_RECIPIENT, SYSTEM_PROGRAM_ID, RENT, PUMP_FUN_ACCOUNT, PUMP_FUN_PROGRAM, ASSOC_TOKEN_ACC_PROG } from '@/app/utils/config';
 import { Idl, Program } from '@coral-xyz/anchor';
 import IDL from '@/app/hooks/pump.json';
@@ -47,9 +45,10 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
         const solInLamports = solIn * LAMPORTS_PER_SOL;
 
-        const tokenOut = new Big(solInLamports).mul(1 - 0.01).mul(virtualTokenReserves).div(virtualSolReserves).toFixed(0, 0);
+        const tokenOut = new Big(solInLamports).mul(virtualTokenReserves).div(virtualSolReserves).toFixed(0, 0);
+        const maxSolCost = new Big(solInLamports).mul(1 + slippageDecimal).mul(1 + 0.01).toFixed(0, 0);
 
-        const maxSolCost = Math.floor(solInLamports * (1 + slippageDecimal));
+        console.log('maxSolCost:', maxSolCost, tokenOut)
 
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
@@ -85,7 +84,9 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
         txBuilder.add(instruction);
 
-        const hash = await walletProvider.signAndSendTransaction(txBuilder)
+        const hash = await walletProvider.signAndSendTransaction(txBuilder, {}, {
+            canJitoable: true
+        })
 
         console.log('hash', hash)
 
@@ -159,7 +160,9 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
         });
         txBuilder.add(instruction);
 
-        const hash = await walletProvider.signAndSendTransaction(txBuilder)
+        const hash = await walletProvider.signAndSendTransaction(txBuilder, {}, {
+            canJitoable: true
+        })
 
         console.log('hash', hash)
 

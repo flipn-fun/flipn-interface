@@ -13,6 +13,7 @@ import { defaultAvatar } from "@/app/utils/config";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
 import { useUserAgent } from "@/app/context/user-agent";
+import { getHoldersByToken, getTokenMeta } from "@/app/utils/solanaScanApi";
 
 export default function Desc({
   data,
@@ -56,25 +57,8 @@ export default function Desc({
   useEffect(() => {
     (async () => {
       if (connection && data) {
-       
-        const tokenAccounts = await connection.getParsedProgramAccounts(new PublicKey('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'), {
-            "filters": [
-              {
-                "dataSize": 165
-              },
-              {
-                "memcmp": {
-                  "offset": 0,
-                  "bytes": data.address as string
-                }
-              }
-            ]
-          });
-
-          // @ts-ignore
-          const size = tokenAccounts.filter((item) => Number(item.account.data.parsed.info.tokenAmount.amount) > 0).length;
-
-        setHolders(size);
+        const tokenMeta = await getTokenMeta(data.address as string)
+        setHolders(tokenMeta.data.holder);
       }
     })();
   }, [connection, data]);
@@ -209,6 +193,9 @@ export default function Desc({
           <div className={styles.nameWrapper}>
             <div className={styles.ticker}>Created by:</div>
             <div
+              style={{
+                cursor: address !== data.account ? "pointer" : "default"
+              }}
               onClick={() => {
                 if (address !== data.account)
                   router.push(
@@ -330,8 +317,8 @@ export default function Desc({
         )}
       </div>
 
-      {data.status! === 1 && data.DApp === 'sexy' &&
-        ((from === "panel" && data.kingProgress) || from !== "panel") && (
+      {/* ((from === "panel" && data.kingProgress) || from !== "panel") */}
+      {data.status! === 1 && data.DApp === 'sexy' && (
           <div
             className={styles.singleProgress}
             style={{

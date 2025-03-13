@@ -62,7 +62,7 @@ export default function Token({
               height: innerHeight
             }}
           >
-            {!!token.boost_time && (
+            {token.data_type === "top_project" && (
               <SpecFrame
                 className={styles.SpecFrame}
                 width={innerWidth}
@@ -104,7 +104,8 @@ export default function Token({
                         window.connect();
                         return;
                       }
-                      onOpenPanel("showFlip", true);
+                      onUpdateTradeTab("details");
+                      onOpenPanel("showTrade", true);
                     }}
                     id={isCurrent ? "guid-tour-flip" : token.id}
                   />

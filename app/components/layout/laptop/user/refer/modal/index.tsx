@@ -52,7 +52,7 @@ const SOL_REFERRAL_LIST = [
     value: 25,
     icon: "/img/home/refer-modal-progress-node.svg",
     iconActive: "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.50k",
+    label: "50K SOL",
     volume: 50000,
     amount: 0,
     unit: "SOL",
@@ -63,7 +63,7 @@ const SOL_REFERRAL_LIST = [
     value: 50,
     icon: "/img/home/refer-modal-progress-node.svg",
     iconActive: "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.250k",
+    label: "250K SOL",
     volume: 250000,
     amount: 0,
     unit: "SOL",
@@ -74,7 +74,7 @@ const SOL_REFERRAL_LIST = [
     value: 75,
     icon: "/img/home/refer-modal-progress-node.svg",
     iconActive: "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.500k",
+    label: "500K SOL",
     volume: 500000,
     amount: 0,
     unit: "SOL",
@@ -85,7 +85,7 @@ const SOL_REFERRAL_LIST = [
     value: 100,
     icon: "/img/home/refer-modal-progress-node.svg",
     iconActive: "/img/home/refer-modal-progress-node-active.svg",
-    label: "Vol.1m",
+    label: "1M SOL",
     volume: 1000000,
     amount: 0,
     unit: "SOL",
@@ -193,17 +193,17 @@ const ReferModalContent = (props: any) => {
                 current={currentTab}
                 onClick={() => handleTab(1)}
               />
-              <TabTitle
+              {/* <TabTitle
                 {...props}
                 label="EARNED"
                 value={numberFormatter(airdropData?.airdrop_points, 4, true, {
                   isShort: true
                 })}
-                unit="$FUN"
+                unit="MEMETICS"
                 tab={2}
                 current={currentTab}
                 onClick={() => handleTab(2)}
-              />
+              /> */}
             </div>
             <AnimatePresence mode="wait">
               {currentTab === 1 && (
@@ -228,9 +228,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10K pts",
+                      label: "10K MEMETICS",
                       amount: "1K",
-                      unit: "pts",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     },
                     {
@@ -239,9 +239,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "100K pts",
+                      label: "100K MEMETICS",
                       amount: "10K",
-                      unit: "pts",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     },
                     {
@@ -250,9 +250,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "1M pts",
+                      label: "1M MEMETICS",
                       amount: "100K",
-                      unit: "pts",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     },
                     {
@@ -261,9 +261,9 @@ const ReferModalContent = (props: any) => {
                       icon: "/img/home/refer-modal-progress-node-pts.svg",
                       iconActive:
                         "/img/home/refer-modal-progress-node-pts-active.svg",
-                      label: "10M pts",
+                      label: "10M MEMETICS",
                       amount: "1M",
-                      unit: "pts",
+                      unit: "MEMETICS",
                       perUnit: "Extra"
                     }
                   ]}
@@ -280,10 +280,11 @@ const ReferModalContent = (props: any) => {
                 className={styles.InviteText}
                 {...AnimateVariants}
               >
-                Users invite more than{" "}
-                <strong className={styles.InviteTextPrimary}>1,000</strong>{" "}
-                people and get{" "}
-                <strong className={styles.InviteTextPrimary}>50%</strong>{" "}
+                Invite users to
+                <br /> get{" "}
+                <strong className={styles.InviteTextPrimary}>
+                  {rate}%
+                </strong>{" "}
                 Referral kickback
               </motion.div>
             )}
@@ -299,7 +300,7 @@ const ReferModalContent = (props: any) => {
                 <strong className={styles.InviteTextPrimary}>
                   extra 10%
                 </strong>{" "}
-                of their points.
+                of their MEMETICS.
               </motion.div>
             )}
           </AnimatePresence>

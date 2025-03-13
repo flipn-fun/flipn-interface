@@ -32,7 +32,7 @@ export default function TokenIcon({
         ...style
       }}
     >
-      {!!token.boost_time && showBlueChip && (
+      {token.data_type === "top_project" && showBlueChip && (
         <>
           <BlueChipBg className={styles.BlueChipBg} />
           <BlueChipIcon className={styles.BlueChipIcon} />
@@ -99,7 +99,7 @@ export default function TokenIcon({
           </div>
         )}
         {token.is_king &&
-          (token.ranking === 1 ? (
+          (token.ranking <= 3 ? (
             <div className={styles.King}>
               👑
               <Image

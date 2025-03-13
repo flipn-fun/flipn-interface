@@ -19,7 +19,7 @@
   height: 100%;
   border-radius: 10px;
   border: 1px solid #000;
-  background: #FCFFEA;
+  background: #fcffea;
   color: #000;
   text-align: center;
   font-family: Unbounded;
@@ -31,14 +31,14 @@
 }
 .InviteCodeFormControlInvalid {
   composes: InviteCodeFormControl;
-  color: #FF2681;
+  color: #ff2681;
 }
 .InviteCodeFormControl:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 .InviteCodeFormToast {
-  color: #FF2681;
+  color: #ff2681;
   font-family: Unbounded;
   font-size: 12px;
   font-style: normal;
@@ -47,7 +47,7 @@
 }
 .InviteCodeFormToastSuccess {
   composes: InviteCodeFormToast;
-  color: #AAFF00;
+  color: #aaff00;
 }
 .InviteCodeFormToastTitle {
   font-size: 14px;

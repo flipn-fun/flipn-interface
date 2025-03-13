@@ -10,7 +10,7 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { numberFormatter } from "@/app/utils/common";
 import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
-import clsx from 'clsx';
+import clsx from "clsx";
 
 export default function FlipPanel(props: any) {
   const {
@@ -28,7 +28,7 @@ export default function FlipPanel(props: any) {
     buttonClassName,
     isMaxLimit,
     isFlipTips,
-    flipButtonText,
+    flipButtonText
   } = props;
   const { flipMax, set }: any = useSetting();
   const [inputVal, setInputVal] = useState("0");
@@ -48,7 +48,7 @@ export default function FlipPanel(props: any) {
     loadData: false
   });
 
-  const onFlip = useCallback(async () => {
+  const onFlip = async () => {
     if (!inputVal) return;
     try {
       setLoading(true);
@@ -69,7 +69,7 @@ export default function FlipPanel(props: any) {
     } finally {
       setLoading(false);
     }
-  }, [inputVal]);
+  };
 
   useEffect(() => {
     if (!address || address === token.account) {
@@ -83,10 +83,16 @@ export default function FlipPanel(props: any) {
 
   const errorTips = useMemo(() => {
     if (isPrePaid) {
-      const flipNumFormatted = numberFormatter(new Big(token.total_amount).div(10 ** 9).div(1 - 0.015).toString(), 2, true, { isShort: true })
+      const flipNumFormatted = numberFormatter(
+        new Big(token.total_amount).toString(),
+        4,
+        true
+      );
       return `You've fliped ${flipNumFormatted} SOL!`;
     }
-    if (Big(inputVal || 0).eq(0)) return "Enter an amount";
+    if (isNaN(Number(inputVal)) || Big(inputVal || 0).eq(0))
+      return "Enter an amount";
+    if (Number(inputVal) > 1) return "Maximum 1 SOL";
     return Big(inputVal || 0).gt(solBalance || 0) ? "Insufficient Balance" : "";
   }, [solBalance, inputVal, isPrePaid]);
 
@@ -102,7 +108,6 @@ export default function FlipPanel(props: any) {
             className={clsx(styles.Input, inputClassName)}
             value={inputVal}
             onChange={(e) => {
-              setInputVal(e.target.value);
               const val = Number(e.target.value);
               if (!isNaN(val)) {
                 setInputVal(e.target.value);
@@ -112,13 +117,6 @@ export default function FlipPanel(props: any) {
           />
           <div>SOL</div>
         </div>
-        {
-          isMaxLimit && (
-            <div className={styles.MaxLimit}>
-              Maximum 1 SOL
-            </div>
-          )
-        }
       </div>
       <div className={clsx(styles.DescWrapper, descWrapperClassName)}>
         <div className={clsx(styles.Tags, tagsClassName)}>
@@ -150,20 +148,23 @@ export default function FlipPanel(props: any) {
           {numberFormatter(Number(config.SolPrice) * Number(inputVal), 2, true)}
         </div>
       </div>
-      {
-        isFlipTips && (
-          <div className={styles.FlipTips}>
-            <strong>Flip:</strong> You will auto-buy in when this meme launched.<br /> You can withdraw anytime before launching.
-          </div>
-        )
-      }
+      {isFlipTips && (
+        <div className={styles.FlipTips}>
+          <strong>Flip:</strong> You will auto-buy in when this meme launched.
+          <br /> You can withdraw anytime before launching.
+        </div>
+      )}
       {address ? (
         <button
           className={`${clsx(styles.Button, buttonClassName)} button`}
           disabled={loading || !!errorTips}
           onClick={onFlip}
         >
-          {loading ? <CircleLoading size={16} /> : errorTips || flipButtonText || "Flip it!"}
+          {loading ? (
+            <CircleLoading size={16} />
+          ) : (
+            errorTips || flipButtonText || "Flip it!"
+          )}
         </button>
       ) : (
         <button

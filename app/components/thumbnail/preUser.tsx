@@ -7,6 +7,7 @@ import Level from "../level/simple";
 import Big from "big.js";
 import { useRouter } from "next/navigation";
 import Empty from "../empty";
+import { numberFormatter } from "@/app/utils/common";
 
 interface Props {
   token: Project;
@@ -146,10 +147,10 @@ function UserItem({ item, type }: any) {
           </svg>
           <span>
             {item.buy_amount
-              ? new Big(item.buy_amount)
-                  .div(1 - 0.015)
+              ? numberFormatter(new Big(item.buy_amount)
+                  // .div(1 - 0.015)
                   .div(10 ** 9)
-                  .toString()
+                  .toNumber(), 4, true)
               : 0}{" "}
             SOL
           </span>

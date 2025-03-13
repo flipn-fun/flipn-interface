@@ -72,8 +72,8 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
   }, [onBack, token]);
 
   useInterval(() => {
-    getDetailInfo({ isSkipLoading: true })
-  }, 3000)
+    getDetailInfo({ isSkipLoading: true });
+  }, 3000);
 
   const tabs = useMemo(() => {
     const vals = [
@@ -101,7 +101,11 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
         name: "Flipped",
         content: (
           <div
-            style={{ backgroundColor: "#252328", padding: "10px 10px 20px", borderRadius: "15px 15px 0 0" }}
+            style={{
+              backgroundColor: "#252328",
+              padding: "10px 10px 20px",
+              borderRadius: "15px 15px 0 0"
+            }}
           >
             <PreUser token={infoData} />
           </div>
@@ -132,8 +136,6 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
     );
   }
 
-
-
   return (
     <div>
       <SexPullToRefresh
@@ -152,7 +154,7 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
                       return;
                     }
                     if (
-                      ["profile", "trends", "messages"].includes(
+                      ["profile", "memes", "messages"].includes(
                         search.get("from") || ""
                       )
                     ) {

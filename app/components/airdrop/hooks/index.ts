@@ -121,10 +121,10 @@ export function useAirdrop(): Airdrop {
   };
 
   const handleBind = async () => {
-    if (binding || !inviter || inviter.toLowerCase() === address?.toLowerCase()) return;
+    if (binding || !inviter || inviter.toLowerCase() === address?.toLowerCase() || !airdrop) return;
     setBinding(true);
-    const res = await httpAuthPost(`/airdrop/binding?account=${inviter}`, {
-      account: inviter,
+    const res = await httpAuthPost(`/airdrop/binding/code?code=${airdrop}`, {
+      code: airdrop,
     }, true, true);
     if (res.code !== 0) {
       if (!referStore.bind) {
@@ -153,7 +153,7 @@ export function useAirdrop(): Airdrop {
 
   const getAirdropData = async () => {
     setAirdropDataLoading(true);
-    const res = await httpAuthGet('/airdrop/data');
+    const res = await httpAuthGet(`/airdrop/data?address=${address}`);
     if (res.code !== 0) {
       setAirdropDataLoading(false);
       return;

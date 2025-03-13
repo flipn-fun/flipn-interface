@@ -8,7 +8,7 @@ export default function useTokenDetail({ token }: any) {
   const [infoData, setInfoData] = useState<any>();
   const params = useSearchParams();
   const [isLoading, setIsLoading] = useState(!token);
-  const { userInfo } = useAuth();
+  const { userInfo, accountRefresher } = useAuth();
 
   const getDetailInfo = useCallback(
     (opts?: { isSkipLoading?: boolean }) => {
@@ -42,7 +42,7 @@ export default function useTokenDetail({ token }: any) {
 
   useEffect(() => {
     getDetailInfo();
-  }, [params, token]);
+  }, [params, token, accountRefresher]);
 
   return { infoData, isLoading, getDetailInfo };
 }

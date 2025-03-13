@@ -2,7 +2,8 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
-  ComputeBudgetProgram
+  ComputeBudgetProgram,
+  TransactionInstruction
 } from "@solana/web3.js";
 import Big from "big.js";
 import * as anchor from "@coral-xyz/anchor";
@@ -30,7 +31,7 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useVip } from "./useVip";
 import {
   programId_address,
-  //   referral_address,
+  referral_address as proxy_address,
   total_supply
 } from "../utils/config";
 import { useReferralStore } from "../store/useReferral";
@@ -160,7 +161,7 @@ export function useTokenTrade({
     const instructions = [];
 
     let referral = new PublicKey(referral_address);
-    const proxy = new PublicKey("8GBcwJAfUU9noxPNh5jnfwkKipK8XRHUPS5va9TAXr5f");
+    const proxy = new PublicKey(proxy_address);
 
     const protocolSolAccount = await _getOrCreateAssociatedTokenAccount(
       wsol,
@@ -389,7 +390,7 @@ export function useTokenTrade({
     async (outputAmount: string | number, maxWsolAmount: string | number) => {
       const keysAndIns = await getKeys();
 
-      console.log('outputAmount:', outputAmount, 'maxWsolAmount:', maxWsolAmount)
+      const instructionsAll: any = {}
 
       if (!keysAndIns) {
         return;
@@ -402,6 +403,7 @@ export function useTokenTrade({
         toPubkey: keys.userWsolAccount,
         lamports: Number(maxWsolAmount)
       });
+
       const instruction2 = createSyncNativeInstruction(
         keys.userWsolAccount,
         TOKEN_PROGRAM_ID
@@ -424,8 +426,16 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (ins) {
+          if (instructionsAll[JSON.stringify(ins)]) {
+            return
+          }
+
+          transaction.add(ins);
+          instructionsAll[JSON.stringify(ins)] = true
+        }
       });
+
 
       transaction.add(instruction1).add(instruction2).add(buyInstruction);
 
@@ -437,7 +447,9 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction);
+      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
+        canJitoable: true
+      });
 
       return hash;
     },
@@ -447,7 +459,7 @@ export function useTokenTrade({
   const buyTokenWithFixedOutput = useCallback(
     async (outputAmount: string | number, maxWsolAmount: string | number) => {
       const keysAndIns = await getKeys();
-
+      const instructionsAll: any = {}
       if (!keysAndIns) {
         return;
       }
@@ -481,7 +493,14 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (ins) {
+          if (instructionsAll[JSON.stringify(ins)]) {
+            return
+          }
+
+          transaction.add(ins);
+          instructionsAll[JSON.stringify(ins)] = true
+        }
       });
 
       transaction.add(instruction1).add(instruction2).add(buyInstruction);
@@ -494,7 +513,9 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction);
+      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
+        canJitoable: true
+      });
 
       return hash;
     },
@@ -504,7 +525,7 @@ export function useTokenTrade({
   const sellToken = useCallback(
     async (amount: number | string, minWsolAmount: number | string) => {
       const keysAndIns = await getKeys();
-
+      const instructionsAll: any = {}
       if (!keysAndIns) {
         return;
       }
@@ -530,7 +551,14 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (ins) {
+          if (instructionsAll[JSON.stringify(ins)]) {
+            return
+          }
+
+          transaction.add(ins);
+          instructionsAll[JSON.stringify(ins)] = true
+        }
       });
 
       transaction.add(sellInstruction);
@@ -543,7 +571,10 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction);
+      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
+        canJitoable: true
+      });
+      
       return hash;
     },
     [connection, walletProvider, programId]
