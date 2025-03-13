@@ -4,13 +4,20 @@ import { fail, success } from '@/app/utils/toast';
 import React, { useState } from 'react';
 import { ToastMsg } from '@/app/sections/invite-code/components/toast-message';
 import { useDebounceFn } from 'ahooks';
+import { useRouter } from 'next/navigation';
 
 export function useBind(props?: any) {
+  const router = useRouter();
+
   const [pending, setPending] = useState<boolean>();
   const [codeValid, setCodeValid] = useState<boolean>();
   const [codeValidMessage, setCodeValidMessage] = useState<string>();
   const [loadingInviterData, setLoadingInviterData] = useState<boolean>(true);
   const [inviterData, setInviterData] = useState<InviterData>();
+
+  const { run: redirect2Home } = useDebounceFn(() => {
+    router.replace("/");
+  }, { wait: 2500 });
 
   const handleBind = async (value?: string) => {
     if (pending || !trim(value) || codeValid) return;
@@ -34,6 +41,7 @@ export function useBind(props?: any) {
         }
         setCodeValidMessage(msg);
         setCodeValid(false);
+        redirect2Home();
         return;
       }
       success((
@@ -41,6 +49,7 @@ export function useBind(props?: any) {
       ), { duration: 5000 });
       setCodeValidMessage(void 0);
       setCodeValid(true);
+      redirect2Home();
     } catch (err: any) {
       const msg = `Bind failed: ${err.message}` || 'Failed to verify code';
       fail(
@@ -51,6 +60,7 @@ export function useBind(props?: any) {
       );
       setCodeValidMessage(msg);
       setCodeValid(false);
+      redirect2Home();
     }
     setPending(false);
   };
