@@ -253,7 +253,7 @@ export default forwardRef(function PreviewNode(
             }
 
             if (val.code === 0) {
-              onNext()
+              !isMobile && onNext()
               return true;
               // success('Create token success')
               // router.push('/profile')
