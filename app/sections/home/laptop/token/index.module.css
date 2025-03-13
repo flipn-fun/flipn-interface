@@ -8,7 +8,7 @@
 }
 
 .Container {
-  border-radius: 20px;
+  border-radius: 14px;
   display: flex;
   position: relative;
   overflow: hidden;
@@ -16,7 +16,7 @@
 
 .Token {
   position: relative;
-  border-radius: 20px;
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -87,6 +87,7 @@
   width: 100%;
   height: 100%;
   z-index: 3;
-  top: -5px;
+  top: -7px;
   left: 0px;
+  pointer-events: none;
 }

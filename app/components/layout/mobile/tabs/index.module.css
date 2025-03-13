@@ -28,7 +28,7 @@
 .copyDot {
   width: 10px;
   height: 10px;
-  background: #FF2681;
+  background: #ff2681;
   border-radius: 50%;
   position: absolute;
   top: 0px;
@@ -38,6 +38,7 @@
 .ComingSoon {
   position: absolute;
   z-index: 100;
+  width: 40px;
 }
 
 .ComingSoonWrapper {

@@ -63,7 +63,7 @@ export default function Created({
   const { unfliped } = useCheckFliped(list, isOther);
 
   useEffect(() => {
-    if (address && userInfo?.address !== address) {
+    if (address) {
       loadMore(true);
     }
     if (!address) {

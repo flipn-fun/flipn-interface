@@ -20,7 +20,7 @@ export default function Mining({ styles, isMobile, info, infoLoading }: any) {
           />
         </div>
         <Rank
-          rank={info?.your_rank}
+          rank={info?.your_rank || "-"}
           list={info?.mining_rank}
           loading={infoLoading}
         />

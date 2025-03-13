@@ -61,6 +61,7 @@
   z-index: 6;
   top: 46px;
   left: 0px;
+  pointer-events: none;
 }
 
 .TokenContent {
