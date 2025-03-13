@@ -71,11 +71,21 @@
   width: 30px;
   height: 30px;
   flex-shrink: 0;
-  background: rgba(13, 16, 18, 0.80);
+  background: rgba(13, 16, 18, 0.8);
   backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
   transform: translateX(-5px);
+}
+
+.SettingButtonWrapper {
+  position: relative;
+}
+
+.SettingRpcStatus {
+  position: absolute;
+  right: 0px;
+  bottom: 6px;
 }

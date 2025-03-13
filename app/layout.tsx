@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import TGProvider from "./context/TGProvider";
 import PrivyWalletProvider from "@/app/context/privy";
 import Script from "next/script";
+import Rpc from "./components/rpc";
 
 export default function RootLayout({
   children
@@ -67,6 +68,7 @@ export default function RootLayout({
               <UserAgentProvider>
                 <Suspense>
                   <Layout>{children}</Layout>
+                  <Rpc />
                 </Suspense>
               </UserAgentProvider>
             </WalletConnect>

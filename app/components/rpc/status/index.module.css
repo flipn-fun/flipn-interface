@@ -1,0 +1,13 @@
+.Container {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.Label {
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
