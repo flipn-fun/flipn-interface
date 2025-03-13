@@ -139,6 +139,10 @@ export default forwardRef(function CreateNode(
   const linkRef = useRef<any>(links);
 
   const validateSameName = useCallback(async () => {
+    if (!tokenName || !ticker) {
+      return ""
+    }
+
     const tokenInUse = await httpGet(
       `/project/check_exist?token_name=${tokenName}&token_symbol=${ticker.toUpperCase()}`
     );
@@ -681,9 +685,9 @@ export default forwardRef(function CreateNode(
               }}
               onBlur={async () => {
                 let tickerError = validateTicker(ticker);
-                // if (!tickerError) {
-                //   tickerError = await validateSameName()
-                // }
+                if (!tickerError) {
+                  tickerError = await validateSameName()
+                }
                 if (tickerError) {
                   setInvaldVasl({ ...inValidVals, ticker: tickerError });
                 } else {
