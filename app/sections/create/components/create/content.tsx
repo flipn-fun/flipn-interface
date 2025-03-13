@@ -211,9 +211,14 @@ export default function Create({
         }
 
         const isSuccess = await onCreateTokenSuccess();
+
+        console.log('isSuccess', isSuccess)
+
         if (isSuccess) {
           setModalShow(true);
         }
+
+        console.log('setModalShow', isSuccess)
 
         setIsLoading(false);
         setIsSkipLoading(false);
