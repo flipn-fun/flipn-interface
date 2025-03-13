@@ -3,7 +3,6 @@ import CouponCard from "@/app/sections/invite-code/components/coupon-card";
 import React, { useEffect, useMemo, useRef } from "react";
 import { formatLongText } from "@/app/utils/common";
 import { useWalletModal } from "@/app/libs/solana/wallet-adapter/modal";
-import { removeAuth } from "@/app/utils";
 import { useSearchParams } from "next/navigation";
 import { useAccount } from "@/app/hooks/useAccount";
 import { useAuth } from "@/app/context/auth";
@@ -21,7 +20,7 @@ const InviterConnect = (props: any) => {
   const { visible, setVisible } = useWalletModal();
   const params = useSearchParams();
   const { address } = useAccount();
-  const { accountRefresher } = useAuth();
+  const { accountRefresher, logout } = useAuth();
   const {
     pending,
     codeValid,
@@ -49,7 +48,7 @@ const InviterConnect = (props: any) => {
   }, [address, accountRefresher, codeValid]);
 
   const handleConnect = () => {
-    removeAuth();
+    logout();
     setVisible(!visible);
   };
 
@@ -123,17 +122,14 @@ const InviterConnect = (props: any) => {
           )}
         </div>
         <div className={styles.InviterName}>
-          {loadingInviterData ? (
-            <Skeleton animated className={styles.InviterNameLoading} />
-          ) : (
-            formatLongText(
-              staticInviter
-                ? staticInviter.name
-                : inviterData?.account_name || "Unknown",
-              10,
-              8
-            )
-          )}
+          {
+            loadingInviterData ? (
+              <Skeleton
+                animated
+                className={styles.InviterNameLoading}
+              />
+            ) : formatLongText(staticInviter ? staticInviter.name : (inviterData?.account_name || inviterData?.account_id || "Unknown"), 10, 8)
+          }
         </div>
       </div>
     </CouponCard>
