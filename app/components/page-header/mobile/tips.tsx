@@ -25,6 +25,7 @@ const TYPES: Record<string, any> = {
 export default function Tips({ isCustomWidth }: any) {
   const { prevTip, tip, prevRef, currentRef } = useTips();
   const router = useRouter();
+
   return (
     <div
       className={styles.Container}
@@ -63,7 +64,7 @@ export default function Tips({ isCustomWidth }: any) {
               <div
                 className={clsx(styles.Token, "button")}
                 onClick={() => {
-                  router.push(`/detail?address=${item.address}`);
+                  router.push(`/detail?address=${item.address}&from=tips`);
                 }}
               >
                 <img src={item.token_icon} className={styles.TokenIcon} />
