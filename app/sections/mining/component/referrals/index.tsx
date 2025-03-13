@@ -28,8 +28,7 @@ export default function Referrals({ show, onClose }: any) {
         className={styles.Container}
         style={{
           borderRadius: isMobile ? "20px 20px 0px 0px" : 20,
-          width: "100vw",
-          maxWidth: 486,
+          width: isMobile ? "100vw" : 486,
           backgroundColor: "#252328",
           padding: "20px 0px 20px"
         }}
