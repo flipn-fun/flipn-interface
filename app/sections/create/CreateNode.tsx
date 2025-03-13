@@ -140,10 +140,10 @@ export default forwardRef(function CreateNode(
 
   const validateSameName = useCallback(async () => {
     const tokenInUse = await httpGet(
-      `/project?token_name=${tokenName}&token_symbol=${ticker.toUpperCase()}`
+      `/project/check_exist?token_name=${tokenName}&token_symbol=${ticker.toUpperCase()}`
     );
 
-    if (tokenInUse.code === 0 && tokenInUse.data?.length > 0) {
+    if (tokenInUse.code === 0 && tokenInUse.data) {
       return "Token name already in use";
     }
 
