@@ -54,21 +54,21 @@ export default function Settings() {
             />
           </svg>
         </Link>
-        <div className={styles.menuItem} onClick={() => {}}>
+        <div
+          className={styles.menuItem}
+          onClick={() => {
+            settingStore.set({
+              showRpcSelectModal: true
+            });
+          }}
+        >
           <div className={styles.textWrapper}>
             <div className={styles.RpcIcon}>
               <RpcIcon />
             </div>
-            <span>RPC: BlockPi</span>
+            <span>RPC: {settingStore.rpc.name}</span>
           </div>
-          <div
-            className={styles.textWrapper}
-            onClick={() => {
-              settingStore.set({
-                showRpcSelectModal: true
-              });
-            }}
-          >
+          <div className={styles.textWrapper}>
             <RpcStatus showLabel={true} />
             <svg
               xmlns="http://www.w3.org/2000/svg"
