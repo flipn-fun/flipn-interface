@@ -23,7 +23,7 @@ export default function Laptop(props: any) {
   }, [infoData]);
 
   useEffect(() => {
-    if (searchFrom === "memes") {
+    if (["memes", "tips"].includes(searchFrom)) {
       detailStatusStore.setShow("showTrade", true);
     }
   }, [searchFrom]);
