@@ -131,7 +131,7 @@ const InviterConnect = (props: any) => {
             ) : (
               staticInviter ? staticInviter.name : (
                 inviterData?.account_name ? formatLongText(inviterData?.account_name, 8, 6) : (
-                  inviterData?.account_id ? formatLongText(inviterData?.account_name, 4, 4) : "Unknown"
+                  inviterData?.account_id ? formatLongText(inviterData?.account_id, 4, 4) : "Unknown"
                 )
               )
             )
