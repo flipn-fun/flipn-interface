@@ -1,7 +1,9 @@
 import styles from "./tips.module.css";
 import SimpleAvatar from "../../avatar/simple";
 import useTips from "./use-tips";
+import { useRouter } from "next/navigation";
 import { numberFormatter } from "@/app/utils/common";
+import clsx from "clsx";
 
 const TYPES: Record<string, any> = {
   flip: {
@@ -22,7 +24,7 @@ const TYPES: Record<string, any> = {
 };
 export default function Tips({ isCustomWidth }: any) {
   const { prevTip, tip, prevRef, currentRef } = useTips();
-
+  const router = useRouter();
   return (
     <div
       className={styles.Container}
@@ -46,16 +48,24 @@ export default function Tips({ isCustomWidth }: any) {
           {item && (
             <>
               <div
-                className={styles.Type}
+                className={clsx(styles.Type, "button")}
                 style={{ backgroundColor: TYPES[item.trade_type].color }}
+                onClick={() => {
+                  router.push(`/profile/user?account=${item.account}`);
+                }}
               >
                 <SimpleAvatar icon={item.account_icon} size={16} />
                 <div>{TYPES[item.trade_type].text}</div>
               </div>
-              <div className={styles.Token}>
-                <div style={{ flexShrink: 0 }}>
-                  {numberFormatter(item.sol_amount, 2, true)} SOL{" "}
-                </div>
+              <div style={{ flexShrink: 0 }}>
+                {numberFormatter(item.sol_amount, 2, true)} SOL{" "}
+              </div>
+              <div
+                className={clsx(styles.Token, "button")}
+                onClick={() => {
+                  router.push(`/detail?address=${item.address}`);
+                }}
+              >
                 <img src={item.token_icon} className={styles.TokenIcon} />
                 <div
                   className={styles.TokenName}
