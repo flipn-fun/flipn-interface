@@ -45,7 +45,7 @@ const InviteCodeView: React.FC<any> = (props) => {
   }, [address, accountRefresher]);
 
   useEffect(() => {
-    if (airdropUserData?.allow_login && pathname === "/invite-code") {
+    if (airdropUserData?.allow_login && UN_REDIRECT_PATH.some((reg) => reg.test(pathname))) {
       const redirectTarget = searchParams.get("redirect");
       router.replace(redirectTarget || "/");
     }
@@ -57,24 +57,24 @@ const InviteCodeView: React.FC<any> = (props) => {
   }, []);
 
   return (
-    <div
-      className={
-        isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop
-      }
-    >
-      {!type || type === INVITE_TYPE.INVITE_CODE
-        ? !pageLoading &&
-          (!address ||
-          !accountRefresher ||
-          airdropDataLoading ||
-          airdropUserData?.allow_login ? (
-            <InviteCodeConnectWallet
-              loading={pageLoading || airdropDataLoading}
-            />
+    <div className={isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop}>
+      <div className={styles.inviteCodeContentContainer}>
+        {
+          (!type || type === INVITE_TYPE.INVITE_CODE) ? (
+            !pageLoading && (
+              (!address || !accountRefresher || airdropDataLoading || airdropUserData?.allow_login) ? (
+                <InviteCodeConnectWallet loading={pageLoading || airdropDataLoading} />
+              ) : (
+                <InviteCodeForm />
+              )
+            )
           ) : (
-            <InviteCodeForm />
-          ))
-        : !pageLoading && <InviterConnect type={type} />}
+            !pageLoading && (
+              <InviterConnect type={type} />
+            )
+          )
+        }
+      </div>
       <Social />
     </div>
   );
