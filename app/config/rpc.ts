@@ -15,6 +15,6 @@ export const RPCS = [
   },
   {
     name: "Chainstack",
-    url: "https://solana-mainnet.core.chainstack.com/653e721a849bc1fffc150e5a1280ba8a"
+    url: "https://solana-mainnet.core.chainstack.com/e7c21746149c2d33eb471f295dd98707"
   }
 ];
