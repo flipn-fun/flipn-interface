@@ -36,6 +36,7 @@ import {
 } from "../utils/config";
 import { useReferralStore } from "../store/useReferral";
 import { useConfig } from "../store/useConfig";
+import { useThrottleFn } from "ahooks";
 
 interface Props {
   tokenName: string;
@@ -808,6 +809,7 @@ export function useTokenTrade({
   const prePaid = useCallback(
     async (amount: number | string, justTransaction: boolean = false) => {
       const keysAndIns = await getKeys();
+      const instructionsAll: any = {}
       if (!keysAndIns) {
         return;
       }
@@ -817,7 +819,13 @@ export function useTokenTrade({
       const transaction = new Transaction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (!ins) return;
+        if (instructionsAll[JSON.stringify(ins)]) {
+          return
+        }
+
+        transaction.add(ins);
+        instructionsAll[JSON.stringify(ins)] = true
       });
 
       const program = new Program<any>(idl, programId, walletProvider as any);
@@ -873,6 +881,8 @@ export function useTokenTrade({
 
       const hash2 = await walletProvider.signAndSendTransaction(transaction);
 
+      console.log('hash:', hash2)
+
       return hash2;
     },
     [programId, walletProvider, connection, wsol]
@@ -883,7 +893,7 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const keysAndIns = await getWithdrawKeys();
-
+    const instructionsAll: any = {}
     if (!keysAndIns) {
       return;
     }
@@ -896,7 +906,13 @@ export function useTokenTrade({
       const transaction = new Transaction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (!ins) return;
+        if (instructionsAll[JSON.stringify(ins)]) {
+          return
+        }
+
+        transaction.add(ins);
+        instructionsAll[JSON.stringify(ins)] = true
       });
 
       const prepaidSolWithdrawInstruction = await program.methods
@@ -927,6 +943,7 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const keysAndIns = await getKeys();
+    const instructionsAll: any = {}
 
     if (!keysAndIns) {
       return;
@@ -960,7 +977,13 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (!ins) return;
+        if (instructionsAll[JSON.stringify(ins)]) {
+          return
+        }
+
+        transaction.add(ins);
+        instructionsAll[JSON.stringify(ins)] = true
       });
 
       const instruction1 = SystemProgram.transfer({
@@ -1077,57 +1100,58 @@ export function useTokenTrade({
     }
   }, [programId, state, pool, tokenDecimals, connection]);
 
-  useEffect(() => {
-    if (
-      programId &&
-      connection &&
-      tokenName &&
-      tokenSymbol &&
-      loadData &&
-      tokenInfo
-    ) {
-      setTimeout(async () => {
-        const userToken = await _getOrCreateAssociatedTokenAccount(
-          tokenInfo[0],
-          walletProvider.publicKey!
-        );
+  // useEffect(() => {
+  //   if (
+  //     programId &&
+  //     connection &&
+  //     tokenName &&
+  //     tokenSymbol &&
+  //     loadData &&
+  //     tokenInfo
+  //   ) {
+  //     setTimeout(async () => {
+  //       const userToken = await _getOrCreateAssociatedTokenAccount(
+  //         tokenInfo[0],
+  //         walletProvider.publicKey!
+  //       );
 
-        if (userToken && userToken.account) {
-          const balance = new Big(Number(userToken.account.amount))
-            .div(10 ** tokenDecimals)
-            .toString();
+  //       if (userToken && userToken.account) {
+  //         const balance = new Big(Number(userToken.account.amount))
+  //           .div(10 ** tokenDecimals)
+  //           .toString();
 
-          setTokenBalance(balance);
-          return;
-        }
+  //         setTokenBalance(balance);
+  //         return;
+  //       }
 
-        setTokenBalance("0");
-      }, 10);
-    }
-  }, [
-    programId,
-    walletProvider,
-    connection,
-    tokenName,
-    tokenSymbol,
-    tokenDecimals,
-    loadData,
-    reFreshBalnace
-  ]);
+  //       setTokenBalance("0");
+  //     }, 10);
+  //   }
+  // }, [
+  //   programId,
+  //   walletProvider,
+  //   connection,
+  //   tokenName,
+  //   tokenSymbol,
+  //   tokenDecimals,
+  //   loadData,
+  //   reFreshBalnace
+  // ]);
 
-  useEffect(() => {
-    if (connection && loadData && walletProvider.publicKey) {
-      connection.getBalance(walletProvider.publicKey!).then((res) => {
-        if (res) {
-          setSolBalance(new Big(res).div(10 ** 9).toString());
-        } else {
-          setSolBalance("0");
-        }
-      }).catch((e) => {
-        console.log(e.message);
-      });
-    }
-  }, [connection, walletProvider, reFreshBalnace, loadData]);
+
+  // useEffect(() => {
+  //   if (connection && loadData && walletProvider.publicKey) {
+  //     connection.getBalance(walletProvider.publicKey!).then((res) => {
+  //       if (res) {
+  //         setSolBalance(new Big(res).div(10 ** 9).toString());
+  //       } else {
+  //         setSolBalance("0");
+  //       }
+  //     }).catch((e) => {
+  //       console.log(e.message);
+  //     });
+  //   }
+  // }, [connection, walletProvider, reFreshBalnace, loadData]);
 
   return {
     getRate,

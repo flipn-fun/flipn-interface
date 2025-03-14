@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Trend } from "@/app/sections/trends/hooks/index";
-import { add } from "lodash-es";
-import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 
 export function useTrade() {
   const [tradeToken, setTradeToken] = useState<any>({});

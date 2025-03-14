@@ -501,7 +501,7 @@ export async function upload(
     _file = bloBData[0];
   }
 
-  const newFileName = generateRandomString(5);
+  const newFileName = generateRandomString(10) + '_' + Date.now();
   const fileExt = fileName?.split(".").pop() || "";
   const finalFileName = `${newFileName}${fileExt ? "." + fileExt : ""}`;
 
@@ -542,7 +542,7 @@ export async function postUpload(
         if (checkImgRes.code === 0 && checkImgRes.data) {
           return url
         } else {
-          fail("Upload fail");
+          fail("check image fail");
           return null;
         }
       }
@@ -550,7 +550,7 @@ export async function postUpload(
       return url 
     }
   } catch (e) {
-    fail("Upload fail");
+    fail("error: Upload fail");
     console.log(e);
   }
 

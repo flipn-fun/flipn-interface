@@ -717,9 +717,6 @@ export default function BuySellLaunched({
                     }
                     setIsLoading(false);
                     setReFreshBalnace(Math.random());
-                    setTimeout(() => {
-                      setReFreshBalnace(Math.random());
-                    }, 2000);
                     if (hash) {
                       // const volume =
                       //   activeIndex === 0
