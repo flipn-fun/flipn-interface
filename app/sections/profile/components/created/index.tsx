@@ -34,7 +34,7 @@ const SUMMARIES_DEFAULT: Record<string, Summary[]> = {
   liked: [
     { label: "All", amount: 0, value: "" },
     { label: "Listed", amount: 0, value: 3 },
-    { label: "Ticking", amount: 0, value: 1 },
+    { label: "Bonding", amount: 0, value: 1 },
     { label: "Genesis", amount: 0, value: 0 }
   ]
 };
@@ -128,7 +128,7 @@ export default function Created({
             { label: "All", amount: res.data.total_num || 0, value: "" },
             { label: "Listed", amount: res.data.launched_num || 0, value: 3 },
             {
-              label: "Ticking",
+              label: "Bonding",
               amount: res.data.launching_num || 0,
               value: 1
             },

@@ -9,7 +9,7 @@ export default function LaunchTag({ type }: { type: number }) {
 
   if (type === 1) {
     return (
-      <div className={styles.launchTag + " " + styles.launch2}>Ticking</div>
+      <div className={styles.launchTag + " " + styles.launch2}>Bonding</div>
     );
   }
 
