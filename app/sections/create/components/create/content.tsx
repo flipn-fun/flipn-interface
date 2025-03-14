@@ -414,11 +414,12 @@ async function uploadTokenMeta(token: Project) {
     "website": token.website,
   }
 
-  const fileName = generateRandomString(10)
+  const random = generateRandomString(2)
+  const fileName = `${token.tokenName}_${token.ticker}_${random}.json`
 
   const blob = new Blob([JSON.stringify(metaData)], { type: 'application/json' });
-  const file = new File([blob], token.tokenName + token.ticker + '.json', { type: 'application/json' });
-  const filePath = await postUpload(file, fileName + '.json', 'application/json');
+  const file = new File([blob], fileName, { type: 'application/json' });
+  const filePath = await postUpload(file, fileName, 'application/json');
 
   return filePath;
 }
