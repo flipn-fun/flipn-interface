@@ -163,7 +163,7 @@ export default function TradeStreamMobile(params:any) {
         <ShareTitleIcon style={{ position: "absolute", top: "-20px", left: "0px"}}/>
      
        <div className={styles.performanceContent}>
-        <div className={styles.topTradersIcon}>
+        <div className={styles.topTradersIcon} onClick={() => router.push("/smart")}>
             <TopTradersWithArrow />
         </div>
 

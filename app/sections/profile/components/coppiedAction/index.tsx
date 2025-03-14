@@ -371,7 +371,9 @@ export default function CoppiedAction({ show, onClose, copiedInfo, address }: an
               <div
                 key={"level" + item.key}
                 onClick={() => {
-                  const newAmount = item.value.toString();
+                  const newAmount = item.id === "level4" 
+                    ? (new Big(item.value).sub(0.03).toString()) 
+                    : item.value.toString();
                   setCopyAmount(newAmount);
 
                   // Calculate copyTimes similar to handleCopyAmountChange logic

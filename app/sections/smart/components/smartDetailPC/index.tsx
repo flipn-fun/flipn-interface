@@ -80,7 +80,7 @@ export default function SmartDetailPC() {
             } else {
               router.back();
             }
-          }}>
+          }} style={{cursor: "pointer"}}>
       <LeftArrowWrap />
        </div>
        
@@ -104,7 +104,7 @@ export default function SmartDetailPC() {
                       formatAddress(userInfo?.address || walletAddress) ||
                       "FUN"}
                   </div>
-                  <div className={styles.shareIcon} onClick={() => setShareVisible(true)}>
+                  <div className={styles.shareIcon} onClick={() => setShareVisible(true)} style={{cursor: "pointer"}}>
                    <ShareIcon />
                   </div>
                 </div>

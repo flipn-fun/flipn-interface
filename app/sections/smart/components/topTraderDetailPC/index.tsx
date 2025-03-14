@@ -182,7 +182,7 @@ export default function TopTraderDetailM() {
 
   return (
     <div className={styles.container}>
-      <div onClick={() => router.back()}>
+      <div onClick={() => router.back()} style={{cursor: "pointer"}}>
       <LeftArrowWrap />
        </div>
       
@@ -214,7 +214,7 @@ export default function TopTraderDetailM() {
               <TopTraderCrown/>
 
             </div>
-            <div onClick={() => setShowShareModal(true)}>
+            <div onClick={() => setShowShareModal(true)} style={{cursor: "pointer"}}>
               <ShareIcon />
             </div>
           </div>
