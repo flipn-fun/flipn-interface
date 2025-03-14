@@ -89,7 +89,7 @@ const InviteCard = (props: any) => {
       borderColor="#90D800"
       bg="radial-gradient(74.25% 66.17% at 63.1% 125%, rgba(170, 255, 0, 0.80) 5.5%, rgba(231, 255, 220, 0.80) 100%)"
     >
-      Invite Friends and earn kickback up to <span style={{ color: "#000", fontWeight: 600 }}>$5000</span>
+      Invite frenz and Earn <span style={{ color: "#000", fontWeight: 600 }}>$SOL</span>
     </Card>
   );
 };
