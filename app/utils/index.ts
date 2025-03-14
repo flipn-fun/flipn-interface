@@ -501,7 +501,7 @@ export async function upload(
     _file = bloBData[0];
   }
 
-  const newFileName = generateRandomString(5);
+  const newFileName = generateRandomString(10) + '_' + Date.now();
   const fileExt = fileName?.split(".").pop() || "";
   const finalFileName = `${newFileName}${fileExt ? "." + fileExt : ""}`;
 
