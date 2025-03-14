@@ -11,12 +11,12 @@ export const useSetting = create(
       jitoable: false,
       showRpcErrorModal: false,
       showRpcSelectModal: false,
-      rpc: RPCS[2],
+      rpc: RPCS[0],
       set: (params: any) => set(() => ({ ...params }))
     }),
     {
       name: "_user_setting",
-      version: 0.1,
+      version: 0.2,
       storage: createJSONStorage(() => localStorage)
     }
   )
