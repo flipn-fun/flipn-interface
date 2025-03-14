@@ -10,7 +10,8 @@ import { useSetting } from "@/app/store/use-setting";
 import Refer from "@/app/components/layout/laptop/user/refer";
 import Header from "./header";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
-import { INVITE_TYPE } from '@/app/config/invite';
+import { INVITE_TYPE } from "@/app/config/invite";
+import RpcStatus from "@/app/components/rpc/status";
 
 const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
 const MemesPage = dynamic(() => import("@/app/sections/memes"));
@@ -74,6 +75,16 @@ export default function Laptop({ children }: any) {
         {pathname === "/smartDetail" && SHOW_COPY_TRADE && <SmartDetailPage />}
       </div>
       <Refer userInfo={userInfo} />
+      <div
+        className={`${styles.RpcStatusWrapper} button`}
+        onClick={() => {
+          settingStore.set({
+            showRpcSelectModal: true
+          });
+        }}
+      >
+        <RpcStatus isDefault showLabel />
+      </div>
     </div>
   );
 }

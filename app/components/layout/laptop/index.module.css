@@ -9,3 +9,9 @@
   flex-grow: 1;
   overflow-x: hidden;
 }
+
+.RpcStatusWrapper {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}

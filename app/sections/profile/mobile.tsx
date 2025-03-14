@@ -10,8 +10,9 @@ import PageHeader from "@/app/components/page-header/mobile";
 import Summaries from "@/app/sections/profile/components/summaries";
 import { AIRDROP_STAGE } from "@/app/config/airdrop";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
+import RpcStatus from "@/app/components/rpc/status";
 import { useConfig } from "@/app/store/useConfig";
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 export default function Profile({
   userInfo,
@@ -49,7 +50,8 @@ export default function Profile({
   useEffect(() => {
     const handleScroll = () => {
       if (followerActionsRef.current) {
-        const tabsPosition = followerActionsRef.current.getBoundingClientRect().top;
+        const tabsPosition =
+          followerActionsRef.current.getBoundingClientRect().top;
         if (tabsPosition <= 0) {
           setHeaderBgColor("black");
         } else {
@@ -59,9 +61,9 @@ export default function Profile({
     };
 
     profileRef.current?.addEventListener?.("scroll", handleScroll);
-    return () => profileRef.current?.removeEventListener?.("scroll", handleScroll);
+    return () =>
+      profileRef.current?.removeEventListener?.("scroll", handleScroll);
   }, []);
-
 
   return (
     <div ref={profileRef} className={styles.main} style={{}}>
@@ -72,13 +74,17 @@ export default function Profile({
         rightActions={
           !isOther && (
             <>
-              <button
-                type="button"
-                className={styles.SettingButton}
+              <div
+                className={styles.SettingButtonWrapper}
                 onClick={() => {
                   router.push("/profile/setting");
                 }}
-              />
+              >
+                <button type="button" className={styles.SettingButton} />
+                <div className={styles.SettingRpcStatus}>
+                  <RpcStatus isDefault={true} />
+                </div>
+              </div>
               <button
                 type="button"
                 className={styles.ShareButton}
@@ -90,7 +96,7 @@ export default function Profile({
           )
         }
         style={{
-          backgroundColor: headerBgColor,
+          backgroundColor: headerBgColor
         }}
         isOther={isOther}
         backButtonClassName={styles.ProfileBackButton}
@@ -103,12 +109,16 @@ export default function Profile({
         <div className={styles.avatarContent} style={backgroundImgStyle}>
           <Avatar
             isName={headerBgColor === "transparent"}
-            avatarStyle={headerBgColor === "transparent" ? {} : {
-              scale: 0.284,
-              position: "fixed",
-              top: -20,
-              zIndex: 21,
-            }}
+            avatarStyle={
+              headerBgColor === "transparent"
+                ? {}
+                : {
+                    scale: 0.284,
+                    position: "fixed",
+                    top: -20,
+                    zIndex: 21
+                  }
+            }
             userInfo={userInfo}
             onVipShow={() => {
               setShowVip(true);
@@ -170,11 +180,11 @@ export default function Profile({
         tabHeadersStyle={{
           overflowX: "auto",
           height: "unset",
-          position: 'sticky',
+          position: "sticky",
           top: 26,
           left: 0,
           zIndex: 10,
-          background: '#000',
+          background: "#000"
         }}
         cursorStyle={{
           height: 3,

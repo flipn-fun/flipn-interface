@@ -1,0 +1,42 @@
+.Container {
+  width: 289px;
+  max-width: 90vw;
+  height: 210px;
+  border-radius: 20px;
+  border: 1px solid #3b3b3b;
+  background: #252328;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+  font-family: Unbounded;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 200%; /* 32px */
+}
+
+.Title {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.Desc {
+  font-size: 12px;
+}
+
+.Button {
+  margin-top: 12px;
+  width: 222px;
+  height: 40px;
+  border-radius: 10px;
+  background: #fbca04;
+  color: #000;
+  text-align: center;
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
