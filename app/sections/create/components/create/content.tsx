@@ -189,12 +189,12 @@ export default function Create({
           setIsLoading(true);
         }
 
-        const sameNameRes = await validateSameName();
+        // const sameNameRes = await validateSameName();
 
-        if (sameNameRes) {
-          setIsLoading(false);
-          fail(sameNameRes);
-        }
+        // if (sameNameRes) {
+        //   setIsLoading(false);
+        //   fail(sameNameRes);
+        // }
 
         await onBeforeCreate();
 
