@@ -78,7 +78,7 @@ const LevelCard = (props: any) => {
       {...props}
       description={(
         <>
-          Starts your FUN journey from <strong>Lv. {level}</strong>.
+          Starts your MEMETICS journey from <strong>Lv. {level}</strong>.
         </>
       )}
       footer={(
