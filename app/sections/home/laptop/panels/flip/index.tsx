@@ -103,12 +103,12 @@ export default function FlipPanel(props: any) {
     }
 
     return 0;
-  }, [token]);
+  }, [token, reFresh]);
 
   const errorTips = useMemo(() => {
-    if (isPrePaid || isPrepaidCache.get(token.address)) {
+    if (isPrePaid) {
       const flipNumFormatted = numberFormatter(
-        (prepaidTotalAmount || isPrepaidCache.get(token.address)),
+        (prepaidTotalAmount),
         4,
         true
       );
