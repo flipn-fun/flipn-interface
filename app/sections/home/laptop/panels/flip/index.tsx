@@ -88,7 +88,7 @@ export default function FlipPanel(props: any) {
         4,
         true
       );
-      return `You've fliped ${flipNumFormatted} SOL!`;
+      return `You've fliped ${flipNumFormatted || inputVal} SOL!`;
     }
     if (isNaN(Number(inputVal)) || Big(inputVal || 0).eq(0))
       return "Enter an amount";
