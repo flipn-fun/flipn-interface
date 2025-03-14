@@ -16,7 +16,6 @@ export default function useBalance({ reFreshBalnace, mint, tokenDecimals }
 
     const getSolBalance = useCallback(() => {
         if (!walletProvider.publicKey || !connection) return;
-
         connection.getBalance(walletProvider.publicKey!).then((res) => {
             if (res) {
                 setSolBalance(new Big(res).div(10 ** 9).toString());
@@ -65,21 +64,19 @@ export default function useBalance({ reFreshBalnace, mint, tokenDecimals }
         () => {
             getSolBalance()
         },
-        { wait: 1000 }
+        { wait: 2000 }
     );
 
     const { run: throttledGetTokenBalance } = useDebounceFn(
         () => {
             getTokenBalance()
         },
-        { wait: 1000 }
+        { wait: 2000 }
     );
 
     useEffect(() => {
-        if (connection && walletProvider.publicKey) {
-            throttledGetSolBalance()
-        }
-    }, [connection, walletProvider, reFreshBalnace]);
+        throttledGetSolBalance()
+    }, [reFreshBalnace]);
 
     useEffect(() => {
         if (mint && tokenDecimals) {
