@@ -26,7 +26,6 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
 
     try {
       fetchingRef.current = true;
-
       if (address && prePageRef.current.length) {
         const res = await httpGet(
           "/project/ids?id_list=" + prePageRef.current.join(",")
@@ -51,7 +50,7 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
 
       if (res.code !== 0 || !res.data?.list) {
         setHasNext(false);
-        return [];
+        return;
       }
       const ids =
         res.data?.list
@@ -107,12 +106,15 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
       ["project", "top_project"].includes(currentToken.data_type)
     ) {
       queryAndUpdateDetail(currentToken.address);
+      setIsLoading(false);
+      return;
     }
 
     if (_list.length - projectsStore.getIndex(launchType) > left_num) {
       setIsLoading(false);
       return;
     }
+
     if (hasNext) {
       handleList(true);
     }
@@ -129,7 +131,11 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
   );
 
   const onChangeIndex = (currentIndex: number) => {
+    const prevIndex = projectsStore.getIndex(launchType);
     projectsStore.setIndex(launchType, currentIndex);
+
+    if (currentIndex < prevIndex) return;
+
     const list = projectsStore.getList(launchType);
 
     if (list.length - projectsStore.getIndex(launchType) > left_num) {
@@ -167,7 +173,7 @@ export default function useData(launchType: Type, isCurrentTab: boolean) {
   );
 
   useEffect(() => {
-    if (!isCurrentTab) return;
+    if (!isCurrentTab || isLoading) return;
     initList();
   }, [isCurrentTab]);
 

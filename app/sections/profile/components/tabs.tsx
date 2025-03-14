@@ -44,8 +44,8 @@ export default function Tabs({
 
   const baseTabs = [
     {
-      name: "Held",
-      content: <Held from={from} address={address} />
+      name: "Liked",
+      ...createTabContent("liked", "Liked")
     },
     {
       name: "Created",
@@ -56,8 +56,8 @@ export default function Tabs({
       ...createTabContent("flipped", "Flipped")
     },
     {
-      name: "Liked",
-      ...createTabContent("liked", "Liked")
+      name: "Held",
+      content: <Held from={from} address={address} />
     }
   ];
 

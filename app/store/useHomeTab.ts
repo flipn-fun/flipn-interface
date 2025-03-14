@@ -5,7 +5,7 @@ export const useHomeTab = create(
   persist(
     (set, get: any) => ({
       homeTabIndex: 0,
-      profileTabName: "Held",
+      profileTabName: "Liked",
       currentSummary: "",
       set: (params: any) => set(() => ({ ...params }))
     }),

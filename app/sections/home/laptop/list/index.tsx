@@ -49,7 +49,7 @@ export default function List({ type, isCurrentTab }: any) {
   }, [index, list]);
 
   useEffect(() => {
-    if (hasNext || type === "preLaunch") return;
+    if (hasNext || type !== "forYou") return;
     if (!listRef.current) return;
     listRef.current.style.transition = "none";
     onChangeIndex(0);
