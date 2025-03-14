@@ -8,11 +8,15 @@ import { generateRandomString } from '@/app/utils';
 import dayjs from 'dayjs';
 import Loading from '@/app/components/icons/loading';
 import Modal from '@/app/components/modal';
+import useInviteCodes from '@/app/hooks/use-invite-code';
+import { useAuth } from '@/app/context/auth';
 
 const AirdropShare = (props: any) => {
   const { onClose } = props;
 
+  const { accountRefresher } = useAuth();
   const { address } = useAccount();
+  const { codeInfo } = useInviteCodes(accountRefresher);
 
   const cardRef = useRef<any>(null);
 
@@ -22,11 +26,10 @@ const AirdropShare = (props: any) => {
   const [downloadFileName, setDownloadFileName] = useState<any>();
 
   const shareLink = useMemo(() => {
-    const _shareLink = new URL(window?.location?.origin);
-    _shareLink.searchParams.set("referral", address ?? "");
-    _shareLink.searchParams.set("airdrop", "1");
+    const _shareLink = new URL(`${window?.location?.origin}/ref`);
+    _shareLink.searchParams.set("code", codeInfo?.code);
     return _shareLink.toString();
-  }, [address]);
+  }, [address, codeInfo]);
 
   const handleCopy = () => {
     navigator.clipboard
