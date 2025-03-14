@@ -151,7 +151,7 @@ export const AuthProvider: React.FC<{
         },
         codeInfo,
         onCopyShareLink() {
-          if (codeInfo?.revise_number === 0) {
+          if (codeInfo?.revise_number === 0 && codeInfo?.invites_number === 0) {
             setShowCustomizeLinkModal(true);
           } else {
             onCopyShareLink();

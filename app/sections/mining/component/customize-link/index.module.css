@@ -1,8 +1,5 @@
 .ConfigContainer {
-  width: 323px;
-  max-width: 80vw;
   height: 250px;
-  border-radius: 20px;
   background: #fef6e6;
   padding: 20px 15px;
 }
@@ -35,6 +32,7 @@
 .ConfigButtons {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   margin-top: 26px;
 }
