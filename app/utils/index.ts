@@ -546,7 +546,7 @@ export async function postUpload(
         if (checkImgRes.code === 0 && checkImgRes.data) {
           return url
         } else {
-          fail("Upload fail");
+          fail("check image fail");
           return null;
         }
       }
@@ -554,7 +554,7 @@ export async function postUpload(
       return url 
     }
   } catch (e) {
-    fail("Upload fail");
+    fail("error: Upload fail");
     console.log(e);
   }
 

@@ -141,22 +141,24 @@ const TokenItem = (props: {
                 : {}
             }
           >
-            {_token?.is_king &&
-              _token.kind === "Hot" &&
-              (_token.ranking > 3 ? (
-                <img
-                  src="/img/memes/icon-crown.svg"
-                  alt=""
-                  className={styles.TokenItemLaptopAvatarCrownIcon}
-                  style={{ display: "none" }}
-                />
-              ) : (
-                <img
-                  src="/img/memes/icon-crown-laptop.svg"
-                  alt=""
-                  className={styles.TokenItemLaptopAvatarCrownKingIcon}
-                />
-              ))}
+            {(_token?.is_king && _token.kind === "Hot")
+              && (
+                _token.ranking > 3 ? (
+                  <img
+                    src="/img/memes/icon-crown.svg"
+                    alt=""
+                    className={styles.TokenItemLaptopAvatarCrownIcon}
+                    style={{ display: "none" }}
+                  />
+                ) : (
+                  <img
+                    src="/img/memes/icon-crown-laptop.svg"
+                    alt=""
+                    className={styles.TokenItemLaptopAvatarCrownKingIcon}
+                  />
+                )
+              )
+            }
           </div>
         </div>
       )}

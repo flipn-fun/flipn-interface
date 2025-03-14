@@ -86,7 +86,7 @@ function SmokeBtn({
     }
     
     if (flipNum && Number(flipNum) > 0) {
-      const flipNumFormatted = numberFormatter(new Big((token as any).total_amount).div(10 ** 9).toString(), 2, true, { isShort: true })
+      const flipNumFormatted = numberFormatter(new Big((token as any).total_amount).toString(), 4, true)
       return 'Fliped <br/>' + flipNumFormatted + 'SOL'
     }
 
