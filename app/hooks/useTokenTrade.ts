@@ -809,6 +809,7 @@ export function useTokenTrade({
   const prePaid = useCallback(
     async (amount: number | string, justTransaction: boolean = false) => {
       const keysAndIns = await getKeys();
+      const instructionsAll: any = {}
       if (!keysAndIns) {
         return;
       }
@@ -818,7 +819,13 @@ export function useTokenTrade({
       const transaction = new Transaction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (!ins) return;
+        if (instructionsAll[JSON.stringify(ins)]) {
+          return
+        }
+
+        transaction.add(ins);
+        instructionsAll[JSON.stringify(ins)] = true
       });
 
       const program = new Program<any>(idl, programId, walletProvider as any);
@@ -884,7 +891,7 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const keysAndIns = await getWithdrawKeys();
-
+    const instructionsAll: any = {}
     if (!keysAndIns) {
       return;
     }
@@ -897,7 +904,13 @@ export function useTokenTrade({
       const transaction = new Transaction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (!ins) return;
+        if (instructionsAll[JSON.stringify(ins)]) {
+          return
+        }
+
+        transaction.add(ins);
+        instructionsAll[JSON.stringify(ins)] = true
       });
 
       const prepaidSolWithdrawInstruction = await program.methods
@@ -928,6 +941,7 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const keysAndIns = await getKeys();
+    const instructionsAll: any = {}
 
     if (!keysAndIns) {
       return;
@@ -961,7 +975,13 @@ export function useTokenTrade({
         .instruction();
 
       instructions.forEach((ins) => {
-        ins && transaction.add(ins);
+        if (!ins) return;
+        if (instructionsAll[JSON.stringify(ins)]) {
+          return
+        }
+
+        transaction.add(ins);
+        instructionsAll[JSON.stringify(ins)] = true
       });
 
       const instruction1 = SystemProgram.transfer({
