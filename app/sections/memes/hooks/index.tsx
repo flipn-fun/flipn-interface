@@ -12,6 +12,7 @@ import { Order, TABS } from '@/app/sections/memes/config';
 import { useThrottleFn } from 'ahooks';
 import { fetchData, getGranularityByResolution } from '@/app/components/chart/fetch-data';
 import { getTokenMeta } from '@/app/utils/solanaScanApi';
+import { minBy } from 'lodash-es';
 
 export function useMemes(props?: { isLoadData?: boolean; }): Memes {
   const { isLoadData } = props ?? {};
@@ -264,14 +265,45 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       sort = currentFilter?.value,
       type = currentTab.value,
     } = params ?? {};
+
+    const _getMinId = () => {
+      let _mim_id: any = void 0;
+      switch (type) {
+        // Genesis
+        case TABS[1].value:
+          _mim_id = minBy(memesGenesisList, "id")?.id;
+          break;
+        // Ticking
+        case TABS[2].value:
+          _mim_id = minBy(memesTickingList, "id")?.id;
+          break;
+        // Listed
+        case TABS[3].value:
+          _mim_id = minBy(memesListedList, "id")?.id;
+          break;
+        // Import
+        case TABS[4].value:
+          _mim_id = minBy(memesImportList, "id")?.id;
+          break;
+        default:
+          break;
+      }
+      return _mim_id;
+    };
+
     try {
-      const res = await httpGet(`/project/memes/list`, {
+      const memesListParams = {
         limit: memesListPageLimit,
         offset: offset * memesListPageLimit,
         order,
         sort,
         type,
-      });
+        min_id: _getMinId(),
+      };
+      if (!memesListParams.min_id) {
+        delete memesListParams.min_id;
+      }
+      const res = await httpGet(`/project/memes/list`, memesListParams);
 
       const _memes_list = await formatMemesList(res.data.list, type);
 
