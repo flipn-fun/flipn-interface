@@ -48,6 +48,10 @@ export default [
 
 export const Links = [
   {
+    icon: "/img/community/docs.svg",
+    href: "https://docs.flipn.fun"
+  },
+  {
     icon: "/img/community/x.svg",
     href: "https://x.com/flipndotfun"
   },
