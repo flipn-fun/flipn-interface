@@ -38,7 +38,7 @@ export const TABS: Tab[] = [
   },
   {
     value: 'ticking',
-    label: 'Ticking',
+    label: 'Bonding',
     filters: [
       { value: 'almost', label: 'Almost', order: Order.Desc },
       { value: 'volume', label: 'Volume', order: Order.Desc },

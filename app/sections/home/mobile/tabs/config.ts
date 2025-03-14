@@ -8,7 +8,7 @@ export default [
     key: "genesis"
   },
   {
-    label: "Ticking",
+    label: "Bonding",
     key: "ticking"
   },
   {
