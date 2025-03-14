@@ -9,24 +9,30 @@ import { useRouter } from "next/navigation";
 import { SmartMoneyAddress, CopyTraderAddress } from "@/app/services/copyTrade";
 import { numberFormatter, numberFormatterNew } from "@/app/utils/common";
 import { useUserAgent } from "@/app/context/user-agent";
-
+import { useTotalPnl } from "@/app/store/use-total-pnl";
 export default function CopyTradeCard(props: {
   smartMoniesInfo: SmartMoneyAddress | null;
   copyTradersUserInfo: CopyTraderAddress | null;
   useLinear?: boolean;
 }) {
   const router = useRouter();
+  const { totalPnl:currentTotalPnl }:any = useTotalPnl();
   const { smartMoniesInfo, copyTradersUserInfo, useLinear } = props;
   const { isMobile } = useUserAgent();
-  const formatPnl = (pnl: string) => {
-    if (pnl == '0') {
-      return '0';
-    }
-    if (pnl.startsWith('-')) {
-      return '-' + numberFormatterNew(Math.abs(Number(pnl)), 3, true);
-    }
-    return '+' + numberFormatterNew(pnl, 3, true);
-}
+  
+    const formatPnl = (pnl: string) => {
+      if (pnl == "0") {
+        return "0";
+      }
+      if (pnl.startsWith("-")) {
+        return "-" + numberFormatterNew(Math.abs(Number(pnl)), 3, true);
+      }
+      return "+" + numberFormatterNew(pnl, 3, true);
+    };
+    const isGtZero = (str: string) => {
+      return Number(str) > 0;
+    };
+
   return (
     <div className={`
       ${isMobile ? styles.container : useLinear ? styles.linearContainer : styles.containerPC}
@@ -57,15 +63,11 @@ export default function CopyTradeCard(props: {
         <div className={styles.openPosition}>
           <span className={styles.detailTitle}>Open Position</span>
           <span className={styles.detailValueContainer}>
-            <span className={styles.detailValueCurrent}>
-              {numberFormatter(
-                copyTradersUserInfo?.tradeInfo?.currentPNL || 0,
-                2,
-                true
-              ) || "0"}
+            <span className={isGtZero(currentTotalPnl || "0") ? styles.detailValueCurrent : styles.detailValueCurrentShortlight}>
+              {formatPnl(currentTotalPnl || "0")}
             </span>
             <span className={styles.detailValue}>
-              / {numberFormatter(copyTradersUserInfo?.tradeInfo?.tokenPosition || 0, 2, true)}
+              / {formatPnl(copyTradersUserInfo?.tradeInfo?.tokenPosition || "0")}
             </span>
             <span className={styles.detailValueCurrency}>SOL</span>
           </span>

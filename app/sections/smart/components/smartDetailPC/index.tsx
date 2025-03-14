@@ -202,7 +202,7 @@ export const SmartDetailContent = ({
             </div>
           </div>
           <div className={styles.statItem}>
-            <div className={styles.statLabel}>Current P NL</div>
+            <div className={styles.statLabel}>Current Pnl</div>
             <div className={styles.statValue}>
               <span className={isGtZero(currentTotalPnl || "0") ? styles.highlight : styles.shortlight}>
                 {formatPnl(currentTotalPnl || "0")}

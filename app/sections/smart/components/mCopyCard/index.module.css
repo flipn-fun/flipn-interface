@@ -95,6 +95,12 @@
     color: #C9FF5D;
 }
 
+.detailValueCurrentShortlight {
+    font-size: 14px;
+    font-weight: 500;
+    color: #FF5D5D;
+}
+
 .detailValueCurrency {
     font-size: 12px;
     font-weight: 400;
