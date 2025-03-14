@@ -33,7 +33,10 @@ export async function getTokenMeta(address: string) {
         return tokenMetaCache.get(cacheKey)
     }
 
-    const res = fetch(`https://solscandev.minirpc.top/solscan/v2.0/token/meta?address=${address}`, {
+    const url = `${api_prefix}/token/meta?address=${address}`
+    const url2 = `https://meta.flipn.fun/solscan/v2.0/token/meta?address=${address}`
+
+    const res = fetch(process.env.NEXT_PUBLIC_API === 'https://api_stage.flipn.fun/api/v1' ? url2 : url, {
         headers: {
             token: solana_api_key
         }
