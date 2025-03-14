@@ -50,8 +50,6 @@ export default function Trade({
   const { address } = useAccount();
   const { config }: any = useConfig();
 
-  const { prepaidDelayTime } = usePrepaidDelayTimeStore();
-  const { showShare } = useMessage();
   const { solBalance } = useBalance({
     mint: token.address as string,
     tokenDecimals: token.tokenDecimals as number,
@@ -65,13 +63,6 @@ export default function Trade({
     loadData: false
   });
 
-  const delayTime = useMemo(() => {
-    if (!prepaidDelayTime || !token.createdAt) return "";
-    return Date.now() < token.createdAt + prepaidDelayTime
-      ? dayjs(token.createdAt + prepaidDelayTime).format("YYYY-MM-DD HH:mm")
-      : "";
-  }, [prepaidDelayTime, token]);
-
   useEffect(() => {
     if (!address || address === token.account) {
       setIsPrePayd(true);
@@ -80,7 +71,7 @@ export default function Trade({
     checkPrePayed().then((prdPaydval) => {
       setIsPrePayd(prdPaydval > 0);
     });
-  }, [checkPrePayed, address, token]);
+  }, [address, token]);
 
   useEffect(() => {
     if (!modalShow) {
@@ -210,6 +201,7 @@ export default function Trade({
                   setIsLoading(true);
                   const inputNum = new Big(inputVal).mul(10 ** 9).toFixed(0);
                   const res = await prePaid(inputNum, false);
+                  // const res = true
                   setIsLoading(false);
                   if (res) {
                     success("Flip success");
