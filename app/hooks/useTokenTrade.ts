@@ -36,6 +36,7 @@ import {
 } from "../utils/config";
 import { useReferralStore } from "../store/useReferral";
 import { useConfig } from "../store/useConfig";
+import { useThrottleFn } from "ahooks";
 
 interface Props {
   tokenName: string;
@@ -1077,57 +1078,58 @@ export function useTokenTrade({
     }
   }, [programId, state, pool, tokenDecimals, connection]);
 
-  useEffect(() => {
-    if (
-      programId &&
-      connection &&
-      tokenName &&
-      tokenSymbol &&
-      loadData &&
-      tokenInfo
-    ) {
-      setTimeout(async () => {
-        const userToken = await _getOrCreateAssociatedTokenAccount(
-          tokenInfo[0],
-          walletProvider.publicKey!
-        );
+  // useEffect(() => {
+  //   if (
+  //     programId &&
+  //     connection &&
+  //     tokenName &&
+  //     tokenSymbol &&
+  //     loadData &&
+  //     tokenInfo
+  //   ) {
+  //     setTimeout(async () => {
+  //       const userToken = await _getOrCreateAssociatedTokenAccount(
+  //         tokenInfo[0],
+  //         walletProvider.publicKey!
+  //       );
 
-        if (userToken && userToken.account) {
-          const balance = new Big(Number(userToken.account.amount))
-            .div(10 ** tokenDecimals)
-            .toString();
+  //       if (userToken && userToken.account) {
+  //         const balance = new Big(Number(userToken.account.amount))
+  //           .div(10 ** tokenDecimals)
+  //           .toString();
 
-          setTokenBalance(balance);
-          return;
-        }
+  //         setTokenBalance(balance);
+  //         return;
+  //       }
 
-        setTokenBalance("0");
-      }, 10);
-    }
-  }, [
-    programId,
-    walletProvider,
-    connection,
-    tokenName,
-    tokenSymbol,
-    tokenDecimals,
-    loadData,
-    reFreshBalnace
-  ]);
+  //       setTokenBalance("0");
+  //     }, 10);
+  //   }
+  // }, [
+  //   programId,
+  //   walletProvider,
+  //   connection,
+  //   tokenName,
+  //   tokenSymbol,
+  //   tokenDecimals,
+  //   loadData,
+  //   reFreshBalnace
+  // ]);
 
-  useEffect(() => {
-    if (connection && loadData && walletProvider.publicKey) {
-      connection.getBalance(walletProvider.publicKey!).then((res) => {
-        if (res) {
-          setSolBalance(new Big(res).div(10 ** 9).toString());
-        } else {
-          setSolBalance("0");
-        }
-      }).catch((e) => {
-        console.log(e.message);
-      });
-    }
-  }, [connection, walletProvider, reFreshBalnace, loadData]);
+
+  // useEffect(() => {
+  //   if (connection && loadData && walletProvider.publicKey) {
+  //     connection.getBalance(walletProvider.publicKey!).then((res) => {
+  //       if (res) {
+  //         setSolBalance(new Big(res).div(10 ** 9).toString());
+  //       } else {
+  //         setSolBalance("0");
+  //       }
+  //     }).catch((e) => {
+  //       console.log(e.message);
+  //     });
+  //   }
+  // }, [connection, walletProvider, reFreshBalnace, loadData]);
 
   return {
     getRate,
