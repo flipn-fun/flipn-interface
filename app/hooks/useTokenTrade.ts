@@ -881,6 +881,8 @@ export function useTokenTrade({
 
       const hash2 = await walletProvider.signAndSendTransaction(transaction);
 
+      console.log('hash:', hash2)
+
       return hash2;
     },
     [programId, walletProvider, connection, wsol]
