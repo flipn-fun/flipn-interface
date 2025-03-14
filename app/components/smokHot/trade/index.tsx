@@ -176,7 +176,7 @@ export default function Trade({
             </div>
           ) : (
             <div className={styles.receiveTitle}>
-              You will auto-buy in at the average price when this meme ticking.{" "}
+              You will auto-buy in at the average price when this meme bonding.{" "}
               {/* {delayTime
                 ? `You can refund after ${delayTime}.`
                 : "You can refund anytime before ticking."} */}

@@ -343,7 +343,7 @@ export default Carousel;
 
 const BadgeConfig = {
   Ticking: {
-    label: "Ticking",
+    label: "Bonding",
     bg: "#628D0B"
   },
   Listed: {

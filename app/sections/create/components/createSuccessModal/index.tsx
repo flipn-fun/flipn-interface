@@ -134,7 +134,7 @@ function SuccessModal({
         </div>
 
         <div className={style.successNote}>
-          Collect 100 Likes to Ticking now!
+          Collect 100 Likes to Bonding now!
         </div>
 
         <div className={style.btnBox}>
