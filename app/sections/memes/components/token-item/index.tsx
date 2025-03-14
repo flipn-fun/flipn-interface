@@ -171,7 +171,7 @@ const TokenItem = (props: {
                 ..._token,
                 icon: isVideoFile(_token.video)
                   ? _token.icon || _token.video
-                  : _token.video,
+                  : _token.video || _token.icon,
                 is_king: false
               }}
               isPlayButton={false}
