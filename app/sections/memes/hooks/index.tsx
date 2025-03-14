@@ -266,7 +266,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       type = currentTab.value,
     } = params ?? {};
 
-    const _getMimId = () => {
+    const _getMinId = () => {
       let _mim_id: any = void 0;
       switch (type) {
         // Genesis
@@ -298,10 +298,10 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
         order,
         sort,
         type,
-        mim_id: _getMimId(),
+        min_id: _getMinId(),
       };
-      if (!memesListParams.mim_id) {
-        delete memesListParams.mim_id;
+      if (!memesListParams.min_id) {
+        delete memesListParams.min_id;
       }
       const res = await httpGet(`/project/memes/list`, memesListParams);
 
