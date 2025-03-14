@@ -57,7 +57,9 @@ export default function InviteFrenz({ rate, codeInfo, onCopyShareLink }: any) {
                   className={styles.Button}
                   onClick={onCopyShareLink}
                 >
-                  Invite
+                  {codeInfo?.invites_number || codeInfo?.revise_number
+                    ? "Copy"
+                    : "Invite"}
                 </button>
               ) : (
                 <WalletModalButton className={styles.Button}>
