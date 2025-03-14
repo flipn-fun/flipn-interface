@@ -80,9 +80,7 @@ export default function Trade({
     }
   }, [modalShow]);
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, [token]);
+
 
   return (
     <div className={styles.main} style={mainStyle}>
