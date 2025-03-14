@@ -390,7 +390,7 @@ async function uploadTokenMeta(token: Project) {
     "name": token.tokenName,
     "symbol": token.ticker,
     "description": token.about,
-    "image": token.tokenImg,
+    "image": token.tokenIcon,
     "twitter": token.x,
     "website": token.website,
   }
