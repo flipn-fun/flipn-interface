@@ -134,11 +134,13 @@ export default function useNotice() {
 
   const onQuery = async () => {
     try {
-      const response = await httpAuthGet(`/inform/list?limit=10&offset=0`);
-
+      const response = await httpAuthGet(`/inform/list?limit=20&offset=0`);
+      const filterdList = response.data?.list?.filter((item: any) =>
+        ["token_launching_owner", "token_launching"].includes(item.type)
+      );
       let list = [...noticesRef.current];
-      if (response.data?.list) {
-        list = [...list, ...response.data.list];
+      if (filterdList) {
+        list = [...list, ...filterdList];
       }
       if (list.length) {
         onToast(list);
