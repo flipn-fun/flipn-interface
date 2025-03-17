@@ -5,8 +5,7 @@ export default function Header({ rank, onRankClick }: any) {
     <div className={styles.Container}>
       <div className={styles.Title}>Earn</div>
       <div className={styles.RankBox} onClick={onRankClick}>
-        {/* <div className={styles.Rank}>#{rank || "-"}</div> */}
-        <div className={styles.Rank}>#-</div>
+        <div className={styles.Rank}>#{rank || "-"}</div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
