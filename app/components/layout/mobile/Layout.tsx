@@ -5,10 +5,11 @@ import useNotice from "../../../hooks/use-notice";
 import { useShare } from "../../../hooks/use-share";
 import Tabs from "./tabs";
 import Refer from "@/app/components/layout/laptop/user/refer";
+import ClaimModal from "@/app/sections/profile/components/tokenAction/claim/modal";
 import { useAuth } from "@/app/context/auth";
 
 export default function Component({ children }: any) {
-  useNotice();
+  const { claimToken, setClaimToken, prepaidTokenWithdraw } = useNotice();
   useShare();
   const { userInfo } = useAuth();
 
@@ -18,6 +19,16 @@ export default function Component({ children }: any) {
       <Refer userInfo={userInfo} isMobile />
       <Tabs />
       {/* {isRefer && <ReferContentCard />} */}
+      <ClaimModal
+        visible={!!claimToken}
+        onClose={() => {
+          setClaimToken(null);
+        }}
+        token={claimToken}
+        prepaidTokenWithdraw={prepaidTokenWithdraw}
+        prepaidAmount={claimToken?.prepaidAmount}
+        tokenAmount={claimToken?.tokenAmount}
+      />
     </div>
   );
 }

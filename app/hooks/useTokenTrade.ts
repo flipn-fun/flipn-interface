@@ -391,7 +391,7 @@ export function useTokenTrade({
     async (outputAmount: string | number, maxWsolAmount: string | number) => {
       const keysAndIns = await getKeys();
 
-      const instructionsAll: any = {}
+      const instructionsAll: any = {};
 
       if (!keysAndIns) {
         return;
@@ -429,14 +429,13 @@ export function useTokenTrade({
       instructions.forEach((ins) => {
         if (ins) {
           if (instructionsAll[JSON.stringify(ins)]) {
-            return
+            return;
           }
 
           transaction.add(ins);
-          instructionsAll[JSON.stringify(ins)] = true
+          instructionsAll[JSON.stringify(ins)] = true;
         }
       });
-
 
       transaction.add(instruction1).add(instruction2).add(buyInstruction);
 
@@ -448,9 +447,13 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
-        canJitoable: true
-      });
+      const hash = await walletProvider.signAndSendTransaction(
+        transaction,
+        {},
+        {
+          canJitoable: true
+        }
+      );
 
       return hash;
     },
@@ -460,7 +463,7 @@ export function useTokenTrade({
   const buyTokenWithFixedOutput = useCallback(
     async (outputAmount: string | number, maxWsolAmount: string | number) => {
       const keysAndIns = await getKeys();
-      const instructionsAll: any = {}
+      const instructionsAll: any = {};
       if (!keysAndIns) {
         return;
       }
@@ -496,11 +499,11 @@ export function useTokenTrade({
       instructions.forEach((ins) => {
         if (ins) {
           if (instructionsAll[JSON.stringify(ins)]) {
-            return
+            return;
           }
 
           transaction.add(ins);
-          instructionsAll[JSON.stringify(ins)] = true
+          instructionsAll[JSON.stringify(ins)] = true;
         }
       });
 
@@ -514,9 +517,13 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
-        canJitoable: true
-      });
+      const hash = await walletProvider.signAndSendTransaction(
+        transaction,
+        {},
+        {
+          canJitoable: true
+        }
+      );
 
       return hash;
     },
@@ -526,7 +533,7 @@ export function useTokenTrade({
   const sellToken = useCallback(
     async (amount: number | string, minWsolAmount: number | string) => {
       const keysAndIns = await getKeys();
-      const instructionsAll: any = {}
+      const instructionsAll: any = {};
       if (!keysAndIns) {
         return;
       }
@@ -554,11 +561,11 @@ export function useTokenTrade({
       instructions.forEach((ins) => {
         if (ins) {
           if (instructionsAll[JSON.stringify(ins)]) {
-            return
+            return;
           }
 
           transaction.add(ins);
-          instructionsAll[JSON.stringify(ins)] = true
+          instructionsAll[JSON.stringify(ins)] = true;
         }
       });
 
@@ -572,10 +579,14 @@ export function useTokenTrade({
 
       transaction.add(closeUseSolIns);
 
-      const hash = await walletProvider.signAndSendTransaction(transaction, {}, {
-        canJitoable: true
-      });
-      
+      const hash = await walletProvider.signAndSendTransaction(
+        transaction,
+        {},
+        {
+          canJitoable: true
+        }
+      );
+
       return hash;
     },
     [connection, walletProvider, programId]
@@ -607,7 +618,9 @@ export function useTokenTrade({
         throw "Create keys error";
       }
 
-      const stateData: any = await program.account.launchpad.fetch(keys.launchpad);
+      const stateData: any = await program.account.launchpad.fetch(
+        keys.launchpad
+      );
 
       const createAccountInstruction: any = await program.methods
         .createTokenAccount({
@@ -735,7 +748,7 @@ export function useTokenTrade({
         lamports += stateData.createTokenFee.toNumber();
       }
 
-      console.log('lamports:', lamports, stateData.createTokenFee.toNumber())
+      console.log("lamports:", lamports, stateData.createTokenFee.toNumber());
 
       const instruction1 = SystemProgram.transfer({
         fromPubkey: walletProvider.publicKey!,
@@ -809,7 +822,7 @@ export function useTokenTrade({
   const prePaid = useCallback(
     async (amount: number | string, justTransaction: boolean = false) => {
       const keysAndIns = await getKeys();
-      const instructionsAll: any = {}
+      const instructionsAll: any = {};
       if (!keysAndIns) {
         return;
       }
@@ -821,11 +834,11 @@ export function useTokenTrade({
       instructions.forEach((ins) => {
         if (!ins) return;
         if (instructionsAll[JSON.stringify(ins)]) {
-          return
+          return;
         }
 
         transaction.add(ins);
-        instructionsAll[JSON.stringify(ins)] = true
+        instructionsAll[JSON.stringify(ins)] = true;
       });
 
       const program = new Program<any>(idl, programId, walletProvider as any);
@@ -881,7 +894,7 @@ export function useTokenTrade({
 
       const hash2 = await walletProvider.signAndSendTransaction(transaction);
 
-      console.log('hash:', hash2)
+      console.log("hash:", hash2);
 
       return hash2;
     },
@@ -893,7 +906,7 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const keysAndIns = await getWithdrawKeys();
-    const instructionsAll: any = {}
+    const instructionsAll: any = {};
     if (!keysAndIns) {
       return;
     }
@@ -908,11 +921,11 @@ export function useTokenTrade({
       instructions.forEach((ins) => {
         if (!ins) return;
         if (instructionsAll[JSON.stringify(ins)]) {
-          return
+          return;
         }
 
         transaction.add(ins);
-        instructionsAll[JSON.stringify(ins)] = true
+        instructionsAll[JSON.stringify(ins)] = true;
       });
 
       const prepaidSolWithdrawInstruction = await program.methods
@@ -943,7 +956,7 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const keysAndIns = await getKeys();
-    const instructionsAll: any = {}
+    const instructionsAll: any = {};
 
     if (!keysAndIns) {
       return;
@@ -979,11 +992,11 @@ export function useTokenTrade({
       instructions.forEach((ins) => {
         if (!ins) return;
         if (instructionsAll[JSON.stringify(ins)]) {
-          return
+          return;
         }
 
         transaction.add(ins);
-        instructionsAll[JSON.stringify(ins)] = true
+        instructionsAll[JSON.stringify(ins)] = true;
       });
 
       const instruction1 = SystemProgram.transfer({
@@ -1006,7 +1019,7 @@ export function useTokenTrade({
     }
 
     return null;
-  }, []);
+  }, [tokenInfo, pool]);
 
   const checkPrePayed = useCallback(async () => {
     if (!pool) {
@@ -1047,13 +1060,17 @@ export function useTokenTrade({
     } as any);
     const poolData: any = await program.account.pool.fetch(pool[0]);
 
-    console.log('poolData', poolData);
+    console.log("poolData", poolData);
 
-    return poolData;  
+    return poolData;
   }, [pool]);
 
   const getRate = useCallback(
-    async (amountParam: { solAmount?: string; tokenAmount?: string, type: string }) => {
+    async (amountParam: {
+      solAmount?: string;
+      tokenAmount?: string;
+      type: string;
+    }) => {
       if (pool) {
         const program = new Program<any>(idl, programId, {
           connection: connection
@@ -1138,7 +1155,6 @@ export function useTokenTrade({
   //   reFreshBalnace
   // ]);
 
-
   // useEffect(() => {
   //   if (connection && loadData && walletProvider.publicKey) {
   //     connection.getBalance(walletProvider.publicKey!).then((res) => {
@@ -1181,18 +1197,21 @@ async function _getRate(
   program: Program,
   pool: PublicKey,
   state: PublicKey,
-  { solAmount, tokenAmount, type }: { solAmount?: string; tokenAmount?: string, type: string }
+  {
+    solAmount,
+    tokenAmount,
+    type
+  }: { solAmount?: string; tokenAmount?: string; type: string }
 ) {
   const poolData: any = await program.account.pool.fetch(pool);
   const stateData: any = await program.account.launchpad.fetch(state);
   const poolToken = new Big(poolData!.virtualTokenAmount.toNumber());
   const solToken = new Big(poolData!.virtualWsolAmount.toNumber());
 
-
-  const maxBuy = poolToken.minus(295_840_542_120_770)
+  const maxBuy = poolToken.minus(295_840_542_120_770);
 
   // buy
-  if (solAmount && type === 'buy') {
+  if (solAmount && type === "buy") {
     const _solAmount = new Big(solAmount).mul(1 - stateData.buyFeeRate / 10000);
     const result = poolToken
       .mul(_solAmount)
@@ -1213,12 +1232,12 @@ async function _getRate(
     };
   }
 
-  if (tokenAmount && type === 'buy') {
-    let avalibleTokenAmount = tokenAmount
-    let isMax = false
+  if (tokenAmount && type === "buy") {
+    let avalibleTokenAmount = tokenAmount;
+    let isMax = false;
     if (maxBuy.lt(tokenAmount)) {
-      avalibleTokenAmount = maxBuy.toString()
-      isMax = true
+      avalibleTokenAmount = maxBuy.toString();
+      isMax = true;
     }
 
     const _tokenAmount = new Big(avalibleTokenAmount);
@@ -1236,7 +1255,7 @@ async function _getRate(
   }
 
   // sell
-  if (tokenAmount && type === 'sell') {
+  if (tokenAmount && type === "sell") {
     const _tokenAmount = new Big(tokenAmount);
     const result = solToken
       .mul(_tokenAmount)
@@ -1252,7 +1271,7 @@ async function _getRate(
   // buy 1% sell 1.5%
 
   return {
-    result: '0',
+    result: "0",
     isMax: false
   };
 }
