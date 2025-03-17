@@ -13,6 +13,7 @@ import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import { numberFormatter } from "@/app/utils/common";
 import { useSmokeHotStore } from '@/app/components/smokHot/store';
 
+const isPrepaidCache = new Map<string, any>();
 interface Props {
   token: Project;
   isBigIcon?: boolean;
@@ -49,10 +50,11 @@ function SmokeBtn({
 
   const { userInfo }: any = useUser();
   const { address } = useAccount();
+  const [reFresh, setRefresh] = useState(1);
   const [boostSuperNoTimesShow, setBoostSuperNoTimesShow] = useState(false);
-  const { prepaidDelayTime } = usePrepaidDelayTimeStore();
+  // const { prepaidDelayTime } = usePrepaidDelayTimeStore();
 
-  const { getMC, pool, checkPrePayed } = useTokenTrade({
+  const { pool, checkPrePayed } = useTokenTrade({
     tokenName: token?.tokenName as string,
     tokenSymbol: token?.tokenSymbol as string,
     tokenDecimals: token?.tokenDecimals as number,
@@ -65,28 +67,28 @@ function SmokeBtn({
     })
   }, [pool]);
   
-  const isDelay = useMemo(() => {
-    if (
-      prepaidDelayTime &&
-      token.createdAt &&
-      Date.now() - token.createdAt > prepaidDelayTime
-    ) {
-      return true;
-    }
-    return false;
-  }, [prepaidDelayTime, token]);
+  // const isDelay = useMemo(() => {
+  //   if (
+  //     prepaidDelayTime &&
+  //     token.createdAt &&
+  //     Date.now() - token.createdAt > prepaidDelayTime
+  //   ) {
+  //     return true;
+  //   }
+  //   return false;
+  // }, [prepaidDelayTime, token]);
 
   const isDisabled = useMemo(() => {
-    return token.isSuperLike || token.account === address;
-  }, [isDelay, token, address]);
+    return token.isSuperLike || token.account === address || Number((token as any).total_amount) > 0 || isPrepaidCache.get(token.address!);
+  }, [token, address, reFresh]);
 
   const disabledText = useMemo(() => {
     if (!isDisabled) {
       return ''
     }
     
-    if (flipNum && Number(flipNum) > 0) {
-      const flipNumFormatted = numberFormatter(new Big((token as any).total_amount).toString(), 4, true)
+    if (Number((token as any).total_amount) > 0 || isPrepaidCache.get(token.address!)) {
+      const flipNumFormatted = numberFormatter(((token as any).total_amount || isPrepaidCache.get(token.address!)).toString(), 4, true)
       return 'Fliped <br/>' + flipNumFormatted + 'SOL'
     }
 
@@ -95,7 +97,7 @@ function SmokeBtn({
     }
 
     return 'Flipped'
-  }, [isDelay, token, address, flipNum, isDisabled])
+  }, [token, address, flipNum, isDisabled, reFresh])
 
   const VipModal = (
     <BoostVip
@@ -166,8 +168,10 @@ function SmokeBtn({
       <SmokPanel
         token={token}
         show={panelShow}
-        onSuccess={() => {
+        onSuccess={(number: string) => {
+          isPrepaidCache.set(token.address!, number);
           onClick && onClick();
+          setRefresh(reFresh + 1);
           setPanelShow(false);
           onSuccess?.();
         }}

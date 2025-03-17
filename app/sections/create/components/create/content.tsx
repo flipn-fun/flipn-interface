@@ -86,7 +86,7 @@ export default function Create({
   });
   const [launchChecked, setLaunchChecked] = useState(false);
 
-  const { createToken, tokenInfo } = useTokenTrade({
+  const { createToken } = useTokenTrade({
     tokenName,
     tokenSymbol,
     tokenDecimals: 6,
@@ -102,18 +102,6 @@ export default function Create({
   useEffect(() => {
     totalRef.current.inputVal = valInput;
   }, [valInput]);
-
-  const validateSameName = useCallback(async () => {
-    const tokenInUse = await httpGet(
-      `/project?token_name=${tokenName}&token_symbol=${tokenSymbol.toUpperCase()}`
-    );
-
-    if (tokenInUse.code === 0 && tokenInUse.data?.length > 0) {
-      return "Token name already in use";
-    }
-
-    return "";
-  }, [tokenName, tokenSymbol]);
 
   const debounceVal = useDebounce(valInput, { wait: 800 });
 
@@ -187,13 +175,6 @@ export default function Create({
           setIsSkipLoading(true);
         } else {
           setIsLoading(true);
-        }
-
-        const sameNameRes = await validateSameName();
-
-        if (sameNameRes) {
-          setIsLoading(false);
-          fail(sameNameRes);
         }
 
         await onBeforeCreate();
@@ -409,7 +390,7 @@ async function uploadTokenMeta(token: Project) {
     "name": token.tokenName,
     "symbol": token.ticker,
     "description": token.about,
-    "image": token.tokenImg,
+    "image": token.tokenIcon,
     "twitter": token.x,
     "website": token.website,
   }

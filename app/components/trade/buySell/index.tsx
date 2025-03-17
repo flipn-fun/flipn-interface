@@ -19,6 +19,7 @@ import type { Project } from "@/app/type";
 import { useUser } from "@/app/store/useUser";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useSlip } from "@/app/store/useSlip";
+import useBalance from "@/app/hooks/useBalance";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
@@ -77,6 +78,7 @@ export default function BuySell({
   const [currentToken, setCurrentToken] = useState<Token>(SOL);
   const [errorMsg, setErrorMsg] = useState("");
   const [isError, setIsError] = useState(false);
+  const [reFreshBalnace, setReFreshBalnace] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
   const [successMoalShow, setSuccessMoalShow] = useState(true);
@@ -115,13 +117,19 @@ export default function BuySell({
     buyTokenWithFixedOutput,
     sellToken,
     getRate,
-    tokenBalance,
-    solBalance,
+    // tokenBalance,
+    // solBalance,
     updateBalance
   } = useTokenTrade({
     tokenName,
     tokenSymbol: tokenSymbol as string,
     tokenDecimals: tokenDecimals as number
+  });
+
+  const { solBalance, tokenBalance } = useBalance({
+    mint: token.address as string,
+    tokenDecimals: token.tokenDecimals as number,
+    reFreshBalnace
   });
 
   const TOKEN_PERCENT_LIST = useMemo(() => {
@@ -807,6 +815,7 @@ export default function BuySell({
                       hash = await sellToken(sellOut, sellOutSol);
                     }
                     setIsLoading(false);
+                    setReFreshBalnace(Math.random());
                     onSuccess?.();
                     if (hash) {
                       const volume = activeIndex === 0 ? buyInSol : sellOutSol;
