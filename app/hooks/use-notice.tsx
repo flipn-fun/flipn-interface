@@ -6,6 +6,7 @@ import { Toast } from "antd-mobile";
 import useRead from "../components/messages/use-read";
 import { useUserAgent } from "@/app/context/user-agent";
 import { numberFormatter } from "@/app/utils/common";
+import { uniqBy } from "lodash-es";
 
 /**
  * content_1 token name
@@ -143,7 +144,7 @@ export default function useNotice() {
         list = [...list, ...filterdList];
       }
       if (list.length) {
-        onToast(list);
+        onToast(uniqBy(list, (item) => item.id));
       } else {
         clearTimeout(timerRef.current);
         timerRef.current = setTimeout(() => {
