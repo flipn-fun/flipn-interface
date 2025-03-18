@@ -74,37 +74,32 @@ export default function useNotice() {
             {notice.type === "token_launching" && (
               <div style={{ fontSize: 13, fontWeight: 300 }}>
                 <span style={{ fontWeight: 600 }}>{notice.content_2}</span> goes
-                to bonding progress, You have
+                to bonding progress. You have
                 <span style={{ fontWeight: 600 }}>
                   {" "}
                   {numberFormatter(notice.content_5, 2, true)}{" "}
                   {notice.content_2}
                 </span>{" "}
-                to be claim.
-              </div>
-            )}
-            {notice.type === "token_launching" && (
-              <div
-                style={{
-                  textDecoration: "underline",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  position: "absolute",
-                  right: 10,
-                  bottom: 10
-                }}
-                className="button"
-                onClick={() => {
-                  setClaimToken({
-                    tokenName: notice.content_1,
-                    tokenSymbol: notice.content_2,
-                    tokenIcon: notice.content_6,
-                    tokenAmount: notice.content_5,
-                    prepaidAmount: notice.content_7
-                  });
-                }}
-              >
-                Claim
+                to be claimed.{"  "}
+                <span
+                  style={{
+                    textDecoration: "underline",
+                    fontSize: 13,
+                    fontWeight: 600
+                  }}
+                  className="button"
+                  onClick={() => {
+                    setClaimToken({
+                      tokenName: notice.content_1,
+                      tokenSymbol: notice.content_2,
+                      tokenIcon: notice.content_6,
+                      tokenAmount: notice.content_5,
+                      prepaidAmount: notice.content_7
+                    });
+                  }}
+                >
+                  Claim
+                </span>
               </div>
             )}
           </div>
@@ -123,26 +118,27 @@ export default function useNotice() {
           )}
         </div>
       ),
-      position: "top"
-    });
-
-    setTimeout(() => {
-      toast.close();
-      onRead({ ids: [notice.id] });
-      if (list.length) {
-        onToast(list);
-      } else {
-        clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(() => {
-          onQuery();
-        }, 10000);
+      position: "top",
+      duration: 5000,
+      afterClose: () => {
+        onRead({ ids: [notice.id] });
+        if (list.length) {
+          onToast(list);
+        } else {
+          clearTimeout(timerRef.current);
+          timerRef.current = setTimeout(() => {
+            onQuery();
+          }, 10000);
+        }
       }
-    }, 5000);
+    });
   };
 
   const onQuery = async () => {
     try {
-      const response = await httpAuthGet(`/inform/list?limit=10&offset=0`);
+      const response = await httpAuthGet(
+        `/inform/list?limit=10&offset=0&read=0`
+      );
       const filterdList = response.data?.list?.filter((item: any) => {
         if (item.read) return false;
 
