@@ -23,6 +23,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
+import { ReportDataType, reportTradeData } from "@/app/utils/report";
 
 type Token = {
   tokenName: string;
@@ -654,6 +655,8 @@ export default function BuySellPump({
                         Big(volume).toFixed(SOL.tokenDecimals),
                         "pump"
                       );
+
+                      reportTradeData(ReportDataType.SWAP, hash);
 
                       const modalHandler = Modal.show({
                         content: (
