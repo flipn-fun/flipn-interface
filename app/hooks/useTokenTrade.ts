@@ -571,6 +571,22 @@ export function useTokenTrade({
 
       transaction.add(sellInstruction);
 
+      const userToken = await getAccount(
+        connection,
+        keys.userTokenAccount,
+        undefined,
+        TOKEN_PROGRAM_ID
+      );
+
+      if (Number(userToken.amount) === Number(amount)) {
+        const closeTokenIns = createCloseAccountInstruction(
+          keys.userTokenAccount, // token account which you want to close
+          walletProvider.publicKey!, // destination
+          walletProvider.publicKey!, // owner of token account
+        )
+        transaction.add(closeTokenIns);
+      }
+
       const closeUseSolIns = createCloseAccountInstruction(
         keys.userWsolAccount,
         walletProvider.publicKey!,
@@ -1048,7 +1064,7 @@ export function useTokenTrade({
         prePaidRecord[0]
       );
       return prePaidRecordData.paidAmount.toNumber();
-    } catch (e) {}
+    } catch (e) { }
 
     return 0;
   }, [walletProvider, programId, connection, pool]);
