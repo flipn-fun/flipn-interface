@@ -19,7 +19,7 @@ export default function useList() {
       const response = await httpAuthGet(
         `/inform/list?limit=${PAGE_SIZE}&offset=${
           (pageRef.current - 1) * PAGE_SIZE
-        }`
+        }&read=-1`
       );
 
       pageRef.current === 1
