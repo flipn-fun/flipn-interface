@@ -11,7 +11,7 @@ import Refer from "@/app/components/layout/laptop/user/refer";
 import Header from "./header";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
 import { INVITE_TYPE } from "@/app/config/invite";
-import RpcStatus from "@/app/components/rpc/status";
+import BottomActions from "./bottom-actions";
 import ClaimModal from "@/app/sections/profile/components/tokenAction/claim/modal";
 
 const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
@@ -77,16 +77,7 @@ export default function Laptop({ children }: any) {
         {pathname === "/invite-code" && <InviteCodeView />}
       </div>
       <Refer userInfo={userInfo} />
-      <div
-        className={`${styles.RpcStatusWrapper} button`}
-        onClick={() => {
-          settingStore.set({
-            showRpcSelectModal: true
-          });
-        }}
-      >
-        <RpcStatus isDefault showLabel />
-      </div>
+      <BottomActions />
       <ClaimModal
         visible={!!claimToken}
         onClose={() => {

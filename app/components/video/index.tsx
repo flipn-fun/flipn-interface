@@ -2,6 +2,7 @@ import type { Project } from "@/app/type";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDebounceFn } from "ahooks";
 import { useVideoPlayer } from "@/app/store/use-video-player";
+import { useSetting } from "@/app/store/use-setting";
 import ProgressBar from "./progress-bar";
 import mediaStore from "@/app/libs/media-store";
 
@@ -29,6 +30,7 @@ export default function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const videoPlayerStore: any = useVideoPlayer();
+  const settingStore: any = useSetting();
   const [progress, setProgress] = useState(0);
   const [mergedSrc, setMergedSrc] = useState("");
 
@@ -55,7 +57,7 @@ export default function VideoPlayer({
         const blob: any = await mediaStore.getFile(id);
         setMergedSrc(URL.createObjectURL(blob));
       } catch (err) {
-        setMergedSrc(src + '#t=0.1');
+        setMergedSrc(src + "#t=0.1");
       }
     };
     getSrc();
@@ -85,6 +87,7 @@ export default function VideoPlayer({
         }}
         preload={videoPlayerStore.autoPlay ? "auto" : "none"}
         id={mediaId}
+        muted={settingStore.isVoiceClose}
       >
         <source src={mergedSrc} type={`video/${type}`} />
       </video>
