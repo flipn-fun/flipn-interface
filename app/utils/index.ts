@@ -2,9 +2,6 @@ import dayjs from "./dayjs";
 import type { Project } from "../type";
 import { fail } from "./toast";
 import { Connection } from "@solana/web3.js";
-// import Cropper from "cropperjs";
-// @ts-ignore
-import Croppie from "croppie";
 import Big from "big.js";
 import { deleteCookie } from "./common";
 import { imgReg, videoReg } from "../components/upload";
