@@ -6,6 +6,10 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { BN } from '@coral-xyz/anchor';
 import { useAccount } from './useAccount';
+import { createCloseAccountInstruction } from '@solana/spl-token';
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { getAccount } from '@solana/spl-token';
+import { getAssociatedTokenAddress } from '@solana/spl-token';
 interface Params {
     token: Project;
 }
@@ -68,6 +72,31 @@ export default function useMeteora({ token }: Params) {
                 minSwapOutAmount,
             );
 
+            if (type === 'sell') {
+                const tokenAccount = await getAssociatedTokenAddress(
+                    new PublicKey(token.address as string),
+                    publicKey!,
+                    false
+                );
+
+                const userToken = await getAccount(
+                    connection,
+                    tokenAccount,
+                    undefined,
+                    TOKEN_PROGRAM_ID
+                );
+
+                if (Number(userToken.amount) === Number(amount)) {
+                    const closeTokenIns = createCloseAccountInstruction(
+                        tokenAccount, // token account which you want to close
+                        walletProvider.publicKey!, // destination
+                        walletProvider.publicKey!, // owner of token account
+                    )
+                    swapTx.add(closeTokenIns);
+                }
+            }
+
+
             const hash = await walletProvider?.signAndSendTransaction(swapTx, {}, {
                 canJitoable: true
             })
@@ -84,12 +113,12 @@ export default function useMeteora({ token }: Params) {
         getQoute,
         trade
     }
-}   
+}
 
 export const getMeteoraPool = async (token: Project) => {
     try {
         if (token.status !== 3 || token.DApp !== 'sexy') {
-            return null;    
+            return null;
         }
         const response = await fetch(`https://amm-v2.meteora.ag/pools/search?page=0&size=1&pool_type=dynamic&include_token_mints=${token.address}`);
         const res = await response.json();
