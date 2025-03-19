@@ -10,7 +10,9 @@ export async function reportTradeData(type: number, txHash: string, uuid: string
       })
     };
 
-    const response = await httpAuthPost('/report/data', data);
+    const response = await httpAuthPost('/report/data', {
+      list: [data]
+    });
 
     if (!response.ok) {
       throw new Error('Report data failed');
