@@ -124,8 +124,8 @@ const TokenItem = (props: {
           <div
             className={styles.TokenItemLaptopAvatarCrown}
             style={
-              _token?.is_king && _token.kind === "Hot"
-                ? _token.ranking <= 3 && _token.ranking !== 0
+              _token.kind === "Hot"
+                ? (_token.ranking <= 3 && _token.ranking !== 0)
                   ? {
                       right: "unset",
                       top: "-20px",
@@ -133,23 +133,26 @@ const TokenItem = (props: {
                       zIndex: 2,
                       transform: "rotate(0deg)"
                     }
-                  : {
+                  : (
+                    _token?.is_king ? {
                       right: "-10px",
                       top: "-15px",
                       transform: "rotate(30deg)"
-                    }
+                    } : {}
+                  )
                 : {}
             }
           >
-            {_token?.is_king &&
-              _token.kind === "Hot" &&
-              (_token.ranking > 3 || _token.ranking === 0 ? (
-                <img
-                  src="/img/memes/icon-crown.svg"
-                  alt=""
-                  className={styles.TokenItemLaptopAvatarCrownIcon}
-                  style={{ display: "none" }}
-                />
+            {_token.kind === "Hot" &&
+              ((_token.ranking > 3 || _token.ranking === 0) ? (
+                  _token?.is_king && (
+                    <img
+                      src="/img/memes/icon-crown.svg"
+                      alt=""
+                      className={styles.TokenItemLaptopAvatarCrownIcon}
+                      style={{ display: "none" }}
+                    />
+                  )
               ) : (
                 <img
                   src="/img/memes/icon-crown-laptop.svg"
@@ -179,16 +182,17 @@ const TokenItem = (props: {
             <div className={styles.TokenItemProfile}>
               <div className={styles.TokenItemName}>
                 <div>{formatLongText(token.token_symbol, 6, 6)}</div>
-                {token.is_king &&
-                  token.kind === "Hot" &&
+                {token.kind === "Hot" &&
                   (token.ranking <= 3 && token.ranking !== 0 ? (
                     <div className={styles.TokenItemNameIcon}>👑</div>
                   ) : (
-                    <img
-                      src="/img/trends/crown-second.svg"
-                      alt=""
-                      className={styles.TokenItemNameIconCrown}
-                    />
+                    token.is_king && (
+                      <img
+                        src="/img/trends/crown-second.svg"
+                        alt=""
+                        className={styles.TokenItemNameIconCrown}
+                      />
+                    )
                   ))}
               </div>
               <TokenItemMarketCap token={token} />
