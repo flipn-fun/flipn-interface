@@ -23,6 +23,7 @@ import useBalance from "@/app/hooks/useBalance";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
+import { ReportDataType, reportTradeData } from "@/app/utils/report";
 
 type Token = {
   tokenName: string;
@@ -825,6 +826,8 @@ export default function BuySell({
                           .toFixed(SOL.tokenDecimals),
                         "sexy"
                       );
+
+                      reportTradeData(ReportDataType.SWAP, hash);
 
                       const modalHandler = Modal.show({
                         content: (
