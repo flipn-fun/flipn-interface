@@ -20,7 +20,7 @@ export default function ZeroFormat({ value }: Props) {
     const zeroCount = numStr.slice(2).match(/^0+/)?.[0]?.length || 0;
     
     if (zeroCount === 0) {
-      return <div>{numStr}</div>;
+      return <div>{numberFormatter(value, 4, true)}</div>;
     }
 
     // Get the non-zero number part

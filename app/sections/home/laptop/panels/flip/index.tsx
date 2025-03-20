@@ -11,6 +11,7 @@ import { numberFormatter } from "@/app/utils/common";
 import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
 import clsx from "clsx";
+import { reportTradeData, ReportDataType } from "@/app/utils/report";
 
 
 const isPrepaidCache = new Map<string, any>();
@@ -56,9 +57,10 @@ export default function FlipPanel(props: any) {
     try {
       setLoading(true);
       const inputNum = new Big(inputVal).mul(10 ** 9).toFixed(0);
-      const res = await prePaid(inputNum, false);
+      const hash = await prePaid(inputNum, false);
       setLoading(false);
-      if (res) {
+      if (hash) {
+        reportTradeData(ReportDataType.FLIP, hash);
         isPrepaidCache.set(token.address, inputVal);
         success("Flip success");
         onSuccess?.(inputVal);
