@@ -15,7 +15,8 @@ export default function TokenIcon({
   className,
   isPlayButton,
   style,
-  showBlueChip = false
+  showBlueChip = false,
+  showRanking = true
 }: any) {
   const progress = useMemo(() => {
     if (token.status === 3) return 0;
@@ -98,20 +99,21 @@ export default function TokenIcon({
             )}
           </div>
         )}
-        {token.ranking <= 3 && token.ranking !== 0 ? (
-          <div className={styles.King}>
-            👑
-            <Image
-              className={styles.KingAnimation}
-              src="/img/animation-king.gif"
-              width={20}
-              height={20}
-              alt="King Animation"
-            />
-          </div>
-        ) : token.is_king ? (
-          <LastKing className={styles.LastKing} id={token.id} />
-        ) : null}
+        {showRanking &&
+          (token.ranking <= 3 && token.ranking !== 0 ? (
+            <div className={styles.King}>
+              👑
+              <Image
+                className={styles.KingAnimation}
+                src="/img/animation-king.gif"
+                width={20}
+                height={20}
+                alt="King Animation"
+              />
+            </div>
+          ) : token.is_king ? (
+            <LastKing className={styles.LastKing} id={token.id} />
+          ) : null)}
       </div>
     </div>
   );
