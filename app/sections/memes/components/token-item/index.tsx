@@ -106,6 +106,7 @@ const TokenItem = (props: {
                   ..._token,
                   is_king: false
                 }}
+                showRanking={false}
               />
               <div
                 className={styles.TokenItemLaptopAvatarProfileSymbol}
@@ -125,7 +126,7 @@ const TokenItem = (props: {
             className={styles.TokenItemLaptopAvatarCrown}
             style={
               _token.kind === "Hot"
-                ? (_token.ranking <= 3 && _token.ranking !== 0)
+                ? _token.ranking <= 3 && _token.ranking !== 0
                   ? {
                       right: "unset",
                       top: "-20px",
@@ -133,26 +134,26 @@ const TokenItem = (props: {
                       zIndex: 2,
                       transform: "rotate(0deg)"
                     }
-                  : (
-                    _token?.is_king ? {
+                  : _token?.is_king
+                  ? {
                       right: "-10px",
                       top: "-15px",
                       transform: "rotate(30deg)"
-                    } : {}
-                  )
+                    }
+                  : {}
                 : {}
             }
           >
             {_token.kind === "Hot" &&
-              ((_token.ranking > 3 || _token.ranking === 0) ? (
-                  _token?.is_king && (
-                    <img
-                      src="/img/memes/icon-crown.svg"
-                      alt=""
-                      className={styles.TokenItemLaptopAvatarCrownIcon}
-                      style={{ display: "none" }}
-                    />
-                  )
+              (_token.ranking > 3 || _token.ranking === 0 ? (
+                _token?.is_king && (
+                  <img
+                    src="/img/memes/icon-crown.svg"
+                    alt=""
+                    className={styles.TokenItemLaptopAvatarCrownIcon}
+                    style={{ display: "none" }}
+                  />
+                )
               ) : (
                 <img
                   src="/img/memes/icon-crown-laptop.svg"
