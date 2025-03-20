@@ -33,7 +33,7 @@ export function useAccount() {
     return {
       connected: true,
       connecting: false,
-      connect: () => {},
+      connect: () => { },
       disconnect: privyDisconnect,
       address: privyWallet.address,
       publicKey: privyPublicKey,
@@ -156,10 +156,9 @@ export function useAccount() {
             if (!status.value || status.value?.err) {
               throw new Error(
                 status.value?.err
-                  ? `send transaction failed: ${
-                    typeof status.value.err === "string"
-                      ? status.value.err
-                      : JSON.stringify(status.value.err)
+                  ? `send transaction failed: ${typeof status.value.err === "string"
+                    ? status.value.err
+                    : JSON.stringify(status.value.err)
                   }`
                   : `send transaction failed, please try again later`
               );
@@ -215,7 +214,7 @@ export function useAccount() {
               }),
             )
           }
-          
+
           const latestBlockhash = await connection?.getLatestBlockhash();
           transaction.feePayer = publicKey;
           transaction.recentBlockhash = latestBlockhash!.blockhash;
@@ -252,7 +251,7 @@ export function useAccount() {
         }
 
         let tx
-        if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') { 
+        if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
           const signedTransaction = await signTransaction!(_transaction)
           const serializedTransaction = signedTransaction.serialize();
           const base58Transaction = bs58.encode(serializedTransaction);
@@ -278,55 +277,55 @@ export function useAccount() {
         let done = false;
         let status;
 
-        if (isVersionedTransaction) {
-          while (!done && Date.now() - startTime < timeout) {
-            const transactionDetails = await connection.getTransaction(tx, {
-              maxSupportedTransactionVersion: 0
-            });
+        // if (isVersionedTransaction) {
+        //   while (!done && Date.now() - startTime < timeout) {
+        //     const transactionDetails = await connection.getTransaction(tx, {
+        //       maxSupportedTransactionVersion: 0
+        //     });
 
-            if (transactionDetails && !transactionDetails.meta?.err) {
-              done = true;
-            } else {
-              await sleep(1000);
-            }
-          }
+        //     if (transactionDetails && !transactionDetails.meta?.err) {
+        //       done = true;
+        //     } else {
+        //       await sleep(1000);
+        //     }
+        //   }
 
-          if (!done) {
-            throw new Error(`send transaction failed, please try again later`);
-          }
-        } else {
-          while (!done && Date.now() - startTime < timeout) {
-            status = await connection.getSignatureStatus(tx, {
-              searchTransactionHistory: true
-            });
+        //   if (!done) {
+        //     throw new Error(`send transaction failed, please try again later`);
+        //   }
+        // } else {
+        while (!done && Date.now() - startTime < timeout) {
+          status = await connection.getSignatureStatus(tx, {
+            searchTransactionHistory: true
+          });
 
-            if (
-              status?.value?.confirmationStatus === "finalized" ||
-              status?.value?.err
-            ) {
-              done = true;
-            } else {
-              await sleep(1000);
-            }
-          }
-
-          if (!status) {
-            throw new Error(
-              `Transaction confirmation failed for signature ${tx}`
-            );
-          }
-
-          if (!status.value || status.value?.err) {
-            throw new Error(
-              status.value?.err
-                ? `send transaction failed: ${typeof status.value.err === "string"
-                  ? status.value.err
-                  : JSON.stringify(status.value.err)
-                }`
-                : `send transaction failed, please try again later`
-            );
+          if (
+            status?.value?.confirmationStatus === "finalized" ||
+            status?.value?.err
+          ) {
+            done = true;
+          } else {
+            await sleep(1000);
           }
         }
+
+        if (!status) {
+          throw new Error(
+            `Transaction confirmation failed for signature ${tx}`
+          );
+        }
+
+        if (!status.value || status.value?.err) {
+          throw new Error(
+            status.value?.err
+              ? `send transaction failed: ${typeof status.value.err === "string"
+                ? status.value.err
+                : JSON.stringify(status.value.err)
+              }`
+              : `send transaction failed, please try again later`
+          );
+        }
+        // }
 
         return tx;
       },

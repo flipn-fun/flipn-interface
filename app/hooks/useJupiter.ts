@@ -5,12 +5,16 @@ import {
   VersionedTransaction,
   VersionedMessage,
   TransactionMessage,
-  Transaction
+  Transaction,
+  TransactionInstruction,
+  SystemProgram
 } from "@solana/web3.js";
 import {
   getAssociatedTokenAddress,
   TOKEN_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  getAccount,
+  createCloseAccountInstruction
 } from "@solana/spl-token";
 import { useAccount } from "./useAccount";
 import { useCallback, useEffect, useState } from "react";
@@ -64,15 +68,42 @@ export default function useJupiter({ tokenAddress, token }: Params) {
       if (publicKey && tokenAddress && amount) {
         const swapInfo = await getQoute(amount, type, slip);
 
-        const { swapTransaction, lastValidBlockHeight } =
+        const swapTransaction: any =
           await fetchSwapTransaction(publicKey.toBase58(), slip, swapInfo, settingStore.jitoable);
 
-        const vTransaction: any = VersionedTransaction.deserialize(
-          Buffer.from(swapTransaction, "base64")
-        );
+        if (!swapTransaction) {
+          return null;
+        }
+
+        const serializedTransaction = Buffer.from(swapTransaction, 'base64');
+        const transaction = Transaction.from(serializedTransaction);
+
+        if (type === 'sell') {
+          const tokenAccount = await getAssociatedTokenAddress(
+            new PublicKey(tokenAddress),
+            publicKey,
+            false
+          );
+
+          const userToken = await getAccount(
+            connection,
+            tokenAccount,
+            undefined,
+            TOKEN_PROGRAM_ID
+          );
+
+          if (Number(userToken.amount) === Number(amount)) {
+            const closeTokenIns = createCloseAccountInstruction(
+              tokenAccount, // token account which you want to close
+              walletProvider.publicKey!, // destination
+              walletProvider.publicKey!, // owner of token account
+            )
+            transaction.add(closeTokenIns);
+          }
+        }
 
         const hash = await walletProvider.signAndSendTransaction(
-          vTransaction,
+          transaction,
           {},
           {
             isVersionedTransaction: true,
@@ -103,7 +134,7 @@ export async function fetchSwapInfo(
   slip: number
 ) {
   const response = await fetch(
-    `${API_PREFIX}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slip}&swapMode=ExactIn&onlyDirectRoutes=false&asLegacyTransaction=false&maxAccounts=64&minimizeSlippage=false&tokenCategoryBasedIntermediateTokens=true`
+    `${API_PREFIX}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slip}&swapMode=ExactIn&onlyDirectRoutes=false&asLegacyTransaction=true&maxAccounts=64&minimizeSlippage=false&tokenCategoryBasedIntermediateTokens=true`
   );
   const data = await response.json();
   return {
@@ -119,13 +150,13 @@ export async function fetchSwapTransaction(
   slip: number,
   swapInfo: any,
   jitoable: boolean
-) {
+): Promise<any> {
   const requestBody: any = {
     userPublicKey: userWalletPublicKey,
     wrapAndUnwrapSol: true,
     dynamicComputeUnitLimit: true,
     correctLastValidBlockHeight: true,
-    asLegacyTransaction: false,
+    asLegacyTransaction: true,
     allowOptimizedWrappedSolTokenAccount: true,
     // prioritizationFeeLamports: {
     //   jitoTipLamports: 1000000,
@@ -165,7 +196,5 @@ export async function fetchSwapTransaction(
 
   const { swapTransaction, lastValidBlockHeight } = await response.json();
 
-  console.log('swapTransaction:', swapTransaction)
-
-  return { swapTransaction, lastValidBlockHeight };
+  return swapTransaction;
 }

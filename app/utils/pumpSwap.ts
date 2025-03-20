@@ -1,5 +1,5 @@
 import { ComputeBudgetProgram, Connection, LAMPORTS_PER_SOL, PublicKey, Transaction, TransactionInstruction, clusterApiUrl } from '@solana/web3.js';
-import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, createCloseAccountInstruction } from '@solana/spl-token';
+import { getAssociatedTokenAddress, createAssociatedTokenAccountInstruction, TOKEN_PROGRAM_ID, createCloseAccountInstruction, getAccount } from '@solana/spl-token';
 import { createTransaction, sendAndConfirmTransactionWrapper, bufferFromUInt64 } from '../hooks/utils';
 import { GLOBAL, FEE_RECIPIENT, SYSTEM_PROGRAM_ID, RENT, PUMP_FUN_ACCOUNT, PUMP_FUN_PROGRAM, ASSOC_TOKEN_ACC_PROG } from '@/app/utils/config';
 import { Idl, Program } from '@coral-xyz/anchor';
@@ -47,8 +47,6 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 
         const tokenOut = new Big(solInLamports).mul(virtualTokenReserves).div(virtualSolReserves).toFixed(0, 0);
         const maxSolCost = new Big(solInLamports).mul(1 + slippageDecimal).mul(1 + 0.01).toFixed(0, 0);
-
-        console.log('maxSolCost:', maxSolCost, tokenOut)
 
         const ASSOCIATED_USER = tokenAccount;
         const USER = owner;
@@ -106,29 +104,29 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
         const mint = new PublicKey(mintStr);
         const txBuilder = new Transaction();
 
-        const tokenAccountAddress = await getAssociatedTokenAddress(
+        const tokenAccount = await getAssociatedTokenAddress(
             mint,
             owner,
             false
         );
 
-        const tokenAccountInfo = await connection.getAccountInfo(tokenAccountAddress);
+        // const tokenAccountInfo = await connection.getAccountInfo(tokenAccountAddress);
 
-        let tokenAccount: PublicKey;
-        if (!tokenAccountInfo) {
-            txBuilder.add(
-                createAssociatedTokenAccountInstruction(
-                    owner,
-                    tokenAccountAddress,
-                    owner,
-                    mint
-                )
+        // let tokenAccount: PublicKey;
+        // if (!tokenAccountInfo) {
+        //     txBuilder.add(
+        //         createAssociatedTokenAccountInstruction(
+        //             owner,
+        //             tokenAccountAddress,
+        //             owner,
+        //             mint
+        //         )
 
-            );
-            tokenAccount = tokenAccountAddress;
-        } else {
-            tokenAccount = tokenAccountAddress;
-        }
+        //     );
+        //     tokenAccount = tokenAccountAddress;
+        // } else {
+        //     tokenAccount = tokenAccountAddress;
+        // }
 
         const minSolOutput = new Big(tokenBalance).mul(1 - slippageDecimal).mul(virtualSolReserves).div(virtualTokenReserves).mul(1 - 0.01).toFixed(0, 0);
 
@@ -159,6 +157,22 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
             data: data
         });
         txBuilder.add(instruction);
+
+        const userToken = await getAccount(
+            connection,
+            tokenAccount,
+            undefined,
+            TOKEN_PROGRAM_ID
+        );
+
+        if (Number(userToken.amount) === Number(tokenBalance)) {
+            const closeTokenIns = createCloseAccountInstruction(
+                tokenAccount, // token account which you want to close
+                walletProvider.publicKey!, // destination
+                walletProvider.publicKey!, // owner of token account
+            )
+            txBuilder.add(closeTokenIns);
+        }
 
         const hash = await walletProvider.signAndSendTransaction(txBuilder, {}, {
             canJitoable: true
