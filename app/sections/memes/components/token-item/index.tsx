@@ -125,7 +125,7 @@ const TokenItem = (props: {
             className={styles.TokenItemLaptopAvatarCrown}
             style={
               _token?.is_king && _token.kind === "Hot"
-                ? _token.ranking <= 3
+                ? _token.ranking <= 3 && _token.ranking !== 0
                   ? {
                       right: "unset",
                       top: "-20px",
@@ -141,24 +141,22 @@ const TokenItem = (props: {
                 : {}
             }
           >
-            {(_token?.is_king && _token.kind === "Hot")
-              && (
-                _token.ranking > 3 ? (
-                  <img
-                    src="/img/memes/icon-crown.svg"
-                    alt=""
-                    className={styles.TokenItemLaptopAvatarCrownIcon}
-                    style={{ display: "none" }}
-                  />
-                ) : (
-                  <img
-                    src="/img/memes/icon-crown-laptop.svg"
-                    alt=""
-                    className={styles.TokenItemLaptopAvatarCrownKingIcon}
-                  />
-                )
-              )
-            }
+            {_token?.is_king &&
+              _token.kind === "Hot" &&
+              (_token.ranking > 3 || _token.ranking === 0 ? (
+                <img
+                  src="/img/memes/icon-crown.svg"
+                  alt=""
+                  className={styles.TokenItemLaptopAvatarCrownIcon}
+                  style={{ display: "none" }}
+                />
+              ) : (
+                <img
+                  src="/img/memes/icon-crown-laptop.svg"
+                  alt=""
+                  className={styles.TokenItemLaptopAvatarCrownKingIcon}
+                />
+              ))}
           </div>
         </div>
       )}
@@ -183,7 +181,7 @@ const TokenItem = (props: {
                 <div>{formatLongText(token.token_symbol, 6, 6)}</div>
                 {token.is_king &&
                   token.kind === "Hot" &&
-                  (token.ranking <= 3 ? (
+                  (token.ranking <= 3 && token.ranking !== 0 ? (
                     <div className={styles.TokenItemNameIcon}>👑</div>
                   ) : (
                     <img
@@ -356,7 +354,13 @@ export const TokenItemMarketCap = (props: any) => {
           }}
         />
       ) : (
-        <div className={Big(token?.market_cap_24h_usd || 0).gte(0) ? styles.TokenItemMarketCap : styles.TokenItemMarketCapDown}>
+        <div
+          className={
+            Big(token?.market_cap_24h_usd || 0).gte(0)
+              ? styles.TokenItemMarketCap
+              : styles.TokenItemMarketCapDown
+          }
+        >
           MC{" "}
           {numberFormatter(token.market_cap, 2, true, {
             prefix: "$",
