@@ -12,6 +12,7 @@ export const useSetting = create(
       showRpcErrorModal: false,
       showRpcSelectModal: false,
       rpc: RPCS[0],
+      isVoiceClose: false,
       set: (params: any) => set(() => ({ ...params }))
     }),
     {
