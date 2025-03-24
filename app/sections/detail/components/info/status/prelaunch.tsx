@@ -17,8 +17,8 @@ export default function PrelaunchStatus({ data, showAddress, from }: any) {
       <div>
         <div className={styles.progressTitleWrapper}>
           <div className={styles.progressTitle}>
-            {/* <ClockIcon /> */}
-            {/* {showAddress ? (
+            {/* <ClockIcon />
+            {showAddress ? (
               <div className={styles.progressTime}>
                 {hours} : {minutes} : {seconds}
               </div>

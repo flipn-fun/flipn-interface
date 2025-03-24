@@ -12,6 +12,7 @@ import { useMessage } from "@/app/context/messageContext";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useAuth } from "@/app/context/auth";
 import { numberFormatter } from "@/app/utils/common";
+// import Timer from "./timer";
 import TipsButton from "@/app/sections/home/laptop/tips-button";
 
 export default function Actions({
