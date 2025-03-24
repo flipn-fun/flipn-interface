@@ -7,24 +7,24 @@ import { useCountDown } from "ahooks";
 import styles from "./index.module.css";
 
 export default function PrelaunchStatus({ data, showAddress, from }: any) {
-  const [timeLeft, { days, hours, minutes, seconds }] = useCountDown({
-    targetDate: data?.timeLeft || 0,
-    interval: 1000
-  });
+  // const [timeLeft, { days, hours, minutes, seconds }] = useCountDown({
+  //   targetDate: data?.timeLeft || 0,
+  //   interval: 1000
+  // });
 
   return (
     <div className={styles.panelEmpty}>
       <div>
         <div className={styles.progressTitleWrapper}>
           <div className={styles.progressTitle}>
-            <ClockIcon />
-            {showAddress ? (
+            {/* <ClockIcon /> */}
+            {/* {showAddress ? (
               <div className={styles.progressTime}>
                 {hours} : {minutes} : {seconds}
               </div>
             ) : (
               <div className={styles.progressTime}>3 : 00 : 00</div>
-            )}
+            )} */}
           </div>
           <div className={styles.progressAmount}>
             <div>{data.like || 0}/100 likes </div>
