@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import React, { useContext, useState, useMemo, useRef, useEffect } from "react";
 import ShareTemplate from "../components/shareTemplate";
+import ShareList from "../components/shareList";
 import { Project } from "../type";
 
 interface MessageContextValue {
@@ -29,6 +30,7 @@ export const MessageContextProvider: React.FC<{
   const [shareTemplateNew, setShareTemplateNew] = useState<boolean>(false);
   const [closeFn, setcloseFn] = useState<any>();
   const shareInstance = useRef<any>();
+  const [shareListShow, setShareListShow] = useState<boolean>(false);
 
   const walletTypeContextValue = useMemo<MessageContextValue>(
     () => ({
@@ -38,12 +40,12 @@ export const MessageContextProvider: React.FC<{
       setHateTrigger,
       showShare: (token: Project, shareTemplateNew = false, closeFn) => {
         setCurrentToken(token);
-        setShareTemplateShow(true);
-        setShareTemplateNew(shareTemplateNew);
-        setcloseFn(closeFn);
-        // if (shareInstance.current) {
-        //     return shareInstance.current.getImgUrl()
-        // }
+        // setShareTemplateShow(true);
+        // setShareTemplateNew(shareTemplateNew);
+        // setcloseFn(closeFn);
+        
+
+        setShareListShow(true);
       }
     }),
     [likeTrigger, setLikeTrigger, hateTrigger, setHateTrigger]
@@ -60,6 +62,12 @@ export const MessageContextProvider: React.FC<{
         onClose={() => {
           closeFn && closeFn();
           setShareTemplateShow(false);
+        }}
+      />
+      <ShareList
+        show={shareListShow}
+        onClose={() => {
+          setShareListShow(false);
         }}
       />
     </MessageContext.Provider>
