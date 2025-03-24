@@ -11,7 +11,10 @@ import { numberFormatter } from "@/app/utils/common";
 import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
 import clsx from "clsx";
+import { reportTradeData, ReportDataType } from "@/app/utils/report";
 
+
+const isPrepaidCache = new Map<string, any>();
 export default function FlipPanel(props: any) {
   const {
     from,
@@ -41,6 +44,7 @@ export default function FlipPanel(props: any) {
   const [loading, setLoading] = useState(false);
   const [isPrePaid, setIsPrePaid] = useState(false);
   const { address } = useAccount();
+  const [reFresh, setRefresh] = useState(1);
   const { prePaid, checkPrePayed } = useTokenTrade({
     tokenName: token.tokenName,
     tokenSymbol: token.tokenSymbol as string,
@@ -53,11 +57,14 @@ export default function FlipPanel(props: any) {
     try {
       setLoading(true);
       const inputNum = new Big(inputVal).mul(10 ** 9).toFixed(0);
-      const res = await prePaid(inputNum, false);
+      const hash = await prePaid(inputNum, false);
       setLoading(false);
-      if (res) {
+      if (hash) {
+        reportTradeData(ReportDataType.FLIP, hash);
+        isPrepaidCache.set(token.address, inputVal);
         success("Flip success");
         onSuccess?.(inputVal);
+        setRefresh(reFresh + 1);
       }
     } catch (e: any) {
       console.log(e);
@@ -76,15 +83,34 @@ export default function FlipPanel(props: any) {
       setIsPrePaid(true);
       return;
     }
-    checkPrePayed().then((prdPaydval) => {
-      setIsPrePaid(prdPaydval > 0);
-    });
-  }, [checkPrePayed, address, token]);
+
+    if (Number(token.total_amount) > 0 || isPrepaidCache.get(token.address)) {
+      setIsPrePaid(true);
+    } else {
+      setIsPrePaid(false);
+    }
+
+    // checkPrePayed().then((prdPaydval) => {
+    //   setIsPrePaid(prdPaydval > 0);
+    // });
+  }, [address, token, reFresh]);
+
+  const prepaidTotalAmount = useMemo(() => {
+    if (isPrepaidCache.has(token.address)) {
+      return isPrepaidCache.get(token.address);
+    }
+
+    if (token.total_amount) {
+      return token.total_amount;
+    }
+
+    return 0;
+  }, [token, reFresh]);
 
   const errorTips = useMemo(() => {
     if (isPrePaid) {
       const flipNumFormatted = numberFormatter(
-        new Big(token.total_amount).toString(),
+        (prepaidTotalAmount),
         4,
         true
       );
@@ -94,7 +120,7 @@ export default function FlipPanel(props: any) {
       return "Enter an amount";
     if (Number(inputVal) > 1) return "Maximum 1 SOL";
     return Big(inputVal || 0).gt(solBalance || 0) ? "Insufficient Balance" : "";
-  }, [solBalance, inputVal, isPrePaid]);
+  }, [solBalance, inputVal, isPrePaid, prepaidTotalAmount, reFresh]);
 
   return (
     <div className={clsx(styles.Container, className)}>

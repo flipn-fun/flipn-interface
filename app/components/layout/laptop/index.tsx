@@ -11,7 +11,8 @@ import Refer from "@/app/components/layout/laptop/user/refer";
 import Header from "./header";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
 import { INVITE_TYPE } from "@/app/config/invite";
-import RpcStatus from "@/app/components/rpc/status";
+import BottomActions from "./bottom-actions";
+import ClaimModal from "@/app/sections/profile/components/tokenAction/claim/modal";
 
 const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
 const MemesPage = dynamic(() => import("@/app/sections/memes"));
@@ -29,7 +30,7 @@ export default function Laptop({ children }: any) {
   const { userInfo, address, updateCurrentUserInfo, logout, pathname } =
     useAuth();
   const settingStore: any = useSetting();
-  useNotice();
+  const { claimToken, setClaimToken, prepaidTokenWithdraw } = useNotice();
   useShare();
 
   if (pathname === "/landing") {
@@ -75,16 +76,17 @@ export default function Laptop({ children }: any) {
         {pathname === "/smartDetail" && SHOW_COPY_TRADE && <SmartDetailPage />}
       </div>
       <Refer userInfo={userInfo} />
-      <div
-        className={`${styles.RpcStatusWrapper} button`}
-        onClick={() => {
-          settingStore.set({
-            showRpcSelectModal: true
-          });
+      <BottomActions />
+      <ClaimModal
+        visible={!!claimToken}
+        onClose={() => {
+          setClaimToken(null);
         }}
-      >
-        <RpcStatus isDefault showLabel />
-      </div>
+        token={claimToken}
+        prepaidTokenWithdraw={prepaidTokenWithdraw}
+        prepaidAmount={claimToken?.prepaidAmount}
+        tokenAmount={claimToken?.tokenAmount}
+      />
     </div>
   );
 }

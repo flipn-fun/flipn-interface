@@ -6,13 +6,13 @@ import ShareIcon from "./share-icon";
 import HolderIcon from "./holder-icon";
 import TokenIcon from "@/app/components/avatar/token";
 import TxIcon from "./tx-icon";
-import LaunchesLike from "./launches-like";
+// import LaunchesLike from "./launches-like";
 import { actionLikeTrigger } from "@/app/components/timesLike/ActionTrigger";
 import { useMessage } from "@/app/context/messageContext";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useAuth } from "@/app/context/auth";
 import { numberFormatter } from "@/app/utils/common";
-import Timer from "./timer";
+// import Timer from "./timer";
 import TipsButton from "@/app/sections/home/laptop/tips-button";
 
 export default function Actions({
@@ -57,9 +57,9 @@ export default function Actions({
           />
         </TipsButton>
       )}
-      {token.status === 0 && (
+      {/* {token.status === 0 && (
         <Timer time={token.timeLeft} isPreview={isPreview} />
-      )}
+      )} */}
       {token.status === 0 ? (
         <>
           <div style={{ height: 14 }} />
@@ -104,7 +104,7 @@ export default function Actions({
         </>
       ) : (
         <>
-          <LaunchesLike
+          {/* <LaunchesLike
             className={styles.Item}
             buttonClassName={`${!disabled ? "button" : ""} ${
               !isMobile && styles.PcItem
@@ -113,7 +113,7 @@ export default function Actions({
             token={token}
             actionLikeTrigger={actionLikeTrigger}
             onSuccess={onSuccess}
-          />
+          /> */}
 
           <div
             className={styles.Item}

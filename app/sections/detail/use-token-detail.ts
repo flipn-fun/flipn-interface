@@ -4,7 +4,7 @@ import { useAuth } from "@/app/context/auth";
 import { httpAuthGet, httpGet } from "@/app/utils";
 import { mapDataToProject } from "@/app/utils/mapTo";
 
-export default function useTokenDetail({ token }: any) {
+export default function useTokenDetail({ token, cb }: any) {
   const [infoData, setInfoData] = useState<any>();
   const params = useSearchParams();
   const [isLoading, setIsLoading] = useState(!token);
@@ -30,6 +30,7 @@ export default function useTokenDetail({ token }: any) {
           if (res.code === 0 && res.data && res.data.length) {
             const infoData = mapDataToProject(res.data[0]);
             setInfoData(infoData);
+            cb?.();
           }
           setIsLoading(false);
         })

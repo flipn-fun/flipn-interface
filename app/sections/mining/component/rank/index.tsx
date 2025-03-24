@@ -28,10 +28,7 @@ export default function Rank(props: any) {
           height: isMobile ? "auto" : "calc(100% - 50px)"
         }}
       >
-        <div style={{ paddingTop: 100 }}>
-          <Empty text="No data" />
-        </div>
-        {/* {info?.mining_rank?.map((item: any, index: number) => (
+        {info?.mining_rank?.map((item: any, index: number) => (
           <RankItem
             key={index}
             rank={index + 1}
@@ -52,9 +49,9 @@ export default function Rank(props: any) {
           rank={info?.your_rank || "-"}
           className={styles.UserRank}
           isUser={true}
-        /> */}
+        />
       </div>
-      {/* {loading && (
+      {loading && (
         <div
           style={{
             paddingTop: 60,
@@ -63,7 +60,12 @@ export default function Rank(props: any) {
         >
           <CircleLoading size={30} />
         </div>
-      )} */}
+      )}
+      {!loading && !info?.mining_rank?.length && (
+        <div style={{ paddingTop: 100 }}>
+          <Empty text="No data" />
+        </div>
+      )}
     </div>
   );
 }

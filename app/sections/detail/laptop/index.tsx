@@ -10,11 +10,18 @@ import { TokenStatusModal } from "@/app/components/status2Alert";
 import { useDetailStatus } from "@/app/store/use-detail-status";
 
 export default function Laptop(props: any) {
-  const { infoData, getDetailInfo } = useTokenDetail({});
   const detailStatusStore: any = useDetailStatus();
   const { innerWidth } = useUserAgent();
   const search = useSearchParams();
   const timer = useRef<any>();
+  const { infoData, getDetailInfo } = useTokenDetail({
+    cb: () => {
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => {
+        getDetailInfo({ isSkipLoading: true });
+      }, 3000);
+    }
+  });
 
   const searchFrom = search.get("from") || "";
 
@@ -29,11 +36,8 @@ export default function Laptop(props: any) {
   }, [searchFrom]);
 
   useEffect(() => {
-    timer.current = setInterval(() => {
-      getDetailInfo();
-    }, 3000);
     return () => {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
     };
   }, []);
 

@@ -1,10 +1,10 @@
 import Modal from "@/app/components/modal";
-import { SOL } from '@/app/components/trade/buySellPump';
-import { useState } from 'react';
-import { fail, success } from '@/app/utils/toast';
-import TokenClaimCard from '@/app/sections/profile/components/tokenAction/card';
-import { numberFormatter } from '@/app/utils/common';
-import Big from 'big.js';
+import { SOL } from "@/app/components/trade/buySellPump";
+import { useState } from "react";
+import { fail, success } from "@/app/utils/toast";
+import TokenClaimCard from "@/app/sections/profile/components/tokenAction/card";
+import { numberFormatter } from "@/app/utils/common";
+import Big from "big.js";
 
 const ClaimModal = (props: any) => {
   const { visible, onClose } = props;
@@ -37,10 +37,11 @@ const Content = (props: any) => {
     prepaidTokenWithdraw,
     prepaidAmount,
     tokenAmount,
-    onClose,
+    onClose
   } = props;
 
-  const tokenIcon = token.tokenIcon || token.tokenImg || "/img/token-placeholder.png";
+  const tokenIcon =
+    token.tokenIcon || token.tokenImg || "/img/token-placeholder.png";
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -52,7 +53,7 @@ const Content = (props: any) => {
         fail("Claim fail", { maskStyle: { zIndex: 2000 } });
       } else {
         success("Claim success", { maskStyle: { zIndex: 2000 } });
-        setIsClaimed(true);
+        setIsClaimed?.(true);
         onClose?.();
       }
     } catch (e) {
@@ -69,15 +70,23 @@ const Content = (props: any) => {
       title="Claim"
       list={[
         {
-          label: 'You flipped',
-          value: numberFormatter(prepaidAmount, 4, true, { isShort: true, isShortUppercase: true, round: Big.roundDown }),
-          icon: SOL.tokenUri,
+          label: "You flipped",
+          value: numberFormatter(prepaidAmount, 4, true, {
+            isShort: true,
+            isShortUppercase: true,
+            round: Big.roundDown
+          }),
+          icon: SOL.tokenUri
         },
         {
-          label: 'To be claimed',
-          value: numberFormatter(tokenAmount, 2, true, { isShort: true, isShortUppercase: true, round: Big.roundDown }),
-          icon: tokenIcon,
-        },
+          label: "To be claimed",
+          value: numberFormatter(tokenAmount, 2, true, {
+            isShort: true,
+            isShortUppercase: true,
+            round: Big.roundDown
+          }),
+          icon: tokenIcon
+        }
       ]}
       tokenIcon={tokenIcon}
       theme="green"
@@ -86,4 +95,3 @@ const Content = (props: any) => {
     />
   );
 };
-

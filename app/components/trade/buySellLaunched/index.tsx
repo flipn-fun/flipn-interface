@@ -24,6 +24,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import useMeteora from "@/app/hooks/useMeteora";
+import { ReportDataType, reportTradeData } from "@/app/utils/report";
 
 type Token = {
   tokenName: string;
@@ -717,9 +718,6 @@ export default function BuySellLaunched({
                     }
                     setIsLoading(false);
                     setReFreshBalnace(Math.random());
-                    setTimeout(() => {
-                      setReFreshBalnace(Math.random());
-                    }, 2000);
                     if (hash) {
                       // const volume =
                       //   activeIndex === 0
@@ -732,6 +730,8 @@ export default function BuySellLaunched({
                       //   Big(volume).toString(),
                       //   token.DApp === "pump" ? "pump" : "sexy"
                       // );
+
+                      reportTradeData(ReportDataType.SWAP, hash);
 
                       const modalHandler = Modal.show({
                         content: (

@@ -36,7 +36,13 @@ export default function CustomizeLink({
         animation={isMobile ? "popup" : "modal"}
         forceNoCloseIcon={isMobile}
       >
-        <div className={styles.ConfigContainer}>
+        <div
+          className={styles.ConfigContainer}
+          style={{
+            width: isMobile ? "100vw" : "323px",
+            borderRadius: isMobile ? "20px 20px 0px 0px" : 20
+          }}
+        >
           <div className={styles.ConfigLink}>
             app.flipn.fun/ref?code={info?.code}
           </div>
@@ -84,8 +90,12 @@ export default function CustomizeLink({
             <span>Customize my invite link</span>
           </div>
           <div className={styles.InputHeader}>
-            <div className={styles.BasicLink}>app.flipn.fun/?code={code}</div>
-            <div className={styles.Amount}>{20 - code.length}</div>
+            <div className={styles.BasicLink}>
+              app.flipn.fun/?code={info?.code}
+            </div>
+            <div className={styles.Amount}>
+              {20 - code.length < 0 ? 0 : 20 - code.length}
+            </div>
           </div>
           <input
             className={`${styles.Input} ${errorMsg && styles.InputError}`}

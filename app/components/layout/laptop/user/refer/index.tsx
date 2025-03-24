@@ -117,28 +117,7 @@ const ReferContent = (props: any) => {
     <>
       <div className={isMobile ? styles.CardInnerMobile : styles.CardInner}>
         <div className={styles.Title}>
-          Invite frenz and{" "}
-          {userInfo?.address ? (
-            "Earn $SOL"
-          ) : (
-            <WalletModalButton
-              style={{
-                cursor: "default",
-                width: "unset",
-                height: "unset",
-                border: 0,
-                background: "unset",
-                display: "inline",
-                padding: 0,
-                margin: 0,
-                fontWeight: 400,
-                fontSize: 14
-              }}
-              isPrivy
-            >
-              Earn $SOL
-            </WalletModalButton>
-          )}
+          Invite frenz and Earn
         </div>
         <div className={styles.Content}>
           {/* <div className={styles.Rebates}>
@@ -151,19 +130,22 @@ const ReferContent = (props: any) => {
             />
             <div className={styles.RebatesUnit}></div>
           </div> */}
-          <button
-            className={clsx(styles.RulesButton, "button")}
-            onClick={handleOpen}
-          >
-            Rules
-          </button>
-          <button
-            type="button"
-            className={styles.ReferBtn}
-            onClick={onCopyShareLink}
-          >
-            Invite
-          </button>
+          <img src="/img/airdrop/referral-kickback.png" alt="" className={styles.KickbackValue} />
+          <div className={styles.ContentButtons}>
+            <button
+              className={clsx(styles.RulesButton, "button")}
+              onClick={handleOpen}
+            >
+              Rules
+            </button>
+            <button
+              type="button"
+              className={styles.ReferBtn}
+              onClick={onCopyShareLink}
+            >
+              Invite
+            </button>
+          </div>
         </div>
       </div>
       <button
@@ -171,6 +153,7 @@ const ReferContent = (props: any) => {
         className={styles.CloseBtn}
         onClick={handleEntryClose}
       />
+      <div className={styles.CardInnerShadow}></div>
     </>
   );
 };

@@ -14,15 +14,15 @@ export default {
     "Detail"
   ],
   token_launching: (item: any) => [
-    "Token Ticking",
-    `Congratulations, the ${item.content_2} Token you Flipped has received a lot of user interest and has successfully entered the Ticking stage.`,
+    "Token Bonding",
+    `Congratulations, the ${item.content_2} Token you Flipped has received a lot of user interest and has successfully entered the Bonding stage.`,
     "Click to view Token details.",
     `/detail?address=${item.msg_id}&from=messages`,
     "Detail"
   ],
   token_launching_owner: (item: any) => [
-    "Token Ticking",
-    `Congratulations, the ${item.content_2} Token you created has received a lot of user interest and has successfully entered the Ticking stage.
+    "Token Bonding",
+    `Congratulations, the ${item.content_2} Token you created has received a lot of user interest and has successfully entered the Bonding stage.
 Click to view Token details.`,
     "Click to view Token details.",
     `/detail?address=${item.msg_id}&from=messages`,
