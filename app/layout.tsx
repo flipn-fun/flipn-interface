@@ -60,6 +60,7 @@ export default function RootLayout({
             `
           }}
         />
+        <script src="https://cdn.getphyllo.com/connect/v2/phyllo-connect.js" async></script>
       </head>
       <body>
         <TGProvider>

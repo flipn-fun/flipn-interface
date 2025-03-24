@@ -3,15 +3,14 @@ import styles from "./index.module.css";
 import Content from "./content";    
 import { useUserAgent } from "@/app/context/user-agent";
 import { Popup } from "antd-mobile";
-
+import { Project } from "@/app/type";
 interface ShareListProps {
+    token: Project | undefined;
     show: boolean;
     onClose: () => void;
 }
 
-console.log("shareList", styles);
-
-const ShareList: React.FC<ShareListProps> = ({ show, onClose }) => {
+const ShareList: React.FC<ShareListProps> = ({ token, show, onClose }) => {
     const { isMobile } = useUserAgent();
 
     if (isMobile) {
@@ -29,7 +28,7 @@ const ShareList: React.FC<ShareListProps> = ({ show, onClose }) => {
                     background: '#252328'
                 }}
             >
-                <Content />
+                <Content data={token} />
             </Popup>
         )
     }
@@ -39,7 +38,7 @@ const ShareList: React.FC<ShareListProps> = ({ show, onClose }) => {
             open={show}
             onClose={onClose}
         >
-            <Content />
+            <Content data={token} />
         </Modal>
     );
 };

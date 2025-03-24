@@ -65,6 +65,7 @@ export const MessageContextProvider: React.FC<{
         }}
       />
       <ShareList
+        token={currentToken}
         show={shareListShow}
         onClose={() => {
           setShareListShow(false);
