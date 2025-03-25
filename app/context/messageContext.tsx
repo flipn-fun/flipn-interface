@@ -5,6 +5,7 @@ import React, { useContext, useState, useMemo, useRef, useEffect } from "react";
 import ShareTemplate from "../components/shareTemplate";
 import ShareList from "../components/shareList";
 import { Project } from "../type";
+import { videoReg } from "../components/upload";
 
 interface MessageContextValue {
   likeTrigger: boolean;
@@ -43,9 +44,11 @@ export const MessageContextProvider: React.FC<{
         // setShareTemplateShow(true);
         // setShareTemplateNew(shareTemplateNew);
         // setcloseFn(closeFn);
-        
-
-        setShareListShow(true);
+        if (videoReg.test(token.tokenImg)) {
+          setShareListShow(true);
+        } else {
+          setShareTemplateShow(true);
+        }
       }
     }),
     [likeTrigger, setLikeTrigger, hateTrigger, setHateTrigger]
@@ -65,6 +68,7 @@ export const MessageContextProvider: React.FC<{
         }}
       />
       <ShareList
+        openX={setShareTemplateShow}
         token={currentToken}
         show={shareListShow}
         onClose={() => {

@@ -3,16 +3,18 @@ import Media from '../thumbnail/media';
 import styles from './preview.module.css';
 import { Project } from '@/app/type';
 import { useUserAgent } from '@/app/context/user-agent';
-import { httpGet } from '@/app/utils';
-import { useEffect, useState } from 'react';
+import { httpAuthPost, httpGet } from '@/app/utils';
+import { useCallback, useEffect, useState } from 'react';
+import { success } from '@/app/utils/toast';
 
 interface PreviewProps {
     isOpen: boolean;
     onClose: () => void;
     token: Project | undefined;
+    accountId: string | null;
 }
 
-export default function Preview({ isOpen, onClose, token }: PreviewProps) {
+export default function Preview({ isOpen, onClose, token, accountId }: PreviewProps) {
     const { isMobile } = useUserAgent();
     const [shareCopy, setShareCopy] = useState('');
 
@@ -32,6 +34,18 @@ export default function Preview({ isOpen, onClose, token }: PreviewProps) {
 
         getShareCopy();
     }, []);
+
+    const share = useCallback(async () => {
+        if (!accountId || !token) return;
+        try {
+            const res = await httpAuthPost(`/contents/publish?account_id=${accountId}&project_id=${token?.id}`);
+            if (res.code === 0) {
+                success("Share successfully");
+            }
+        } catch (error) {
+            console.error("Failed to share:", error);
+        }
+    }, [accountId, token]);
 
     if (!token) {
         return null;
@@ -59,7 +73,9 @@ export default function Preview({ isOpen, onClose, token }: PreviewProps) {
                         />
                         <span className={styles.username}>@Oxflipnfans</span>
                     </div>
-                    <button className={styles.postButton}>Post</button>
+                    <button className={styles.postButton} onClick={() => {
+                        share();
+                    }}>Post</button>
                 </div>
 
                 <div className={styles.tokenMsg}>

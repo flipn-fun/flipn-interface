@@ -4,22 +4,23 @@ import { httpAuthPost } from "../utils";
 import { fail } from "../utils/toast";
 
 export default function usePhyllo() {
-    const { userInfo }: any = useUser();
-    const [token, setToken] = useState<string | null>('1111');
+    // const { userInfo }: any = useUser();
+    const [userId, setUserId] = useState<string | null>(null);
+    const [token, setToken] = useState<string | null>(null);
     const phylloConnectRef = useRef<any>(null);
+    const [isInit, setIsInit] = useState(false);
 
     useEffect(() => {
-
-        // if (!token || phylloConnectRef.current) return;
+        if (!token || phylloConnectRef.current) return;
 
         const config = {
             clientDisplayName: 'FlipN', // the name of your app that you want the creators to see while granting access
-            environment: 'sandbox', // the mode in which you want to use the SDK,  `sandbox`, `staging` or `production`
+            environment: 'staging', // the mode in which you want to use the SDK,  `sandbox`, `staging` or `production`
             // userId: userInfo?.user_external_id, // the unique user_id parameter returned by Phyllo API when you create a user (see https://docs.getphyllo.com/docs/api-reference/reference/openapi.v1.yml/paths/~1v1~1users/post)
-            userId: '3333', // the unique user_id parameter returned by Phyllo API when you create a user (see https://docs.getphyllo.com/docs/api-reference/reference/openapi.v1.yml/paths/~1v1~1users/post)
+            userId, // the unique user_id parameter returned by Phyllo API when you create a user (see https://docs.getphyllo.com/docs/api-reference/reference/openapi.v1.yml/paths/~1v1~1users/post)
             token,
             redirect: false, // (optional) flag to indicate that you want to use the redirect flow, this is `false` by default
-            workPlatformId: '1', // (optional) the unique work_platform_id of a specific work platform, if you want the creator to skip the platform selection screen and just be able to connect just with a single work platform
+            workPlatformId: '7645460a-96e0-4192-a3ce-a1fc30641f72', // (optional) the unique work_platform_id of a specific work platform, if you want the creator to skip the platform selection screen and just be able to connect just with a single work platform
         };
 
         // @ts-ignore
@@ -67,27 +68,31 @@ export default function usePhyllo() {
             }
         );
 
-    }, [token, userInfo]);
+        setIsInit(true);
+
+    }, [token, userId]);
 
     const getToken = useCallback(async () => {
         const res = await httpAuthPost('/sdk/token');
         console.log("res", res);
         if (res.code === 0 && res.data) {
-            setToken(res.data);
+            setToken(res.data.sdk_token);
+            setUserId(res.data.user_id);
         } else {
             fail('Load PhylloConnect token failed');
         }
     }, []);
 
     const connectPhyllo = useCallback(() => {
+        if (!token) return;
         console.log("connectPhyllo", phylloConnectRef.current);
         phylloConnectRef.current?.open();
-    }, []);
+    }, [token]);
 
     useEffect(() => {
         getToken();
     }, []);
 
-    return { token, connectPhyllo };
+    return { token, isInit, userId, connectPhyllo };
 
 }

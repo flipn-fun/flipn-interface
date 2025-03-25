@@ -8,9 +8,10 @@ interface ShareListProps {
     token: Project | undefined;
     show: boolean;
     onClose: () => void;
+    openX: (show: boolean) => void;
 }
 
-const ShareList: React.FC<ShareListProps> = ({ token, show, onClose }) => {
+const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose }) => {
     const { isMobile } = useUserAgent();
 
     if (isMobile) {
@@ -28,7 +29,7 @@ const ShareList: React.FC<ShareListProps> = ({ token, show, onClose }) => {
                     background: '#252328'
                 }}
             >
-                <Content data={token} />
+                <Content data={token} openX={openX} />
             </Popup>
         )
     }
@@ -38,7 +39,7 @@ const ShareList: React.FC<ShareListProps> = ({ token, show, onClose }) => {
             open={show}
             onClose={onClose}
         >
-            <Content data={token} />
+            <Content data={token} openX={openX} />
         </Modal>
     );
 };
