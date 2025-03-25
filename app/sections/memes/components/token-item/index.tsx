@@ -324,11 +324,13 @@ export const TokenItemSummaries = (props: any) => {
       )}
       {currentTab?.value === TABS[1].value && (
         <>
-          <SummaryItem
-            className={styles.TokenItemSummary}
-            type="like"
-            value={token.like || 0}
-          />
+          {token.status === 0 && (
+            <SummaryItem
+              className={styles.TokenItemSummary}
+              type="like"
+              value={token.like || 0}
+            />
+          )}
           <SummaryItem
             className={styles.TokenItemSummary}
             type="flip"
