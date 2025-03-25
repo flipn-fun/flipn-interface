@@ -301,7 +301,7 @@ export const TokenItemSummaries = (props: any) => {
     <div className={clsx(styles.TokenItemSummaries, className)}>
       {currentTab?.value !== TABS[1].value && (
         <>
-          {[0, 1, 2].includes(token.status) ? (
+          {/*{[0, 1, 2].includes(token.status) ? (
             <SummaryItem
               className={styles.TokenItemSummary}
               type="rocket"
@@ -313,7 +313,7 @@ export const TokenItemSummaries = (props: any) => {
               type="plane"
               value={token.launched_like || 0}
             />
-          )}
+          )}*/}
           <SummaryItem
             className={styles.TokenItemSummary}
             type="user"
