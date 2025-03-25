@@ -22,8 +22,10 @@ export default function Laptop(props: any) {
       }, 3000);
     }
   });
+  const addressRef = useRef<any>();
 
   const searchFrom = search.get("from") || "";
+  const tokenAddress = search.get("address") || "";
 
   useEffect(() => {
     detailStatusStore.setToken(infoData);
@@ -36,6 +38,7 @@ export default function Laptop(props: any) {
   }, [searchFrom]);
 
   useEffect(() => {
+    addressRef.current = tokenAddress;
     return () => {
       clearTimeout(timer.current);
     };
@@ -77,11 +80,14 @@ export default function Laptop(props: any) {
                 detailStatusStore.setToken(JSON.parse(JSON.stringify(token)));
                 return;
               }
+
               if (
-                search.get("address")?.toLowerCase() !==
+                addressRef.current?.toLowerCase() !==
                 token.address.toLowerCase()
-              )
+              ) {
                 return;
+              }
+
               if (action === "flip") {
                 setTimeout(() => {
                   getDetailInfo();
