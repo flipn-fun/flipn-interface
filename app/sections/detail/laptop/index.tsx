@@ -77,6 +77,11 @@ export default function Laptop(props: any) {
                 detailStatusStore.setToken(JSON.parse(JSON.stringify(token)));
                 return;
               }
+              if (
+                search.get("address")?.toLowerCase() !==
+                token.address.toLowerCase()
+              )
+                return;
               if (action === "flip") {
                 setTimeout(() => {
                   getDetailInfo();
