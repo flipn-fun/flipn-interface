@@ -12,7 +12,7 @@ import { useMessage } from "@/app/context/messageContext";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useAuth } from "@/app/context/auth";
 import { numberFormatter } from "@/app/utils/common";
-import Timer from "./timer";
+// import Timer from "./timer";
 import TipsButton from "@/app/sections/home/laptop/tips-button";
 
 export default function Actions({
@@ -57,9 +57,9 @@ export default function Actions({
           />
         </TipsButton>
       )}
-      {token.status === 0 && (
+      {/* {token.status === 0 && (
         <Timer time={token.timeLeft} isPreview={isPreview} />
-      )}
+      )} */}
       {token.status === 0 ? (
         <>
           <div style={{ height: 14 }} />
