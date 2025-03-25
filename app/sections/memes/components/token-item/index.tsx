@@ -213,7 +213,7 @@ const TokenItem = (props: {
         </>
       ) : (
         <div className={styles.TokenItemLaptopFooter}>
-          <div />
+          {token.status === 0 ? <div /> : <TokenItemMarketCap token={token} />}
           <TokenItemSummaries
             token={token}
             holders={holders}
