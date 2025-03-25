@@ -1,20 +1,23 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { httpGet, timeAgo } from '@/app/utils';
-import { PublicKey } from '@solana/web3.js';
-import { programId_address } from '@/app/utils/config';
-import Big from 'big.js';
-import { Program } from '@coral-xyz/anchor';
-import idl from '@/app/hooks/meme_launchpad.json';
-import { useConnection } from '@solana/wallet-adapter-react';
-import { Hot, Meme, useMemesListStore } from '@/app/sections/memes/store/list';
-import { MemesState, useMemesStore } from '@/app/sections/memes/store';
-import { Order, TABS } from '@/app/sections/memes/config';
-import { useThrottleFn } from 'ahooks';
-import { fetchData, getGranularityByResolution } from '@/app/components/chart/fetch-data';
-import { getTokenMeta } from '@/app/utils/solanaScanApi';
-import { minBy } from 'lodash-es';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { httpGet, timeAgo } from "@/app/utils";
+import { PublicKey } from "@solana/web3.js";
+import { programId_address } from "@/app/utils/config";
+import Big from "big.js";
+import { Program } from "@coral-xyz/anchor";
+import idl from "@/app/hooks/meme_launchpad.json";
+import { useConnection } from "@solana/wallet-adapter-react";
+import { Hot, Meme, useMemesListStore } from "@/app/sections/memes/store/list";
+import { MemesState, useMemesStore } from "@/app/sections/memes/store";
+import { Order, TABS } from "@/app/sections/memes/config";
+import { useThrottleFn } from "ahooks";
+import {
+  fetchData,
+  getGranularityByResolution
+} from "@/app/components/chart/fetch-data";
+import { getTokenMeta } from "@/app/utils/solanaScanApi";
+import { minBy } from "lodash-es";
 
-export function useMemes(props?: { isLoadData?: boolean; }): Memes {
+export function useMemes(props?: { isLoadData?: boolean }): Memes {
   const { isLoadData } = props ?? {};
 
   const {
@@ -45,7 +48,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     setMemesHoldersQueue,
     spliceMemesHoldersQueue,
     memesListHoldersLoading,
-    setMemesListHoldersLoading,
+    setMemesListHoldersLoading
   } = useMemesListStore();
   const {
     currentTab,
@@ -53,7 +56,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     prevTab,
     setPrevTab,
     currentFilter,
-    setCurrentFilter,
+    setCurrentFilter
   } = useMemesStore();
   const { connection } = useConnection();
 
@@ -114,18 +117,21 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     setHoldersLoading(true);
     setMemesListHoldersLoading({ [address]: true });
     return new Promise((resolve) => {
-      getTokenMeta(address).then((res) => {
-        const holders = res?.data?.holder || 0;
-        setMemesListHolders({ [address]: holders });
-        resolve(holders);
-      }).catch((err) => {
-        resolve(void 0);
-        console.log('get meme holders queue err: %o', err);
-      }).finally(() => {
-        setHoldersLoading(false);
-        setMemesListHoldersLoading({ [address]: false });
-        spliceMemesHoldersQueue(0);
-      })
+      getTokenMeta(address)
+        .then((res) => {
+          const holders = res?.data?.holder || 0;
+          setMemesListHolders({ [address]: holders });
+          resolve(holders);
+        })
+        .catch((err) => {
+          resolve(void 0);
+          console.log("get meme holders queue err: %o", err);
+        })
+        .finally(() => {
+          setHoldersLoading(false);
+          setMemesListHoldersLoading({ [address]: false });
+          spliceMemesHoldersQueue(0);
+        });
     });
   };
 
@@ -150,7 +156,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
         // console.log('%ctrends getPoolToken no pool, will return 0 amount', 'background:#FF2681;color:#fff;');
         return {
           poolAmount: Big(0),
-          solAmount: Big(0),
+          solAmount: Big(0)
         };
       }
       const program = new Program<any>(idl, programId, {
@@ -169,13 +175,17 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       // );
       return {
         poolAmount: poolToken,
-        solAmount: solToken,
+        solAmount: solToken
       };
     } catch (err) {
-      console.log('%ctrends getPoolToken failed: %o', 'background:#FF2681;color:#fff;', err);
+      console.log(
+        "%ctrends getPoolToken failed: %o",
+        "background:#FF2681;color:#fff;",
+        err
+      );
       return {
         poolAmount: Big(0),
-        solAmount: Big(0),
+        solAmount: Big(0)
       };
     }
   };
@@ -184,14 +194,20 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     _list = Array.isArray(_list) ? _list : [];
     for (let i = 0; i < _list.length; i++) {
       const it = _list[i];
-      it.kind = 'Hot';
-      it.created2Now = timeAgo(new Date(it.project_created).getTime(), new Date().getTime());
+      it.kind = "Hot";
+      it.created2Now = timeAgo(
+        new Date(it.project_created).getTime(),
+        new Date().getTime()
+      );
 
       setMemesHoldersQueue(it.address);
 
       if ([0].includes(it.status)) {
         const { poolAmount, solAmount } = await getPoolToken(it);
-        let _progress = Big(1095840542120770).minus(poolAmount).div(Big(1095840542120770).minus(295840542120770)).times(100);
+        let _progress = Big(1095840542120770)
+          .minus(poolAmount)
+          .div(Big(1095840542120770).minus(295840542120770))
+          .times(100);
         if (Big(_progress).lt(0)) {
           _progress = Big(0);
         }
@@ -207,12 +223,12 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       if (![0].includes(it.status) && i < 3) {
         const kLineRes = await fetchData(
           it.address,
-          getGranularityByResolution('1H'),
+          getGranularityByResolution("1H"),
           0
         );
         it.kLineData = kLineRes.data.map(([timestamp, open]: any) => ({
           timestamp: timestamp,
-          price: parseFloat(open),
+          price: parseFloat(open)
         }));
       }
     }
@@ -227,8 +243,8 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
         // https://s3.cn-north-1.amazonaws.com.cn/lcpublic/185dc2d5-3cd5-40b5-9957-f1f95e47ca08_1200_8000?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAR4LOV33FDQFAFDV4%2F20250106%2Fcn-north-1%2Fs3%2Faws4_request&X-Amz-Date=20250106T130658Z&X-Amz-Expires=10800&X-Amz-Signature=18fe496af343275074fcf0925e3f38102e99a5685e1be029f77b837a17a7490e&X-Amz-SignedHeaders=host&x-id=GetObject
         limit: 100,
         offset: 0,
-        text: '',
-        order: '',
+        text: "",
+        order: ""
       });
 
       const _hot_list = await formatHotList(res.data.list);
@@ -236,7 +252,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       setHotList(_hot_list);
       setHotListLoading(false);
     } catch (err) {
-      console.log('get hot list err: %o', err);
+      console.log("get hot list err: %o", err);
       setHotListLoading(false);
     }
   };
@@ -245,12 +261,12 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     _list = Array.isArray(_list) ? _list : [];
     for (let i = 0; i < _list.length; i++) {
       const it = _list[i];
-      it.kind = 'Meme';
+      it.kind = "Meme";
       it.created2Now = timeAgo(it.DApp === "pump" ? it.time : it.created_at);
 
       setMemesHoldersQueue(it.address);
 
-      if (memesListCountdown[it.id] !== void 0 && tabType === 'import') {
+      if (memesListCountdown[it.id] !== void 0 && tabType === "import") {
         it.countdown = memesListCountdown[it.id];
       }
     }
@@ -263,7 +279,7 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       offset = memesListPageOffset,
       order = currentFilter?.order,
       sort = currentFilter?.value,
-      type = currentTab.value,
+      type = currentTab.value
     } = params ?? {};
 
     const _getMinId = () => {
@@ -292,14 +308,17 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     };
 
     try {
-      const memesListParams = {
+      const memesListParams: Record<string, any> = {
         limit: memesListPageLimit,
         offset: offset * memesListPageLimit,
         order,
         sort,
-        type,
-        min_id: _getMinId(),
+        type
       };
+
+      if (offset !== 0) {
+        memesListParams.min_id = _getMinId();
+      }
       if (!memesListParams.min_id) {
         delete memesListParams.min_id;
       }
@@ -341,17 +360,20 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
       setMemesListPageOffset(offset);
       setMemesListLoading(false);
     } catch (err) {
-      console.log('get memes list err: %o', err);
+      console.log("get memes list err: %o", err);
       setMemesListLoading(false);
     }
   };
 
-  const { run: onMemesListNextPage } = useThrottleFn(() => {
-    if (memesListLoading || !memesListPageNext) return;
-    getMemesList({
-      offset: memesListPageOffset + 1,
-    });
-  }, { wait: 1000 });
+  const { run: onMemesListNextPage } = useThrottleFn(
+    () => {
+      if (memesListLoading || !memesListPageNext) return;
+      getMemesList({
+        offset: memesListPageOffset + 1
+      });
+    },
+    { wait: 1000 }
+  );
 
   const initMemesList = () => {
     setMemesGenesisList([]);
@@ -397,11 +419,16 @@ export function useMemes(props?: { isLoadData?: boolean; }): Memes {
     memesContainerRef,
     setMemesListCountdown,
     memesListHolders,
-    memesListHoldersLoading,
+    memesListHoldersLoading
   };
 }
 
-interface MemesListParams { offset?: number; order?: Order; sort?: string; type?: string; }
+interface MemesListParams {
+  offset?: number;
+  order?: Order;
+  sort?: string;
+  type?: string;
+}
 
 export interface Memes extends MemesState {
   hotList: Hot[];

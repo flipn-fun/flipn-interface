@@ -106,6 +106,7 @@ const TokenItem = (props: {
                   ..._token,
                   is_king: false
                 }}
+                showRanking={false}
               />
               <div
                 className={styles.TokenItemLaptopAvatarProfileSymbol}
@@ -124,8 +125,8 @@ const TokenItem = (props: {
           <div
             className={styles.TokenItemLaptopAvatarCrown}
             style={
-              _token?.is_king && _token.kind === "Hot"
-                ? _token.ranking <= 3
+              _token.kind === "Hot"
+                ? _token.ranking <= 3 && _token.ranking !== 0
                   ? {
                       right: "unset",
                       top: "-20px",
@@ -133,32 +134,33 @@ const TokenItem = (props: {
                       zIndex: 2,
                       transform: "rotate(0deg)"
                     }
-                  : {
+                  : _token?.is_king
+                  ? {
                       right: "-10px",
                       top: "-15px",
                       transform: "rotate(30deg)"
                     }
+                  : {}
                 : {}
             }
           >
-            {(_token?.is_king && _token.kind === "Hot")
-              && (
-                _token.ranking > 3 ? (
+            {_token.kind === "Hot" &&
+              (_token.ranking > 3 || _token.ranking === 0 ? (
+                _token?.is_king && (
                   <img
                     src="/img/memes/icon-crown.svg"
                     alt=""
                     className={styles.TokenItemLaptopAvatarCrownIcon}
                     style={{ display: "none" }}
                   />
-                ) : (
-                  <img
-                    src="/img/memes/icon-crown-laptop.svg"
-                    alt=""
-                    className={styles.TokenItemLaptopAvatarCrownKingIcon}
-                  />
                 )
-              )
-            }
+              ) : (
+                <img
+                  src="/img/memes/icon-crown-laptop.svg"
+                  alt=""
+                  className={styles.TokenItemLaptopAvatarCrownKingIcon}
+                />
+              ))}
           </div>
         </div>
       )}
@@ -181,16 +183,17 @@ const TokenItem = (props: {
             <div className={styles.TokenItemProfile}>
               <div className={styles.TokenItemName}>
                 <div>{formatLongText(token.token_symbol, 6, 6)}</div>
-                {token.is_king &&
-                  token.kind === "Hot" &&
-                  (token.ranking <= 3 ? (
+                {token.kind === "Hot" &&
+                  (token.ranking <= 3 && token.ranking !== 0 ? (
                     <div className={styles.TokenItemNameIcon}>👑</div>
                   ) : (
-                    <img
-                      src="/img/trends/crown-second.svg"
-                      alt=""
-                      className={styles.TokenItemNameIconCrown}
-                    />
+                    token.is_king && (
+                      <img
+                        src="/img/trends/crown-second.svg"
+                        alt=""
+                        className={styles.TokenItemNameIconCrown}
+                      />
+                    )
                   ))}
               </div>
               <TokenItemMarketCap token={token} />
@@ -210,7 +213,7 @@ const TokenItem = (props: {
         </>
       ) : (
         <div className={styles.TokenItemLaptopFooter}>
-          <TokenItemMarketCap token={token} />
+          <div />
           <TokenItemSummaries
             token={token}
             holders={holders}
@@ -339,32 +342,21 @@ export const TokenItemSummaries = (props: any) => {
 
 export const TokenItemMarketCap = (props: any) => {
   const { token } = props;
-  const { setMemesListCountdown } = useContext(MemesContext);
-
-  const [countdownFinished, setCountdownFinished] = useState(false);
 
   return (
-    <>
-      {Big(token.countdown || 0).gt(0) ? (
-        <Countdown
-          token={token}
-          onFinish={() => {
-            setCountdownFinished(true);
-            setMemesListCountdown?.({
-              [token.id]: 0
-            });
-          }}
-        />
-      ) : (
-        <div className={Big(token?.market_cap_24h_usd || 0).gte(0) ? styles.TokenItemMarketCap : styles.TokenItemMarketCapDown}>
-          MC{" "}
-          {numberFormatter(token.market_cap, 2, true, {
-            prefix: "$",
-            isShort: true,
-            isShortUppercase: true
-          })}
-        </div>
-      )}
-    </>
+    <div
+      className={
+        Big(token?.market_cap_24h_usd || 0).gte(0)
+          ? styles.TokenItemMarketCap
+          : styles.TokenItemMarketCapDown
+      }
+    >
+      MC{" "}
+      {numberFormatter(token.market_cap, 2, true, {
+        prefix: "$",
+        isShort: true,
+        isShortUppercase: true
+      })}
+    </div>
   );
 };
