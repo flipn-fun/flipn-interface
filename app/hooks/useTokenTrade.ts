@@ -241,6 +241,8 @@ export function useTokenTrade({
       console.log(e);
     }
 
+    console.log(referral, 'referral', state)
+
     const referralFeeRateRecord = PublicKey.findProgramAddressSync(
       [
         Buffer.from("referral_fee_rate_record"),
@@ -757,39 +759,30 @@ export function useTokenTrade({
       let lamports = 0;
 
       if (amount && Number(amount) > 0) {
-        lamports += Number(amount);
+        lamports += (Number(amount) + (0.003 * (10 ** 9)));
       }
 
       if (stateData.createTokenFee.toNumber() > 0) {
         lamports += stateData.createTokenFee.toNumber();
       }
 
-      console.log("lamports:", lamports, stateData.createTokenFee.toNumber());
+      if (lamports > 0) {
+        const instruction1 = SystemProgram.transfer({
+          fromPubkey: walletProvider.publicKey!,
+          toPubkey: userSolAccount.address,
+          lamports
+        });
+        const instruction2 = createSyncNativeInstruction(
+          userSolAccount.address,
+          TOKEN_PROGRAM_ID
+        );
 
-      const instruction1 = SystemProgram.transfer({
-        fromPubkey: walletProvider.publicKey!,
-        toPubkey: userSolAccount.address,
-        lamports
-      });
-      const instruction2 = createSyncNativeInstruction(
-        userSolAccount.address,
-        TOKEN_PROGRAM_ID
-      );
+        transaction
+          .add(instruction1)
+          .add(instruction2)
+      }
 
-      transaction
-        // .add(
-        //   ComputeBudgetProgram.setComputeUnitLimit({
-        //     units: 991600000
-        //   })
-        // )
-        // .add(
-        //   ComputeBudgetProgram.setComputeUnitPrice({
-        //     microLamports: 20000
-        //   })
-        // )
-        .add(instruction1)
-        .add(instruction2)
-        .add(createInfoTransition);
+      transaction.add(createInfoTransition);
 
       if (launching) {
         const instructions = await call(
@@ -843,7 +836,7 @@ export function useTokenTrade({
         return;
       }
 
-      const { keys, instructions } = keysAndIns;
+      const { keys, instructions, referral } = keysAndIns;
 
       const transaction = new Transaction();
 
@@ -868,25 +861,19 @@ export function useTokenTrade({
         programId
       );
 
-      const protocolSolAccount = await _getOrCreateAssociatedTokenAccount(
-        wsol,
-        keys.launchpad
-      );
-
-      if (!protocolSolAccount) {
-        throw "Create protocolSolAccount failed";
-      }
-
-      if (protocolSolAccount.instruction) {
-        transaction.add(protocolSolAccount.instruction);
-      }
-
       const prepaidInstruction = await program.methods
-        .prepaid(new anchor.BN(amount))
+        .prepaid({
+          amount: new anchor.BN(amount),
+          recommender: referral,
+          proxy: keys.proxySolAccount
+        })
         .accounts({
           ...keys,
+          referralWsolAccount: keys.referralSolAccount,
+          protocolWsolAccount: keys.protocolSolAccount,
+          proxyWsolAccount: keys.proxySolAccount,
           paidRecord: paidRecord[0],
-          protocolWsolAccount: protocolSolAccount.address
+          // protocolWsolAccount: protocolSolAccount.address
         })
         .instruction();
 
@@ -897,7 +884,7 @@ export function useTokenTrade({
       const instruction1 = SystemProgram.transfer({
         fromPubkey: walletProvider.publicKey!,
         toPubkey: keys.userWsolAccount,
-        lamports: Number(amount)
+        lamports: Number(amount) + (0.003 * (10 ** 9))
       });
       const instruction2 = createSyncNativeInstruction(
         keys.userWsolAccount,
@@ -995,10 +982,7 @@ export function useTokenTrade({
       const transaction = new Transaction();
 
       const prepaidTokenWithdrawInstruction = await program.methods
-        .prepaidTokenWithdraw({
-          recommender: referral,
-          proxy: keys.proxySolAccount
-        })
+        .prepaidTokenWithdraw()
         .accounts({
           ...keys,
           paidRecord: paidRecord[0]
