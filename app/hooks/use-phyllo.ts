@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useUser } from "../store/useUser";
-import { httpAuthPost } from "../utils";
+import { httpAuthPost, httpAuthGet } from "../utils";
 import { fail } from "../utils/toast";
 
 export default function usePhyllo() {
@@ -9,7 +9,7 @@ export default function usePhyllo() {
     const [token, setToken] = useState<string | null>(null);
     const phylloConnectRef = useRef<any>(null);
     const [isInit, setIsInit] = useState(false);
-
+    const [phylloAccount, setPhylloAccount] = useState<any>(null);
     useEffect(() => {
         if (!token || phylloConnectRef.current) return;
 
@@ -45,6 +45,7 @@ export default function usePhyllo() {
                 console.log(
                     `onAccountConnected: ${accountId}, ${workplatformId}, ${userId}`
                 );
+                getAccount();
             }
         );
 
@@ -89,10 +90,32 @@ export default function usePhyllo() {
         phylloConnectRef.current?.open();
     }, [token]);
 
+    const getAccount = useCallback(async () => {
+        if (!userId) return;
+        httpAuthGet(`/phyllo/accounts?user_id=${userId}`).then((res) => {
+            console.log("res", res);
+            if (res.code === 0 && res.data?.data) {
+                const accounts = res.data.data;
+                const account = accounts.find((item: any) => item.work_platform.id === '7645460a-96e0-4192-a3ce-a1fc30641f72');
+                console.log("account", account);
+                if (account) {
+                    setPhylloAccount(account);
+                }
+            }
+        });
+    }, [userId]);
+    
+
+    useEffect(() => {
+        if (userId) {
+            getAccount();
+        }
+    }, [userId]);
+
     useEffect(() => {
         getToken();
     }, []);
 
-    return { token, isInit, userId, connectPhyllo };
+    return { token, isInit, userId, phylloAccount, connectPhyllo };
 
 }

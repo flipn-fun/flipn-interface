@@ -14,7 +14,7 @@ interface ShareListProps {
 
 const Content: React.FC<ShareListProps> = ({ data, openX }) => {
   const { isMobile } = useUserAgent();
-  const { isInit, userId, connectPhyllo } = usePhyllo();
+  const { isInit, userId, phylloAccount, connectPhyllo } = usePhyllo();
   const [preview, setPreview] = useState(false);
 
   return (
@@ -23,9 +23,12 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
           <div className={styles.iconItem} onClick={() => {
-            if (!isInit) return;
-            connectPhyllo();
-            // setPreview(true);
+            if (!isInit) return;  
+            if (!phylloAccount || phylloAccount.status === 'NOT_CONNECTED') {
+              connectPhyllo();
+            } else {
+              setPreview(true);
+            }
           }}>
             {isInit ? (
               <>
@@ -92,7 +95,7 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
         </div>
       </div>
 
-      <Preview token={data} accountId={userId} isOpen={preview} onClose={() => setPreview(false)} />
+      <Preview token={data} phylloAccount={phylloAccount} accountId={userId} isOpen={preview} onClose={() => setPreview(false)} />
     </div>
   );
 };

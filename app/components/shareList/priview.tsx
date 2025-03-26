@@ -12,9 +12,10 @@ interface PreviewProps {
     onClose: () => void;
     token: Project | undefined;
     accountId: string | null;
+    phylloAccount: any;
 }
 
-export default function Preview({ isOpen, onClose, token, accountId }: PreviewProps) {
+export default function Preview({ isOpen, onClose, token, accountId, phylloAccount }: PreviewProps) {
     const { isMobile } = useUserAgent();
     const [shareCopy, setShareCopy] = useState('');
 
@@ -47,7 +48,7 @@ export default function Preview({ isOpen, onClose, token, accountId }: PreviewPr
         }
     }, [accountId, token]);
 
-    if (!token) {
+    if (!token || !phylloAccount) {
         return null;
     }
 
@@ -67,11 +68,11 @@ export default function Preview({ isOpen, onClose, token, accountId }: PreviewPr
                 <div className={styles.userAction}>
                     <div className={styles.userInfo}>
                         <img
-                            src="/avatar.png"
+                            src={ phylloAccount?.profile_pic_url }
                             alt="User avatar"
                             className={styles.avatar}
                         />
-                        <span className={styles.username}>@Oxflipnfans</span>
+                        <span className={styles.username}>{ phylloAccount?.platform_username }</span>
                     </div>
                     <button className={styles.postButton} onClick={() => {
                         share();
