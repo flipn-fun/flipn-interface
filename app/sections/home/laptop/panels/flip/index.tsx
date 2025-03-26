@@ -15,7 +15,6 @@ import { reportTradeData, ReportDataType } from "@/app/utils/report";
 import dayjs from "dayjs";
 import { usePrepaidDelayTimeStore } from "@/app/store/usePrepaidDelayTime";
 
-
 const isPrepaidCache = new Map<string, any>();
 export default function FlipPanel(props: any) {
   const {
@@ -36,7 +35,7 @@ export default function FlipPanel(props: any) {
     flipButtonText
   } = props;
   const { flipMax, set }: any = useSetting();
-  const [inputVal, setInputVal] = useState("0");
+  const [inputVal, setInputVal] = useState("");
   const { solBalance } = useBalance({
     mint: token.address as string,
     tokenDecimals: token.tokenDecimals as number,
@@ -123,11 +122,7 @@ export default function FlipPanel(props: any) {
 
   const errorTips = useMemo(() => {
     if (isPrePaid) {
-      const flipNumFormatted = numberFormatter(
-        (prepaidTotalAmount),
-        4,
-        true
-      );
+      const flipNumFormatted = numberFormatter(prepaidTotalAmount, 4, true);
       return `You've fliped ${flipNumFormatted || inputVal} SOL!`;
     }
     if (isNaN(Number(inputVal)) || Big(inputVal || 0).eq(0))
@@ -181,6 +176,7 @@ export default function FlipPanel(props: any) {
                 set({ flipMax: val });
               }
             }}
+            placeholder="0"
           />
           <div>SOL</div>
         </div>
