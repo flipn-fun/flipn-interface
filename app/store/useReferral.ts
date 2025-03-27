@@ -13,9 +13,7 @@ export const useReferralStore = create<ReferralState>((set) => {
     
     if (typeof(window) !== 'undefined') {
         const cookieReferral = getCookie('referral')
-
-
-        if (cookieReferral) {
+        if (cookieReferral && cookieReferral.trim() !== '') {
             try {
                 const publicKey = new PublicKey(cookieReferral);
                 PublicKey.isOnCurve(publicKey.toBuffer());
@@ -24,7 +22,6 @@ export const useReferralStore = create<ReferralState>((set) => {
               }
         }
     }
-
 
     return {
         referral: _referral_address,

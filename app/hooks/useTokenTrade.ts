@@ -161,7 +161,9 @@ export function useTokenTrade({
 
     const instructions = [];
 
-    let referral = new PublicKey(referral_address);
+    console.log(referral_address, 'referral_address')
+
+    let referral = new PublicKey(referral_address || proxy_address);
     const proxy = new PublicKey(proxy_address);
 
     const protocolSolAccount = await _getOrCreateAssociatedTokenAccount(
