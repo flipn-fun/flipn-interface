@@ -92,6 +92,11 @@ export default function FlipPanel(props: any) {
     }
   };
 
+  const isReFunded = useMemo(() => {
+    if (!token.withdrawAmount) return false;
+    return token.withdrawAmount > 0;
+  }, [token.withdrawAmount]);
+
   useEffect(() => {
     if (!address || address === token.account) {
       setIsPrePaid(true);
@@ -122,19 +127,23 @@ export default function FlipPanel(props: any) {
   }, [token, reFresh]);
 
   const errorTips = useMemo(() => {
+    if (isReFunded) {
+      return `You have withdrawn your Flip Funds`;
+    }
+
     if (isPrePaid) {
       const flipNumFormatted = numberFormatter(
         (prepaidTotalAmount),
         4,
         true
       );
-      return `You've fliped ${flipNumFormatted} SOL!`;
+      return `You've flipped ${flipNumFormatted} SOL!`;
     }
     if (isNaN(Number(inputVal)) || Big(inputVal || 0).eq(0))
       return "Enter an amount";
     if (Number(inputVal) > 1) return "Maximum 1 SOL";
     return Big(inputVal || 0).gt(solBalance || 0) ? "Insufficient Balance" : "";
-  }, [solBalance, inputVal, isPrePaid, prepaidTotalAmount, reFresh]);
+  }, [solBalance, inputVal, isPrePaid, isReFunded, prepaidTotalAmount, reFresh]);
 
   return (
     <div className={clsx(styles.Container, className)}>

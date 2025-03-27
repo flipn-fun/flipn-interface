@@ -47,6 +47,7 @@ export function mapDataToProject(currentToken: any): Project {
     volume24hUsd: currentToken.volume_24h_usd,
     mc: currentToken.market_cap,
     solReserve: currentToken.sol_reserve,
+    withdrawAmount: currentToken.withdraw_amount,
     ...currentToken
   };
 }
