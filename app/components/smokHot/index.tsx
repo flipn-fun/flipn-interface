@@ -79,12 +79,20 @@ function SmokeBtn({
   // }, [prepaidDelayTime, token]);
 
   const isDisabled = useMemo(() => {
-    return token.isSuperLike || token.account === address || Number((token as any).total_amount) > 0 || isPrepaidCache.get(token.address!);
+    return token.isSuperLike 
+    || token.account === address 
+    || Number((token as any).total_amount) > 0 
+    || isPrepaidCache.get(token.address!)
+    || (token.withdrawAmount && token.withdrawAmount > 0)
   }, [token, address, reFresh]);
 
   const disabledText = useMemo(() => {
     if (!isDisabled) {
       return ''
+    }
+
+    if (token.withdrawAmount && token.withdrawAmount > 0) {
+      return 'Withdrawn your Flip Funds'
     }
     
     if (Number((token as any).total_amount) > 0 || isPrepaidCache.get(token.address!)) {
