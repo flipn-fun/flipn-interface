@@ -6,6 +6,7 @@ import {
   IconLike,
   IconPlane,
   IconRocket,
+  IconTransactions,
   IconUser
 } from '@/app/sections/memes/components/summary-item/icons';
 import Loading from '@/app/components/icons/loading';
@@ -46,5 +47,8 @@ const Config: any = {
   },
   flip: {
     icon: IconFlip
+  },
+  transactions: {
+    icon: IconTransactions
   },
 };

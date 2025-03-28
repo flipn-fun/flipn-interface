@@ -213,7 +213,7 @@ const TokenItem = (props: {
         </>
       ) : (
         <div className={styles.TokenItemLaptopFooter}>
-          <TokenItemMarketCap token={token} />
+          {token.status === 0 ? <div /> : <TokenItemMarketCap token={token} />}
           <TokenItemSummaries
             token={token}
             holders={holders}
@@ -301,7 +301,7 @@ export const TokenItemSummaries = (props: any) => {
     <div className={clsx(styles.TokenItemSummaries, className)}>
       {currentTab?.value !== TABS[1].value && (
         <>
-          {[0, 1, 2].includes(token.status) ? (
+          {/*{[0, 1, 2].includes(token.status) ? (
             <SummaryItem
               className={styles.TokenItemSummary}
               type="rocket"
@@ -313,7 +313,7 @@ export const TokenItemSummaries = (props: any) => {
               type="plane"
               value={token.launched_like || 0}
             />
-          )}
+          )}*/}
           <SummaryItem
             className={styles.TokenItemSummary}
             type="user"
@@ -324,11 +324,13 @@ export const TokenItemSummaries = (props: any) => {
       )}
       {currentTab?.value === TABS[1].value && (
         <>
-          <SummaryItem
-            className={styles.TokenItemSummary}
-            type="like"
-            value={token.like || 0}
-          />
+          {token.status === 0 && (
+            <SummaryItem
+              className={styles.TokenItemSummary}
+              type="like"
+              value={token.like || 0}
+            />
+          )}
           <SummaryItem
             className={styles.TokenItemSummary}
             type="flip"
@@ -342,38 +344,21 @@ export const TokenItemSummaries = (props: any) => {
 
 export const TokenItemMarketCap = (props: any) => {
   const { token } = props;
-  const { setMemesListCountdown } = useContext(MemesContext);
-
-  const [countdownFinished, setCountdownFinished] = useState(false);
 
   return (
-    <>
-      {Big(token.countdown || 0).gt(0) ? (
-        <Countdown
-          token={token}
-          onFinish={() => {
-            setCountdownFinished(true);
-            setMemesListCountdown?.({
-              [token.id]: 0
-            });
-          }}
-        />
-      ) : (
-        <div
-          className={
-            Big(token?.market_cap_24h_usd || 0).gte(0)
-              ? styles.TokenItemMarketCap
-              : styles.TokenItemMarketCapDown
-          }
-        >
-          MC{" "}
-          {numberFormatter(token.market_cap, 2, true, {
-            prefix: "$",
-            isShort: true,
-            isShortUppercase: true
-          })}
-        </div>
-      )}
-    </>
+    <div
+      className={
+        Big(token?.market_cap_24h_usd || 0).gte(0)
+          ? styles.TokenItemMarketCap
+          : styles.TokenItemMarketCapDown
+      }
+    >
+      MC{" "}
+      {numberFormatter(token.market_cap, 2, true, {
+        prefix: "$",
+        isShort: true,
+        isShortUppercase: true
+      })}
+    </div>
   );
 };
