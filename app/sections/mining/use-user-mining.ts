@@ -17,9 +17,10 @@ export default function useUserMining() {
 
       setInfo({
         ...response.data,
-        clime_created: Number(pointsResponse.data.points) > 0
+        clime_created: Number(pointsResponse?.data?.points) > 0
       });
     } catch (err) {
+      console.log("err:", err);
     } finally {
       setLoading(false);
     }
