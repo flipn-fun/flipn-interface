@@ -12,6 +12,9 @@ import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
 import clsx from "clsx";
 import { reportTradeData, ReportDataType } from "@/app/utils/report";
+import dayjs from "dayjs";
+import { usePrepaidDelayTimeStore } from "@/app/store/usePrepaidDelayTime";
+
 
 const isPrepaidCache = new Map<string, any>();
 export default function FlipPanel(props: any) {
@@ -33,7 +36,7 @@ export default function FlipPanel(props: any) {
     flipButtonText
   } = props;
   const { flipMax, set }: any = useSetting();
-  const [inputVal, setInputVal] = useState("");
+  const [inputVal, setInputVal] = useState("0");
   const { solBalance } = useBalance({
     mint: token.address as string,
     tokenDecimals: token.tokenDecimals as number,
@@ -44,12 +47,26 @@ export default function FlipPanel(props: any) {
   const [isPrePaid, setIsPrePaid] = useState(false);
   const { address } = useAccount();
   const [reFresh, setRefresh] = useState(1);
+  const { prepaidDelayTime } = usePrepaidDelayTimeStore();
   const { prePaid, checkPrePayed } = useTokenTrade({
     tokenName: token.tokenName,
     tokenSymbol: token.tokenSymbol as string,
     tokenDecimals: token.tokenDecimals as number,
     loadData: false
   });
+
+  console.log('token', token)
+
+  const delayTime = useMemo(() => {
+    if (!token.createdAt || !prepaidDelayTime) return 0;
+    const createdAt = new Date(token.createdAt);
+    const now = new Date();
+    const delayTime = createdAt.getTime() + prepaidDelayTime;
+    if (now.getTime() < delayTime) {
+      return dayjs(delayTime).format("YYYY-MM-DD HH:mm:ss");
+    }
+    return null
+  }, [token, prepaidDelayTime]);
 
   const onFlip = async () => {
     if (!inputVal) return;
@@ -76,6 +93,12 @@ export default function FlipPanel(props: any) {
       setLoading(false);
     }
   };
+
+  const isReFunded = useMemo(() => {
+    console.log('token.withdrawAmount', token.withdrawAmount)
+    if (!token.withdrawAmount) return false;
+    return token.withdrawAmount > 0;
+  }, [token.withdrawAmount]);
 
   useEffect(() => {
     if (!address || address === token.account) {
@@ -107,23 +130,58 @@ export default function FlipPanel(props: any) {
   }, [token, reFresh]);
 
   const errorTips = useMemo(() => {
+    if (isReFunded) {
+      return `You have withdrawn your Flip Funds`;
+    }
+
     if (isPrePaid) {
-      const flipNumFormatted = numberFormatter(prepaidTotalAmount, 4, true);
-      return `You've fliped ${flipNumFormatted} SOL!`;
+      const flipNumFormatted = numberFormatter(
+        (prepaidTotalAmount),
+        4,
+        true
+      );
+      return `You've flipped ${flipNumFormatted} SOL!`;
     }
     if (isNaN(Number(inputVal)) || Big(inputVal || 0).eq(0))
       return "Enter an amount";
     if (Number(inputVal) > 1) return "Maximum 1 SOL";
     return Big(inputVal || 0).gt(solBalance || 0) ? "Insufficient Balance" : "";
-  }, [solBalance, inputVal, isPrePaid, prepaidTotalAmount, reFresh]);
+  }, [solBalance, inputVal, isPrePaid, isReFunded, prepaidTotalAmount, reFresh]);
 
   return (
     <div className={clsx(styles.Container, className)}>
       <div className={clsx(styles.InputWrapper, inputContainerClassName)}>
-        <div className={styles.BalanceWrapper}>
-          <WalletIcon />
-          <div>{numberFormatter(solBalance, 2, true)} SOL</div>
+        <div className={styles.InputTop}>
+          <div className={styles.BalanceWrapper}>
+            <WalletIcon />
+            <div>{numberFormatter(solBalance, 2, true)} SOL</div>
+          </div>
+
+          <div className={clsx(styles.Tags, tagsClassName)}>
+            {[0.1, 0.5, 1].map((item) => (
+              <div
+                key={item}
+                className={`${styles.Tag}`}
+                onClick={() => {
+                  setInputVal(item.toString());
+                }}
+              >
+                {item}
+              </div>
+            ))}
+            <div
+              className={`${styles.Tag}`}
+              onClick={() => {
+                if (!isNaN(Number(solBalance))) {
+                  setInputVal(solBalance);
+                }
+              }}
+            >
+              Max
+            </div>
+          </div>
         </div>
+
         <div className={clsx(styles.InputBox, inputBoxClassName)}>
           <input
             className={clsx(styles.Input, inputClassName)}
@@ -135,34 +193,15 @@ export default function FlipPanel(props: any) {
                 set({ flipMax: val });
               }
             }}
-            placeholder="0"
           />
           <div>SOL</div>
         </div>
       </div>
       <div className={clsx(styles.DescWrapper, descWrapperClassName)}>
-        <div className={clsx(styles.Tags, tagsClassName)}>
-          {[0.1, 0.5, 1].map((item) => (
-            <div
-              key={item}
-              className={`${styles.Tag}`}
-              onClick={() => {
-                setInputVal(item.toString());
-              }}
-            >
-              {item}
-            </div>
-          ))}
-          <div
-            className={`${styles.Tag}`}
-            onClick={() => {
-              if (!isNaN(Number(solBalance))) {
-                setInputVal(solBalance);
-              }
-            }}
-          >
-            Max
-          </div>
+        <div style={{ color: "#FBCA04", fontSize: 10, fontWeight: 300 }}>
+          {delayTime
+            ? `* Your flipped amount can be refund after ${delayTime}.`
+            : "* Your flipped amount can be refund anytime before bonding."}
         </div>
         <div className={clsx(styles.Value, valueClassName)}>
           {" "}
@@ -170,12 +209,12 @@ export default function FlipPanel(props: any) {
           {numberFormatter(Number(config.SolPrice) * Number(inputVal), 2, true)}
         </div>
       </div>
-      {isFlipTips && (
+      {/* {isFlipTips && (
         <div className={styles.FlipTips}>
           <strong>Flip:</strong> You will auto-buy in when this meme launched.
           <br /> You can withdraw anytime before launching.
         </div>
-      )}
+      )} */}
       {address ? (
         <button
           className={`${clsx(styles.Button, buttonClassName)} button`}
