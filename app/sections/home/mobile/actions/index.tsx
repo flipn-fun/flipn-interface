@@ -91,7 +91,7 @@ export default function Actions({
             >
               <HomeIcon
                 size={22}
-                type={token.isSuperLike ? "primary" : "normal"}
+                type={token.isSuperLike && (!token.withdrawAmount || token.withdrawAmount === 0) ? "primary" : "normal"}
               />
             </button>
             <span>
