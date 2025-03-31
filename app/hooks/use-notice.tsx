@@ -5,8 +5,6 @@ import { httpAuthGet } from "@/app/utils";
 import { Toast } from "antd-mobile";
 import useRead from "../components/messages/use-read";
 import { useUserAgent } from "@/app/context/user-agent";
-import { numberFormatter } from "@/app/utils/common";
-import { uniqBy } from "lodash-es";
 
 /**
  * content_1 token name
@@ -71,7 +69,7 @@ export default function useNotice() {
               </div>
             )}
 
-            {notice.type === "token_launching" && (
+            {/* {notice.type === "token_launching" && (
               <div style={{ fontSize: 13, fontWeight: 300 }}>
                 <span style={{ fontWeight: 600 }}>{notice.content_2}</span> goes
                 to bonding progress. You have
@@ -101,7 +99,7 @@ export default function useNotice() {
                   Claim
                 </span>
               </div>
-            )}
+            )} */}
           </div>
           {notice.type === "token_launching_owner" && (
             <div
@@ -142,11 +140,7 @@ export default function useNotice() {
       const filterdList = response.data?.list?.filter((item: any) => {
         if (item.read) return false;
 
-        if (!["token_launching_owner", "token_launching"].includes(item.type))
-          return false;
-
-        if (item.type === "token_launching" && !Number(item.content_5))
-          return false;
+        if (!["token_launching_owner"].includes(item.type)) return false;
 
         return true;
       });

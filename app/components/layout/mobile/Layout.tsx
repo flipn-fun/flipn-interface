@@ -9,7 +9,7 @@ import ClaimModal from "@/app/sections/profile/components/tokenAction/claim/moda
 import { useAuth } from "@/app/context/auth";
 
 export default function Component({ children }: any) {
-  const { claimToken, setClaimToken, prepaidTokenWithdraw } = useNotice();
+  useNotice();
   useShare();
   const { userInfo } = useAuth();
 
@@ -19,16 +19,6 @@ export default function Component({ children }: any) {
       <Refer userInfo={userInfo} isMobile />
       <Tabs />
       {/* {isRefer && <ReferContentCard />} */}
-      <ClaimModal
-        visible={!!claimToken}
-        onClose={() => {
-          setClaimToken(null);
-        }}
-        token={claimToken}
-        prepaidTokenWithdraw={prepaidTokenWithdraw}
-        prepaidAmount={claimToken?.prepaidAmount}
-        tokenAmount={claimToken?.tokenAmount}
-      />
     </div>
   );
 }
