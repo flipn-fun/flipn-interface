@@ -12,7 +12,6 @@ import Header from "./header";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
 import { INVITE_TYPE } from "@/app/config/invite";
 import RpcStatus from "@/app/components/rpc/status";
-import ClaimModal from "@/app/sections/profile/components/tokenAction/claim/modal";
 
 const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
 const MemesPage = dynamic(() => import("@/app/sections/memes"));
@@ -30,7 +29,7 @@ export default function Laptop({ children }: any) {
   const { userInfo, address, updateCurrentUserInfo, logout, pathname } =
     useAuth();
   const settingStore: any = useSetting();
-  const { claimToken, setClaimToken, prepaidTokenWithdraw } = useNotice();
+  useNotice();
   useShare();
 
   if (pathname === "/landing") {
@@ -87,16 +86,6 @@ export default function Laptop({ children }: any) {
       >
         <RpcStatus isDefault showLabel />
       </div>
-      <ClaimModal
-        visible={!!claimToken}
-        onClose={() => {
-          setClaimToken(null);
-        }}
-        token={claimToken}
-        prepaidTokenWithdraw={prepaidTokenWithdraw}
-        prepaidAmount={claimToken?.prepaidAmount}
-        tokenAmount={claimToken?.tokenAmount}
-      />
     </div>
   );
 }
