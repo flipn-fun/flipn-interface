@@ -229,7 +229,7 @@ export default function Txs({ from, data }: any) {
                 <div style={{ flex: 2 }} className={styles.titleItem}>
                   Account
                 </div>
-                <div className={styles.titleItem}>Time</div>
+                <div className={styles.titleItem} style={{ paddingRight: 10 }}>Time</div>
                 <div className={styles.titleItem}>Type</div>
                 <div className={styles.titleItem}>SOL</div>
                 <div className={styles.titleItem}>{data.tokenName}</div>
@@ -280,7 +280,7 @@ export default function Txs({ from, data }: any) {
                         </div>
                       </div>
 
-                      <div className={styles.value} style={{ fontSize: 10, lineHeight: 1.5}}>
+                      <div className={styles.value} style={{ fontSize: 10, lineHeight: 1.5, paddingRight: 10 }}>
                         {formatDateTime(item.time, "YYYY/MM/DD hh:mm:ss")}
                       </div>
 
