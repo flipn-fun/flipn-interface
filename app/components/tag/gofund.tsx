@@ -3,7 +3,7 @@ import styles from "./import.module.css";
 export default function Gofund() {
   return (
     <div className={styles.Tag}>
-      <img className={styles.punmIcon} src="/img/home/gofund.svg" />
+      <img className={styles.punmIcon} style={{ width: 24, height: 24 }} src="/img/home/GFM.svg" />
     </div>
   );
 }
