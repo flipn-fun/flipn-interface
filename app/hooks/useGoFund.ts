@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { initGoFundMemeSDK } from "@gofundmeme/sdk";
+import { initGoFundMemeSDK } from "@gofundmeme/sdk-frontend";
 import { Project } from '../type';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-import { BN } from '@coral-xyz/anchor';
+import { Keypair, PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
+import { BN, Program, Wallet } from '@coral-xyz/anchor';
 import { useAccount } from './useAccount';
 import { createCloseAccountInstruction } from '@solana/spl-token';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { getAccount } from '@solana/spl-token';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
+import Decimal from "decimal.js";
+
 interface Params {
     token: Project;
 }
-
 export default function useGoFund({ token }: Params) {
     const { connection } = useConnection();
     const { publicKey, walletProvider } = useAccount();
@@ -22,34 +23,44 @@ export default function useGoFund({ token }: Params) {
 
     useEffect(() => {
         (async () => {
-            if (token && token.status === 1 && token.DApp === 'GoFund') {
-                const gfmSDK = await initGoFundMemeSDK({ connection });
-                const bondingCurvePool = await gfmSDK.pools.bondingCurve.fetchBondingCurvePool(
-                    { mintB: new PublicKey(token.address as string) }
+            if (token && token.status === 1 && token.DApp === 'gofund') {
+                const gfmSDK = await initGoFundMemeSDK(
+                    (idl, programId) => new Program(idl, programId, {
+                        connection: connection
+                    } as any)
                 );
-                console.log(bondingCurvePool, 'bondingCurvePool')
-                bondingCurvePoolRef.current = bondingCurvePool
+
+                const pool = await gfmSDK.pools.bondingCurve.fetchBondingCurvePool({
+                    mintB: new PublicKey(token.address as string),
+                });
+
+                bondingCurvePoolRef.current = pool;
             }
         })()
     }, [token.address]);
 
-    const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
+    const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
         if (bondingCurvePoolRef.current) {
-            const { quote } = bondingCurvePoolRef.current.actions.swap[type]({
-                amountInUI: new BN(amount).toString(),
+            const x = await bondingCurvePoolRef.current.actions.swap[type]({
+                amountInUI: new Decimal(amount),
                 funder: publicKey!,
                 slippage: 0,
             });
 
-            return quote
+            if (type === 'buy') {
+                return x?.quote?.amountOut * 100000
+            } else {
+                return x?.quote?.amountOut
+            }
         }
+
         return null
     }, [token])
 
     const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
         if (bondingCurvePoolRef.current) {
-            const { quote, transaction } = bondingCurvePoolRef.current.actions.swap[type]({
-                amountInUI: new BN(amount).toString(),
+            const { quote, transaction } = await bondingCurvePoolRef.current.actions.swap[type]({
+                amountInUI: new Decimal(amount),
                 funder: publicKey!,
                 slippage: slip,
             })
@@ -78,9 +89,9 @@ export default function useGoFund({ token }: Params) {
                 }
             }
 
-
             const hash = await walletProvider?.signAndSendTransaction(transaction, {}, {
-                canJitoable: true
+                canJitoable: true,
+                needFeeEstimate: false,
             })
 
             console.log('hash:', hash)
