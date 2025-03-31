@@ -16,7 +16,7 @@ export const useSetting = create(
     }),
     {
       name: "_user_setting",
-      version: 0.2,
+      version: 0.3,
       storage: createJSONStorage(() => localStorage)
     }
   )
