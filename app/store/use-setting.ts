@@ -6,13 +6,12 @@ export const useSetting = create(
   persist(
     (set, get: any) => ({
       menuExpand: true,
-      autoPlay: false,
       flipMax: 1,
       jitoable: false,
       showRpcErrorModal: false,
       showRpcSelectModal: false,
       rpc: RPCS[0],
-      isVoiceClose: false,
+      isVoiceClose: true,
       set: (params: any) => set(() => ({ ...params }))
     }),
     {

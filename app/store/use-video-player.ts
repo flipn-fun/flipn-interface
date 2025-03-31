@@ -10,7 +10,7 @@ interface VideoPlayerState {
 
 export const useVideoPlayer = create<VideoPlayerState>((set, get) => ({
   isPlay: false,
-  autoPlay: false,
+  autoPlay: true,
   prevId: "",
   setAutoPlay: (autoPlay: boolean) => {
     set({ autoPlay });
