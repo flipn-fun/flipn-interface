@@ -2,33 +2,45 @@ import { useUserAgent } from "@/app/context/user-agent";
 import styles from "./index.module.css";
 import usePhyllo from "@/app/hooks/use-phyllo";
 import Preview from "./priview";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Project } from "@/app/type";
 import { Loading, SpinLoading } from "antd-mobile";
 import { success } from "@/app/utils/toast";
+import useTwitterBind from "@/app/hooks/use-twitter-bind";
+import { useSearchParams } from "next/navigation";
+import useXShare from "@/app/hooks/use-x-share";
 
 interface ShareListProps {
   data: Project | undefined;
   openX: (show: boolean) => void;
 }
 
+const isInit = true;
+
 const Content: React.FC<ShareListProps> = ({ data, openX }) => {
   const { isMobile } = useUserAgent();
-  const { isInit, userId, phylloAccount, connectPhyllo } = usePhyllo();
+  // const { isInit, userId, phylloAccount, connectPhyllo } = usePhyllo();
   const [preview, setPreview] = useState(false);
-
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code");  
+  const { shareToTwitter } = useXShare();
+  
   return (
     <div className={isMobile ? styles.mobile : styles.pc}>
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
           <div className={styles.iconItem} onClick={() => {
-            if (!isInit) return;  
-            if (!phylloAccount || phylloAccount.status === 'NOT_CONNECTED') {
-              connectPhyllo();
-            } else {
-              setPreview(true);
-            }
+            // if (!phylloAccount || phylloAccount.status === 'NOT_CONNECTED') {
+            //   connectPhyllo();
+            // } else {
+            //   setPreview(true);
+            // }
+            shareToTwitter({
+              text: "Share to Twitter",
+            });
+
+            // setPreview(true);
           }}>
             {isInit ? (
               <>
@@ -95,7 +107,7 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
         </div>
       </div>
 
-      <Preview token={data} phylloAccount={phylloAccount} accountId={userId} isOpen={preview} onClose={() => setPreview(false)} />
+      <Preview token={data} isOpen={preview} onClose={() => setPreview(false)} />
     </div>
   );
 };

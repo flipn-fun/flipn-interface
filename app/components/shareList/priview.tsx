@@ -11,11 +11,9 @@ interface PreviewProps {
     isOpen: boolean;
     onClose: () => void;
     token: Project | undefined;
-    accountId: string | null;
-    phylloAccount: any;
 }
 
-export default function Preview({ isOpen, onClose, token, accountId, phylloAccount }: PreviewProps) {
+export default function Preview({ isOpen, onClose, token }: PreviewProps) {
     const { isMobile } = useUserAgent();
     const [shareCopy, setShareCopy] = useState('');
 
@@ -37,18 +35,18 @@ export default function Preview({ isOpen, onClose, token, accountId, phylloAccou
     }, []);
 
     const share = useCallback(async () => {
-        if (!accountId || !token) return;
+        if (!token) return;
         try {
-            const res = await httpAuthPost(`/contents/publish?account_id=${accountId}&project_id=${token?.id}`);
-            if (res.code === 0) {
-                success("Share successfully");
-            }
+            // const res = await httpAuthPost(`/contents/publish?account_id=${accountId}&project_id=${token?.id}`);
+            // if (res.code === 0) {
+            //     success("Share successfully");
+            // }
         } catch (error) {
             console.error("Failed to share:", error);
         }
-    }, [accountId, token]);
+    }, [token]);
 
-    if (!token || !phylloAccount) {
+    if (!token) {
         return null;
     }
 
@@ -67,12 +65,12 @@ export default function Preview({ isOpen, onClose, token, accountId, phylloAccou
 
                 <div className={styles.userAction}>
                     <div className={styles.userInfo}>
-                        <img
+                        {/* <img
                             src={ phylloAccount?.profile_pic_url }
                             alt="User avatar"
                             className={styles.avatar}
                         />
-                        <span className={styles.username}>{ phylloAccount?.platform_username }</span>
+                        <span className={styles.username}>{ phylloAccount?.platform_username }</span> */}
                     </div>
                     <button className={styles.postButton} onClick={() => {
                         share();
