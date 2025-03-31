@@ -77,6 +77,7 @@ export default function VideoPlayer({
       <video
         loop={videoPlayerStore.isPlay}
         onTimeUpdate={onTimeUpdate}
+        autoPlay={videoPlayerStore.autoPlay}
         ref={videoRef}
         playsInline
         webkit-playsinline

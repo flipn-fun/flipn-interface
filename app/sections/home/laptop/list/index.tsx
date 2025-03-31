@@ -78,7 +78,7 @@ export default function List({ type, isCurrentTab }: any) {
       }
       if (diff > 0 && index > 0) onChangeIndex(index - 1);
     },
-    { wait: 1000 }
+    { wait: 300 }
   );
 
   useEffect(() => {
