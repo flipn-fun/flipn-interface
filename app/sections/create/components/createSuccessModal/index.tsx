@@ -128,7 +128,7 @@ function SuccessModal({
         </div>
 
         <div className={style.nameContent}>
-          <div className={style.time}>3:00:00</div>
+          <div className={style.time} style={{ visibility: 'hidden' }}>3:00:00</div>
           <div className={style.name}>{token.tokenName}</div>
           <div className={style.ticker}>Ticker: {token.tokenSymbol}</div>
         </div>

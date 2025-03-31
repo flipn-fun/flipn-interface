@@ -55,6 +55,8 @@ export default function FlipPanel(props: any) {
     loadData: false
   });
 
+  console.log('token', token)
+
   const delayTime = useMemo(() => {
     if (!token.createdAt || !prepaidDelayTime) return 0;
     const createdAt = new Date(token.createdAt);
@@ -93,6 +95,7 @@ export default function FlipPanel(props: any) {
   };
 
   const isReFunded = useMemo(() => {
+    console.log('token.withdrawAmount', token.withdrawAmount)
     if (!token.withdrawAmount) return false;
     return token.withdrawAmount > 0;
   }, [token.withdrawAmount]);
