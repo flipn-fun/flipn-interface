@@ -41,15 +41,17 @@ export const MessageContextProvider: React.FC<{
       setHateTrigger,
       showShare: (token: Project, shareTemplateNew = false, closeFn) => {
         setCurrentToken(token);
-        // setShareTemplateShow(true);
+        setShareTemplateShow(true);
         // setShareTemplateShow(true);
         // setShareTemplateNew(shareTemplateNew);
         // setcloseFn(closeFn);
-        if (videoReg.test(token.tokenImg)) {
-          setShareListShow(true);
-        } else {
-          setShareTemplateShow(true);
-        }
+
+        
+        // if (videoReg.test(token.tokenImg)) {
+        //   setShareListShow(true);
+        // } else {
+        //   setShareTemplateShow(true);
+        // }
       }
     }),
     [likeTrigger, setLikeTrigger, hateTrigger, setHateTrigger]
@@ -68,14 +70,14 @@ export const MessageContextProvider: React.FC<{
           setShareTemplateShow(false);
         }}
       />
-      <ShareList
+      {/* <ShareList
         openX={setShareTemplateShow}
         token={currentToken}
         show={shareListShow}
         onClose={() => {
           setShareListShow(false);
         }}
-      />
+      /> */}
     </MessageContext.Provider>
   );
 };
