@@ -70,7 +70,7 @@ export default function List({ type, isCurrentTab }: any) {
       const deltaY = ev.deltaY;
       startY.current = 0;
 
-      if (Math.abs(deltaY) < 50) return;
+      if (Math.abs(deltaY) < 25) return;
 
       if (deltaY > 0 && index < list.length - 1) {
         // Scrolling down
