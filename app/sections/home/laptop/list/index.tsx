@@ -70,7 +70,7 @@ export default function List({ type, isCurrentTab }: any) {
       const deltaY = ev.deltaY;
       startY.current = 0;
 
-      if (Math.abs(deltaY) < 25) return;
+      if (Math.abs(deltaY) < 5) return;
 
       if (deltaY > 0 && index < list.length - 1) {
         // Scrolling down
@@ -81,7 +81,7 @@ export default function List({ type, isCurrentTab }: any) {
         onChangeIndex(index - 1);
       }
     },
-    { wait: 300 }
+    { wait: 30 }
   );
 
   useEffect(() => {
