@@ -646,7 +646,7 @@ export default function BuySellPump({
                           userInfo.address
                         );
                         if (_showBuyInToken) {
-                          showBuyInToken = _showBuyInToken;
+                          showBuyInToken = new Big(_showBuyInToken).div(10 ** (token.tokenDecimals as number)).toString();
                         }
                       }
                       setIsLoading(true);
@@ -679,7 +679,7 @@ export default function BuySellPump({
                             amount={new Big(
                               activeIndex === 0 ? showBuyInToken : sellOut
                             )
-                              .div(10 ** token.tokenDecimals!)
+                              // .div(10 ** token.tokenDecimals!)
                               .toFixed(2)}
                             point={pointByVolume}
                             onClose={() => {

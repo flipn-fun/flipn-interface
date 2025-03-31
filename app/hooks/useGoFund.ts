@@ -11,6 +11,7 @@ import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { getAccount } from '@solana/spl-token';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
 import Decimal from "decimal.js";
+import Big from 'big.js';
 
 interface Params {
     token: Project;
@@ -58,7 +59,7 @@ export default function useGoFund({ token }: Params) {
     }, [token])
 
     const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
-        if (bondingCurvePoolRef.current) {
+        if (bondingCurvePoolRef.current && token) {
             const { quote, transaction } = await bondingCurvePoolRef.current.actions.swap[type]({
                 amountInUI: new Decimal(amount),
                 funder: publicKey!,
@@ -79,7 +80,7 @@ export default function useGoFund({ token }: Params) {
                     TOKEN_PROGRAM_ID
                 );
 
-                if (Number(userToken.amount) === Number(amount)) {
+                if (Number(userToken.amount) === new Big(amount).mul(10 ** (token.tokenDecimals as number)).toNumber()) {
                     const closeTokenIns = createCloseAccountInstruction(
                         tokenAccount, // token account which you want to close
                         walletProvider.publicKey!, // destination

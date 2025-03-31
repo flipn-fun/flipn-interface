@@ -81,7 +81,7 @@ export default function Txs({ from, data }: any) {
       });
     }
 
-    if (data && data.tokenName && data.status === 1 && data.DApp === "pump") {
+    if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund")) {
       httpGet(
         `/project/trade_pump/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
       ).then((res) => {

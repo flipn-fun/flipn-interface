@@ -18,8 +18,8 @@ export default function useXShare() {
         setLoading(true);
 
         try {
-            const path = `https://x.com/i/oauth2/authorize?response_type=code&client_id=NWZlaG93WlNfNW4xVmxNZHdvUVo6MTpjaQ&redirect_uri=${window.location.href}&scope=tweet.read%20users.read%20account.follows.read%20account.follows.write&state=state&code_challenge=challenge&code_challenge_method=plain`;
-
+            const redirectUri = encodeURIComponent(window.location.href.replace(/\/$/, ''));
+            const path = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NWZlaG93WlNfNW4xVmxNZHdvUVo6MTpjaQ&redirect_uri=${redirectUri}&scope=tweet.read%20users.read%20follows.read%20like.read&state=state&code_challenge=challenge&code_challenge_method=plain`;
             window.open(path, "_blank");
 
             // const result = await httpAuthPost("/twitter/tweet", {
