@@ -3,7 +3,9 @@
 import type { ReactNode } from "react";
 import React, { useContext, useState, useMemo, useRef, useEffect } from "react";
 import ShareTemplate from "../components/shareTemplate";
+import ShareList from "../components/shareList";
 import { Project } from "../type";
+import { videoReg } from "../components/upload";
 
 interface MessageContextValue {
   likeTrigger: boolean;
@@ -29,6 +31,7 @@ export const MessageContextProvider: React.FC<{
   const [shareTemplateNew, setShareTemplateNew] = useState<boolean>(false);
   const [closeFn, setcloseFn] = useState<any>();
   const shareInstance = useRef<any>();
+  const [shareListShow, setShareListShow] = useState<boolean>(false);
 
   const walletTypeContextValue = useMemo<MessageContextValue>(
     () => ({
@@ -39,10 +42,13 @@ export const MessageContextProvider: React.FC<{
       showShare: (token: Project, shareTemplateNew = false, closeFn) => {
         setCurrentToken(token);
         setShareTemplateShow(true);
-        setShareTemplateNew(shareTemplateNew);
-        setcloseFn(closeFn);
-        // if (shareInstance.current) {
-        //     return shareInstance.current.getImgUrl()
+        // setShareTemplateShow(true);
+        // setShareTemplateNew(shareTemplateNew);
+        // setcloseFn(closeFn);
+        // if (videoReg.test(token.tokenImg)) {
+        //   setShareListShow(true);
+        // } else {
+        //   setShareTemplateShow(true);
         // }
       }
     }),
@@ -62,6 +68,14 @@ export const MessageContextProvider: React.FC<{
           setShareTemplateShow(false);
         }}
       />
+      {/* <ShareList
+        openX={setShareTemplateShow}
+        token={currentToken}
+        show={shareListShow}
+        onClose={() => {
+          setShareListShow(false);
+        }}
+      /> */}
     </MessageContext.Provider>
   );
 };
