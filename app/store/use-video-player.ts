@@ -10,7 +10,7 @@ interface VideoPlayerState {
 
 export const useVideoPlayer = create<VideoPlayerState>((set, get) => ({
   isPlay: false,
-  autoPlay: false,
+  autoPlay: true,
   prevId: "",
   setAutoPlay: (autoPlay: boolean) => {
     set({ autoPlay });
@@ -25,10 +25,13 @@ export const useVideoPlayer = create<VideoPlayerState>((set, get) => ({
     }
 
     if (id) {
-      const currentVideo = document.getElementById(id) as HTMLVideoElement;
-      isPlay ? currentVideo?.play() : currentVideo?.pause();
+      setTimeout(() => {
+        const currentVideo = document.getElementById(id) as HTMLVideoElement;
 
-      set({ prevId: id });
+        isPlay ? currentVideo?.play() : currentVideo?.pause();
+
+        set({ prevId: id });
+      }, 300);
     }
 
     set({ isPlay });
