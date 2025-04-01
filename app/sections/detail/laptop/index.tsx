@@ -39,6 +39,9 @@ export default function Laptop(props: any) {
 
   useEffect(() => {
     addressRef.current = tokenAddress;
+  }, [tokenAddress]);
+
+  useEffect(() => {
     return () => {
       clearTimeout(timer.current);
     };
