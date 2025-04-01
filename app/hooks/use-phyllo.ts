@@ -1,0 +1,121 @@
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useUser } from "../store/useUser";
+import { httpAuthPost, httpAuthGet } from "../utils";
+import { fail } from "../utils/toast";
+
+export default function usePhyllo() {
+    // const { userInfo }: any = useUser();
+    const [userId, setUserId] = useState<string | null>(null);
+    const [token, setToken] = useState<string | null>(null);
+    const phylloConnectRef = useRef<any>(null);
+    const [isInit, setIsInit] = useState(false);
+    const [phylloAccount, setPhylloAccount] = useState<any>(null);
+    useEffect(() => {
+        if (!token || phylloConnectRef.current) return;
+
+        const config = {
+            clientDisplayName: 'FlipN', // the name of your app that you want the creators to see while granting access
+            environment: 'staging', // the mode in which you want to use the SDK,  `sandbox`, `staging` or `production`
+            // userId: userInfo?.user_external_id, // the unique user_id parameter returned by Phyllo API when you create a user (see https://docs.getphyllo.com/docs/api-reference/reference/openapi.v1.yml/paths/~1v1~1users/post)
+            userId, // the unique user_id parameter returned by Phyllo API when you create a user (see https://docs.getphyllo.com/docs/api-reference/reference/openapi.v1.yml/paths/~1v1~1users/post)
+            token,
+            redirect: false, // (optional) flag to indicate that you want to use the redirect flow, this is `false` by default
+            workPlatformId: '7645460a-96e0-4192-a3ce-a1fc30641f72', // (optional) the unique work_platform_id of a specific work platform, if you want the creator to skip the platform selection screen and just be able to connect just with a single work platform
+        };
+
+        // @ts-ignore
+        const phylloConnect = window.PhylloConnect.initialize(config);
+        phylloConnectRef.current = phylloConnect;
+        console.log(" PhylloConnect", phylloConnect);
+
+        phylloConnect.on(
+            "accountDisconnected",
+            (accountId: string, workplatformId: string, userId: string) => {
+                // gives the successfully disconnected account ID and work platform ID for the given user ID
+                console.log(
+                    `onAccountDisconnected: ${accountId}, ${workplatformId}, ${userId}`
+                );
+            }
+        );
+
+        phylloConnect.on(
+            "accountConnected",
+            (accountId: string, workplatformId: string, userId: string) => {
+                // gives the successfully connected account ID and work platform ID for the given user ID
+                console.log(
+                    `onAccountConnected: ${accountId}, ${workplatformId}, ${userId}`
+                );
+                getAccount();
+            }
+        );
+
+        phylloConnect.on("tokenExpired", (userId: string) => {
+            // gives the user ID for which the token has expired
+            console.log(`onTokenExpired: ${userId}`); // the SDK closes automatically in case the token has expired, and you need to handle this by showing an appropriate UI and messaging to the users
+        });
+        
+        phylloConnect.on("exit", (reason: string, userId: string) => {
+            // indicates that the user with given user ID has closed the SDK and gives an appropriate reason for it
+            console.log(`onExit: ${reason}, ${userId}`);
+        });
+
+        phylloConnect.on(
+            "connectionFailure",
+            (reason: string, workplatformId: string, userId: string) => {
+                // optional, indicates that the user with given user ID has attempted connecting to the work platform but resulted in a failure and gives an appropriate reason for it
+                console.log(
+                    `onConnectionFailure: ${reason}, ${workplatformId}, ${userId}`
+                );
+            }
+        );
+
+        setIsInit(true);
+
+    }, [token, userId]);
+
+    const getToken = useCallback(async () => {
+        const res = await httpAuthPost('/sdk/token');
+        console.log("res", res);
+        if (res.code === 0 && res.data) {
+            setToken(res.data.sdk_token);
+            setUserId(res.data.user_id);
+        } else {
+            fail('Load PhylloConnect token failed');
+        }
+    }, []);
+
+    const connectPhyllo = useCallback(() => {
+        if (!token) return;
+        console.log("connectPhyllo", phylloConnectRef.current);
+        phylloConnectRef.current?.open();
+    }, [token]);
+
+    const getAccount = useCallback(async () => {
+        if (!userId) return;
+        httpAuthGet(`/phyllo/accounts?user_id=${userId}`).then((res) => {
+            console.log("res", res);
+            if (res.code === 0 && res.data?.data) {
+                const accounts = res.data.data;
+                const account = accounts.find((item: any) => item.work_platform.id === '7645460a-96e0-4192-a3ce-a1fc30641f72');
+                console.log("account", account);
+                if (account) {
+                    setPhylloAccount(account);
+                }
+            }
+        });
+    }, [userId]);
+    
+
+    useEffect(() => {
+        if (userId) {
+            getAccount();
+        }
+    }, [userId]);
+
+    useEffect(() => {
+        getToken();
+    }, []);
+
+    return { token, isInit, userId, phylloAccount, connectPhyllo };
+
+}

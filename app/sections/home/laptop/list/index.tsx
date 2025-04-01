@@ -67,18 +67,21 @@ export default function List({ type, isCurrentTab }: any) {
 
   const { run } = useDebounceFn(
     (ev: any) => {
-      const diff = ev.deltaY - startY.current;
+      const deltaY = ev.deltaY;
       startY.current = 0;
 
-      if (Math.abs(diff) < 100) return;
+      if (Math.abs(deltaY) < 5) return;
 
-      if (diff < 0 && index < list.length) {
+      if (deltaY > 0 && index < list.length - 1) {
+        // Scrolling down
+
         onChangeIndex(index + 1);
-        return;
+      } else if (deltaY < 0 && index > 0) {
+        // Scrolling up
+        onChangeIndex(index - 1);
       }
-      if (diff > 0 && index > 0) onChangeIndex(index - 1);
     },
-    { wait: 1000 }
+    { wait: 30 }
   );
 
   useEffect(() => {
@@ -100,6 +103,7 @@ export default function List({ type, isCurrentTab }: any) {
 
   useEffect(() => {
     if (!isCurrentTab) return;
+
     if (!currentToken) {
       videoPlayerStore.setPlay(false);
       return;

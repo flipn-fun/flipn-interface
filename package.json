@@ -2,6 +2,7 @@
   "name": "mainsite",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "dev": "next dev --port 4001",
     "build": "next build",
@@ -13,6 +14,7 @@
     "@ant-design/cssinjs": "^1.21.1",
     "@ant-design/nextjs-registry": "^1.0.1",
     "@coral-xyz/anchor": "0.29.0",
+    "@gofundmeme/sdk-frontend": "^1.0.4",
     "@mercurial-finance/dynamic-amm-sdk": "^1.1.23",
     "@metaplex-foundation/js": "^0.20.1",
     "@okxconnect/solana-provider": "1.6.7",
@@ -42,6 +44,7 @@
     "croppie": "^2.6.5",
     "d3": "^7.9.0",
     "dayjs": "^1.11.13",
+    "decimal.js": "^10.5.0",
     "dom-to-image": "^2.6.0",
     "echarts": "^5.6.0",
     "framer-motion": "^11.13.1",
@@ -71,5 +74,9 @@
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "typescript": "^5"
+  },
+  "resolutions": {
+    "@solana-developers/helpers": "2.5.6",
+    "viem": "2.23.12"
   }
 }

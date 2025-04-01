@@ -57,7 +57,7 @@ export default function useBalance({ reFreshBalnace, mint, tokenDecimals }
         } catch (e) {
             setTokenBalance('0')
         }
-    }, [mint, tokenDecimals])
+    }, [mint, tokenDecimals, walletProvider.publicKey, connection])
 
 
     const { run: throttledGetSolBalance } = useDebounceFn(
@@ -75,6 +75,7 @@ export default function useBalance({ reFreshBalnace, mint, tokenDecimals }
     );
 
     useEffect(() => {
+        console.log('reFreshBalnace:', reFreshBalnace)
         throttledGetSolBalance()
     }, [reFreshBalnace]);
 
