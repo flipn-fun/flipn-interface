@@ -114,6 +114,24 @@ const TokenItem = (props: {
               >
                 {formatLongText(_token.token_symbol, 2, 4)}
               </div>
+              {_token.DApp === "gofund" && (
+                <img
+                  src="/img/memes/gfm.svg"
+                  alt={_token.token_symbol}
+                  width={18}
+                  height={18}
+                  style={{ marginBottom: 3 }}
+                />
+              )}
+              {_token.DApp === "pump" && (
+                <img
+                  src="/img/memes/pump.svg"
+                  alt={_token.token_symbol}
+                  width={12}
+                  height={12}
+                  style={{ marginBottom: 5 }}
+                />
+              )}
             </div>
             <div className={styles.TokenItemLaptopAvatarProfileRight}>
               <div className={styles.TokenItemCreateAt}>
