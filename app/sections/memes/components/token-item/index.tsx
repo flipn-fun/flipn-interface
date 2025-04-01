@@ -108,11 +108,11 @@ const TokenItem = (props: {
                 }}
                 showRanking={false}
               />
-              <div
-                className={styles.TokenItemLaptopAvatarProfileSymbol}
-                title={_token.token_symbol}
-              >
-                {formatLongText(_token.token_symbol, 2, 4)}
+              <div className={styles.TokenItemLaptopAvatarProfileName}>
+                <div title={_token.token_symbol}>
+                  {formatLongText(_token.token_symbol, 2, 4)}
+                </div>
+                <DappIcon token={_token} />
               </div>
             </div>
             <div className={styles.TokenItemLaptopAvatarProfileRight}>
@@ -183,6 +183,7 @@ const TokenItem = (props: {
             <div className={styles.TokenItemProfile}>
               <div className={styles.TokenItemName}>
                 <div>{formatLongText(token.token_symbol, 6, 6)}</div>
+                <DappIcon token={_token} />
                 {token.kind === "Hot" &&
                   (token.ranking <= 3 && token.ranking !== 0 ? (
                     <div className={styles.TokenItemNameIcon}>👑</div>
@@ -361,4 +362,27 @@ export const TokenItemMarketCap = (props: any) => {
       })}
     </div>
   );
+};
+
+const DappIcon = ({ token }: any) => {
+  if (token.DApp === "gofund") {
+    return (
+      <img
+        src="/img/memes/gfm.svg"
+        alt={token.token_symbol}
+        width={18}
+        height={18}
+      />
+    );
+  }
+  if (token.DApp === "pump") {
+    return (
+      <img
+        src="/img/memes/pump.svg"
+        alt={token.token_symbol}
+        width={12}
+        height={12}
+      />
+    );
+  }
 };
