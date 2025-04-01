@@ -63,7 +63,7 @@ export default function HoldItem(props: any) {
                     {tokenInfo[item.token_address].token_name}
 
                     { tokenSelf[item.token_address].DApp === "gofund" && <img style={{ width: 20, height: 20 }} src="/img/home/GFM.svg" />}
-                    { tokenSelf[item.token_address].DApp === "pump" && <img style={{ width: 20, height: 20 }} src="/img/home/pump.svg" />}
+                    { tokenSelf[item.token_address].DApp === "pump" && <img style={{ width: 20, height: 20 }} src="/img/home/pump.png" />}
                 </div>
                 <div
                     className={styles.viewCoin}
