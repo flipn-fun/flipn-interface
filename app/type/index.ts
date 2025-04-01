@@ -45,6 +45,7 @@ export interface Project {
     volume24hUsd?: number;
     mc?: string;
     solReserve?: string;
+    withdrawAmount?: number;
 }
 
 export interface Comment {

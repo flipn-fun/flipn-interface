@@ -39,7 +39,7 @@
   color: #fff;
   font-size: 26px;
   font-weight: 500;
-  width: 340px;
+  width: 140px;
 }
 
 .DescWrapper {
@@ -114,4 +114,11 @@
   font-weight: 300;
   line-height: 150%;
   text-align: left;
+}
+
+.InputTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
