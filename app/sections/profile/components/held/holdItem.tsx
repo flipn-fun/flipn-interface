@@ -20,8 +20,6 @@ export default function HoldItem(props: any) {
         }
     }, [item])
 
-    console.log(tokenSelf[item.token_address])
-
     return <div
         className={`${styles.heldToken} ${from === "page" && styles.PageHeldToken
             }`}
