@@ -32,7 +32,8 @@ export default function useNotice() {
       content: (
         <div
           style={{
-            padding: notice.type === "token_launching_owner" ? "20px 0px" : 0
+            padding: notice.type === "token_launching_owner" ? "20px 0px" : 0,
+            position: "relative"
           }}
         >
           <div
@@ -105,7 +106,7 @@ export default function useNotice() {
             <div
               style={{
                 position: "absolute",
-                right: 2,
+                right: -20,
                 top: 1,
                 fontSize: 60,
                 transform: "rotate(-45deg)"
