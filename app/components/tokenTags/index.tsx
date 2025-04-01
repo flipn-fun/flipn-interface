@@ -1,6 +1,7 @@
 import type { Project } from "@/app/type";
 import LaunchTag from "../tag/status";
 import Import from "../tag/import";
+import Gofund from "../tag/gofund";
 import styles from "./TokenTags.module.css";
 import { useMemo } from "react";
 
@@ -21,6 +22,7 @@ export default function TokenTags({ token }: Props) {
     <div className={styles.tags}>
       <LaunchTag type={status as number} />
       {token.DApp === "pump" && <Import />}
+      {token.DApp === "gofund" && <Gofund />}
     </div>
   );
 }

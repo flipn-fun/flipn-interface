@@ -45,10 +45,12 @@ export function useAccount() {
           sendOptions: any = {},
           {
             isVersionedTransaction = false,
-            canJitoable = false
+            canJitoable = false,
+            needFeeEstimate = true
           }: {
             isVersionedTransaction?: boolean,
-            canJitoable?: boolean
+            canJitoable?: boolean,
+            needFeeEstimate?: boolean
           } = {}
         ) => {
           const confirmationStrategy: any = {
@@ -187,10 +189,12 @@ export function useAccount() {
         sendOptions: any = {},
         {
           isVersionedTransaction = false,
-          canJitoable = false
+          canJitoable = false,
+          needFeeEstimate = true
         }: {
           isVersionedTransaction?: boolean,
-          canJitoable?: boolean
+          canJitoable?: boolean,
+          needFeeEstimate?: boolean
         } = {}
       ) => {
         const confirmationStrategy: any = {
@@ -219,19 +223,21 @@ export function useAccount() {
           transaction.feePayer = publicKey;
           transaction.recentBlockhash = latestBlockhash!.blockhash;
 
-          const microLamports = await getPriorityFeeEstimate(
-            transaction,
-            connection.rpcEndpoint
-          );
+          if (needFeeEstimate) {
+            const microLamports = await getPriorityFeeEstimate(
+              transaction,
+              connection.rpcEndpoint
+            );
 
-          transaction.add(
-            ComputeBudgetProgram.setComputeUnitLimit({
-              units: 500000
-            }),
-            ComputeBudgetProgram.setComputeUnitPrice({
-              microLamports: microLamports
-            })
-          );
+            transaction.add(
+              ComputeBudgetProgram.setComputeUnitLimit({
+                units: 500000
+              }),
+              ComputeBudgetProgram.setComputeUnitPrice({
+                microLamports: microLamports
+              })
+            );
+          }
 
           if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
             const lookupTableAccount = (
