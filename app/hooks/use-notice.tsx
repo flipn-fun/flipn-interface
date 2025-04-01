@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "@/app/context/auth";
-import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import { httpAuthGet } from "@/app/utils";
 import { Toast } from "antd-mobile";
 import useRead from "../components/messages/use-read";
 import { useUserAgent } from "@/app/context/user-agent";
+import { useDebounceFn } from "ahooks";
 
 /**
  * content_1 token name
@@ -15,16 +15,9 @@ import { useUserAgent } from "@/app/context/user-agent";
  */
 export default function useNotice() {
   const { accountRefresher } = useAuth();
-  const [claimToken, setClaimToken] = useState<any>(null);
   const timerRef = useRef<any>();
   const { onRead } = useRead();
   const { isWindowVisible } = useUserAgent();
-
-  const { prepaidTokenWithdraw } = useTokenTrade({
-    tokenName: claimToken?.tokenName as string,
-    tokenSymbol: claimToken?.tokenSymbol as string,
-    tokenDecimals: claimToken?.tokenDecimals as number
-  });
 
   const onToast = (list: any) => {
     const notice = list.shift();
@@ -146,7 +139,7 @@ export default function useNotice() {
         return true;
       });
 
-      if (filterdList.length) {
+      if (filterdList?.length) {
         onToast(filterdList);
       } else {
         clearTimeout(timerRef.current);
@@ -157,13 +150,20 @@ export default function useNotice() {
     } catch (err) {}
   };
 
+  const { run } = useDebounceFn(
+    () => {
+      if (accountRefresher) {
+        onQuery();
+      }
+    },
+    { wait: 1000 }
+  );
+
   useEffect(() => {
     if (!isWindowVisible) {
       clearTimeout(timerRef.current);
       return;
     }
-    if (accountRefresher) onQuery();
+    run();
   }, [accountRefresher, isWindowVisible]);
-
-  return { claimToken, prepaidTokenWithdraw, setClaimToken };
 }
