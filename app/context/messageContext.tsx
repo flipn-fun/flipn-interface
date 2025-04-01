@@ -70,14 +70,14 @@ export const MessageContextProvider: React.FC<{
           setShareTemplateShow(false);
         }}
       />
-      {/* <ShareList
+      <ShareList
         openX={setShareTemplateShow}
         token={currentToken}
         show={shareListShow}
         onClose={() => {
           setShareListShow(false);
         }}
-      /> */}
+      />
     </MessageContext.Provider>
   );
 };
