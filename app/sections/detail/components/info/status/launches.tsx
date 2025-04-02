@@ -8,7 +8,7 @@ import { useConfig } from "@/app/store/useConfig";
 import useGoFund from "@/app/hooks/useGoFund";
 export default function LaunchesStatus({ data }: any) {
   const { config }: any = useConfig();
-  const { progress } = useGoFund({ token: data });
+  const { progress, totalRaised, targetRaise } = useGoFund({ token: data });
 
   return (
     <div className={styles.panel}>
@@ -19,7 +19,17 @@ export default function LaunchesStatus({ data }: any) {
               {data.bondingProgress || progress}%
             </div>
             <div className={styles.progressTitle}>
-              {numberFormatter(new Big(data.solReserve || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
+              {
+                data.DApp === 'gofund' ? (
+                  <>
+                    {totalRaised} SOL / <span style={{ color: "#9290B1" }}>{targetRaise} SOL</span>
+                  </>
+                ) : (
+                  <>
+                    {numberFormatter(new Big(data.solReserve || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
+                  </>
+                )
+              }
             </div>
           </div>
 
