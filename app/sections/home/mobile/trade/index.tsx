@@ -1,8 +1,11 @@
 import styles from "./index.module.css";
 import { simplifyNum } from "@/app/utils";
 import TradeButton from "./button";
+import useGoFund from "@/app/hooks/useGoFund";
 
 export default function Trade({ token, isCurrent, onClick }: any) {
+  const { progress } = useGoFund({ token });
+
   return (
     <div className={`${styles.Container}`} onClick={onClick}>
       {token.bondingProgress < 100 && token.status !== 3 ? (
@@ -20,13 +23,13 @@ export default function Trade({ token, isCurrent, onClick }: any) {
               </div>
               <div>MC</div>
             </div>
-            <div>{token.bondingProgress}%</div>
+            <div>{token.bondingProgress || progress}%</div>
           </div>
           <div className={styles.Progress}>
             <div
               className={styles.ProgressInner}
               style={{
-                width: `${token.bondingProgress}%`
+                width: `${token.bondingProgress || progress}%`
               }}
             />
           </div>

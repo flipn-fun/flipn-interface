@@ -5,8 +5,10 @@ import ZeroFormat from "@/app/components/zeroFomat";
 import Big from "big.js";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
+import useGoFund from "@/app/hooks/useGoFund";
 export default function LaunchesStatus({ data }: any) {
   const { config }: any = useConfig();
+  const { progress } = useGoFund({ token: data });
 
   return (
     <div className={styles.panel}>
@@ -14,7 +16,7 @@ export default function LaunchesStatus({ data }: any) {
         <div className={styles.singleProgress}>
           <div className={styles.progressTitleWrapper}>
             <div className={styles.progressPercent}>
-              {data.bondingProgress}%
+              {data.bondingProgress || progress}%
             </div>
             <div className={styles.progressTitle}>
               {numberFormatter(new Big(data.solReserve || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
@@ -22,7 +24,7 @@ export default function LaunchesStatus({ data }: any) {
           </div>
 
           <ProgressBar
-            percent={data.bondingProgress}
+            percent={data.bondingProgress || progress}
             style={{
               "--track-width": "6px",
               "--fill-color": "#C9FF5D",
