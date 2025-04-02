@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { initGoFundMemeSDK } from "@gofundmeme/sdk-frontend";
 import { Project } from '../type';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { Keypair, PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
 import { BN, Program, Wallet } from '@coral-xyz/anchor';
 import { useAccount } from './useAccount';
 import { createCloseAccountInstruction } from '@solana/spl-token';
@@ -19,6 +19,7 @@ interface Params {
 export default function useGoFund({ token }: Params) {
     const { connection } = useConnection();
     const { publicKey, walletProvider } = useAccount();
+    const [remainingSolToRaise, setRemainingSolToRaise] = useState<number>(0);
 
     const bondingCurvePoolRef = useRef<any>(null);
 
@@ -34,6 +35,15 @@ export default function useGoFund({ token }: Params) {
                 const pool = await gfmSDK.pools.bondingCurve.fetchBondingCurvePool({
                     mintB: new PublicKey(token.address as string),
                 });
+
+                const { poolStatus, targetRaise, totalRaised } = pool.poolData;
+
+                // console.log('poolStatus:', poolStatus);
+                // console.log('targetRaise:', targetRaise);
+                // console.log('totalRaised:', totalRaised);
+                // const remainingSolToRaise =
+                //     (targetRaise.toNumber() - totalRaised.toNumber()) / LAMPORTS_PER_SOL;
+                // console.log("⚠️ Pool is NOT fully funded yet!", { remainingSolToRaise });
 
                 bondingCurvePoolRef.current = pool;
             }
@@ -101,6 +111,8 @@ export default function useGoFund({ token }: Params) {
         }
         return null
     }, [token, publicKey, walletProvider])
+
+   
 
     return {
         getQoute,
