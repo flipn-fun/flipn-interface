@@ -196,7 +196,7 @@ const MemesTabs = (props: any) => {
                 onClick={() => handleFilter(f)}
               >
                 <div>{f.label}</div>
-                {currentFilter && currentFilter?.value === f.value && (
+                {currentFilter && currentFilter?.value === f.value && currentTab?.value !== 'import' && (
                   <OrderArrow order={currentFilter?.order} />
                 )}
               </div>
