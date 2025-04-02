@@ -13,18 +13,28 @@ import useXShare from "@/app/hooks/use-x-share";
 interface ShareListProps {
   data: Project | undefined;
   openX: (show: boolean) => void;
+  openSelf: (token: Project) => void;
+  code: string | null;
+  shareToTwitter: () => void;
+  clear: () => void;
+  xUserInfo: any;
 }
 
 const isInit = true;
 
-const Content: React.FC<ShareListProps> = ({ data, openX }) => {
+const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareToTwitter, clear, xUserInfo }) => {
   const { isMobile } = useUserAgent();
-  // const { isInit, userId, phylloAccount, connectPhyllo } = usePhyllo();
   const [preview, setPreview] = useState(false);
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");  
-  const { shareToTwitter } = useXShare();
-  
+
+  useEffect(() => {
+    console.log('xUserInfo:', xUserInfo, data);
+
+    if (xUserInfo) {
+      setPreview(true);
+    }
+  }, [xUserInfo]);
+
+
   return (
     <div className={isMobile ? styles.mobile : styles.pc}>
       <div className={styles.section}>
@@ -36,11 +46,14 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
             // } else {
             //   setPreview(true);
             // }
-            shareToTwitter({
-              text: "Share to Twitter",
-            });
+            if (!code || !xUserInfo) {
+              shareToTwitter();
+            } else {
+              setPreview(true);
+            }
 
-            // setPreview(true);
+
+            // 
           }}>
             {isInit ? (
               <>
@@ -62,7 +75,7 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
           <div className={styles.iconItem} onClick={() => {
             if (!data) return;
             openX(true);
-          }}> 
+          }}>
             <div className={styles.iconWrapper}>
               <img src="/img/share/twitter.svg" alt="X" width={50} height={50} />
             </div>
@@ -107,7 +120,9 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
         </div>
       </div>
 
-      <Preview token={data} isOpen={preview} onClose={() => setPreview(false)} />
+      <Preview token={data} isOpen={preview} xUserInfo={xUserInfo} onClear={() => {
+        clear();
+      }} onClose={() => setPreview(false)} />
     </div>
   );
 };
