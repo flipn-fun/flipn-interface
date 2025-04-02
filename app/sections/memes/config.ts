@@ -59,6 +59,11 @@ export const TABS: Tab[] = [
   },
   {
     value: "import",
-    label: "Import"
+    label: "Import",
+    filters: [
+      { value: "import", label: "All", order: Order.Desc },
+      { value: "pump", label: "Pump", order: Order.Desc },
+      { value: "gofund", label: "GoFund", order: Order.Desc },
+    ]
   }
 ];
