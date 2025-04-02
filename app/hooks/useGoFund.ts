@@ -12,6 +12,7 @@ import { getAccount } from '@solana/spl-token';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
 import Decimal from "decimal.js";
 import Big from 'big.js';
+import { simplifyNum } from '../utils';
 
 interface Params {
     token: Project;
@@ -19,7 +20,7 @@ interface Params {
 export default function useGoFund({ token }: Params) {
     const { connection } = useConnection();
     const { publicKey, walletProvider } = useAccount();
-    const [remainingSolToRaise, setRemainingSolToRaise] = useState<number>(0);
+    const [progress, setProgress] = useState<any>(0);
 
     const bondingCurvePoolRef = useRef<any>(null);
 
@@ -36,14 +37,12 @@ export default function useGoFund({ token }: Params) {
                     mintB: new PublicKey(token.address as string),
                 });
 
-                const { poolStatus, targetRaise, totalRaised } = pool.poolData;
+                const { poolStatus, targetRaise, totalRaised, totalSupply,  } = pool.poolData;
 
-                // console.log('poolStatus:', poolStatus);
-                // console.log('targetRaise:', targetRaise);
-                // console.log('totalRaised:', totalRaised);
-                // const remainingSolToRaise =
-                //     (targetRaise.toNumber() - totalRaised.toNumber()) / LAMPORTS_PER_SOL;
-                // console.log("⚠️ Pool is NOT fully funded yet!", { remainingSolToRaise });
+                if (targetRaise.toNumber() > 0) {
+                    const progress = simplifyNum(totalRaised.toNumber() / targetRaise.toNumber() * 100, 2);
+                    setProgress(progress);
+                }
 
                 bondingCurvePoolRef.current = pool;
             }
@@ -116,7 +115,8 @@ export default function useGoFund({ token }: Params) {
 
     return {
         getQoute,
-        trade
+        trade,
+        progress
     }
 }
 
