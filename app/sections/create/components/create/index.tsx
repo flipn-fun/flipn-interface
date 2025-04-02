@@ -24,7 +24,7 @@ export default memo(function Create(props: any) {
   })
 
   const share = useCallback(async () => {
-    if (props) {
+    if (tokenInfo) {
       const tokenAddress = tokenInfo![0].toBase58()
       const v = await httpGet("/project?address=" + tokenAddress);
       if (v.code === 0) {
@@ -34,7 +34,7 @@ export default memo(function Create(props: any) {
         })
       }
     }
-  }, [props]);
+  }, [tokenInfo]);
 
   return (
     <>

@@ -21,6 +21,8 @@ export default function useGoFund({ token }: Params) {
     const { connection } = useConnection();
     const { publicKey, walletProvider } = useAccount();
     const [progress, setProgress] = useState<any>(0);
+    const [totalRaised, setTotalRaised] = useState<any>(0);
+    const [targetRaise, setTargetRaise] = useState<any>(0);
 
     const bondingCurvePoolRef = useRef<any>(null);
 
@@ -37,11 +39,13 @@ export default function useGoFund({ token }: Params) {
                     mintB: new PublicKey(token.address as string),
                 });
 
-                const { poolStatus, targetRaise, totalRaised, totalSupply,  } = pool.poolData;
+                const { poolStatus, targetRaise, totalRaised, totalSupply  } = pool.poolData;
 
                 if (targetRaise.toNumber() > 0) {
                     const progress = simplifyNum(totalRaised.toNumber() / targetRaise.toNumber() * 100, 2);
                     setProgress(progress);
+                    setTotalRaised(simplifyNum(totalRaised.toNumber() / LAMPORTS_PER_SOL, 2));
+                    setTargetRaise(simplifyNum(targetRaise.toNumber() / LAMPORTS_PER_SOL, 2));
                 }
 
                 bondingCurvePoolRef.current = pool;
@@ -116,7 +120,9 @@ export default function useGoFund({ token }: Params) {
     return {
         getQoute,
         trade,
-        progress
+        progress,
+        totalRaised,
+        targetRaise
     }
 }
 
