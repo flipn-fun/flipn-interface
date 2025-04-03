@@ -8,6 +8,7 @@ import clsx from "clsx";
 import LastKing from "./last-king";
 import BlueChipBg from "./blue-chip-bg";
 import BlueChipIcon from "./blue-chip-icon";
+import useGoFund from "@/app/hooks/useGoFund";
 
 export default function TokenIcon({
   token,
@@ -18,13 +19,20 @@ export default function TokenIcon({
   showBlueChip = false,
   showRanking = true
 }: any) {
+  const { progress: gofundProgress } = useGoFund({ token });
+
   const progress = useMemo(() => {
     if (token.status === 3) return 0;
     if (token.status === 0) {
       return (token.like / 100) * 138.23;
     }
+
+    if (token.DApp === 'gofund') {
+      return (gofundProgress / 100) * 138.23;
+    }
+
     return (token.bondingProgress / 100) * 138.23;
-  }, [token]);
+  }, [token, gofundProgress]);
   return (
     <div
       className={clsx(styles.Container, className, "button")}
