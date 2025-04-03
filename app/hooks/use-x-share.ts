@@ -24,7 +24,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
                 return true;
             }
 
-            let redirectUri = window.location.href.replace(/\/$/, '');
+            let redirectUri = window.location.origin + window.location.pathname.replace(/\/$/, '') + window.location.search
 
             if (redirectUri.includes("?")) {
                 redirectUri += '&address=' + token.address;
@@ -32,7 +32,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
                 redirectUri += '?address=' + token.address;
             }
 
-            redirectUri = encodeURIComponent(redirectUri.replace(/\/$/, ''));
+            redirectUri = encodeURIComponent(redirectUri);
 
             const path = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NWZlaG93WlNfNW4xVmxNZHdvUVo6MTpjaQ&redirect_uri=${redirectUri}&scope=tweet.read%20users.read%20follows.read%20like.read%20tweet.write&state=state&code_challenge=challenge&code_challenge_method=plain`;
             window.open(path, "_blank");
@@ -48,7 +48,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
     useEffect(() => {
         if (code && address) {
             (async () => {
-                const url = new URL(window.location.href);
+                const url = new URL(window.location.origin + window.location.pathname.replace(/\/$/, '') + window.location.search);
                 url.searchParams.delete('state');
                 url.searchParams.delete('code');
                 const cleanedRedirectUri = url.toString();
