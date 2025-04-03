@@ -15,7 +15,7 @@ interface ShareListProps {
   openX: (show: boolean) => void;
   openSelf: (token: Project) => void;
   code: string | null;
-  shareToTwitter: () => void;
+  shareToTwitter: () => Promise<boolean>;
   clear: () => void;
   xUserInfo: any;
 }
@@ -28,7 +28,6 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
 
   useEffect(() => {
     console.log('xUserInfo:', xUserInfo, data);
-
     if (xUserInfo) {
       setPreview(true);
     }
@@ -40,14 +39,17 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
-          <div className={styles.iconItem} onClick={() => {
+          <div className={styles.iconItem} onClick={async () => {
             // if (!phylloAccount || phylloAccount.status === 'NOT_CONNECTED') {
             //   connectPhyllo();
             // } else {
             //   setPreview(true);
             // }
             if (!code || !xUserInfo) {
-              shareToTwitter();
+              const result = await shareToTwitter();
+              if (result) {
+                setPreview(true);
+              } 
             } else {
               setPreview(true);
             }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { httpAuthPost, httpGet } from "../utils";
+import { httpAuthGet, httpAuthPost, httpGet } from "../utils";
 import { success, fail } from "@/app/utils/toast";
 import { useSearchParams } from "next/navigation";
 import { Project } from "../type";
@@ -13,10 +13,17 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
     const [xUserInfo, setXUserInfo] = useState<any>(null);
 
     const shareToTwitter = useCallback(async () => {
-        if (loading || !token) return;
+        if (loading || !token) return false;
         setLoading(true);
 
         try {
+            const result = await httpAuthGet('/twitter/user_info');
+            if (result.code === 0) {
+                setXUserInfo(result.data);
+                setLoading(false);
+                return true;
+            }
+
             let redirectUri = window.location.href;
 
             if (redirectUri.includes("?")) {
@@ -49,7 +56,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
                 const res = await httpAuthPost(`/bind/twitter?code=${code}&redirect_uri=${encodeURIComponent(cleanedRedirectUri)}`);
                 console.log('res:', res);
                 if (res.code === 0) {
-                    success("Share successfully");
+                    // success("Share successfully");
                     setXUserInfo(res.data);
 
                     // 移除url中的state和code参数,不刷新页面
