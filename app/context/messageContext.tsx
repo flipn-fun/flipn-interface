@@ -43,8 +43,8 @@ export const MessageContextProvider: React.FC<{
         setCurrentToken(token);
         // setShareTemplateShow(true);
         // setShareTemplateShow(true);
-        // setShareTemplateNew(shareTemplateNew);
-        // setcloseFn(closeFn);
+        setShareTemplateNew(shareTemplateNew);
+        setcloseFn(closeFn);
 
         
         if (videoReg.test(token.tokenImg)) {
