@@ -48,10 +48,11 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
     useEffect(() => {
         if (code && address) {
             (async () => {
-                const url = new URL(window.location.origin + window.location.pathname.replace(/\/$/, '') + window.location.search);
+                const url = new URL(window.location.href);
                 url.searchParams.delete('state');
                 url.searchParams.delete('code');
-                const cleanedRedirectUri = url.toString();
+
+                const cleanedRedirectUri = url.origin + url.pathname.replace(/\/$/, '') + url.search;
 
                 const res = await httpAuthPost(`/bind/twitter?code=${code}&redirect_uri=${encodeURIComponent(cleanedRedirectUri)}`);
                 console.log('res:', res);
