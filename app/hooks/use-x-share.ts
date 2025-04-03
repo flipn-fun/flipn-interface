@@ -24,7 +24,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
                 return true;
             }
 
-            let redirectUri = window.location.href;
+            let redirectUri = window.location.href.replace(/\/$/, '');
 
             if (redirectUri.includes("?")) {
                 redirectUri += '&address=' + token.address;
@@ -37,7 +37,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
             const path = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=NWZlaG93WlNfNW4xVmxNZHdvUVo6MTpjaQ&redirect_uri=${redirectUri}&scope=tweet.read%20users.read%20follows.read%20like.read%20tweet.write&state=state&code_challenge=challenge&code_challenge_method=plain`;
             window.open(path, "_blank");
             setLoading(false);
-            return true;
+            return false;
         } catch (err: any) {
             setLoading(false);
             fail(err.message || "Share failed!");
