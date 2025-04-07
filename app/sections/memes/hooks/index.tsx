@@ -76,6 +76,12 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     if (_type === TABS[4].value) {
       return memesImportList;
     }
+    if (_type === 'pump') {
+      return memesImportList;
+    }
+    if (_type === 'gofund') {
+      return memesImportList;
+    }
     return [];
   };
 
@@ -282,6 +288,8 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       type = currentTab.value
     } = params ?? {};
 
+    console.log('getMemesList params:', params);
+
     const _getMinId = () => {
       let _mim_id: any = void 0;
       switch (type) {
@@ -299,6 +307,12 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
           break;
         // Import
         case TABS[4].value:
+          _mim_id = minBy(memesImportList, "id")?.id;
+          break;
+        case 'pump':
+          _mim_id = minBy(memesImportList, "id")?.id;
+          break;
+        case 'gofund':
           _mim_id = minBy(memesImportList, "id")?.id;
           break;
         default:
@@ -344,6 +358,12 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
           case TABS[4].value:
             setMemesImportList(val);
             break;
+          case 'pump':
+            setMemesImportList(val);
+            break;
+          case 'gofund':
+            setMemesImportList(val);
+            break;
           default:
             break;
         }
@@ -368,8 +388,10 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
   const { run: onMemesListNextPage } = useThrottleFn(
     () => {
       if (memesListLoading || !memesListPageNext) return;
+      console.log('currentFilter?.value:', currentFilter);
       getMemesList({
-        offset: memesListPageOffset + 1
+        offset: memesListPageOffset + 1,
+        type: currentTab.value === TABS[4].value ? currentFilter?.value : currentTab.value
       });
     },
     { wait: 1000 }
@@ -389,7 +411,10 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     if (!isLoadData) return;
 
     getHotList();
-    getMemesList();
+
+    getMemesList({
+      type: currentTab.value === 'import' ? currentFilter?.value : currentTab.value
+    });
   }, [isLoadData]);
 
   useEffect(() => {

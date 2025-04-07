@@ -132,7 +132,7 @@ a {
 
 .adm-popup .adm-popup-body {
   background-color: #252328;
-  border: 1px solid #3B3B3B;
+  border: 1px solid #3b3b3b;
 }
 
 .adm-toast-mask div.adm-toast-main {
@@ -144,8 +144,9 @@ a {
   align-items: center;
   gap: 10px;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 1);
+  background-color: transparent !important;
   border-radius: 20px;
+  overflow: hidden;
 }
 
 @media screen and (min-width: 960px) {

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { initGoFundMemeSDK } from "@gofundmeme/sdk-frontend";
 import { Project } from '../type';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { Keypair, PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, sendAndConfirmTransaction } from '@solana/web3.js';
 import { BN, Program, Wallet } from '@coral-xyz/anchor';
 import { useAccount } from './useAccount';
 import { createCloseAccountInstruction } from '@solana/spl-token';
@@ -12,6 +12,7 @@ import { getAccount } from '@solana/spl-token';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
 import Decimal from "decimal.js";
 import Big from 'big.js';
+import { simplifyNum } from '../utils';
 
 interface Params {
     token: Project;
@@ -19,6 +20,9 @@ interface Params {
 export default function useGoFund({ token }: Params) {
     const { connection } = useConnection();
     const { publicKey, walletProvider } = useAccount();
+    const [progress, setProgress] = useState<any>(0);
+    const [totalRaised, setTotalRaised] = useState<any>(0);
+    const [targetRaise, setTargetRaise] = useState<any>(0);
 
     const bondingCurvePoolRef = useRef<any>(null);
 
@@ -34,6 +38,15 @@ export default function useGoFund({ token }: Params) {
                 const pool = await gfmSDK.pools.bondingCurve.fetchBondingCurvePool({
                     mintB: new PublicKey(token.address as string),
                 });
+
+                const { poolStatus, targetRaise, totalRaised, totalSupply  } = pool.poolData;
+
+                if (targetRaise.toNumber() > 0) {
+                    const progress = simplifyNum(totalRaised.toNumber() / targetRaise.toNumber() * 100, 2);
+                    setProgress(progress);
+                    setTotalRaised(simplifyNum(totalRaised.toNumber() / LAMPORTS_PER_SOL, 2));
+                    setTargetRaise(simplifyNum(targetRaise.toNumber() / LAMPORTS_PER_SOL, 2));
+                }
 
                 bondingCurvePoolRef.current = pool;
             }
@@ -102,9 +115,14 @@ export default function useGoFund({ token }: Params) {
         return null
     }, [token, publicKey, walletProvider])
 
+   
+
     return {
         getQoute,
-        trade
+        trade,
+        progress,
+        totalRaised,
+        targetRaise
     }
 }
 

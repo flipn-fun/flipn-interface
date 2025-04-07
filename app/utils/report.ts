@@ -1,7 +1,6 @@
 import { httpAuthPost } from "@/app/utils";
 
 export async function reportTradeData(type: number, txHash: string, uuid: string = '') {
-  return
   try {
     const data = {
       t: type, // 2 for swap, 3 for flip
