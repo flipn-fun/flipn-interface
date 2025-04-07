@@ -10,6 +10,7 @@ import CreateToEarn from "../mobile/panels/create-to-earn";
 import Rank from "../component/rank";
 import { useConfig } from "@/app/store/useConfig";
 import { useMemo } from "react";
+import Claim from "../component/cliam";
 
 export default function Laptop({
   info,
@@ -58,6 +59,7 @@ export default function Laptop({
                 />
               )}
             </div>
+            <Claim />
           </Panel>
         </div>
         <div className={styles.Right}>
