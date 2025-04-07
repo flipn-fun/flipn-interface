@@ -2,6 +2,7 @@ import styles from "./trande.module.css";
 import BuySell from "./buySell";
 import BuySellLaunched from "./buySellLaunched";
 import BuySellPump from "./buySellPump";
+import BuySellGofund from "./buySellGoFund";
 import type { Project } from "@/app/type";
 
 interface Props {
@@ -21,10 +22,23 @@ export default function Trade({
   onClose,
   onSuccess
 }: Props) {
+
   return (
     <div className={styles.main}>
       {token.status === 1 && token.DApp === "pump" && (
         <BuySellPump
+          token={token}
+          initType={initType}
+          show={show}
+          from={from}
+          onClose={() => {
+            onClose && onClose();
+          }}
+          onSuccess={onSuccess}
+        />
+      )}
+      {token.status === 1 && token.DApp === "gofund" && (
+        <BuySellGofund
           token={token}
           initType={initType}
           show={show}

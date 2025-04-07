@@ -3,13 +3,11 @@ import styles from "./avatar-box.module.css";
 
 export default function AvatarBox({ data, showTicker = true, showLaunchType }: any) {
 
-  console.log('sho222wTicker:', showTicker)
-
   return (
     <div className={styles.avatarBox}>
       <div className={styles.tokenImgBox}>
         <img
-          style={{ opacity: data.tokenIcon ? 0.3 : 1 }}
+          style={{ opacity: 1 }}
           className={styles.tokenImg}
           src={data.tokenIcon || "/img/token-icon-placeholder.svg"}
         />

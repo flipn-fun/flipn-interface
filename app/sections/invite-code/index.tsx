@@ -49,26 +49,28 @@ const InviteCodeView: React.FC<any> = (props) => {
 
   useEffect(() => {
     // Close the login modal
-    window.connect?.();
+    window.connect?.({ isClose: true });
   }, []);
 
   return (
     <div className={isMobile ? styles.inviteCodeContainer : styles.inviteCodeContainerLaptop}>
-      {
-        (!type || type === INVITE_TYPE.INVITE_CODE) ? (
-          !pageLoading && (
-            (!address || !accountRefresher || airdropDataLoading || airdropUserData?.allow_login) ? (
-              <InviteCodeConnectWallet loading={pageLoading || airdropDataLoading} />
-            ) : (
-              <InviteCodeForm />
+      <div className={styles.inviteCodeContentContainer}>
+        {
+          (!type || type === INVITE_TYPE.INVITE_CODE) ? (
+            !pageLoading && (
+              (!address || !accountRefresher || airdropDataLoading || airdropUserData?.allow_login) ? (
+                <InviteCodeConnectWallet loading={pageLoading || airdropDataLoading} />
+              ) : (
+                <InviteCodeForm />
+              )
+            )
+          ) : (
+            !pageLoading && (
+              <InviterConnect type={type} />
             )
           )
-        ) : (
-          !pageLoading && (
-            <InviterConnect type={type} />
-          )
-        )
-      }
+        }
+      </div>
       <Social />
     </div>
   );

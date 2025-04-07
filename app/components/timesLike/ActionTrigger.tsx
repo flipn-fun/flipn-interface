@@ -28,7 +28,7 @@ const onLike = async (data: any) => {
             (data.token_name || data.tokenName) +
             "', You are expected to receive " +
             numberFormatter(points, 4, true) +
-            " $FUN"
+            " MEMETICS"
         );
         return v.data || {};
       } else if (v.code === 100002 && data.status === 0) {
@@ -77,7 +77,10 @@ export async function actionLikeTrigger({ data, onShare, onSuccess }: any) {
       className: "final-like-modal no-bg"
     });
   }
-  if (likeNum === FIRST_LIKE_TIMES && !window.location.pathname.includes('detail')) {
+  if (
+    likeNum === FIRST_LIKE_TIMES &&
+    !window.location.pathname.includes("detail")
+  ) {
     if (data) {
       const timeLikeHandler = Modal.show({
         content: (

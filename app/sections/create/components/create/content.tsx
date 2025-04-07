@@ -5,6 +5,7 @@ import styles from "./trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import {
+  generateRandomString,
   getFullNum,
   getPointByVolume,
   getTransaction,
@@ -15,6 +16,7 @@ import type { Project } from "@/app/type";
 import { fail } from "@/app/utils/toast";
 import { useUserAgent } from "@/app/context/user-agent";
 import useBalance from "@/app/hooks/useBalance";
+import { postUpload } from "@/app/utils";
 import { numberFormatter } from "@/app/utils/common";
 import CreateSuccessModal from "../createSuccessModal";
 import { useConfig } from "@/app/store/useConfig";
@@ -22,6 +24,7 @@ import { useAccount } from "@/app/hooks/useAccount";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useUser } from "@/app/store/useUser";
 import StepAction from "../stepAction";
+import { SpinLoading } from "antd-mobile";
 
 type Token = {
   tokenName: string;
@@ -83,7 +86,7 @@ export default function Create({
   });
   const [launchChecked, setLaunchChecked] = useState(false);
 
-  const { createToken, tokenInfo } = useTokenTrade({
+  const { createToken } = useTokenTrade({
     tokenName,
     tokenSymbol,
     tokenDecimals: 6,
@@ -99,18 +102,6 @@ export default function Create({
   useEffect(() => {
     totalRef.current.inputVal = valInput;
   }, [valInput]);
-
-  const validateSameName = useCallback(async () => {
-    const tokenInUse = await httpGet(
-      `/project?token_name=${tokenName}&token_symbol=${tokenSymbol.toUpperCase()}`
-    );
-
-    if (tokenInUse.code === 0 && tokenInUse.data?.length > 0) {
-      return "Token name already in use";
-    }
-
-    return "";
-  }, [tokenName, tokenSymbol]);
 
   const debounceVal = useDebounce(valInput, { wait: 800 });
 
@@ -186,19 +177,18 @@ export default function Create({
           setIsLoading(true);
         }
 
-        const sameNameRes = await validateSameName();
-
-        if (sameNameRes) {
-          setIsLoading(false);
-          fail(sameNameRes);
-        }
-
         await onBeforeCreate();
+
+        const filePath = await uploadTokenMeta(data)
+
+        if (!filePath) {
+          throw "Upload token meta error";
+        }
 
         const hash = await createToken({
           name: tokenName,
           symbol: tokenSymbol,
-          uri: tokenUri,
+          uri: filePath,
           launching: launchChecked,
           amount:
             ignorePrepaid !== 0 && totalRef.current.inputVal
@@ -211,6 +201,8 @@ export default function Create({
         }
 
         const isSuccess = await onCreateTokenSuccess();
+
+
         if (isSuccess) {
           setModalShow(true);
         }
@@ -343,38 +335,39 @@ export default function Create({
             </div>
           </div>
 
-          {
-            <StepAction
-              step={4}
-              disabled={isError || isSkipLoading || isLoading}
-              isLoading={isLoading}
-              isSkipLoading={isSkipLoading}
-              btnText={isError ? errorMsg : "Get"}
-              goBackTo={(number) => {
-                console.log("number", number, goBackTo);
-                goBackTo && goBackTo();
-              }}
-              onBack={() => {
-                // onBack();
-              }}
-              extendBtn={
-                <div
-                  className={styles.skipBtn}
-                  onClick={() => {
-                    submit(0);
-                  }}
-                >
-                  Skip
-                </div>
-              }
-              onSkip={() => {
-                submit(0);
-              }}
-              onNext={async () => {
-                submit(1);
-              }}
-            />
-          }
+          <StepAction
+            step={4}
+            disabled={isError || isSkipLoading || isLoading}
+            isLoading={isLoading}
+            isSkipLoading={isSkipLoading}
+            btnText={isError ? errorMsg : "Get"}
+            goBackTo={(number) => {
+              console.log("number", number, goBackTo);
+              goBackTo && goBackTo();
+            }}
+            onBack={() => {
+              // onBack();
+            }}
+            extendBtn={
+              <div
+                className={styles.skipBtn}
+                onClick={() => {
+                  submit(0);
+                }}
+              >
+                {isSkipLoading ? <SpinLoading
+                  color="#9290B1"
+                  style={{ "--size": "16px" }}
+                /> : 'Skip'}
+              </div>
+            }
+            onSkip={() => {
+              submit(0);
+            }}
+            onNext={async () => {
+              submit(1);
+            }}
+          />
         </div>
       )}
 
@@ -389,4 +382,25 @@ export default function Create({
       />
     </>
   );
+}
+
+
+async function uploadTokenMeta(token: Project) {
+  const metaData = {
+    "name": token.tokenName,
+    "symbol": token.ticker,
+    "description": token.about,
+    "image": token.tokenIcon,
+    "twitter": token.x,
+    "website": token.website,
+  }
+
+  const random = generateRandomString(2)
+  const fileName = `${token.tokenName}_${token.ticker}_${random}.json`
+
+  const blob = new Blob([JSON.stringify(metaData)], { type: 'application/json' });
+  const file = new File([blob], fileName, { type: 'application/json' });
+  const filePath = await postUpload(file, fileName, 'application/json');
+
+  return filePath;
 }

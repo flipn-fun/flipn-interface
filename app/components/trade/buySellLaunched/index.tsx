@@ -24,6 +24,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import useMeteora from "@/app/hooks/useMeteora";
+import { ReportDataType, reportTradeData } from "@/app/utils/report";
 
 type Token = {
   tokenName: string;
@@ -677,7 +678,7 @@ export default function BuySellLaunched({
             <div style={{ marginTop: 18 }}>
               <MainBtn
                 isLoading={isLoading}
-                isDisabled={isError}
+                isDisabled={false}
                 onClick={async () => {
                   try {
                     if (isLoading || isError) {
@@ -696,6 +697,7 @@ export default function BuySellLaunched({
 
                         hash = await tradeMeteora(buyInSol, "buy", slip * 100);
                       }
+
                       if (hash) {
                         const _showBuyInToken = await getTransaction(
                           connection,
@@ -703,7 +705,6 @@ export default function BuySellLaunched({
                           token.address as string,
                           userInfo.address
                         );
-
                         if (_showBuyInToken) {
                           showBuyInToken = _showBuyInToken;
                         }
@@ -716,20 +717,21 @@ export default function BuySellLaunched({
                       }
                     }
                     setIsLoading(false);
-                    setReFreshBalnace(reFreshBalnace + 1);
-                    onSuccess?.();
+                    setReFreshBalnace(Math.random());
                     if (hash) {
-                      const volume =
-                        activeIndex === 0
-                          ? new Big(buyInSol)
-                              .div(10 ** SOL.tokenDecimals)
-                              .toFixed(SOL.tokenDecimals)
-                          : sellOutSol;
+                      // const volume =
+                      //   activeIndex === 0
+                      //     ? new Big(buyInSol)
+                      //         .div(10 ** SOL.tokenDecimals)
+                      //         .toFixed(SOL.tokenDecimals)
+                      //     : sellOutSol;
 
-                      const pointByVolume = await getPointByVolume(
-                        Big(volume).toString(),
-                        "sexy"
-                      );
+                      // const pointByVolume = await getPointByVolume(
+                      //   Big(volume).toString(),
+                      //   token.DApp === "pump" ? "pump" : "sexy"
+                      // );
+
+                      reportTradeData(ReportDataType.SWAP, hash);
 
                       const modalHandler = Modal.show({
                         content: (
@@ -745,7 +747,7 @@ export default function BuySellLaunched({
                             )
                               .div(10 ** token.tokenDecimals!)
                               .toFixed(2)}
-                            point={pointByVolume}
+                            point={'0'}
                             onClose={() => {
                               modalHandler.close();
                             }}
@@ -773,7 +775,8 @@ export default function BuySellLaunched({
                   color: activeIndex === 0 ? "#000" : "#fff",
                   background: activeIndex === 0 ? "#C9FF5D" : "#FF559D",
                   height: from === "panel" ? 36 : 60,
-                  width: "100%"
+                  width: "100%",
+                  cursor: isError ? "not-allowed" : "pointer"
                 }}
               >
                 {activeIndex === 0 ? "Buy" : "Sell"}

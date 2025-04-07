@@ -106,12 +106,13 @@ const TokenItem = (props: {
                   ..._token,
                   is_king: false
                 }}
+                showRanking={false}
               />
-              <div
-                className={styles.TokenItemLaptopAvatarProfileSymbol}
-                title={_token.token_symbol}
-              >
-                {formatLongText(_token.token_symbol, 2, 4)}
+              <div className={styles.TokenItemLaptopAvatarProfileName}>
+                <div title={_token.token_symbol}>
+                  {formatLongText(_token.token_symbol, 2, 4)}
+                </div>
+                <DappIcon token={_token} />
               </div>
             </div>
             <div className={styles.TokenItemLaptopAvatarProfileRight}>
@@ -124,8 +125,8 @@ const TokenItem = (props: {
           <div
             className={styles.TokenItemLaptopAvatarCrown}
             style={
-              _token?.is_king && _token.kind === "Hot"
-                ? _token.ranking <= 3
+              _token.kind === "Hot"
+                ? _token.ranking <= 3 && _token.ranking !== 0
                   ? {
                       right: "unset",
                       top: "-20px",
@@ -133,23 +134,26 @@ const TokenItem = (props: {
                       zIndex: 2,
                       transform: "rotate(0deg)"
                     }
-                  : {
+                  : _token?.is_king
+                  ? {
                       right: "-10px",
                       top: "-15px",
                       transform: "rotate(30deg)"
                     }
+                  : {}
                 : {}
             }
           >
-            {_token?.is_king &&
-              _token.kind === "Hot" &&
-              (_token.ranking > 3 ? (
-                <img
-                  src="/img/memes/icon-crown.svg"
-                  alt=""
-                  className={styles.TokenItemLaptopAvatarCrownIcon}
-                  style={{ display: "none" }}
-                />
+            {_token.kind === "Hot" &&
+              (_token.ranking > 3 || _token.ranking === 0 ? (
+                _token?.is_king && (
+                  <img
+                    src="/img/memes/icon-crown.svg"
+                    alt=""
+                    className={styles.TokenItemLaptopAvatarCrownIcon}
+                    style={{ display: "none" }}
+                  />
+                )
               ) : (
                 <img
                   src="/img/memes/icon-crown-laptop.svg"
@@ -169,7 +173,7 @@ const TokenItem = (props: {
                 ..._token,
                 icon: isVideoFile(_token.video)
                   ? _token.icon || _token.video
-                  : _token.video,
+                  : _token.video || _token.icon,
                 is_king: false
               }}
               isPlayButton={false}
@@ -179,16 +183,18 @@ const TokenItem = (props: {
             <div className={styles.TokenItemProfile}>
               <div className={styles.TokenItemName}>
                 <div>{formatLongText(token.token_symbol, 6, 6)}</div>
-                {token.is_king &&
-                  token.kind === "Hot" &&
-                  (token.ranking <= 3 ? (
+                <DappIcon token={_token} />
+                {token.kind === "Hot" &&
+                  (token.ranking <= 3 && token.ranking !== 0 ? (
                     <div className={styles.TokenItemNameIcon}>👑</div>
                   ) : (
-                    <img
-                      src="/img/trends/crown-second.svg"
-                      alt=""
-                      className={styles.TokenItemNameIconCrown}
-                    />
+                    token.is_king && (
+                      <img
+                        src="/img/trends/crown-second.svg"
+                        alt=""
+                        className={styles.TokenItemNameIconCrown}
+                      />
+                    )
                   ))}
               </div>
               <TokenItemMarketCap token={token} />
@@ -208,7 +214,7 @@ const TokenItem = (props: {
         </>
       ) : (
         <div className={styles.TokenItemLaptopFooter}>
-          <TokenItemMarketCap token={token} />
+          {token.status === 0 ? <div /> : <TokenItemMarketCap token={token} />}
           <TokenItemSummaries
             token={token}
             holders={holders}
@@ -296,7 +302,7 @@ export const TokenItemSummaries = (props: any) => {
     <div className={clsx(styles.TokenItemSummaries, className)}>
       {currentTab?.value !== TABS[1].value && (
         <>
-          {[0, 1, 2].includes(token.status) ? (
+          {/*{[0, 1, 2].includes(token.status) ? (
             <SummaryItem
               className={styles.TokenItemSummary}
               type="rocket"
@@ -308,7 +314,7 @@ export const TokenItemSummaries = (props: any) => {
               type="plane"
               value={token.launched_like || 0}
             />
-          )}
+          )}*/}
           <SummaryItem
             className={styles.TokenItemSummary}
             type="user"
@@ -319,11 +325,13 @@ export const TokenItemSummaries = (props: any) => {
       )}
       {currentTab?.value === TABS[1].value && (
         <>
-          <SummaryItem
-            className={styles.TokenItemSummary}
-            type="like"
-            value={token.like || 0}
-          />
+          {token.status === 0 && (
+            <SummaryItem
+              className={styles.TokenItemSummary}
+              type="like"
+              value={token.like || 0}
+            />
+          )}
           <SummaryItem
             className={styles.TokenItemSummary}
             type="flip"
@@ -337,32 +345,44 @@ export const TokenItemSummaries = (props: any) => {
 
 export const TokenItemMarketCap = (props: any) => {
   const { token } = props;
-  const { setMemesListCountdown } = useContext(MemesContext);
-
-  const [countdownFinished, setCountdownFinished] = useState(false);
 
   return (
-    <>
-      {Big(token.countdown || 0).gt(0) ? (
-        <Countdown
-          token={token}
-          onFinish={() => {
-            setCountdownFinished(true);
-            setMemesListCountdown?.({
-              [token.id]: 0
-            });
-          }}
-        />
-      ) : (
-        <div className={styles.TokenItemMarketCap}>
-          MC{" "}
-          {numberFormatter(token.market_cap, 2, true, {
-            prefix: "$",
-            isShort: true,
-            isShortUppercase: true
-          })}
-        </div>
-      )}
-    </>
+    <div
+      className={
+        Big(token?.market_cap_24h_usd || 0).gte(0)
+          ? styles.TokenItemMarketCap
+          : styles.TokenItemMarketCapDown
+      }
+    >
+      MC{" "}
+      {numberFormatter(token.market_cap, 2, true, {
+        prefix: "$",
+        isShort: true,
+        isShortUppercase: true
+      })}
+    </div>
   );
+};
+
+const DappIcon = ({ token }: any) => {
+  if (token.DApp === "gofund") {
+    return (
+      <img
+        src="/img/memes/gfm.svg"
+        alt={token.token_symbol}
+        width={18}
+        height={18}
+      />
+    );
+  }
+  if (token.DApp === "pump") {
+    return (
+      <img
+        src="/img/memes/pump.svg"
+        alt={token.token_symbol}
+        width={12}
+        height={12}
+      />
+    );
+  }
 };

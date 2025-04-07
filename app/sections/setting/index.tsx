@@ -3,11 +3,14 @@
 import Link from "next/link";
 import styles from "./setting.module.css";
 import BackNew from "@/app/components/backNew";
+import RpcIcon from "./rpc-icon";
+import RpcStatus from "@/app/components/rpc/status";
 import { useAuth } from "@/app/context/auth";
+import { useSetting } from "@/app/store/use-setting";
 
 export default function Settings() {
   const { logout } = useAuth();
-
+  const settingStore: any = useSetting();
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -46,12 +49,43 @@ export default function Settings() {
             <path
               d="M1 14L7 7.5L1 1"
               stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
+              strokeWidth="2"
+              strokeLinecap="round"
             />
           </svg>
         </Link>
-
+        <div
+          className={styles.menuItem}
+          onClick={() => {
+            settingStore.set({
+              showRpcSelectModal: true
+            });
+          }}
+        >
+          <div className={styles.textWrapper}>
+            <div className={styles.RpcIcon}>
+              <RpcIcon />
+            </div>
+            <span>RPC: {settingStore.rpc.name}</span>
+          </div>
+          <div className={styles.textWrapper}>
+            <RpcStatus showLabel={true} />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="9"
+              height="15"
+              viewBox="0 0 9 15"
+              fill="none"
+            >
+              <path
+                d="M1 14L7 7.5L1 1"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
         <div
           className={styles.menuItem}
           onClick={() => {
@@ -70,9 +104,9 @@ export default function Settings() {
               <path
                 d="M17.1333 7H7V22.2H17.1333"
                 stroke="white"
-                stroke-width="2"
+                strokeWidth="2"
               />
-              <path d="M13.333 14.6H19.6663" stroke="white" stroke-width="2" />
+              <path d="M13.333 14.6H19.6663" stroke="white" strokeWidth="2" />
               <path
                 d="M23.4668 14.6L19.6668 18.9879L19.6668 10.2121L23.4668 14.6Z"
                 fill="white"

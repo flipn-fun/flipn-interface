@@ -32,8 +32,6 @@ export default function Layout(props: any) {
   const { prepaidDelayTime, setPrepaidDelayTime } = usePrepaidDelayTimeStore();
   const pathname = usePathname();
 
-  // useWhitelist();
-
   const { getConfig } = useTokenTrade({
     tokenName: "",
     tokenSymbol: "",

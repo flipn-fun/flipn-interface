@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function HoldItem(props: any) {
-    const { item, from, tokenInfo, tokenPrice } = props;
+    const { item, from, tokenInfo, tokenPrice, tokenSelf } = props;
     const router = useRouter();
     const [icon, setIcon] = useState('');
 
@@ -16,11 +16,7 @@ export default function HoldItem(props: any) {
         if (type === 'image') {
             setIcon(tokenInfo[item.token_address].token_icon);
         } else {
-            httpGet("/project", { address: item.token_address }).then((res) => {
-                if (res.code === 0 && res.data && res.data.length) {
-                    setIcon(res.data[0].icon);
-                }
-            })
+            setIcon(tokenSelf[item.token_address].icon);
         }
     }, [item])
 
@@ -63,6 +59,9 @@ export default function HoldItem(props: any) {
             <div className={styles.tokenNames}>
                 <div className={styles.name}>
                     {tokenInfo[item.token_address].token_name}
+
+                    { tokenSelf[item.token_address].DApp === "gofund" && <img style={{ width: 20, height: 20 }} src="/img/home/GFM.svg" />}
+                    { tokenSelf[item.token_address].DApp === "pump" && <img style={{ width: 14, height: 14 }} src="/img/home/pump.png" />}
                 </div>
                 <div
                     className={styles.viewCoin}

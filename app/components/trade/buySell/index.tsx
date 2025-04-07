@@ -19,9 +19,11 @@ import type { Project } from "@/app/type";
 import { useUser } from "@/app/store/useUser";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { useSlip } from "@/app/store/useSlip";
+import useBalance from "@/app/hooks/useBalance";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
+import { ReportDataType, reportTradeData } from "@/app/utils/report";
 
 type Token = {
   tokenName: string;
@@ -77,6 +79,7 @@ export default function BuySell({
   const [currentToken, setCurrentToken] = useState<Token>(SOL);
   const [errorMsg, setErrorMsg] = useState("");
   const [isError, setIsError] = useState(false);
+  const [reFreshBalnace, setReFreshBalnace] = useState(1);
 
   const [isLoading, setIsLoading] = useState(false);
   const [successMoalShow, setSuccessMoalShow] = useState(true);
@@ -115,13 +118,19 @@ export default function BuySell({
     buyTokenWithFixedOutput,
     sellToken,
     getRate,
-    tokenBalance,
-    solBalance,
+    // tokenBalance,
+    // solBalance,
     updateBalance
   } = useTokenTrade({
     tokenName,
     tokenSymbol: tokenSymbol as string,
     tokenDecimals: tokenDecimals as number
+  });
+
+  const { solBalance, tokenBalance } = useBalance({
+    mint: token.address as string,
+    tokenDecimals: token.tokenDecimals as number,
+    reFreshBalnace
   });
 
   const TOKEN_PERCENT_LIST = useMemo(() => {
@@ -767,7 +776,7 @@ export default function BuySell({
             <div style={{ marginTop: 18 }}>
               <MainBtn
                 isLoading={isLoading}
-                isDisabled={isError}
+                isDisabled={false}
                 onClick={async () => {
                   try {
                     if (isLoading || isError) {
@@ -807,6 +816,7 @@ export default function BuySell({
                       hash = await sellToken(sellOut, sellOutSol);
                     }
                     setIsLoading(false);
+                    setReFreshBalnace(Math.random());
                     onSuccess?.();
                     if (hash) {
                       const volume = activeIndex === 0 ? buyInSol : sellOutSol;
@@ -816,6 +826,8 @@ export default function BuySell({
                           .toFixed(SOL.tokenDecimals),
                         "sexy"
                       );
+
+                      reportTradeData(ReportDataType.SWAP, hash);
 
                       const modalHandler = Modal.show({
                         content: (
@@ -859,7 +871,8 @@ export default function BuySell({
                   color: activeIndex === 0 ? "#000" : "#fff",
                   background: activeIndex === 0 ? "#C9FF5D" : "#FF559D",
                   height: from === "panel" ? 36 : 60,
-                  width: "100%"
+                  width: "100%",
+                  cursor: isError ? "not-allowed" : "pointer"
                 }}
               >
                 {activeIndex === 0 ? "Buy" : "Sell"}

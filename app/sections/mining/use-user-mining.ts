@@ -11,15 +11,20 @@ export default function useUserMining() {
     try {
       setLoading(true);
       const response = await httpAuthGet("/account/mining");
-      const pointsResponse = await httpAuthGet(
-        `/airdrop/account/level_points?account=${userInfo.address}`
-      );
+      let clime_created = false;
+      try {
+        const pointsResponse = await httpAuthGet(
+          `/airdrop/account/level_points?account=${userInfo.address}`
+        );
+        clime_created = Number(pointsResponse?.data?.points) > 0;
+      } catch (err) {}
 
       setInfo({
         ...response.data,
-        clime_created: Number(pointsResponse.data.points) > 0
+        clime_created
       });
     } catch (err) {
+      console.log("err:", err);
     } finally {
       setLoading(false);
     }

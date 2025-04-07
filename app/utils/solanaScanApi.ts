@@ -18,10 +18,30 @@ export async function getHoldersByToken(address: string, page: number = 1, pageS
     }).then(res => res.json()).then(res => res.data)
 }
 
+
+const tokenMetaCache = new Map<string, any>()
 export async function getTokenMeta(address: string) {
-    return fetch(`${api_prefix}/token/meta?address=${address}`, {
+    if (!address) {
+        return null
+    }
+
+
+    const nowMinute = new Date().toLocaleString('zh-CN', { hour12: false }).slice(0, -3)
+    const cacheKey = `${address}-${nowMinute}`
+
+    if (tokenMetaCache.has(cacheKey)) {
+        return tokenMetaCache.get(cacheKey)
+    }
+
+    const url = `${api_prefix}/token/meta?address=${address}`
+    const url2 = `https://meta.flipn.fun/solscan/v2.0/token/meta?address=${address}`
+
+    const res = fetch(process.env.NEXT_PUBLIC_API === 'https://api_stage.flipn.fun/api/v1' ? url2 : url, {
         headers: {
             token: solana_api_key
         }
-    }).then(res => res.json()) 
+    }).then(res => res.json())
+    tokenMetaCache.set(cacheKey, res)
+
+    return res
 }

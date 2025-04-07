@@ -13,54 +13,57 @@ export interface Tab {
 }
 
 export enum Order {
-  Asc = 'asc',
-  Desc = 'desc',
+  Asc = "asc",
+  Desc = "desc"
 }
 
 export const TABS: Tab[] = [
   {
-    value: 'hot',
-    label: 'Hot',
+    value: "hot",
+    label: "Hot",
     filters: [
-      { value: 'virtual_volume', label: 'Volume', order: Order.Desc },
-      { value: 'market_cap', label: 'MCap', order: Order.Desc },
+      { value: "virtual_volume", label: "Volume", order: Order.Desc },
+      { value: "market_cap", label: "MCap", order: Order.Desc }
       // { value: 'holder', label: 'Holders', order: Order.Desc },
-    ],
+    ]
   },
   {
-    value: 'genesis',
-    label: 'Genesis',
+    value: "genesis",
+    label: "Genesis",
     filters: [
-      { value: 'likes', label: 'Likes', order: Order.Desc },
-      { value: 'flips', label: 'Flips', order: Order.Desc },
-      { value: 'latest', label: 'Latest', order: Order.Desc },
-    ],
+      { value: "likes", label: "Likes", order: Order.Desc },
+      { value: "flips", label: "Flips", order: Order.Desc },
+      { value: "latest", label: "Latest", order: Order.Desc }
+    ]
   },
   {
-    value: 'ticking',
-    label: 'Ticking',
+    value: "ticking",
+    label: "Bonding",
     filters: [
-      { value: 'almost', label: 'Almost', order: Order.Desc },
-      { value: 'volume', label: 'Volume', order: Order.Desc },
-      { value: 'mcap', label: 'MCap', order: Order.Desc },
+      { value: "almost", label: "Almost", order: Order.Desc },
+      { value: "volume", label: "Volume", order: Order.Desc },
+      { value: "mcap", label: "MCap", order: Order.Desc },
       // { value: 'holders', label: 'Holders', order: Order.Desc },
-      { value: 'latest', label: 'Latest', order: Order.Desc },
-    ],
+      { value: "latest", label: "Latest", order: Order.Desc }
+    ]
   },
   {
-    value: 'listed',
-    label: 'Listed',
+    value: "listed",
+    label: "Listed",
     filters: [
-      { value: 'volume', label: 'Volume', order: Order.Desc },
-      { value: 'mcap', label: 'MCap', order: Order.Desc },
+      { value: "volume", label: "Volume", order: Order.Desc },
+      { value: "mcap", label: "MCap", order: Order.Desc },
       // { value: 'holders', label: 'Holders', order: Order.Desc },
-      { value: 'latest', label: 'Latest', order: Order.Desc },
-    ],
+      { value: "latest", label: "Latest", order: Order.Desc }
+    ]
   },
   {
-    value: 'import',
-    label: 'Import',
-    icon: '/img/memes/pump.svg',
-    iconSize: 12,
-  },
+    value: "import",
+    label: "Import",
+    filters: [
+      { value: "import", label: "All", order: Order.Desc },
+      { value: "pump", label: "Pump", order: Order.Desc },
+      { value: "gofund", label: "GoFund", order: Order.Desc },
+    ]
+  }
 ];

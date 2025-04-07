@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import TGProvider from "./context/TGProvider";
 import PrivyWalletProvider from "@/app/context/privy";
 import Script from "next/script";
+import Rpc from "./components/rpc";
 
 export default function RootLayout({
   children
@@ -41,7 +42,7 @@ export default function RootLayout({
         />
         {/* <link rel="stylesheet" href="/libs/add_to_homescreen/index.css" /> */}
         <link rel="manifest" href="/manifest.json" />
-        <title>Fun</title>
+        <title>FlipN</title>
         {/* <script async src="/libs/add_to_homescreen/index.js" /> */}
         <Script
           async
@@ -59,6 +60,7 @@ export default function RootLayout({
             `
           }}
         />
+        <script src="https://cdn.getphyllo.com/connect/v2/phyllo-connect.js" async></script>
       </head>
       <body>
         <TGProvider>
@@ -67,6 +69,7 @@ export default function RootLayout({
               <UserAgentProvider>
                 <Suspense>
                   <Layout>{children}</Layout>
+                  <Rpc />
                 </Suspense>
               </UserAgentProvider>
             </WalletConnect>

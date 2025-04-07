@@ -5,6 +5,7 @@ import useNotice from "../../../hooks/use-notice";
 import { useShare } from "../../../hooks/use-share";
 import Tabs from "./tabs";
 import Refer from "@/app/components/layout/laptop/user/refer";
+import ClaimModal from "@/app/sections/profile/components/tokenAction/claim/modal";
 import { useAuth } from "@/app/context/auth";
 
 export default function Component({ children }: any) {

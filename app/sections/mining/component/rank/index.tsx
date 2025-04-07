@@ -4,6 +4,7 @@ import CircleLoading from "@/app/components/icons/loading";
 import Header from "./header";
 import RankItem from "./item";
 import clsx from "clsx";
+import Empty from "@/app/components/empty";
 
 export default function Rank(props: any) {
   const {
@@ -58,6 +59,11 @@ export default function Rank(props: any) {
           }}
         >
           <CircleLoading size={30} />
+        </div>
+      )}
+      {!loading && !info?.mining_rank?.length && (
+        <div style={{ paddingTop: 100 }}>
+          <Empty text="No data" />
         </div>
       )}
     </div>

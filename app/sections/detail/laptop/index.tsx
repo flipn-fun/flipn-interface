@@ -10,30 +10,40 @@ import { TokenStatusModal } from "@/app/components/status2Alert";
 import { useDetailStatus } from "@/app/store/use-detail-status";
 
 export default function Laptop(props: any) {
-  const { infoData, getDetailInfo } = useTokenDetail({});
   const detailStatusStore: any = useDetailStatus();
   const { innerWidth } = useUserAgent();
   const search = useSearchParams();
   const timer = useRef<any>();
+  const { infoData, getDetailInfo } = useTokenDetail({
+    cb: () => {
+      clearTimeout(timer.current);
+      timer.current = setTimeout(() => {
+        getDetailInfo({ isSkipLoading: true });
+      }, 3000);
+    }
+  });
+  const addressRef = useRef<any>();
 
   const searchFrom = search.get("from") || "";
+  const tokenAddress = search.get("address") || "";
 
   useEffect(() => {
     detailStatusStore.setToken(infoData);
   }, [infoData]);
 
   useEffect(() => {
-    if (searchFrom === "memes") {
+    if (["memes", "tips"].includes(searchFrom)) {
       detailStatusStore.setShow("showTrade", true);
     }
   }, [searchFrom]);
 
   useEffect(() => {
-    timer.current = setInterval(() => {
-      getDetailInfo();
-    }, 3000);
+    addressRef.current = tokenAddress;
+  }, [tokenAddress]);
+
+  useEffect(() => {
     return () => {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
     };
   }, []);
 
@@ -73,6 +83,14 @@ export default function Laptop(props: any) {
                 detailStatusStore.setToken(JSON.parse(JSON.stringify(token)));
                 return;
               }
+
+              if (
+                addressRef.current?.toLowerCase() !==
+                token.address.toLowerCase()
+              ) {
+                return;
+              }
+
               if (action === "flip") {
                 setTimeout(() => {
                   getDetailInfo();

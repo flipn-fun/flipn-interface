@@ -3,6 +3,7 @@ import SimpleAvatar from "../../avatar/simple";
 import MessagesAlarm from "@/app/components/messages";
 import SearchBar from "@/app/components/search-bar";
 import Tips from "./tips";
+import RpcStatus from "@/app/components/rpc/status";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/context/auth";
 import clsx from "clsx";
@@ -56,16 +57,19 @@ export default function PageHeader({
         </button>
       )}
       {["trends", "reward", "home", "smart", "memes"].includes(from) && (
-        <SimpleAvatar
-          icon={userInfo?.icon}
-          onClick={() => {
-            if (!window.sexAddress) {
-              window.connect();
-              return;
-            }
-            router.push("/profile");
-          }}
-        />
+        <div className={styles.AvatarWrapper}>
+          <SimpleAvatar
+            icon={userInfo?.icon}
+            onClick={() => {
+              if (!window.sexAddress) {
+                window.connect();
+                return;
+              }
+              router.push("/profile");
+            }}
+          />
+          <RpcStatus isDefault={true} />
+        </div>
       )}
       {["trends", "reward", "home", "smart", "memes"].includes(from) && (
         <Tips />

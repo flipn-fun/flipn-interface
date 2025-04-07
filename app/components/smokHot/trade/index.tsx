@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import styles from "./trande.module.css";
 import MainBtn from "@/app/components/mainBtn";
 import { Avatar } from "../../thumbnail/avatar";
@@ -17,6 +17,7 @@ import { useAuth } from "@/app/context/auth";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
+import { reportTradeData, ReportDataType } from "@/app/utils/report";
 
 interface Props {
   token: Project;
@@ -49,9 +50,8 @@ export default function Trade({
   const [isPrePayd, setIsPrePayd] = useState(false);
   const { address } = useAccount();
   const { config }: any = useConfig();
-
   const { prepaidDelayTime } = usePrepaidDelayTimeStore();
-  const { showShare } = useMessage();
+
   const { solBalance } = useBalance({
     mint: token.address as string,
     tokenDecimals: token.tokenDecimals as number,
@@ -66,21 +66,39 @@ export default function Trade({
   });
 
   const delayTime = useMemo(() => {
-    if (!prepaidDelayTime || !token.createdAt) return "";
-    return Date.now() < token.createdAt + prepaidDelayTime
-      ? dayjs(token.createdAt + prepaidDelayTime).format("YYYY-MM-DD HH:mm")
-      : "";
-  }, [prepaidDelayTime, token]);
+    if (!token.createdAt || !prepaidDelayTime) return 0;
+    const createdAt = new Date(token.createdAt);
+    const now = new Date();
+    const delayTime = createdAt.getTime() + prepaidDelayTime;
+    if (now.getTime() < delayTime) {
+      return dayjs(delayTime).format("YYYY-MM-DD HH:mm:ss");
+    }
+    return null
+  }, [token, prepaidDelayTime]);
+
+  const checkIsOutDate = useCallback(() => {
+    if (!token.createdAt || !prepaidDelayTime) return false;
+    const createdAt = new Date(token.createdAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - createdAt.getTime());
+    return diffTime > prepaidDelayTime;
+  }, [token, prepaidDelayTime]);
 
   useEffect(() => {
     if (!address || address === token.account) {
       setIsPrePayd(true);
       return;
     }
+    // const isOutDate = checkIsOutDate();
+    // if (isOutDate) {
+    //   setIsPrePayd(true);
+    //   return
+    // }
+
     checkPrePayed().then((prdPaydval) => {
       setIsPrePayd(prdPaydval > 0);
     });
-  }, [checkPrePayed, address, token]);
+  }, [address, token, prepaidDelayTime]);
 
   useEffect(() => {
     if (!modalShow) {
@@ -89,9 +107,7 @@ export default function Trade({
     }
   }, [modalShow]);
 
-  useEffect(() => {
-    setIsLoading(false);
-  }, [token]);
+
 
   return (
     <div className={styles.main} style={mainStyle}>
@@ -163,9 +179,8 @@ export default function Trade({
               setInputVal(amount.toString());
               set({ flipMax: amount });
             }}
-            className={`${styles.percentTag} ${
-              inputVal === amount.toString() ? styles.active : ""
-            } button`}
+            className={`${styles.percentTag} ${inputVal === amount.toString() ? styles.active : ""
+              } button`}
           >
             {amount}
           </div>
@@ -187,10 +202,11 @@ export default function Trade({
             </div>
           ) : (
             <div className={styles.receiveTitle}>
-              You will auto-buy in at the average price when this meme ticking.{" "}
-              {/* {delayTime
-                ? `You can refund after ${delayTime}.`
-                : "You can refund anytime before ticking."} */}
+              You will auto-buy in at the average price when this meme bonding.{" "}
+              <span style={{ color: "#FBCA04" }}>{delayTime
+                ? `* Your flipped amount can be refund after ${delayTime}.`
+                : "* Your flipped amount can be refund anytime before bonding."}
+                </span>
             </div>
           )}
         </div>
@@ -209,9 +225,12 @@ export default function Trade({
                 if (inputVal) {
                   setIsLoading(true);
                   const inputNum = new Big(inputVal).mul(10 ** 9).toFixed(0);
-                  const res = await prePaid(inputNum, false);
+                  const hash = await prePaid(inputNum, false);
+
+                  reportTradeData(ReportDataType.FLIP, hash);
+                  // const res = true
                   setIsLoading(false);
-                  if (res) {
+                  if (hash) {
                     success("Flip success");
                     // await actionLikeTrigger({
                     //   data: token,

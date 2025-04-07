@@ -125,7 +125,7 @@ function Card({ token, show, onClose }: Props, ref: any) {
         setIsSharing(true);
         const img = await getShareImg();
         if (!img) {
-          fail("Share fail");
+          // fail("Share fail");
           setIsSharing(false);
           return;
         }
@@ -208,7 +208,8 @@ function Card({ token, show, onClose }: Props, ref: any) {
         ...style
       }}
       style={{
-        backgroundColor: '#000'
+        backgroundColor: '#000',
+        zIndex: 1001
       }}
       closeStyle={{
         top: -10

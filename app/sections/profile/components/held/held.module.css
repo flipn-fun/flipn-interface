@@ -25,6 +25,9 @@
         color: #fff;
         font-size: 14px;
         white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
       .viewCoin {
         flex-shrink: 0;

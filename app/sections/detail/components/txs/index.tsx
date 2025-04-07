@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import CA from "../ca";
 import styles from "./txs.module.css";
-import { formatAddressLast, httpGet, simplifyNum } from "@/app/utils";
+import { formatAddressLast, formatDateTime, httpGet, simplifyNum } from "@/app/utils";
 import Big from "big.js";
 import Empty from "@/app/components/empty";
 import { defaultAvatar } from "@/app/utils/config";
@@ -81,7 +81,7 @@ export default function Txs({ from, data }: any) {
       });
     }
 
-    if (data && data.tokenName && data.status === 1 && data.DApp === "pump") {
+    if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund")) {
       httpGet(
         `/project/trade_pump/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
       ).then((res) => {
@@ -226,9 +226,10 @@ export default function Txs({ from, data }: any) {
                   from === "panel" ? styles.LaptopTitles : styles.MobileTitles
                 }`}
               >
-                <div style={{ flex: 3 }} className={styles.titleItem}>
+                <div style={{ flex: 2 }} className={styles.titleItem}>
                   Account
                 </div>
+                <div className={styles.titleItem} style={{ paddingRight: 10 }}>Time</div>
                 <div className={styles.titleItem}>Type</div>
                 <div className={styles.titleItem}>SOL</div>
                 <div className={styles.titleItem}>{data.tokenName}</div>
@@ -277,6 +278,10 @@ export default function Txs({ from, data }: any) {
                           {from === "panel" && <div style={{ height: 2 }} />}
                           <Level level={item.level} />
                         </div>
+                      </div>
+
+                      <div className={styles.value} style={{ fontSize: 10, lineHeight: 1.5, paddingRight: 10 }}>
+                        {formatDateTime(item.time, "YYYY/MM/DD hh:mm:ss")}
                       </div>
 
                       <div className={styles.type + " " + styles[item.type]}>
@@ -360,7 +365,7 @@ export default function Txs({ from, data }: any) {
           {data?.status === 3 && pair && (
             <iframe
               style={{
-                height: from === "panel" ? 296 : "calc(100vh - 210px)"
+                height: from === "panel" ? 360 : "calc(100vh - 210px)"
               }}
               width="100%"
               height="800"

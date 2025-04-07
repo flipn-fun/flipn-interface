@@ -139,12 +139,16 @@ export default forwardRef(function CreateNode(
   const linkRef = useRef<any>(links);
 
   const validateSameName = useCallback(async () => {
+    if (!tokenName || !ticker) {
+      return ""
+    }
+
     const tokenInUse = await httpGet(
-      `/project?token_name=${tokenName}&token_symbol=${ticker.toUpperCase()}`
+      `/project/check_exist?token_name=${tokenName}&token_symbol=${ticker.toUpperCase()}`
     );
 
-    if (tokenInUse.code === 0 && tokenInUse.data?.length > 0) {
-      return "Token name already in use";
+    if (tokenInUse.code === 0 && tokenInUse.data) {
+      return "Token name and ticker already in use";
     }
 
     return "";
@@ -206,11 +210,11 @@ export default forwardRef(function CreateNode(
 
   const validateAbout = useCallback((about: string) => {
     // if (!about) {
-    //   return "Discription cannot be empty";
+    //   return "Description cannot be empty";
     // }
 
     if (about.length > 1000) {
-      return "Discription cannot be length than 1000";
+      return "Description cannot be length than 1000";
     }
 
     return "";
@@ -265,6 +269,7 @@ export default forwardRef(function CreateNode(
       const sameNameError = await validateSameName();
       if (sameNameError) {
         inValidVals["tokenName"] = sameNameError;
+        inValidVals["ticker"] = sameNameError;
         isValid = true;
       }
 
@@ -638,14 +643,18 @@ export default forwardRef(function CreateNode(
                 setNameLength(Math.max(20 - e.target.value.length, 0));
               }}
               onBlur={async () => {
+                const _inValidVals = { ...inValidVals };
                 let nameError = validateName(tokenName);
                 if (!nameError) {
                   nameError = await validateSameName();
+                  if (!nameError) {
+                    _inValidVals.ticker = "";
+                  }
                 }
                 if (nameError) {
-                  setInvaldVasl({ ...inValidVals, tokenName: nameError });
+                  setInvaldVasl({ ..._inValidVals, tokenName: nameError });
                 } else {
-                  setInvaldVasl({ ...inValidVals, tokenName: "" });
+                  setInvaldVasl({ ..._inValidVals, tokenName: "" });
                 }
               }}
               className={`${isMobile ? styles.inputText : styles.laptopInputText
@@ -680,14 +689,18 @@ export default forwardRef(function CreateNode(
                 setTickerLength(Math.max(10 - e.target.value.length, 0));
               }}
               onBlur={async () => {
+                const _inValidVals = { ...inValidVals };
                 let tickerError = validateTicker(ticker);
-                // if (!tickerError) {
-                //   tickerError = await validateSameName()
-                // }
+                if (!tickerError) {
+                  tickerError = await validateSameName()
+                  if (!tickerError) {
+                    _inValidVals.tokenName = "";
+                  }
+                }
                 if (tickerError) {
-                  setInvaldVasl({ ...inValidVals, ticker: tickerError });
+                  setInvaldVasl({ ..._inValidVals, ticker: tickerError });
                 } else {
-                  setInvaldVasl({ ...inValidVals, ticker: "" });
+                  setInvaldVasl({ ..._inValidVals, ticker: "" });
                 }
               }}
               className={`${isMobile ? styles.inputText : styles.laptopInputText
@@ -701,7 +714,7 @@ export default forwardRef(function CreateNode(
         <div className={styles.group}>
           <div className={styles.groupTitle}>
             <div className={styles.linkTitle}>
-              <div>Discription</div>
+              <div>Description</div>
               <div className={styles.linkOptional}>Optional</div>
             </div>
             <div className={styles.requireSize}>{aboutLength}</div>
@@ -734,7 +747,7 @@ export default forwardRef(function CreateNode(
         {!isMobile && <>
           <div className={styles.groupTitle}>
             <div className={styles.linkTitle}>
-              <div>Linked infor / community</div>
+              <div>Linked info / community</div>
               <div className={styles.linkOptional}>Optional</div>
             </div>
 

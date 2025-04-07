@@ -30,3 +30,9 @@
   align-items: center;
   gap: 10px;
 }
+
+.AvatarWrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

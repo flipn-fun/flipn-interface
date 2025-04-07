@@ -212,18 +212,18 @@ const Carousel: React.FC<CarouselProps> = ({
                           </div>
                         )}
                       </div>
-                      {[3].includes(item.status) ? (
+                      {/*{[3].includes(item.status) ? (
                         <Emoji content="✈️" />
                       ) : (
                         <Emoji content="🚀️" />
-                      )}
-                      <Emoji content="💰" placement="right" />
+                      )}*/}
+                      {/*<Emoji content="💰" placement="right" />*/}
                     </div>
                     <div className={styles.CarouselTokenName}>
                       {formatLongText(item?.token_symbol, 6, 6)}
                     </div>
                     <div className={styles.CarouselSummaries}>
-                      {[3].includes(item.status) ? (
+                      {/*{[3].includes(item.status) ? (
                         <SummaryItem
                           type="plane"
                           value={(item.kind === "Hot" ? item.launched_like : item.like) || 0}
@@ -233,11 +233,15 @@ const Carousel: React.FC<CarouselProps> = ({
                           type="rocket"
                           value={(item.kind === "Hot" ? item.launched_like : item.like) || 0}
                         />
-                      )}
+                      )}*/}
                       <SummaryItem
                         type="user"
                         value={holders?.[item.address]}
                         loading={holdersLoading?.[item.address]}
+                      />
+                      <SummaryItem
+                        type="transactions"
+                        value={item.tx || 0}
                       />
                     </div>
                     <div
@@ -270,6 +274,7 @@ const Carousel: React.FC<CarouselProps> = ({
                               2,
                               true,
                               {
+                                prefix: "$",
                                 isShort: true,
                                 isShortUppercase: false
                               }
@@ -342,7 +347,7 @@ export default Carousel;
 
 const BadgeConfig = {
   Ticking: {
-    label: "Ticking",
+    label: "Bonding",
     bg: "#628D0B"
   },
   Listed: {

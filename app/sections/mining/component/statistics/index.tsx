@@ -48,7 +48,7 @@ export default function Statistics({ itemStyle, style, info }: any) {
         </div>
       </div>
       <div className={styles.statisticsItem} style={itemStyle}>
-        <div className={styles.statisticsTitle}>Ticking Rate</div>
+        <div className={styles.statisticsTitle}>Bonding Rate</div>
         <div
           className={styles.value}
           style={{
