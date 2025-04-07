@@ -1,18 +1,25 @@
 import Modal from "../modal";
 import styles from "./index.module.css";
-import Content from "./content";    
+import Content from "./content";
 import { useUserAgent } from "@/app/context/user-agent";
 import { Popup } from "antd-mobile";
 import { Project } from "@/app/type";
+import useXShare from "@/app/hooks/use-x-share";
 interface ShareListProps {
     token: Project | undefined;
     show: boolean;
     onClose: () => void;
     openX: (show: boolean) => void;
+    openSelf: (token: Project) => void;
 }
 
-const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose }) => {
+const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose, openSelf }) => {
     const { isMobile } = useUserAgent();
+
+    const { shareToTwitter, code, xUserInfo, clear } = useXShare({
+        openSelf,
+        token
+    });
 
     if (isMobile) {
         return (
@@ -29,7 +36,10 @@ const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose }) =>
                     background: '#252328'
                 }}
             >
-                <Content data={token} openX={openX} />
+                <Content clear={() => {
+                    onClose();
+                    clear();
+                }} data={token} xUserInfo={xUserInfo} code={code} shareToTwitter={shareToTwitter} openX={openX} openSelf={openSelf} />
             </Popup>
         )
     }
@@ -39,7 +49,10 @@ const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose }) =>
             open={show}
             onClose={onClose}
         >
-            <Content data={token} openX={openX} />
+            <Content clear={() => {
+                onClose();
+                clear();
+            }}  data={token} xUserInfo={xUserInfo} code={code} shareToTwitter={shareToTwitter} openX={openX} openSelf={openSelf} />
         </Modal>
     );
 };

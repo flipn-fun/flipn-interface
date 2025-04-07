@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CA from "../ca";
 import styles from "./txs.module.css";
 import { formatAddressLast, formatDateTime, httpGet, simplifyNum } from "@/app/utils";
@@ -12,6 +12,7 @@ import { useInterval } from "ahooks";
 import { useAccount } from "@/app/hooks/useAccount";
 import Level from "@/app/components/level/simple";
 import { usePair } from "../hooks/usePair";
+import SexInfiniteScroll from "@/app/components/sexInfiniteScroll";
 
 const addressReg = /(\w{2}).+(\w{2})/;
 
@@ -53,6 +54,8 @@ function SexSwitch({ checked, onChange }: any) {
 
 const isDevnet = process.env.NEXT_PUBLIC_NET === "Devnet";
 
+const LIMIT = 10;
+
 export default function Txs({ from, data }: any) {
   const [list, setList] = useState([]);
   const router = useRouter();
@@ -60,48 +63,84 @@ export default function Txs({ from, data }: any) {
   const { userInfo } = useAuth();
   const [totalGreater, setTotalGreater] = useState(0);
   const [totalMyFollowing, setTotalMyFollowing] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [offset, setOffset] = useState(0);
   const [totalMyTrades, setTotalMyTrades] = useState(0);
+  const listRef = useRef<any>([]);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const isLoading = useRef(false);
   const [filter, setFilter] = useState<any>({
     1: false,
     2: false,
     3: false
   });
 
-  const getData = useCallback(() => {
+  const getData = useCallback((reset = false) => {
+    if (isLoading.current) {
+      return;
+    }
+    isLoading.current = true;
+    let canGet = false
+    let url = ''
     if (data && data.tokenName && data.status === 1 && data.DApp === "sexy") {
-      httpGet(
-        `/project/trade/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
-      ).then((res) => {
-        if (res.code === 0) {
-          setList(res.data.list || []);
-          setTotalGreater(res.data.total_greater || 0);
-          setTotalMyFollowing(res.data.total_my_following || 0);
-          setTotalMyTrades(res.data.total_my_trades || 0);
-        }
-      });
+      canGet = true
+      url = `/project/trade/list`
     }
 
     if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund")) {
-      httpGet(
-        `/project/trade_pump/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
+      canGet = true
+      url = `/project/trade_pump/list`
+    }
+
+    if (canGet) {
+      return httpGet(
+        `${url}?limit=${LIMIT}&offset=${reset ? 0 : offset}&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
       ).then((res) => {
         if (res.code === 0) {
-          setList(res.data.list || []);
+          if (reset) {
+            listRef.current = res.data.list || [];
+            setOffset(LIMIT);
+            
+          } else {
+            listRef.current = [
+              ...listRef.current,
+              ...(res.data.list || [])
+            ];
+            setOffset(offset + LIMIT);
+          }
+
+          setList(listRef.current);
           setTotalGreater(res.data.total_greater || 0);
           setTotalMyFollowing(res.data.total_my_following || 0);
           setTotalMyTrades(res.data.total_my_trades || 0);
+          setHasMore(res.data.has_next_page || false);
+          isLoading.current = false;
         }
       });
-    }
-  }, [data, filter]);
+    } 
+  }, [data, filter, offset]);
 
-  useEffect(() => {
-    getData();
-  }, [data, filter]);
+  // useEffect(() => {
+  //   getData(true);
+  // }, [data, filter]);
 
   useInterval(() => {
-    getData();
-  }, 3000);
+    if (offset === 0 || offset === LIMIT || (!wrapperRef.current?.parentElement?.scrollTop) || (wrapperRef.current?.parentElement?.scrollTop && wrapperRef.current?.parentElement?.scrollTop < 300)) {
+      if (wrapperRef.current?.parentElement?.scrollTop) {
+        wrapperRef.current.parentElement.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+      getData(true);
+    }
+  }, 3000, {
+    immediate: true
+  });
+
+  const loadMore = useCallback(() => {
+    return getData();
+  }, [getData]);
 
   const { pair } = usePair({ token: data, type: data.status === 3 ? 2 : 0 });
 
@@ -112,6 +151,7 @@ export default function Txs({ from, data }: any) {
         backgroundColor: from === "panel" ? "transparent" : "#252328",
         borderRadius: from === "panel" ? "10px" : "15px 15px 0 0"
       }}
+      ref={wrapperRef}
     >
       {data.status === 1 && (
         <div className={styles.filter}>
@@ -248,6 +288,7 @@ export default function Txs({ from, data }: any) {
                     <div
                       key={item.tx_hash + index}
                       className={`${styles.item}`}
+                      id={`item-${index}`}
                     >
                       <div
                         className={`${styles.Account} ${!isSelf && "button"}`}
@@ -375,6 +416,10 @@ export default function Txs({ from, data }: any) {
           )}
         </div>
       )}
+
+      {
+        data && data.status === 1 && <SexInfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+      }
     </div>
   );
 }
