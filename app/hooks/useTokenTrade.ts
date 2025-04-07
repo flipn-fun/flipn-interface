@@ -161,7 +161,7 @@ export function useTokenTrade({
 
     const instructions = [];
 
-    console.log(referral_address, 'referral_address')
+    console.log(referral_address, "referral_address");
 
     let referral = new PublicKey(referral_address || proxy_address);
     const proxy = new PublicKey(proxy_address);
@@ -243,7 +243,7 @@ export function useTokenTrade({
       console.log(e);
     }
 
-    console.log(referral, 'referral', state)
+    console.log(referral, "referral", state);
 
     const referralFeeRateRecord = PublicKey.findProgramAddressSync(
       [
@@ -586,8 +586,8 @@ export function useTokenTrade({
         const closeTokenIns = createCloseAccountInstruction(
           keys.userTokenAccount, // token account which you want to close
           walletProvider.publicKey!, // destination
-          walletProvider.publicKey!, // owner of token account
-        )
+          walletProvider.publicKey! // owner of token account
+        );
         transaction.add(closeTokenIns);
       }
 
@@ -761,7 +761,7 @@ export function useTokenTrade({
       let lamports = 0;
 
       if (amount && Number(amount) > 0) {
-        lamports += (Number(amount) + (0.003 * (10 ** 9)));
+        lamports += Number(amount) + 0.003 * 10 ** 9;
       }
 
       if (stateData.createTokenFee.toNumber() > 0) {
@@ -779,9 +779,7 @@ export function useTokenTrade({
           TOKEN_PROGRAM_ID
         );
 
-        transaction
-          .add(instruction1)
-          .add(instruction2)
+        transaction.add(instruction1).add(instruction2);
       }
 
       transaction.add(createInfoTransition);
@@ -874,7 +872,7 @@ export function useTokenTrade({
           referralWsolAccount: keys.referralSolAccount,
           protocolWsolAccount: keys.protocolSolAccount,
           proxyWsolAccount: keys.proxySolAccount,
-          paidRecord: paidRecord[0],
+          paidRecord: paidRecord[0]
           // protocolWsolAccount: protocolSolAccount.address
         })
         .instruction();
@@ -886,7 +884,7 @@ export function useTokenTrade({
       const instruction1 = SystemProgram.transfer({
         fromPubkey: walletProvider.publicKey!,
         toPubkey: keys.userWsolAccount,
-        lamports: Number(amount) + (0.003 * (10 ** 9))
+        lamports: Number(amount) + 0.003 * 10 ** 9
       });
       const instruction2 = createSyncNativeInstruction(
         keys.userWsolAccount,
@@ -1050,7 +1048,7 @@ export function useTokenTrade({
         prePaidRecord[0]
       );
       return prePaidRecordData.paidAmount.toNumber();
-    } catch (e) { }
+    } catch (e) {}
 
     return 0;
   }, [walletProvider, programId, connection, pool]);

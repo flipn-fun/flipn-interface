@@ -36,7 +36,6 @@ const MemesTabs = (props: any) => {
   } = useContext(MemesContext);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
   const handleTabClick = (tab: Tab) => {
     setPrevTab?.(currentTab);
     setCurrentTab?.(tab);
@@ -81,10 +80,11 @@ const MemesTabs = (props: any) => {
       return;
     }
     initMemesList?.();
+
     getMemesList?.({
-      type: currentTab?.value,
+      type: currentTab?.value === TABS[4].value ? filter?.value : currentTab?.value,
       offset: 0,
-      sort: filter.value,
+      sort: currentTab?.value === TABS[4].value ? '' : filter.value,
       order: _order
     });
   };
@@ -154,7 +154,11 @@ const MemesTabs = (props: any) => {
                 <div className={styles.MemesTabsFilterDropdownLabel}>
                   {currentFilter?.label}
                 </div>
-                <OrderArrow order={currentFilter?.order} />
+                {
+                  currentTab?.value !== 'import' && (
+                    <OrderArrow order={currentFilter?.order} />
+                  )
+                }
               </div>
             )}
             renderLabel={(item: any) => (
@@ -162,13 +166,17 @@ const MemesTabs = (props: any) => {
                 <div className={styles.MemesTabsFilterDropdownLabel}>
                   {item?.label}
                 </div>
-                <OrderArrow
-                  order={
-                    item.value === currentFilter?.value
-                      ? currentFilter?.order
-                      : item.order
-                  }
-                />
+                {
+                  currentTab?.value !== 'import' && (
+                    <OrderArrow
+                      order={
+                        item.value === currentFilter?.value
+                          ? currentFilter?.order
+                          : item.order
+                      }
+                    />
+                  )
+                }
               </div>
             )}
           />
@@ -188,7 +196,7 @@ const MemesTabs = (props: any) => {
                 onClick={() => handleFilter(f)}
               >
                 <div>{f.label}</div>
-                {currentFilter && currentFilter?.value === f.value && (
+                {currentFilter && currentFilter?.value === f.value && currentTab?.value !== 'import' && (
                   <OrderArrow order={currentFilter?.order} />
                 )}
               </div>
@@ -197,12 +205,12 @@ const MemesTabs = (props: any) => {
         )}
         <div
           className={styles.MemesTabsList}
-          // style={{
-          //   maxHeight: !!currentTab?.filters?.length ? 'calc(100dvh - 440px)' : 'calc(100dvh - 412px)',
-          // }}
+        // style={{
+        //   maxHeight: !!currentTab?.filters?.length ? 'calc(100dvh - 440px)' : 'calc(100dvh - 412px)',
+        // }}
         >
           {hotListLoading ||
-          ((!list || list.length < 1) && memesListLoading) ? (
+            ((!list || list.length < 1) && memesListLoading) ? (
             <div className={styles.MemesTabsListInner}>
               <TokenItemLoading key={1} />
               <TokenItemLoading key={2} />

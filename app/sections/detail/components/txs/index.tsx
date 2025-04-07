@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CA from "../ca";
 import styles from "./txs.module.css";
 import { formatAddressLast, formatDateTime, httpGet, simplifyNum } from "@/app/utils";
@@ -12,6 +12,7 @@ import { useInterval } from "ahooks";
 import { useAccount } from "@/app/hooks/useAccount";
 import Level from "@/app/components/level/simple";
 import { usePair } from "../hooks/usePair";
+import SexInfiniteScroll from "@/app/components/sexInfiniteScroll";
 
 const addressReg = /(\w{2}).+(\w{2})/;
 
@@ -53,6 +54,8 @@ function SexSwitch({ checked, onChange }: any) {
 
 const isDevnet = process.env.NEXT_PUBLIC_NET === "Devnet";
 
+const LIMIT = 10;
+
 export default function Txs({ from, data }: any) {
   const [list, setList] = useState([]);
   const router = useRouter();
@@ -60,7 +63,10 @@ export default function Txs({ from, data }: any) {
   const { userInfo } = useAuth();
   const [totalGreater, setTotalGreater] = useState(0);
   const [totalMyFollowing, setTotalMyFollowing] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const [offset, setOffset] = useState(0);
   const [totalMyTrades, setTotalMyTrades] = useState(0);
+  const listRef = useRef<any>([]);
   const [filter, setFilter] = useState<any>({
     1: false,
     2: false,
@@ -68,40 +74,52 @@ export default function Txs({ from, data }: any) {
   });
 
   const getData = useCallback(() => {
+    let canGet = false
+    let url = ''
     if (data && data.tokenName && data.status === 1 && data.DApp === "sexy") {
-      httpGet(
-        `/project/trade/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
-      ).then((res) => {
-        if (res.code === 0) {
-          setList(res.data.list || []);
-          setTotalGreater(res.data.total_greater || 0);
-          setTotalMyFollowing(res.data.total_my_following || 0);
-          setTotalMyTrades(res.data.total_my_trades || 0);
-        }
-      });
+      canGet = true
+      url = `/project/trade/list`
     }
 
     if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund")) {
-      httpGet(
-        `/project/trade_pump/list?limit=100&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
+      canGet = true
+      url = `/project/trade_pump/list`
+    }
+
+    if (canGet) {
+      return httpGet(
+        `${url}?limit=${LIMIT}&offset=${offset}&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
       ).then((res) => {
         if (res.code === 0) {
-          setList(res.data.list || []);
+          listRef.current = [
+            ...listRef.current,
+            ...(res.data.list || [])
+          ];
+
+          setList(listRef.current);
           setTotalGreater(res.data.total_greater || 0);
           setTotalMyFollowing(res.data.total_my_following || 0);
           setTotalMyTrades(res.data.total_my_trades || 0);
+          setHasMore(res.data.has_next_page || false);
+          setOffset(offset + LIMIT);
         }
       });
-    }
-  }, [data, filter]);
+    } 
+  }, [data, filter, offset]);
 
   useEffect(() => {
     getData();
   }, [data, filter]);
 
   useInterval(() => {
-    getData();
+    if (offset === 0) {
+      getData();
+    }
   }, 3000);
+
+  const loadMore = useCallback(() => {
+    return getData();
+  }, [getData]);
 
   const { pair } = usePair({ token: data, type: data.status === 3 ? 2 : 0 });
 
@@ -375,6 +393,10 @@ export default function Txs({ from, data }: any) {
           )}
         </div>
       )}
+
+      {
+        data && data.status === 1 && <SexInfiniteScroll loadMore={loadMore} hasMore={hasMore} />
+      }
     </div>
   );
 }
