@@ -67,13 +67,19 @@ export default function Txs({ from, data }: any) {
   const [offset, setOffset] = useState(0);
   const [totalMyTrades, setTotalMyTrades] = useState(0);
   const listRef = useRef<any>([]);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const isLoading = useRef(false);
   const [filter, setFilter] = useState<any>({
     1: false,
     2: false,
     3: false
   });
 
-  const getData = useCallback(() => {
+  const getData = useCallback((reset = false) => {
+    if (isLoading.current) {
+      return;
+    }
+    isLoading.current = true;
     let canGet = false
     let url = ''
     if (data && data.tokenName && data.status === 1 && data.DApp === "sexy") {
@@ -88,34 +94,49 @@ export default function Txs({ from, data }: any) {
 
     if (canGet) {
       return httpGet(
-        `${url}?limit=${LIMIT}&offset=${offset}&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
+        `${url}?limit=${LIMIT}&offset=${reset ? 0 : offset}&token_name=${data.address}&greater=${filter[1]}&my_following=${filter[2]}&my_trades=${filter[3]}`
       ).then((res) => {
         if (res.code === 0) {
-          listRef.current = [
-            ...listRef.current,
-            ...(res.data.list || [])
-          ];
+          if (reset) {
+            listRef.current = res.data.list || [];
+            setOffset(LIMIT);
+            
+          } else {
+            listRef.current = [
+              ...listRef.current,
+              ...(res.data.list || [])
+            ];
+            setOffset(offset + LIMIT);
+          }
 
           setList(listRef.current);
           setTotalGreater(res.data.total_greater || 0);
           setTotalMyFollowing(res.data.total_my_following || 0);
           setTotalMyTrades(res.data.total_my_trades || 0);
           setHasMore(res.data.has_next_page || false);
-          setOffset(offset + LIMIT);
+          isLoading.current = false;
         }
       });
     } 
   }, [data, filter, offset]);
 
-  useEffect(() => {
-    getData();
-  }, [data, filter]);
+  // useEffect(() => {
+  //   getData(true);
+  // }, [data, filter]);
 
   useInterval(() => {
-    if (offset === 0) {
-      getData();
+    if (offset === 0 || offset === LIMIT || (!wrapperRef.current?.parentElement?.scrollTop) || (wrapperRef.current?.parentElement?.scrollTop && wrapperRef.current?.parentElement?.scrollTop < 300)) {
+      if (wrapperRef.current?.parentElement?.scrollTop) {
+        wrapperRef.current.parentElement.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }
+      getData(true);
     }
-  }, 3000);
+  }, 3000, {
+    immediate: true
+  });
 
   const loadMore = useCallback(() => {
     return getData();
@@ -130,6 +151,7 @@ export default function Txs({ from, data }: any) {
         backgroundColor: from === "panel" ? "transparent" : "#252328",
         borderRadius: from === "panel" ? "10px" : "15px 15px 0 0"
       }}
+      ref={wrapperRef}
     >
       {data.status === 1 && (
         <div className={styles.filter}>
@@ -266,6 +288,7 @@ export default function Txs({ from, data }: any) {
                     <div
                       key={item.tx_hash + index}
                       className={`${styles.item}`}
+                      id={`item-${index}`}
                     >
                       <div
                         className={`${styles.Account} ${!isSelf && "button"}`}
