@@ -5,6 +5,7 @@ import Panels from "./panels";
 import styles from "./index.module.css";
 import { useState } from "react";
 import Rank from "./rank";
+import Claim from "../component/cliam";
 
 export default function Mining({
   info,
@@ -32,6 +33,7 @@ export default function Mining({
             userInfo={userInfo}
             onQuery={onQuery}
           />
+          <Claim />
           <TotalPanel info={info} userInfo={userInfo} />
           <Others info={info} />
         </div>
