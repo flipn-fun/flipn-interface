@@ -55,7 +55,6 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
                 const cleanedRedirectUri = url.origin + url.pathname.replace(/\/$/, '') + url.search;
 
                 const res = await httpAuthPost(`/bind/twitter?code=${code}&redirect_uri=${encodeURIComponent(cleanedRedirectUri)}`);
-                console.log('res:', res);
                 if (res.code === 0) {
                     // success("Share successfully");
                     setXUserInfo(res.data);

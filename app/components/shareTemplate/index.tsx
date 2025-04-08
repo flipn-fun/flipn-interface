@@ -145,10 +145,7 @@ function Card({ token, show, onClose }: Props, ref: any) {
           imgUrl
         )}&address=${token.address}&referral=${userInfo.address}`;
 
-        console.log('longUrl:', imgUrl, longUrl)
-
         const shareUrl = await getShortUrl(longUrl);
-        console.log("shareUrl:", shareUrl);
         setShareUrl(shareUrl);
       } else {
         setQrcodeCanvas(false)
@@ -447,7 +444,6 @@ function Card({ token, show, onClose }: Props, ref: any) {
                 return;
               }
               if (shareUrl && !isSharing) {
-                console.log('shareUrl:', shareUrl)
                 shareToX(shareCopy, shareUrl);
                 onClose();
               }

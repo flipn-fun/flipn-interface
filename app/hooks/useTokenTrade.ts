@@ -37,6 +37,9 @@ import {
 import { useReferralStore } from "../store/useReferral";
 import { useConfig } from "../store/useConfig";
 import { useThrottleFn } from "ahooks";
+import { reportTradeData } from "../utils/report";
+import { ReportDataType } from "../utils/report";
+import { useUUID } from "../store/useUUID";
 
 interface Props {
   tokenName: string;
@@ -54,6 +57,7 @@ export function useTokenTrade({
   const { connection } = useConnection();
   const { walletProvider } = useAccount();
   const { call } = useVip();
+  const { uuids }: any = useUUID();
 
   const [tokenBalance, setTokenBalance] = useState("0");
   const [solBalance, setSolBalance] = useState("0");
@@ -455,7 +459,10 @@ export function useTokenTrade({
         transaction,
         {},
         {
-          canJitoable: true
+          canJitoable: true,
+          beforeSend: (signature: string) => {
+            reportTradeData(ReportDataType.SWAP, signature, uuids[keys.tokenMint.toBase58()]);
+          }
         }
       );
 
@@ -525,7 +532,10 @@ export function useTokenTrade({
         transaction,
         {},
         {
-          canJitoable: true
+          canJitoable: true,
+          beforeSend: (signature: string) => {
+            reportTradeData(ReportDataType.SWAP, signature, uuids[keys.tokenMint.toBase58()]);
+          }
         }
       );
 
@@ -603,7 +613,10 @@ export function useTokenTrade({
         transaction,
         {},
         {
-          canJitoable: true
+          canJitoable: true,
+          beforeSend: (signature: string) => {
+            reportTradeData(ReportDataType.SWAP, signature, uuids[keys.tokenMint.toBase58()]);
+          }
         }
       );
 
@@ -895,7 +908,13 @@ export function useTokenTrade({
 
       transaction.add(prepaidInstruction);
 
-      const hash2 = await walletProvider.signAndSendTransaction(transaction);
+      const hash2 = await walletProvider.signAndSendTransaction(transaction,
+        {},
+        {
+          beforeSend: (signature: string) => {
+            reportTradeData(ReportDataType.FLIP, signature, uuids[keys.tokenMint.toBase58()]);
+          }
+        });
 
       console.log("hash:", hash2);
 
@@ -1048,7 +1067,7 @@ export function useTokenTrade({
         prePaidRecord[0]
       );
       return prePaidRecordData.paidAmount.toNumber();
-    } catch (e) {}
+    } catch (e) { }
 
     return 0;
   }, [walletProvider, programId, connection, pool]);

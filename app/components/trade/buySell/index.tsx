@@ -23,8 +23,6 @@ import useBalance from "@/app/hooks/useBalance";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
-import { ReportDataType, reportTradeData } from "@/app/utils/report";
-import { useUUID } from "@/app/store/useUUID";
 
 type Token = {
   tokenName: string;
@@ -64,7 +62,6 @@ export default function BuySell({
   const { slip, set: setSlip }: any = useSlip();
   const slippageTextRef = useRef<any>();
   const { config }: any = useConfig();
-  const { uuids, set: setUUID }: any = useUUID();
   const { isMobile } = useUserAgent();
   const tokenUri =
     token.tokenIcon || token.tokenImg || "/img/token-icon-placeholder.svg";
@@ -829,7 +826,6 @@ export default function BuySell({
                         "sexy"
                       );
 
-                      reportTradeData(ReportDataType.SWAP, hash, uuids[token.address as string]);
 
                       const modalHandler = Modal.show({
                         content: (

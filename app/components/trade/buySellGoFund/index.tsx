@@ -23,8 +23,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
-import { ReportDataType, reportTradeData } from "@/app/utils/report";
-import { useUUID } from "@/app/store/useUUID";
+
 
 type Token = {
   tokenName: string;
@@ -63,7 +62,6 @@ export default function BuySellPump({
   const [showSlip, setShowSlip] = useState(false);
   const { config }: any = useConfig();
   const { slip, set: setSlip }: any = useSlip();
-  const { uuids, set: setUUID }: any = useUUID();
   const tokenUri =
     token.tokenIcon || token.tokenImg || "/img/token-icon-placeholder.svg";
   const slippageTextRef = useRef<any>();
@@ -666,8 +664,6 @@ export default function BuySellPump({
                         Big(volume).toFixed(SOL.tokenDecimals),
                         "pump"
                       );
-
-                      reportTradeData(ReportDataType.SWAP, hash, uuids[token.address as string]);
 
                       const modalHandler = Modal.show({
                         content: (
