@@ -165,8 +165,6 @@ export function useTokenTrade({
 
     const instructions = [];
 
-    console.log(referral_address, "referral_address");
-
     let referral = new PublicKey(referral_address || proxy_address);
     const proxy = new PublicKey(proxy_address);
 
@@ -246,8 +244,6 @@ export function useTokenTrade({
     } catch (e) {
       console.log(e);
     }
-
-    console.log(referral, "referral", state);
 
     const referralFeeRateRecord = PublicKey.findProgramAddressSync(
       [
@@ -1078,8 +1074,6 @@ export function useTokenTrade({
       connection: connection
     } as any);
     const poolData: any = await program.account.pool.fetch(pool[0]);
-
-    console.log("poolData", poolData);
 
     return poolData;
   }, [pool]);
