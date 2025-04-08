@@ -85,6 +85,7 @@
 
 .type {
   flex: 1;
+  color: rgba(111, 255, 0, 1);
   &.sell {
     color: rgba(255, 75, 167, 1);
   }
