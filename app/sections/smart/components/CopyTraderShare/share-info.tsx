@@ -42,7 +42,7 @@ const formatWinRate = (winRate: string) => {
     <div className={styles.CopyTradeShareInfoCardContainer}>
       <div className={styles.CopyTradeShareInfoCard}>
         <div className={styles.CopyTradeShareInfoCardContent}>
-          <div className={styles.CopyTradeShareInfoCardTitle}>Copied PRFM</div>
+          <img  className={styles.CopyTradeShareInfoCardTitle} src="/img/smart/copy-share-title.png" alt="copy share title" />
           <div className={styles.avatarAndName}>
             <img src={userInfo?.icon || defaultAvatar} alt="" className={styles.CopyTradeShareInfoCardAvatar}/>
             <div className={styles.CopyTradeShareInfoCardName}>{formatAddress(userInfo?.name || accountAddress)}</div>
@@ -82,3 +82,5 @@ const formatWinRate = (winRate: string) => {
 };
 
 export default React.forwardRef(AirdropShareInfoCard);
+
+
