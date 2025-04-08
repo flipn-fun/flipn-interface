@@ -91,6 +91,10 @@
   &.buy {
     color: rgba(111, 255, 0, 1);
   }
+  &.withdraw {
+    color: rgba(111, 255, 0, 1);
+    padding-right: 5px;
+  }
 }
 
 .value {
