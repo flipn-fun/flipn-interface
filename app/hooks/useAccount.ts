@@ -266,7 +266,7 @@ export function useAccount() {
         console.log('signedTransaction:', signedTransaction)
 
         if (beforeSend && signedTransaction.signatures.length > 0) {
-          const signature = bs58.encode(signedTransaction.signature);
+          const signature = bs58.encode(signedTransaction.signatures[0]);
           console.log('signature:', signature)
           beforeSend(signature, _transaction)
         }
