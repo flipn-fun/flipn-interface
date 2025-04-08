@@ -28,13 +28,16 @@
   width: 100%;
   height: 412px;
   border-radius: 20px;
-  background: linear-gradient(rgba(251, 202, 4, 0.9), rgba(251, 202, 4, 0.9)), url("/img/smart/copy-share-bg.png") no-repeat top / cover;
-  background-color: #FBCA04;
+  background: url("/img/smart/copy-share-bg-new.png") no-repeat 46px 70px / 320px;
+  /* background-color: #FBCA04; */
+  border: 2px solid #FBCA04;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
-  padding: 27px 20px;
+  border-bottom: none;
+  background-color: #000000;
+  /* padding: 27px 33px; */
 }
 .CopyTradeShareFooter {
   width: 90%;
@@ -105,15 +108,15 @@
   height: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: column;
 }
 .CopyTradeShareInfoCard {
   width: 100%;
-  height: 272px;
+  height: 100%;
   border-radius: 12px;
-  background: #F2E9D8;
-  padding:25px 20px;
+  /* background: #F2E9D8; */
+  padding:25px 30px;
 }
 
 .AirdropShareInfoCardInfo {
@@ -124,8 +127,13 @@
  display: flex;
  align-items: center;
  justify-content: space-between;
- width: 100%;
- margin-top: 38px;
+ width: 101%;
+ /* margin-top: 38px; */
+ background-color: #FBCA04;
+ min-height: 100px;
+ border-radius: 20px;
+ border-top: 3px solid #252328;
+ padding:0 25px;
 }
 .FlipImgContainer {
   display: flex;
@@ -212,14 +220,14 @@
 }
 
 .CopyTradeShareInfoCardTitle {
-  color: #000;
-  font-family: Unbounded;
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 500;
   line-height: normal;
-  text-align: left;
+  text-align: center;
+  width: 100%;
+  height: 20px;
 }
+
+
+
 .avatarAndName {
   display: flex;
   align-items: center;
@@ -235,11 +243,11 @@
 }
 
 .CopyTradeShareInfoCardName {
-  color: #000;
+  color: white;
   font-family: Unbounded;
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
   line-height: normal;
 }
 
@@ -251,24 +259,24 @@
   flex-direction: column;
 }
 .publicStyleValueCurrency {
-  color: rgba(0,0,0,.5);
+  color: #C2FF49;
   font-family: Unbounded;
-  font-size: 12px;
+  font-size: 14px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
 }
 .publicStylePNL {
-  color: #000;
+  color: #C2FF49;
   font-family: Unbounded;
-  font-size: 26px;
+  font-size: 40px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   line-height: normal;
   margin-right: 2px;
 }
 .publicStyleTitle {
-  color: rgba(0,0,0,.5);
+  color: rgba(255,255,255,.5);
   font-family: Unbounded;
   font-size: 12px;
   font-style: normal;
@@ -276,11 +284,11 @@
   line-height: normal;
 }
 .publicStyleValue {
-  color: #000;
+  color: #fff;
   font-family: Unbounded;
-  font-size: 14px;
+  font-size: 18px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 500;
   line-height: normal;
 }
 .ROIandWinRate {
