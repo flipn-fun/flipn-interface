@@ -255,6 +255,16 @@ export function useAccount() {
             const versionedTransaction = new VersionedTransaction(message)
 
             _transaction = versionedTransaction
+          } else {
+            const message = new TransactionMessage({
+              payerKey: publicKey!, // Public key of the account paying for the transaction
+              recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
+              instructions: transaction.instructions, // Instructions to be included in the transaction
+            }).compileToV0Message()
+
+            const versionedTransaction = new VersionedTransaction(message)
+
+            _transaction = versionedTransaction
           }
         }
 
@@ -263,11 +273,9 @@ export function useAccount() {
         const signedTransaction = await signTransaction!(_transaction)
         const serializedTransaction = signedTransaction.serialize();
 
-        console.log('signedTransaction:', signedTransaction)
 
         if (beforeSend && signedTransaction.signatures.length > 0) {
           const signature = bs58.encode(signedTransaction.signatures[0]);
-          console.log('signature:', signature)
           beforeSend(signature, _transaction)
         }
         
@@ -286,7 +294,7 @@ export function useAccount() {
           // });
         }
 
-        console.log('tx:', tx, _transaction)
+        // console.log('tx:', tx, _transaction)
 
         // console.log(tx)
         // const tx = await connection.sendTransaction(transaction, [payer], {

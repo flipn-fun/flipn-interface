@@ -14,9 +14,9 @@ export async function reportTradeData(type: number, txHash: string, uuid: string
       list: [data]
     }, true, true);
 
-    if (!response.ok) {
-      throw new Error('Report data failed');
-    }
+    // if (!response.ok) {
+    //   throw new Error('Report data failed');
+    // }
 
     return await response.json();
   } catch (error) {
