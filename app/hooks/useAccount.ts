@@ -263,8 +263,10 @@ export function useAccount() {
         const signedTransaction = await signTransaction!(_transaction)
         const serializedTransaction = signedTransaction.serialize();
 
+        console.log('signedTransaction:', signedTransaction)
+
         if (beforeSend && signedTransaction.signatures.length > 0) {
-          const signature = bs58.encode(signedTransaction.signatures[0].signature);
+          const signature = bs58.encode(signedTransaction.signature);
           console.log('signature:', signature)
           beforeSend(signature, _transaction)
         }
