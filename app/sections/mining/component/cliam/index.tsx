@@ -13,8 +13,8 @@ export default function Claim() {
         />
       ) : (
         <img
-          style={{ marginTop: 16 }}
-          src="/img/mining/claim-pc.svg" 
+          style={{ marginTop: 16, width: '100%' }}
+          src="/img/mining/claim-pc.png" 
         />
       )}
     </a>
