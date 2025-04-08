@@ -13,7 +13,6 @@ export default function LimitProject({ list = [] }: any) {
           currentSummary: { label: "Launched", amount: 0, value: 3 },
           profileTabName: "Liked"
         });
-        console.log(16);
         router.push("/profile");
       }}
     >

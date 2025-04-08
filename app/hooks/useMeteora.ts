@@ -10,6 +10,9 @@ import { createCloseAccountInstruction } from '@solana/spl-token';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { getAccount } from '@solana/spl-token';
 import { getAssociatedTokenAddress } from '@solana/spl-token';
+import { ReportDataType } from '../utils/report';
+import { reportTradeData } from '../utils/report';
+import { useUUID } from '../store/useUUID';
 interface Params {
     token: Project;
 }
@@ -19,6 +22,7 @@ export default function useMeteora({ token }: Params) {
     const [meteoraPool, setMeteoraPool] = useState<any>(null);
     const { connection } = useConnection();
     const { publicKey, walletProvider } = useAccount();
+    const { uuids }: any = useUUID();
 
     const meteoraPoolRef = useRef<any>(null);
 
@@ -98,7 +102,10 @@ export default function useMeteora({ token }: Params) {
 
 
             const hash = await walletProvider?.signAndSendTransaction(swapTx, {}, {
-                canJitoable: true
+                canJitoable: true,
+                beforeSend: (signature: string) => {
+                    reportTradeData(ReportDataType.SWAP, signature, uuids[token.address as string]);
+                }
             })
 
             console.log('hash:', hash)

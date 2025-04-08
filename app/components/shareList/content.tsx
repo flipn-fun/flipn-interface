@@ -27,7 +27,6 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
   const [preview, setPreview] = useState(false);
 
   useEffect(() => {
-    console.log('xUserInfo:', xUserInfo, data);
     if (xUserInfo) {
       setPreview(true);
     }

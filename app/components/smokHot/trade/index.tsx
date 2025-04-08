@@ -17,8 +17,6 @@ import { useAuth } from "@/app/context/auth";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
-import { reportTradeData, ReportDataType } from "@/app/utils/report";
-import { useUUID } from "@/app/store/useUUID";
 
 interface Props {
   token: Project;
@@ -43,7 +41,6 @@ export default function Trade({
   bottomStyle
 }: Props) {
   const { flipMax, set }: any = useSetting();
-  const { uuids, set: setUUID }: any = useUUID();
   const [inputVal, setInputVal] = useState(
     flipMax.toString() || max.toString()
   );
@@ -229,7 +226,6 @@ export default function Trade({
                   const inputNum = new Big(inputVal).mul(10 ** 9).toFixed(0);
                   const hash = await prePaid(inputNum, false);
 
-                  reportTradeData(ReportDataType.FLIP, hash, uuids[token.address as string]);
                   // const res = true
                   setIsLoading(false);
                   if (hash) {

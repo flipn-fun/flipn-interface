@@ -24,8 +24,6 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import useMeteora from "@/app/hooks/useMeteora";
-import { ReportDataType, reportTradeData } from "@/app/utils/report";
-import { useUUID } from "@/app/store/useUUID";
 
 type Token = {
   tokenName: string;
@@ -66,7 +64,6 @@ export default function BuySellLaunched({
   const { slip, set: setSlip }: any = useSlip();
   const { isMobile } = useUserAgent();
   const slippageTextRef = useRef<any>();
-  const { uuids, set: setUUID }: any = useUUID();
   const tokenUri =
     token.tokenIcon || token.tokenImg || "/img/token-icon-placeholder.svg";
 
@@ -181,7 +178,6 @@ export default function BuySellLaunched({
                 } else {
                   getMeteoraQoute(buyIn, "buy", slip * 100)
                     .then((res: any) => {
-                      console.log("meteora res:", res);
                       if (res > 0) {
                         setDexType(1);
                         setBuyIn(
@@ -694,8 +690,6 @@ export default function BuySellLaunched({
                       if (dexType === 0) {
                         hash = await trade(buyInSol, "buy", slip * 100);
                       } else {
-                        console.log("buyInSol:", buyInSol);
-
                         hash = await tradeMeteora(buyInSol, "buy", slip * 100);
                       }
 
@@ -732,7 +726,6 @@ export default function BuySellLaunched({
                       //   token.DApp === "pump" ? "pump" : "sexy"
                       // );
 
-                      reportTradeData(ReportDataType.SWAP, hash, uuids[token.address as string]);
 
                       const modalHandler = Modal.show({
                         content: (

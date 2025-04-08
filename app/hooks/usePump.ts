@@ -2,6 +2,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { useCallback, useMemo } from "react";
 import { pumpFunBuy, pumpFunSell, getCoinData } from "../utils/pumpSwap";
 import { useAccount } from "./useAccount";
+import { useUUID } from "../store/useUUID";
 
 interface Props {
   tokenAddress: string;
@@ -10,7 +11,7 @@ interface Props {
 export default function usePump({ tokenAddress }: Props) {
   const { connection } = useConnection();
   const { walletProvider } = useAccount();
-
+  const { uuids }: any = useUUID();
 
   const buy = useCallback(
     async (amount: number, slippageDecimal: number) => {
@@ -19,7 +20,8 @@ export default function usePump({ tokenAddress }: Props) {
         amount,
         slippageDecimal,
         connection,
-        walletProvider
+        walletProvider,
+        uuids[tokenAddress],
       );
 
       return hash;
@@ -34,7 +36,8 @@ export default function usePump({ tokenAddress }: Props) {
         amount,
         slippageDecimal,
         connection,
-        walletProvider
+        walletProvider,
+        uuids[tokenAddress],
       );
       return hash;
     },

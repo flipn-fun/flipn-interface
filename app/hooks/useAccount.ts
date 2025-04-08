@@ -190,11 +190,13 @@ export function useAccount() {
         {
           isVersionedTransaction = false,
           canJitoable = false,
-          needFeeEstimate = true
+          needFeeEstimate = true,
+          beforeSend
         }: {
           isVersionedTransaction?: boolean,
           canJitoable?: boolean,
-          needFeeEstimate?: boolean
+          needFeeEstimate?: boolean,
+          beforeSend?: (signature: string, transaction?: Transaction) => void
         } = {}
       ) => {
         const confirmationStrategy: any = {
@@ -257,20 +259,32 @@ export function useAccount() {
         }
 
         let tx
+
+        const signedTransaction = await signTransaction!(_transaction)
+        const serializedTransaction = signedTransaction.serialize();
+
+        if (beforeSend && signedTransaction.signatures.length > 0) {
+          const signature = bs58.encode(signedTransaction.signatures[0].signature);
+          console.log('signature:', signature)
+          beforeSend(signature, _transaction)
+        }
+        
+
         if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
-          const signedTransaction = await signTransaction!(_transaction)
-          const serializedTransaction = signedTransaction.serialize();
           const base58Transaction = bs58.encode(serializedTransaction);
           tx = await jitoClient.sendTxn([base58Transaction], false);
         } else {
-          tx = await sendTransaction(_transaction, connection, {
+          tx = await connection.sendRawTransaction(serializedTransaction, {
             ...confirmationStrategy,
             ...sendOptions
           });
+          // tx = await sendTransaction(_transaction, connection, {
+          //   ...confirmationStrategy,
+          //   ...sendOptions
+          // });
         }
 
-        console.log('tx:', tx)
-
+        console.log('tx:', tx, _transaction)
 
         // console.log(tx)
         // const tx = await connection.sendTransaction(transaction, [payer], {

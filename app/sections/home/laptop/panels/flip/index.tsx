@@ -11,11 +11,8 @@ import { numberFormatter } from "@/app/utils/common";
 import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
 import clsx from "clsx";
-import { reportTradeData, ReportDataType } from "@/app/utils/report";
 import dayjs from "dayjs";
 import { usePrepaidDelayTimeStore } from "@/app/store/usePrepaidDelayTime";
-import { useUUID } from "@/app/store/useUUID";
-
 
 const isPrepaidCache = new Map<string, any>();
 export default function FlipPanel(props: any) {
@@ -38,7 +35,6 @@ export default function FlipPanel(props: any) {
   } = props;
   const { flipMax, set }: any = useSetting();
   const [inputVal, setInputVal] = useState("0");
-  const { uuids, set: setUUID }: any = useUUID();
   const { solBalance } = useBalance({
     mint: token.address as string,
     tokenDecimals: token.tokenDecimals as number,
@@ -56,8 +52,6 @@ export default function FlipPanel(props: any) {
     tokenDecimals: token.tokenDecimals as number,
     loadData: false
   });
-
-  console.log('token', token)
 
   const delayTime = useMemo(() => {
     if (!token.createdAt || !prepaidDelayTime) return 0;
@@ -78,7 +72,6 @@ export default function FlipPanel(props: any) {
       const hash = await prePaid(inputNum, false);
       setLoading(false);
       if (hash) {
-        reportTradeData(ReportDataType.FLIP, hash, uuids[token.address as string]);
         isPrepaidCache.set(token.address, inputVal);
         success("Flip success");
         onSuccess?.(inputVal);

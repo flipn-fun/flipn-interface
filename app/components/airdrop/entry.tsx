@@ -41,7 +41,6 @@ const AirdropEntry = (props: any) => {
   const isAirdrop = useMemo(() => {
     if (!search.get("referral")) return false;
     if (!Cookies.get("referral")) {
-      console.log("referral saved: %o", search.get("referral"));
       Cookies.set("referral", search.get("referral") as string, { path: "/" });
       setReferral(search.get("referral") as string);
     }

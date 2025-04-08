@@ -342,7 +342,6 @@ export default function Create({
             isSkipLoading={isSkipLoading}
             btnText={isError ? errorMsg : "Get"}
             goBackTo={(number) => {
-              console.log("number", number, goBackTo);
               goBackTo && goBackTo();
             }}
             onBack={() => {
