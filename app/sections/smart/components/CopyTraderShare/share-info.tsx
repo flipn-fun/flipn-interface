@@ -31,6 +31,9 @@ const AirdropShareInfoCard = (props: any, ref: any) => {
     return '+' + numberFormatterNew(pnl, 3, true);
 }
 
+const isGtZero = (str: string) => {
+  return Number(str) >= 0;
+};
 
 const formatWinRate = (winRate: string) => {
   if (winRate == '0') {
@@ -50,7 +53,7 @@ const formatWinRate = (winRate: string) => {
           <div className={styles.publicStyle}>
             <span className={styles.publicStyleTitle}>Total PnL</span>
             <span>
-              <span className={styles.publicStylePNL}>{formatPnl(copyTradersUserInfo?.tradeInfo?.totalPNL || '0')}</span>
+              <span className={styles.publicStylePNL} style={{color: isGtZero(copyTradersUserInfo?.tradeInfo?.totalPNL || '0') ? '#C2FF49 !important' : '#FF2681 !important'}}>{formatPnl(copyTradersUserInfo?.tradeInfo?.totalPNL || '0')}</span>
                <span className={styles.publicStyleValueCurrency}>SOL</span>
             </span>
           </div>
