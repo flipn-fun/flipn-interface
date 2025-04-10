@@ -39,7 +39,7 @@ export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: 
     }, []);
 
     const share = useCallback(async () => {
-        if (!token) return;
+        if (!token || isLoading) return;
         try {
             setIsLoading(true);
             const res = await httpAuthPost(`/contents/publish?project_id=${token?.id}&sharing_copy=${encodeURIComponent(shareCopy)}`);
@@ -53,7 +53,7 @@ export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: 
             console.error("Failed to share:", error);
             setIsLoading(false);
         }
-    }, [token, shareCopy]);
+    }, [token, shareCopy, isLoading]);
 
     if (!token) {
         return null;
@@ -84,7 +84,7 @@ export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: 
                     <button className={styles.postButton} onClick={() => {
                         share();
                     }}>
-                        {isLoading ? <SpinLoading /> : 'Post'}
+                        {isLoading ? <SpinLoading color='#fff' style={{ fontSize: 14 }} /> : 'Post'}
                     </button>
                 </div>
 
