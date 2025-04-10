@@ -27,6 +27,7 @@ import TopTraderDetailShareConfirm from '@/app/sections/smart/components/topTrad
 import { useAccount } from '@/app/hooks/useAccount';
 import { useCopyTradeRefresh } from '@/app/store/useCopyTradeRefresh';
 import Loading from "@/app/loading";
+import { ALLOW_COPY_TRADE } from '@/app/utils/config';
 interface SatelliteNode {
   id: string;
   name: string;
@@ -171,7 +172,7 @@ export default function TopTraderDetailM() {
     return <Loading />;
   }
   // to do release
-  if(copyTradersUserInfo && !copyTradersUserInfo.isTopTrader) {
+  if(!ALLOW_COPY_TRADE && copyTradersUserInfo && !copyTradersUserInfo.isTopTrader) {
     return (
       <div className={styles.notTopTraderContainer}>
         <span>Not a top trader!</span>

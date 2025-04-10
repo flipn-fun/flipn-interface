@@ -10,6 +10,7 @@ import { useUserAgent } from "@/app/context/user-agent";
 import CircleLoading from "@/app/components/icons/loading";
 import { useCopyTradeRefresh } from '@/app/store/useCopyTradeRefresh'
 import MCopyCardSkeleton from './ske';
+import { ALLOW_COPY_TRADE } from '@/app/utils/config';
 export default function CardContainer() {
   const { address: walletAddress } = useAccount();
   const { lastCopyTradeTime, set: setLastCopyTradeTime }:any = useCopyTradeRefresh();
@@ -45,9 +46,9 @@ export default function CardContainer() {
   }, [walletAddress,refreshing,lastCopyTradeTime]);
 
 
-  const isTopTrader = copyTradersUserInfo?.isTopTrader;
+  const isTopTrader = ALLOW_COPY_TRADE || copyTradersUserInfo?.isTopTrader;
   // const isTopTrader = true;
-  const isCopyier = copyTradersUserInfo && +copyTradersUserInfo?.tradeInfo?.totalInvestment > 0;
+  const isCopyier = ALLOW_COPY_TRADE || (copyTradersUserInfo && +copyTradersUserInfo?.tradeInfo?.totalInvestment > 0);
 
   // if (!walletAddress) {
   //   return null
