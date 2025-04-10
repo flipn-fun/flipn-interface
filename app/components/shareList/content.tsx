@@ -39,11 +39,6 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
           <div className={styles.iconItem} onClick={async () => {
-            // if (!phylloAccount || phylloAccount.status === 'NOT_CONNECTED') {
-            //   connectPhyllo();
-            // } else {
-            //   setPreview(true);
-            // }
             if (!code || !xUserInfo) {
               const result = await shareToTwitter();
               if (result) {
@@ -52,9 +47,6 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
             } else {
               setPreview(true);
             }
-
-
-            // 
           }}>
             {isInit ? (
               <>
