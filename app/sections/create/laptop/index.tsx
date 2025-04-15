@@ -9,6 +9,9 @@ import styles from "./index.module.css";
 import Steps from "./step";
 import PreviewNode from "../PreviewNode";
 import { useUserAgent } from "@/app/context/user-agent";
+import { createMint } from "@solana/spl-token";
+import { useRay } from "@/app/hooks/useRay";
+import { Button } from "antd-mobile";
 
 export default function Laptop() {
   const [step, setStep] = useState(1);
@@ -16,6 +19,15 @@ export default function Laptop() {
   const createRef = useRef<any>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { isMobile } = useUserAgent();
+  const { createMint, getQoute, trade } = useRay({
+    token: {
+      address: 'HNdZwxxPgJzMYg85wmK9Z8zUV5q71QRRCNWK49MUY87A',
+      about: '',
+      tokenImg: '',
+      tokenName: '',
+      ticker: '',
+    }
+  });
 
   const query = useMemo(() => {
     const query: any = {
@@ -91,6 +103,27 @@ export default function Laptop() {
             </motion.div>
           )}
         </div>
+
+
+        <Button onClick={async () => {    
+          const tx = await createMint({})
+        }}>Raudium</Button>
+
+        <Button onClick={async () => {
+          const quote = await getQoute('10000', 'buy')
+          console.log('quote', quote)
+        }}>Get Quote</Button>
+
+        <Button onClick={async () => {
+          const tx = await trade('1000000000', 'buy', 100)
+          console.log('tx', tx)
+        }}>Buy</Button>
+
+        <Button onClick={async () => {
+          const tx = await trade('100000000', 'sell', 100)
+          console.log('tx', tx)
+        }}>Sell</Button>  
+
       </motion.div>
     </>
   );
