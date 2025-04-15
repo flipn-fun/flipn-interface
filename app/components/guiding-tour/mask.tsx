@@ -21,6 +21,7 @@ interface MaskProps {
   contentHeight?: number;
   reset?: boolean;
   type?: string;
+  showAction?: boolean;
 }
 
 export const Mask: React.FC<MaskProps> = (props) => {
@@ -34,9 +35,11 @@ export const Mask: React.FC<MaskProps> = (props) => {
     contentWidth = 200,
     contentHeight = 100,
     reset = false,
-    type
+    type,
+    showAction = true
   } = props;
   const { isMobile } = useUserAgent();
+  const [outerHTML, setOuterHTML] = useState<string>('');
 
   const [style, setStyle] = useState<CSSProperties>({});
 
@@ -104,37 +107,21 @@ export const Mask: React.FC<MaskProps> = (props) => {
 
   const { top, left, elementWidth, elementHeight } = style as any;
 
+  useEffect(() => {
+    if (type === 'button') {
+      const newElement: any = element.cloneNode(true);
+      newElement.style.top = '0';
+      setOuterHTML(newElement.outerHTML);
+      element.style.visibility = 'hidden';
+    }
+
+    return () => {
+      element.style.visibility = 'visible';
+    }
+  }, [element, type]);
+
   const elementRect = useMemo(() => element.getClientRects()?.[0], [element]);
 
-  const triStyle = useMemo(() => {
-    if (isMobile) {
-      switch (placement) {
-        case MaskPlacement.Top:
-          return {
-            bottom: -9,
-            left:
-              elementRect.left -
-              elementWidth / 2 -
-              (contentWidth - elementRect.left < 10 ? 14 : 4)
-          };
-      }
-    }
-    if (placement === 0) return { bottom: -9, right: 76 };
-    if (placement === 1) return { bottom: -9, right: contentWidth / 2 };
-    if (placement === 6)
-      return {
-        right: 30,
-        top: -8,
-        transform: "rotate(180deg)"
-      };
-    if (placement === 7)
-      return {
-        top: -9,
-        left: contentWidth / 2,
-        transform: "rotate(180deg)"
-      };
-    return {};
-  }, [placement, isMobile, contentWidth, elementWidth, elementRect]);
 
   const [iconStyle, innerIconStyle] = useMemo(() => {
     if (element?.id === "guid-home-create-mobile") {
@@ -168,8 +155,8 @@ export const Mask: React.FC<MaskProps> = (props) => {
   const btnWrapper: any = {
     button: <div
       style={{
-        width: elementWidth + 16,
-        height: elementHeight + 16,
+        width: elementWidth,
+        height: elementHeight,
         left: elementRect.left,
         top: elementRect.top
       }}
@@ -177,11 +164,10 @@ export const Mask: React.FC<MaskProps> = (props) => {
     >
       <div
         style={{
-          width: elementWidth + 4,
-          height: elementHeight + 4
+          top: 0,
         }}
-        className={styles.ButtonInner}
-        dangerouslySetInnerHTML={{ __html: element.outerHTML }}
+        // className={styles.ButtonInner}
+        dangerouslySetInnerHTML={{ __html: outerHTML }}
       />
     </div>,
     icon: <div style={iconStyle} className={styles.IconWrapper}>
@@ -198,14 +184,14 @@ export const Mask: React.FC<MaskProps> = (props) => {
               alignItems: "center",
               justifyContent: "center"
             }}
-            dangerouslySetInnerHTML={{ __html: element.outerHTML }}
+            dangerouslySetInnerHTML={{ __html: outerHTML }}
           />
         </div>
       ) : (
         <div
           style={innerIconStyle}
           className={styles.IconInner}
-          dangerouslySetInnerHTML={{ __html: element.outerHTML }}
+          dangerouslySetInnerHTML={{ __html: outerHTML }}
         />
       )}
     </div>

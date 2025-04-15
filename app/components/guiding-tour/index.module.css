@@ -77,8 +77,8 @@
 }
 
 .ButtonWrapper {
-  border-radius: 40px;
-  border: 2px solid #ff008a80;
+  border-radius: 10px;
+  border: 1px solid #FBCA04;
   position: absolute;
   box-sizing: border-box;
 }

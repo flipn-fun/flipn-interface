@@ -21,6 +21,8 @@ export interface GuidingTourStepConfig {
   beforeForward?: (currentStep: number) => void;
   beforeBack?: (currentStep: number) => void;
   type?: string;
+  showAction?: boolean;
+  actionLocation?: 'left' | 'right';
 }
 
 const GuidingTour: FC<IGuidingTourProps> = (props) => {
@@ -85,7 +87,7 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
       return null;
     }
 
-    const { content } = config;
+    const { content, showAction, actionLocation = 'right' } = config;
 
     const operation = (
       <button className={styles.Button} onClick={() => forward()}>
@@ -107,19 +109,33 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
 
     return isMaskMoving ? null : (
       <div ref={popoverRef} className={styles.Panel}>
-        <div className={styles.Text}>{content}</div>
-        <div className={styles.Operation}>
-          <div className={styles.OperationNo}>
-            {
-              currentStep === 0 && 'No thanks'
-            }
+        <div className={styles.Text} onClick={() => {
+          if (!showAction) {
+            forward()
+          }
+        }}>{content}</div>
 
-            {
-              currentStep !== 0 && 'Exit'
-            }
-          </div>
-          {operation}
-        </div>
+        {
+          showAction && ( 
+            <div className={styles.Operation} style={{
+              justifyContent: actionLocation === 'left' ? 'flex-start' : 'flex-end',
+              
+            }}>
+              <div className={styles.OperationNo} style={{
+                order: actionLocation === 'left' ? 2 : -1
+              }}>
+                {
+                  currentStep === 0 && 'No thanks'
+                }
+
+                {
+                  currentStep !== 0 && 'Exit'
+                }
+              </div>
+              {operation}
+            </div>
+          )
+        }
       </div>
     );
   };
@@ -149,6 +165,7 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
       contentWidth={contentSize.width}
       contentHeight={contentSize.height}
       type={getCurrentStep().type}
+      showAction={getCurrentStep().showAction}
     />
   );
 

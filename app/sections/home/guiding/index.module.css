@@ -3,7 +3,7 @@
     backdrop-filter: blur(5px);
     border: 1px solid #FFFFFF66;
     border-radius: 20px;
-    padding: 20px 10px;
+    padding: 10px;
     color: #FFFFFF;
     font-size: 12px;
     line-height: 1.5;
@@ -24,4 +24,29 @@
     position: absolute;
     bottom: -55px;
     left: -80px;
+}
+
+.step2 {
+    position: absolute;
+    bottom: -55px;
+    right: -80px;
+}
+
+.scroll {
+    width: 100vw;
+    height: 218px;
+    background: #000;
+    color: #FFFFFF;
+    margin-top: -218px;
+    font-weight: 400;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 75.96%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 11px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    cursor: pointer;
 }
