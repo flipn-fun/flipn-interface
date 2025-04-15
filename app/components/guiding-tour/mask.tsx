@@ -165,54 +165,56 @@ export const Mask: React.FC<MaskProps> = (props) => {
     ];
   }, [elementRect, elementWidth]);
 
-  return (
-    <div className={styles.Mask}>
-      {type === "button" ? (
-        <div
-          style={{
-            width: elementWidth + 16,
-            height: elementHeight + 16,
-            left: elementRect.left,
-            top: elementRect.top
-          }}
-          className={styles.ButtonWrapper}
-        >
+  const btnWrapper: any = {
+    button: <div
+      style={{
+        width: elementWidth + 16,
+        height: elementHeight + 16,
+        left: elementRect.left,
+        top: elementRect.top
+      }}
+      className={styles.ButtonWrapper}
+    >
+      <div
+        style={{
+          width: elementWidth + 4,
+          height: elementHeight + 4
+        }}
+        className={styles.ButtonInner}
+        dangerouslySetInnerHTML={{ __html: element.outerHTML }}
+      />
+    </div>,
+    icon: <div style={iconStyle} className={styles.IconWrapper}>
+      {element?.id === "guid-home-create-mobile" ? (
+        <div style={innerIconStyle} className={styles.IconInner}>
           <div
             style={{
-              width: elementWidth + 4,
-              height: elementHeight + 4
+              border: "3px solid #000",
+              borderRadius: 50,
+              backgroundColor: "#FF2681",
+              width: 60,
+              height: 60,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
             }}
-            className={styles.ButtonInner}
             dangerouslySetInnerHTML={{ __html: element.outerHTML }}
           />
         </div>
       ) : (
-        <div style={iconStyle} className={styles.IconWrapper}>
-          {element?.id === "guid-home-create-mobile" ? (
-            <div style={innerIconStyle} className={styles.IconInner}>
-              <div
-                style={{
-                  border: "3px solid #000",
-                  borderRadius: 50,
-                  backgroundColor: "#FF2681",
-                  width: 60,
-                  height: 60,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-                dangerouslySetInnerHTML={{ __html: element.outerHTML }}
-              />
-            </div>
-          ) : (
-            <div
-              style={innerIconStyle}
-              className={styles.IconInner}
-              dangerouslySetInnerHTML={{ __html: element.outerHTML }}
-            />
-          )}
-        </div>
+        <div
+          style={innerIconStyle}
+          className={styles.IconInner}
+          dangerouslySetInnerHTML={{ __html: element.outerHTML }}
+        />
       )}
+    </div>
+  }
+
+  return (
+    <div className={styles.Mask}>
+      {type && btnWrapper[type]}
+
       {top !== undefined && left !== undefined && (
         <motion.div
           animate={{

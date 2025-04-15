@@ -89,33 +89,37 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
 
     const operation = (
       <button className={styles.Button} onClick={() => forward()}>
-        {currentStep === steps.length - 1 ? (
-          "Got it"
-        ) : (
-          <>
+        {
+          currentStep === steps.length - 1 && 'Got it'
+        }
+
+        {
+          currentStep === 0 && 'Show me!'
+        }
+
+        {
+          currentStep !== 0 && currentStep !== steps.length - 1 && (
             <span>Next</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="7"
-              height="10"
-              viewBox="0 0 7 10"
-              fill="none"
-            >
-              <path
-                d="M1 0.842773L5.24264 5.08541L1 9.32806"
-                stroke="white"
-                strokeWidth="1.5"
-              />
-            </svg>
-          </>
-        )}
+          )
+        }
       </button>
     );
 
     return isMaskMoving ? null : (
       <div ref={popoverRef} className={styles.Panel}>
         <div className={styles.Text}>{content}</div>
-        <div style={{ height: 30 }}>{operation}</div>
+        <div className={styles.Operation}>
+          <div className={styles.OperationNo}>
+            {
+              currentStep === 0 && 'No thanks'
+            }
+
+            {
+              currentStep !== 0 && 'Exit'
+            }
+          </div>
+          {operation}
+        </div>
       </div>
     );
   };

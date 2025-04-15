@@ -15,7 +15,7 @@ export default function Tabs() {
   if (!tabsPath.includes(pathname)) return null;
 
   return (
-    <div className={styles.Container}>
+    <div className={styles.Container} id="tabs-bottom-wrapper">
       {tabs.map((item: any) => {
         const isActive = item.key.includes(pathname);
         return (

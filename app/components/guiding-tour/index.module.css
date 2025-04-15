@@ -6,22 +6,22 @@
   bottom: 0;
   z-index: 999;
   background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
+  /* backdrop-filter: blur(5px); */
 }
 
 .Panel {
-  width: 359px;
-  border-radius: 20px;
-  background: #fff3f8;
+  /* width: 359px; */
+  /* border-radius: 20px; */
+  /* background: #fff3f8; */
   position: relative;
-  padding: 24px;
+  /* padding: 24px; */
 }
 
 .Button {
-  border-radius: 8px;
-  background: #ff2681;
+  border-radius: 898px;
+  background: #C9FF5D;
   padding: 7px 12px;
-  color: #fff;
+  color: #000;
   text-align: right;
   font-family: Unbounded;
   font-size: 14px;
@@ -31,8 +31,22 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  font-size: 11px;
+}
+
+.Operation {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   margin-top: 10px;
-  float: right;
+  gap: 10px;
+}
+
+.OperationNo {
+  color: #fff;
+  font-size: 11px;
+  font-family: Unbounded;
+  cursor: pointer;
 }
 
 .Text {

@@ -1,0 +1,27 @@
+.panel {
+    background: #FFFFFF33;
+    backdrop-filter: blur(5px);
+    border: 1px solid #FFFFFF66;
+    border-radius: 20px;
+    padding: 20px 10px;
+    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    font-weight: 400;
+}
+
+.text {
+    margin-top: 10px;
+}
+
+.importantText {
+    color: #FBCA04;
+    font-weight: 500;
+}
+
+.step1 {
+    position: absolute;
+    bottom: -55px;
+    left: -80px;
+}
