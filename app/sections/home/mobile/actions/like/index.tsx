@@ -27,6 +27,7 @@ export default function Like({
   return (
     <div
       className={styles.Like}
+      id="home-like-button"
       onClick={async () => {
         if (mergedLiked || disabled) return;
         if (!window.sexAddress) {

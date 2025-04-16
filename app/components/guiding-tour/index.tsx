@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Mask } from "./mask";
 import { MaskPlacement } from "./get-style-rect";
 import { useGuidingTour } from "@/app/store/use-guiding-tour";
+import { Exit } from "./exit";
 import styles from "./index.module.css";
 
 export interface IGuidingTourProps {
@@ -21,6 +22,11 @@ export interface GuidingTourStepConfig {
   beforeForward?: (currentStep: number) => void;
   beforeBack?: (currentStep: number) => void;
   type?: string;
+  showAction?: boolean;
+  actionLocation?: 'left' | 'right';
+  triggerEvent?: 'click' | 'hover' | null;
+  showOuter?: boolean;
+  eleOffset?: { left?: number, top?: number };
 }
 
 const GuidingTour: FC<IGuidingTourProps> = (props) => {
@@ -36,6 +42,7 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
   const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
   const popoverRef = useRef<HTMLDivElement>(null);
   const [isResetting, setIsResetting] = useState(false);
+  const [exit, setExit] = useState(false);
 
   const getCurrentStep = () => {
     return steps[currentStep];
@@ -56,8 +63,26 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
     }
 
     const { beforeForward } = getCurrentStep();
-    await beforeForward?.(currentStep);
-    setCurrentStep(currentStep + 1);
+    let nextEle = false;
+    try {
+      await beforeForward?.(currentStep);
+      nextEle = true
+    } catch (error) {
+      console.error(error);
+      nextEle = false;
+    }
+
+    if (nextEle) {
+      setCurrentStep(currentStep + 1);
+    } else {
+      if (currentStep === steps.length - 2) {
+        await handleTourEnd();
+        return;
+      }
+
+      setCurrentStep(currentStep + 1);
+    }
+
   };
 
   useEffect(() => {
@@ -85,37 +110,62 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
       return null;
     }
 
-    const { content } = config;
+    const { content, showAction, actionLocation = 'right' } = config;
 
     const operation = (
-      <button className={styles.Button} onClick={() => forward()}>
-        {currentStep === steps.length - 1 ? (
-          "Got it"
-        ) : (
-          <>
+      <button className={styles.Button} style={{
+        width: currentStep === steps.length - 1 ? '100%' : 'auto'
+      }} onClick={() => forward()}>
+        {
+          currentStep === steps.length - 1 && 'Make Memes Great Again!'
+        }
+
+        {
+          currentStep === 0 && 'Show me!'
+        }
+
+        {
+          currentStep !== 0 && currentStep !== steps.length - 1 && (
             <span>Next</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="7"
-              height="10"
-              viewBox="0 0 7 10"
-              fill="none"
-            >
-              <path
-                d="M1 0.842773L5.24264 5.08541L1 9.32806"
-                stroke="white"
-                strokeWidth="1.5"
-              />
-            </svg>
-          </>
-        )}
+          )
+        }
       </button>
     );
 
     return isMaskMoving ? null : (
       <div ref={popoverRef} className={styles.Panel}>
-        <div className={styles.Text}>{content}</div>
-        <div style={{ height: 30 }}>{operation}</div>
+        <div className={styles.Text} onClick={() => {
+          if (!showAction) {
+            forward()
+          }
+        }}>{content}</div>
+
+        {
+          showAction && (
+            <div className={styles.Operation}  style={{
+              justifyContent: actionLocation === 'left' ? 'flex-start' : 'flex-end',
+
+            }}>
+              {
+                currentStep !== steps.length - 1 && (
+                  <div onClick={() => {
+                    setExit(true);
+                  }} className={styles.OperationNo} style={{
+                    order: actionLocation === 'left' ? 2 : -1
+                  }}>
+                    {
+                      currentStep === 0 && 'No thanks'
+                    }
+
+                    {
+                      currentStep !== 0 && 'Exit'
+                    }
+                  </div>
+                )}
+              {operation}
+            </div>
+          )
+        }
       </div>
     );
   };
@@ -128,6 +178,18 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
   if ((!props?.forceShow && hasShownTour) || !currentSelectedElement || done) {
     return null;
   }
+
+  if (exit) {
+    const exitComponent = <Exit onConfirm={async () => {
+      await handleTourEnd();
+    }} onCancel={() => {
+      setExit(false);
+    }} />
+
+    return createPortal(exitComponent, currentContainerElement);
+  }
+
+
 
   const mask = (
     <Mask
@@ -145,6 +207,13 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
       contentWidth={contentSize.width}
       contentHeight={contentSize.height}
       type={getCurrentStep().type}
+      showAction={getCurrentStep().showAction}
+      triggerEvent={getCurrentStep().triggerEvent}
+      onNext={() => {
+        forward();
+      }}
+      showOuter={getCurrentStep().showOuter}
+      eleOffset={getCurrentStep().eleOffset}
     />
   );
 

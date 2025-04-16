@@ -60,9 +60,9 @@ export const getPositionStyle = (
     }
   }
 
-  const highlightWidth = elementWidth + HIGHLIGHT_PADDING * 2;
+  const highlightWidth = elementWidth > contentWidth ? elementWidth + HIGHLIGHT_PADDING * 2 : window.innerWidth;
   const highlightHeight = elementHeight + HIGHLIGHT_PADDING * 2;
-  const highlightLeft = left - HIGHLIGHT_PADDING;
+  const highlightLeft = elementWidth > contentWidth ? left - HIGHLIGHT_PADDING : 0;
   const highlightTop = top - HIGHLIGHT_PADDING;
 
   switch (placement) {

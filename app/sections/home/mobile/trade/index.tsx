@@ -7,7 +7,7 @@ export default function Trade({ token, isCurrent, onClick }: any) {
   const { progress } = useGoFund({ token });
 
   return (
-    <div className={`${styles.Container}`} onClick={onClick}>
+    <div className={`${styles.Container}`} id="bonding-trade" onClick={onClick}>
       {token.bondingProgress < 100 && token.status !== 3 ? (
         <div>
           <div className={styles.McWrapper}>

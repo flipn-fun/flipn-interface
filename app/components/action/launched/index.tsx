@@ -98,6 +98,7 @@ export default function Action({ data, justPlus = false, from, style }: Props) {
               setTradeShow(true);
               setInitType("buy");
             }}
+            id="detail-trade-button"
           >
             {/* {from === "laptop" ? <LaptopBuyIcon /> : <MobileBuyIcon />} */}
             <div>Trade Now</div>

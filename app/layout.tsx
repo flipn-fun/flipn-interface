@@ -10,6 +10,8 @@ import TGProvider from "./context/TGProvider";
 import PrivyWalletProvider from "@/app/context/privy";
 import Script from "next/script";
 import Rpc from "./components/rpc";
+import { MaskPlacement } from "@/app/components/guiding-tour/get-style-rect";
+import Guiding from "./components/guiding";
 
 export default function RootLayout({
   children
@@ -60,7 +62,7 @@ export default function RootLayout({
             `
           }}
         />
-        <script src="https://cdn.getphyllo.com/connect/v2/phyllo-connect.js" async></script>
+        {/* <script src="https://cdn.getphyllo.com/connect/v2/phyllo-connect.js" async></script> */}
       </head>
       <body>
         <TGProvider>
@@ -70,6 +72,7 @@ export default function RootLayout({
                 <Suspense>
                   <Layout>{children}</Layout>
                   <Rpc />
+                  <Guiding />
                 </Suspense>
               </UserAgentProvider>
             </WalletConnect>

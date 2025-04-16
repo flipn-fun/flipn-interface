@@ -21,6 +21,11 @@ interface MaskProps {
   contentHeight?: number;
   reset?: boolean;
   type?: string;
+  showAction?: boolean;
+  triggerEvent?: 'click' | 'hover' | null;
+  onNext: () => void;
+  showOuter?: boolean;
+  eleOffset?: { left?: number, top?: number };
 }
 
 export const Mask: React.FC<MaskProps> = (props) => {
@@ -34,9 +39,14 @@ export const Mask: React.FC<MaskProps> = (props) => {
     contentWidth = 200,
     contentHeight = 100,
     reset = false,
-    type
+    type,
+    showAction = true,
+    triggerEvent,
+    showOuter = true,
+    eleOffset
   } = props;
   const { isMobile } = useUserAgent();
+  const [outerHTML, setOuterHTML] = useState<string>('');
 
   const [style, setStyle] = useState<CSSProperties>({});
 
@@ -104,37 +114,24 @@ export const Mask: React.FC<MaskProps> = (props) => {
 
   const { top, left, elementWidth, elementHeight } = style as any;
 
+  useEffect(() => {
+    if (type === 'button') {
+      const newElement: any = element.cloneNode(true);
+      newElement.style.top = '0';
+      if (eleOffset) {
+        newElement.style.transform = `translate(${eleOffset.left || 0}px, ${eleOffset.top || 0}px)`;
+      }
+      setOuterHTML(newElement.outerHTML);
+      element.style.visibility = 'hidden';
+    }
+
+    return () => {
+      element.style.visibility = 'visible';
+    }
+  }, [element, type, eleOffset]);
+
   const elementRect = useMemo(() => element.getClientRects()?.[0], [element]);
 
-  const triStyle = useMemo(() => {
-    if (isMobile) {
-      switch (placement) {
-        case MaskPlacement.Top:
-          return {
-            bottom: -9,
-            left:
-              elementRect.left -
-              elementWidth / 2 -
-              (contentWidth - elementRect.left < 10 ? 14 : 4)
-          };
-      }
-    }
-    if (placement === 0) return { bottom: -9, right: 76 };
-    if (placement === 1) return { bottom: -9, right: contentWidth / 2 };
-    if (placement === 6)
-      return {
-        right: 30,
-        top: -8,
-        transform: "rotate(180deg)"
-      };
-    if (placement === 7)
-      return {
-        top: -9,
-        left: contentWidth / 2,
-        transform: "rotate(180deg)"
-      };
-    return {};
-  }, [placement, isMobile, contentWidth, elementWidth, elementRect]);
 
   const [iconStyle, innerIconStyle] = useMemo(() => {
     if (element?.id === "guid-home-create-mobile") {
@@ -165,58 +162,73 @@ export const Mask: React.FC<MaskProps> = (props) => {
     ];
   }, [elementRect, elementWidth]);
 
-  return (
-    <div className={styles.Mask}>
-      {type === "button" ? (
-        <div
-          style={{
-            width: elementWidth + 16,
-            height: elementHeight + 16,
-            left: elementRect.left,
-            top: elementRect.top
-          }}
-          className={styles.ButtonWrapper}
-        >
+  const btnWrapper: any = {
+    button: <div
+      style={{
+        width: elementWidth,
+        height: elementHeight,
+        left: elementRect.left,
+        top: elementRect.top,
+        border: showOuter ? '1px solid #FBCA04' : 'none'
+      }}
+      className={styles.ButtonWrapper}
+    >
+      <div
+        onClick={() => {
+          if (triggerEvent === 'click') {
+            element.click();
+            props.onNext();
+          }
+        }}
+        style={{
+          top: 0,
+
+        }}
+        // className={styles.ButtonInner}
+        dangerouslySetInnerHTML={{ __html: outerHTML }}
+      />
+    </div>,
+    icon: <div style={iconStyle} className={styles.IconWrapper}>
+      {element?.id === "guid-home-create-mobile" ? (
+        <div style={innerIconStyle} className={styles.IconInner}>
           <div
-            style={{
-              width: elementWidth + 4,
-              height: elementHeight + 4
+            onClick={() => {
+              if (triggerEvent === 'click') {
+                element.click();
+                props.onNext();
+              }
             }}
-            className={styles.ButtonInner}
-            dangerouslySetInnerHTML={{ __html: element.outerHTML }}
+            style={{
+              border: "3px solid #000",
+              borderRadius: 50,
+              backgroundColor: "#FF2681",
+              width: 60,
+              height: 60,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+            dangerouslySetInnerHTML={{ __html: outerHTML }}
           />
         </div>
       ) : (
-        <div style={iconStyle} className={styles.IconWrapper}>
-          {element?.id === "guid-home-create-mobile" ? (
-            <div style={innerIconStyle} className={styles.IconInner}>
-              <div
-                style={{
-                  border: "3px solid #000",
-                  borderRadius: 50,
-                  backgroundColor: "#FF2681",
-                  width: 60,
-                  height: 60,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-                dangerouslySetInnerHTML={{ __html: element.outerHTML }}
-              />
-            </div>
-          ) : (
-            <div
-              style={innerIconStyle}
-              className={styles.IconInner}
-              dangerouslySetInnerHTML={{ __html: element.outerHTML }}
-            />
-          )}
-        </div>
+        <div
+          style={innerIconStyle}
+          className={styles.IconInner}
+          dangerouslySetInnerHTML={{ __html: outerHTML }}
+        />
       )}
+    </div>
+  }
+
+  return (
+    <div className={styles.Mask}>
+      {type && btnWrapper[type]}
+
       {top !== undefined && left !== undefined && (
         <motion.div
           animate={{
-            opacity: contentWidth ? 1 : 0
+            // opacity: contentWidth ? 1 : 0
           }}
           style={{
             position: "absolute",

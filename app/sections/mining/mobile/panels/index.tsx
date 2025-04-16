@@ -25,7 +25,7 @@ export default function Panels({
     );
   }, [info]);
   return (
-    <div className={styles.Container}>
+    <div className={styles.Container} id="mining-top">
       <Swiper
         stuckAtBoundary={false}
         slideSize={82}

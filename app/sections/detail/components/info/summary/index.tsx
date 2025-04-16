@@ -10,7 +10,7 @@ import FullPlay from "../fullPlay";
 export default function Summary({ data, showAddress, from }: any) {
   const [showFullPlay, setShowFullPlay] = useState(false);
   return (
-    <div className={styles.tokenSummary}>
+    <div className={styles.tokenSummary} id="token-summary">
       <div className={styles.tokenSummaryContent}>
         <TokenIcon token={data} showBlueChip={from !== "panel"} />
         <div className={styles.tokenSummaryInfo}>

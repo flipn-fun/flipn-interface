@@ -1,0 +1,105 @@
+.panel {
+    background: #FFFFFF33;
+    backdrop-filter: blur(5px);
+    border: 1px solid #FFFFFF66;
+    border-radius: 20px;
+    padding: 10px;
+    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    font-weight: 400;
+}
+
+.text {
+    margin-top: 10px;
+}
+
+.importantText {
+    color: #FBCA04;
+    font-weight: 500;
+}
+
+.step1 {
+    position: absolute;
+    bottom: -55px;
+    left: -80px;
+}
+
+.step2 {
+    position: absolute;
+    bottom: -55px;
+    right: -80px;
+}
+
+.arrowRightBottom {
+    position: absolute;
+    bottom: -15px;
+    right: -50px;
+}
+
+.arrowLeftBottom {
+    position: absolute;
+    bottom: -50px;
+    left: -60px;
+}
+
+.arrowLeftBottom2 {
+    position: absolute;
+    bottom: -70px;
+    left: 70px;
+}
+
+.arrowRightBottom2 {
+    position: absolute;
+    bottom: -60px;
+    left: 30px;
+}
+.memeticsTitle {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #FBCA04;
+}
+
+.middleText {
+    color: #FFFFFF;
+    font-size: 14px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    font-weight: 400;
+    text-align: center;
+    position: relative;
+    top: -30vh;
+    width: 100vw;
+}
+
+.arrowText {
+    color: #FFFFFF;
+    font-size: 11px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    font-weight: 400;
+    text-align: center;
+   
+}
+
+.scroll {
+    width: 100vw;
+    height: 218px;
+    background: #000;
+    color: #FFFFFF;
+    margin-top: -218px;
+    font-weight: 400;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 75.96%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 11px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    cursor: pointer;
+}

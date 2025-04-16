@@ -27,9 +27,10 @@ export default function Tabs() {
   );
 
   return (
-    <div className={styles.launchPadTab} style={mergedStyle}>
+    <div className={styles.launchPadTab} style={mergedStyle} id="tabs-wrapper">
       {tabs.map((tab: any, i: number) => (
         <div
+          id={`home-tab-${tab.key}`}
           key={tab.key}
           onClick={() => {
             if (tokenPanelStatusStore.showTrade)
