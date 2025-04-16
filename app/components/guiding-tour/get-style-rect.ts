@@ -65,8 +65,6 @@ export const getPositionStyle = (
   const highlightLeft = elementWidth > contentWidth ? left - HIGHLIGHT_PADDING : 0;
   const highlightTop = top - HIGHLIGHT_PADDING;
 
-  console.log('left:', left, highlightWidth, elementWidth, contentWidth)
-
   switch (placement) {
     case MaskPlacement.TopLeft:
       return {

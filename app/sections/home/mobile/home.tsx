@@ -7,9 +7,7 @@ import Tabs from "./tabs";
 import { useHomeTab } from "@/app/store/useHomeTab";
 import { LaunchType } from "@/app/store/use-projects-new";
 import { useUserAgent } from "@/app/context/user-agent";
-import GuidingTour from "@/app/components/guiding-tour";
-import { MaskPlacement } from "@/app/components/guiding-tour/get-style-rect";
-import Guiding from "../guiding";
+
 
 
 
@@ -52,7 +50,6 @@ export default function HomeMobile() {
         </div>
       </div>
           
-      <Guiding />
     </>
   );
 }

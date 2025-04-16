@@ -22,6 +22,10 @@ interface MaskProps {
   reset?: boolean;
   type?: string;
   showAction?: boolean;
+  triggerEvent?: 'click' | 'hover' | null;
+  onNext: () => void;
+  showOuter?: boolean;
+  eleOffset?: { left?: number, top?: number };
 }
 
 export const Mask: React.FC<MaskProps> = (props) => {
@@ -36,7 +40,10 @@ export const Mask: React.FC<MaskProps> = (props) => {
     contentHeight = 100,
     reset = false,
     type,
-    showAction = true
+    showAction = true,
+    triggerEvent,
+    showOuter = true,
+    eleOffset
   } = props;
   const { isMobile } = useUserAgent();
   const [outerHTML, setOuterHTML] = useState<string>('');
@@ -111,6 +118,9 @@ export const Mask: React.FC<MaskProps> = (props) => {
     if (type === 'button') {
       const newElement: any = element.cloneNode(true);
       newElement.style.top = '0';
+      if (eleOffset) {
+        newElement.style.transform = `translate(${eleOffset.left || 0}px, ${eleOffset.top || 0}px)`;
+      }
       setOuterHTML(newElement.outerHTML);
       element.style.visibility = 'hidden';
     }
@@ -118,7 +128,7 @@ export const Mask: React.FC<MaskProps> = (props) => {
     return () => {
       element.style.visibility = 'visible';
     }
-  }, [element, type]);
+  }, [element, type, eleOffset]);
 
   const elementRect = useMemo(() => element.getClientRects()?.[0], [element]);
 
@@ -158,13 +168,21 @@ export const Mask: React.FC<MaskProps> = (props) => {
         width: elementWidth,
         height: elementHeight,
         left: elementRect.left,
-        top: elementRect.top
+        top: elementRect.top,
+        border: showOuter ? '1px solid #FBCA04' : 'none'
       }}
       className={styles.ButtonWrapper}
     >
       <div
+        onClick={() => {
+          if (triggerEvent === 'click') {
+            element.click();
+            props.onNext();
+          }
+        }}
         style={{
           top: 0,
+
         }}
         // className={styles.ButtonInner}
         dangerouslySetInnerHTML={{ __html: outerHTML }}
@@ -174,6 +192,12 @@ export const Mask: React.FC<MaskProps> = (props) => {
       {element?.id === "guid-home-create-mobile" ? (
         <div style={innerIconStyle} className={styles.IconInner}>
           <div
+            onClick={() => {
+              if (triggerEvent === 'click') {
+                element.click();
+                props.onNext();
+              }
+            }}
             style={{
               border: "3px solid #000",
               borderRadius: 50,
@@ -204,7 +228,7 @@ export const Mask: React.FC<MaskProps> = (props) => {
       {top !== undefined && left !== undefined && (
         <motion.div
           animate={{
-            opacity: contentWidth ? 1 : 0
+            // opacity: contentWidth ? 1 : 0
           }}
           style={{
             position: "absolute",

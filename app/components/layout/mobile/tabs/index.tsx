@@ -22,6 +22,7 @@ export default function Tabs() {
           <div
             className={`${item?.comingSoon && styles.ComingSoonWrapper} ${styles.Tab}`}
             key={item.path}
+            id={'tab-bottom-' + item.label}
             onClick={() => {
               if (!window.sexAddress && item.needLogin) {
                 window.connect();

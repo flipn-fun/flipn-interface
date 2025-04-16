@@ -147,6 +147,7 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
           <div className={styles.Content}>
             <div className={styles.header} ref={headerRef}>
               <div className={styles.backWrapper}>
+
                 <Back
                   onBack={() => {
                     if (onBack) {
@@ -164,6 +165,7 @@ export default function Detail({ token, tab, onBack, onSuccess }: any) {
                     router.push("/");
                   }}
                 />
+
                 <AvatarDetail token={infoData} />
 
                 <Share token={infoData} />

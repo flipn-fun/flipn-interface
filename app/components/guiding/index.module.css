@@ -32,6 +32,59 @@
     right: -80px;
 }
 
+.arrowRightBottom {
+    position: absolute;
+    bottom: -15px;
+    right: -50px;
+}
+
+.arrowLeftBottom {
+    position: absolute;
+    bottom: -50px;
+    left: -60px;
+}
+
+.arrowLeftBottom2 {
+    position: absolute;
+    bottom: -70px;
+    left: 70px;
+}
+
+.arrowRightBottom2 {
+    position: absolute;
+    bottom: -60px;
+    left: 30px;
+}
+.memeticsTitle {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #FBCA04;
+}
+
+.middleText {
+    color: #FFFFFF;
+    font-size: 14px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    font-weight: 400;
+    text-align: center;
+    position: relative;
+    top: -30vh;
+    width: 100vw;
+}
+
+.arrowText {
+    color: #FFFFFF;
+    font-size: 11px;
+    line-height: 1.5;
+    font-family: "Unbounded";
+    font-weight: 400;
+    text-align: center;
+   
+}
+
 .scroll {
     width: 100vw;
     height: 218px;

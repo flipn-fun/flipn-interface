@@ -6,6 +6,7 @@ export default function Back({ onBack }: any) {
 
   return (
     <div
+      id="detail-back-button"
       className={styles.main}
       onClick={() => {
         onBack ? onBack() : router.back();

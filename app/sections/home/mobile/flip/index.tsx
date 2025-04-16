@@ -14,30 +14,32 @@ export default function Flip({ token, id, onClick }: any) {
   }
 
   return isEnter ? (
-    <motion.div
-      key={id}
-      className={styles.Container}
-      initial={{
-        rotateZ: 0,
-        backgroundColor: COLORS[0]
-      }}
-      animate={{
-        rotateZ: [0, -5, 5, 0],
-        backgroundColor: [COLORS[0], COLORS[1], COLORS[2], COLORS[0]]
-      }}
-      transition={{
-        duration: 0.1,
-        ease: "linear",
-        repeat: 30
-      }}
-      onClick={onClick}
-      onMouseLeave={() => {
-        setIsEnter(false);
-      }}
-    >
-      <HomeIcon size={28} type="black" />
-      <div>Flip it!</div>
-    </motion.div>
+    <div id="home-flip-button" style={{ display: 'inline-block', marginLeft: 14 }}>
+      <motion.div
+        key={id}
+        className={styles.Container}
+        initial={{
+          rotateZ: 0,
+          backgroundColor: COLORS[0]
+        }}
+        animate={{
+          rotateZ: [0, -5, 5, 0],
+          backgroundColor: [COLORS[0], COLORS[1], COLORS[2], COLORS[0]]
+        }}
+        transition={{
+          duration: 0.1,
+          ease: "linear",
+          repeat: 30
+        }}
+        onClick={onClick}
+        onMouseLeave={() => {
+          setIsEnter(false);
+        }}
+      >
+        <HomeIcon size={28} type="black" />
+        <div>Flip it!</div>
+      </motion.div>
+    </div>
   ) : (
     <button
       className={`button ${styles.Container}`}

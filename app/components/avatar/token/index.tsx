@@ -40,6 +40,7 @@ export default function TokenIcon({
       style={{
         ...style
       }}
+      id="home-action-details"
     >
       {token.data_type === "top_project" && showBlueChip && (
         <>

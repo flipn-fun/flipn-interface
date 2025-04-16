@@ -19,7 +19,7 @@ export default function Panels({ info, rate, userInfo }: any) {
     );
   }, [info]);
   return (
-    <div className={styles.Container}>
+    <div className={styles.Container} id="mining-top">
       <Swiper
         stuckAtBoundary={false}
         slideSize={82}
