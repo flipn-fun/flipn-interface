@@ -73,7 +73,7 @@ export default function Guiding() {
     const { userInfo } = useUser();
     const { innerWidth, isMobile } = useUserAgent();
 
-    if (!address || !userInfo.id) {
+    if (!address || !userInfo || !userInfo?.id) {
         return null;
     }
 
