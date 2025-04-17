@@ -46,6 +46,8 @@ export interface Project {
     mc?: string;
     solReserve?: string;
     withdrawAmount?: number;
+    platform?: any;
+    programId?: string;
 }
 
 export interface Comment {

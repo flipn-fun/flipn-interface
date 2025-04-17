@@ -59,7 +59,8 @@
     "react-dom": "^18",
     "react-lazy-load-image-component": "^1.6.3",
     "recharts": "^2.15.1",
-    "zustand": "^5.0.2"
+    "zustand": "^5.0.2",
+    "@raydium-io/raydium-sdk-v2": "0.1.119-alpha"
   },
   "devDependencies": {
     "@types/big.js": "^6.2.2",

@@ -234,3 +234,84 @@
     }
   }
 }
+
+
+.platformList {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.platformItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 0;
+  width: 140px;
+  border-radius: 10px;
+  border: 1px solid rgba(146, 144, 177, 0.4);
+  cursor: pointer;
+}
+
+.platformItem.selected {
+  border: 1.5px solid rgba(251, 202, 4, 1);
+}
+
+.platformImg {
+  width: 36px;
+  height: 36px;
+}
+
+.platformName {
+  font-size: 14px;
+  color: #fff;
+}
+
+.platformNote {
+  background-color: rgba(191, 255, 0, 0.1);
+  border-radius: 10px;
+  padding: 13px 16px;
+  margin-top: 10px;
+}
+
+.platformNoteIcon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.platformNoteIcon strong {
+  color: rgba(201, 255, 93, 1);
+  margin-left: 5px;
+}
+
+.platformNoteTitleText {
+  font-weight: 300;
+}
+
+.platformNoteText {
+  list-style-type: disc;
+  margin-left: 18px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+
+.Container {
+  .platformList {
+    padding: 10px;
+    background: rgba(18, 23, 25, 1);
+    gap: 5px;
+  }
+  .platformItem {
+    flex-direction: column;
+  }
+
+  .platformNote {
+    margin-top: 2px;
+    border-radius: 0;
+  }
+}
