@@ -22,7 +22,8 @@
   background: #C9FF5D;
   padding: 7px 12px;
   color: #000;
-  text-align: right;
+  text-align: center;
+  justify-content: center;
   font-family: Unbounded;
   font-size: 14px;
   font-style: normal;

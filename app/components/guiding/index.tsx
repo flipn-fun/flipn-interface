@@ -2,6 +2,7 @@ import GuidingTour from "@/app/components/guiding-tour";
 import { MaskPlacement } from "@/app/components/guiding-tour/get-style-rect";
 import { useUserAgent } from "@/app/context/user-agent";
 import styles from './index.module.css';
+import { useAccount } from "@/app/hooks/useAccount";
 
 const icons = {
     1: '/img/home/guide/step1.png',
@@ -56,8 +57,23 @@ function Panel({ children, style }: any) {
     return <div className={styles.panel} style={style}>{children}</div>;
 }
 
+
+function topTabRect(elementWidth: number, elementHeight: number, elementRect: ClientRect) {
+    return {
+        width: elementWidth - 16,
+        height: elementHeight - 10,
+        left: elementRect.left + 8,
+        top: elementRect.top + 0,
+    }
+}
+
 export default function Guiding() {
+    const { address } = useAccount();
     const { innerWidth, isMobile } = useUserAgent();
+
+    if (!address) {
+        return null;
+    }
 
     if (!isMobile) {
         return null;
@@ -122,6 +138,7 @@ export default function Guiding() {
             {step2}
         </Panel>,
         type: 'button',
+        eleOuterOffset: topTabRect,
     }, {
         selector: () => document.querySelector('#tabs-wrapper'),
         placement: MaskPlacement.Bottom,
@@ -131,6 +148,7 @@ export default function Guiding() {
             {step21}
         </Panel>,
         type: 'button',
+        eleOuterOffset: topTabRect,
     }, {
         selector: () => document.querySelector('#home-tab-genesis'),
         placement: MaskPlacement.Bottom,
@@ -142,17 +160,38 @@ export default function Guiding() {
             {step2}
         </Panel>,
         type: 'button',
+        eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
+            return {
+                width: elementWidth + 16,
+                height: elementHeight + 6,
+                left: elementRect.left - 8,
+                top: elementRect.top - 6,
+                paddingTop: 6,
+                paddingLeft: 5,
+            }
+        }
     }, {
         selector: () => document.querySelector('#home-tab-ticking'),
         placement: MaskPlacement.Bottom,
         showAction: true,
         actionLocation: 'left',
         content: <Panel style={{ width: 260, marginRight: 35, }}>
-            <div className={styles.text}><span className={styles.importantText}>Bonding phase</span> is where public trading is enabled.</div>
+            <div className={styles.text}><span className={styles.importantText}>Bonding</span> phase is where public trading is enabled.</div>
             <div className={styles.text}>Memecoins must accumulate <span className={styles.importantText}>42 SOL</span> in liquidity to <span className={styles.importantText}>graduate</span> to <span className={styles.importantText}>Meteora</span>.</div>
+            <div className={styles.text}>This phase facilitates <span className={styles.importantText}>efficient price formation</span> and liquidity accumulation, ensuring a <span className={styles.importantText}>smooth transition</span> to the broader trading ecosystem.</div>
             {step2}
         </Panel>,
         type: 'button',
+        eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
+            return {
+                width: elementWidth + 16,
+                height: elementHeight + 6,
+                left: elementRect.left - 8,
+                top: elementRect.top - 6,
+                paddingTop: 6,
+                paddingLeft: 5,
+            }
+        }
     }, {
         selector: () => document.querySelector('#home-tab-listed'),
         placement: MaskPlacement.Bottom,
@@ -164,6 +203,16 @@ export default function Guiding() {
             {step21}
         </Panel>,
         type: 'button',
+        eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
+            return {
+                width: elementWidth + 16,
+                height: elementHeight + 6,
+                left: elementRect.left - 8,
+                top: elementRect.top - 6,
+                paddingTop: 6,
+                paddingLeft: 5,
+            }
+        }
     }, {
         selector: () => document.querySelector('#home-tab-genesis'),
         placement: MaskPlacement.Bottom,
@@ -171,6 +220,16 @@ export default function Guiding() {
         triggerEvent: 'click',
         content: <div style={{ color: '#fff', fontSize: 11, marginLeft: 0, marginTop: -30, transform: 'rotate(-15deg)' }}>Click here!</div>,
         type: 'button',
+        eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
+            return {
+                width: elementWidth + 16,
+                height: elementHeight + 6,
+                left: elementRect.left - 8,
+                top: elementRect.top - 6,
+                paddingTop: 6,
+                paddingLeft: 5,
+            }
+        },
     }, {
         selector: () => document.querySelector('#tabs-wrapper'),
         placement: MaskPlacement.Bottom,
@@ -182,6 +241,7 @@ export default function Guiding() {
             //     ele.scrollIntoView({ behavior: 'smooth' });
             // }
         },
+        
         content: <Panel style={{ width: 260, marginRight: 35 }}>
             <div className={styles.text}>Welcome to <span className={styles.importantText}>Genesis</span> feed!</div>
             <div className={styles.text}>Nyan will show you around what you can do here!</div>
@@ -192,12 +252,13 @@ export default function Guiding() {
         placement: MaskPlacement.Top,
         showAction: true,
         actionLocation: 'left',
-        content: <Panel style={{ width: 260, marginRight: 35, marginTop: 80 }}>
-            <div className={styles.text}>Welcome to <span className={styles.importantText}>Genesis</span> feed!</div>
-            <div className={styles.text}>Nyan will show you around what you can do here!</div>
+        content: <Panel style={{ width: 260, marginRight: 35, marginTop: -20 }}>
+            <div className={styles.text}><span className={styles.importantText}>Click here</span> to <span className={styles.importantText}>Like</span> videos = memecoins that you like! Each like will earn you <span className={styles.importantText}>MEMETICS</span> as <span className={styles.importantText}>reward</span>!</div>
+            <div className={styles.text}>The <span className={styles.importantText}>more quality</span> content & memecoins you <span className={styles.importantText}>like</span>, the more <span className={styles.importantText}>MEMETICS</span> you can receive as <span className={styles.importantText}>your reputation</span> score increase.</div>
             {arrowRightBottom}
         </Panel>,
         type: 'button',
+        showOuter: false,
     }, {
         selector: () => document.querySelector('#tabs-wrapper'),
         placement: MaskPlacement.Bottom,
@@ -205,7 +266,8 @@ export default function Guiding() {
         actionLocation: 'right',
         content: <div style={{ marginTop: 80 }}>
             <div className={styles.memeticsTitle}>MEMETICS</div>
-            <Panel style={{ width: 290, marginRight: 0, }}>
+            <Panel style={{ width: 295, marginRight: 0, }}>
+                <div className={styles.text}>What are they? Are they a memecoin?</div>
                 <div className={styles.text}><span className={styles.importantText}>Memetics</span> is a <span className={styles.importantText}>theory of the evolution of culture</span> based on <span className={styles.importantText}>Darwinian principles</span> with the <span className={styles.importantText}>meme as the unit of culture</span>.</div>
                 <div className={styles.text}>FlipN <span className={styles.importantText}>adapted</span> this theory and truly believe that <span className={styles.importantText}>meme is the DNA of culture</span>.</div>
                 <div className={styles.text}>Each time you <span className={styles.importantText}>Like</span> a video, you <span className={styles.importantText}>earn MEMETICS</span>. The more you <span className={styles.importantText}>contribute</span> to culture (<span className={styles.importantText}>quality content</span>), the more <span className={styles.importantText}>MEMETICS</span> you earn!</div>
@@ -215,7 +277,8 @@ export default function Guiding() {
         selector: () => document.querySelector('#home-flip-button'),
         placement: MaskPlacement.Top,
         showAction: true,
-        actionLocation: 'right',
+        actionLocation: 'left',
+        locationStyle: { paddingLeft: 40 },
         content: <Panel style={{ width: 256, marginLeft: 40, marginTop: 20 }}>
             <div className={styles.text}>Although Genesis stage<span className={styles.importantText}> doesn’t allow trading</span>, but you can still <span className={styles.importantText}>bet</span> in a memecoin by <span className={styles.importantText}>Flip it!</span></div>
             <div className={styles.text}><span className={styles.importantText}>Flip</span> allows you the <span className={styles.importantText}>secure the earliest slot</span> to <span className={styles.importantText}>purchase</span> the memecoin as <span className={styles.importantText}>soon</span> as it moves to <span className={styles.importantText}>Ticking</span> phase!</div>
@@ -230,13 +293,23 @@ export default function Guiding() {
         triggerEvent: 'click',
         content: <div style={{ color: '#fff', fontSize: 11, marginLeft: 30, marginTop: -30, transform: 'rotate(-15deg)' }}>Click here!</div>,
         type: 'button',
+        eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
+            return {
+                width: elementWidth + 16,
+                height: elementHeight + 6,
+                left: elementRect.left - 8,
+                top: elementRect.top - 6,
+                paddingTop: 6,
+                paddingLeft: 5,
+            }
+        },
     }, {
         selector: () => document.querySelector('#tabs-wrapper'),
         placement: MaskPlacement.Bottom,
         showAction: true,
         actionLocation: 'left',
         content: <Panel style={{ width: 260, marginRight: 35 }}>
-            <div className={styles.text}>Welcome to <span className={styles.importantText}>Binding</span> feed!</div>
+            <div className={styles.text}>Welcome to <span className={styles.importantText}>Bonding</span> feed!</div>
             <div className={styles.text}>Nyan will show you around what you can do here!</div>
             {step3}
         </Panel>,
@@ -252,6 +325,7 @@ export default function Guiding() {
         </Panel>,
         type: 'button',
         showOuter: false,
+        locationStyle: { position: 'relative', top: -180 },
     }, {
         selector: () => document.querySelector('#home-action-details'),
         placement: MaskPlacement.Top,
@@ -274,8 +348,7 @@ export default function Guiding() {
         showAction: true,
         actionLocation: 'left',
         content: <Panel style={{ width: 260, marginRight: 35 }}>
-            <div className={styles.text}>Welcome to <span className={styles.importantText}>Binding</span> feed!</div>
-            <div className={styles.text}>Nyan will show you around what you can do here!</div>
+            <div className={styles.text}>This is the <span className={styles.importantText}>Details</span> page that consist <span className={styles.importantText}>every information</span> you need to know about the memecoins: Chart, holders, trades, volume etc...</div>
             {step3}
         </Panel>,
     }, {
@@ -318,6 +391,16 @@ export default function Guiding() {
         triggerEvent: 'click',
         content: <div style={{ color: '#fff', fontSize: 11, marginLeft: '44vw', marginTop: -30, transform: 'rotate(-15deg)' }}>Click here!</div>,
         type: 'button',
+        eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
+            return {
+                width: elementWidth + 16,
+                height: elementHeight + 6,
+                left: elementRect.left - 8,
+                top: elementRect.top - 6,
+                paddingTop: 6,
+                paddingLeft: 5,
+            }
+        },
     }, {
         selector: () => document.querySelector('#tabs-wrapper'),
         placement: MaskPlacement.Bottom,
@@ -393,7 +476,7 @@ export default function Guiding() {
         content: <div>
             <div>
                 <div className={styles.middleText}>Tap the screen to view next</div>
-                <div style={{ width: 250, marginLeft: '40vw', transform: 'rotate(5deg)', marginTop: -30 }} className={styles.arrowText}>This is coming very thoon!</div>
+                <div style={{ width: 250, marginLeft: '40vw', transform: 'rotate(5deg)', marginTop: -30 }} className={styles.arrowText}>This is coming very soon!</div>
             </div>
             <img src={icons[6]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '66vw', top: '3vh' }} />
         </div>,
@@ -443,10 +526,10 @@ export default function Guiding() {
             <div className={styles.text}>
                 Now go <span className={styles.importantText}>Like</span> some silly videos, <span className={styles.importantText}>stack up</span> some <span className={styles.importantText}>MEMETICS</span>, <span className={styles.importantText}>Flip</span> some memecoins and <span className={styles.importantText}>invite</span> your frens over to earn some fat <span className={styles.importantText}>revenue share</span> from FlipN!
             </div>
-            <img src={icons[1]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '52vw', top: '-10vh' }} />
-            <img src={icons[2]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-2vw', top: '-15vh' }} />
-            <img src={icons[3]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '50vw', top: '30vh' }} />
-            <img src={icons[4]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-8vw', top: '28vh' }} />
+            <img src={icons[1]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '52vw', top: '-12vh', width: 114 }} />
+            <img src={icons[2]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-2vw', top: '-15vh', width: 114 }} />
+            <img src={icons[3]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '40vw', top: '35vh', width: 134 }} />
+            <img src={icons[4]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-8vw', top: '28vh', width: 114 }} />
         </Panel>,
     }]} />
 }
