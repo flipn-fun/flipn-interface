@@ -92,6 +92,12 @@ export default function Guiding() {
             <div className={styles.text}>Would you <span className={styles.importantText}>allow us</span> to give you a <span className={styles.importantText}>walkthrough</span> of the platform?</div>
             {step1}
         </Panel>,
+        beforeForward: async () => {
+            const ele: any = document.querySelector('#home-tab-all');
+            if (ele) {
+                ele.click();
+            }
+        },
     }, {
         selector: () => document.querySelector('#tabs-wrapper'),
         placement: MaskPlacement.Bottom,
@@ -146,7 +152,7 @@ export default function Guiding() {
         placement: MaskPlacement.Bottom,
         showAction: true,
         content: <Panel style={{ width: 260, marginLeft: 35 }}>
-            <div className={styles.text}>When a memecoins = videos are posted on FlipN, they go through 3 phases: <span className={styles.importantText}>Genesis, Ticking</span> and <span className={styles.importantText}>Listed</span>.</div>
+            <div className={styles.text}>When a memecoins = videos are posted on FlipN, they go through 3 phases: <span className={styles.importantText}>Genesis, Bonding</span> and <span className={styles.importantText}>Listed</span>.</div>
             {step21}
         </Panel>,
         type: 'button',
@@ -158,7 +164,7 @@ export default function Guiding() {
         actionLocation: 'left',
         content: <Panel style={{ width: 260, marginRight: 35, }}>
             <div className={styles.text}><span className={styles.importantText}>Genesis</span> is the pre-engagement phase, where the memecoins are opened for <span className={styles.importantText}>public interaction</span> and haven’t entered the <span className={styles.importantText}>Bonding Curve</span>.</div>
-            <div className={styles.text}>Videos need to get <span className={styles.importantText}>100 likes</span> to proceed to the <span className={styles.importantText}>Ticking</span> phase (Bonding Curve).</div>
+            <div className={styles.text}>Videos need to get <span className={styles.importantText}>100 likes</span> to proceed to the <span className={styles.importantText}>Bonding</span> phase (Bonding Curve).</div>
             {step2}
         </Panel>,
         type: 'button',
@@ -220,7 +226,7 @@ export default function Guiding() {
         placement: MaskPlacement.Bottom,
         showAction: false,
         triggerEvent: 'click',
-        content: <div style={{ color: '#fff', fontSize: 11, marginLeft: 0, marginTop: -30, transform: 'rotate(-15deg)' }}>Click here!</div>,
+        content: <div style={{ color: '#fff', fontSize: 11, marginLeft: -50, marginTop: -30, transform: 'rotate(-15deg)' }}>Click here!</div>,
         type: 'button',
         eleOuterOffset: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => {
             return {
@@ -254,7 +260,7 @@ export default function Guiding() {
         placement: MaskPlacement.Top,
         showAction: true,
         actionLocation: 'left',
-        content: <Panel style={{ width: 260, marginRight: 35, marginTop: -20 }}>
+        content: <Panel style={{ width: 260, marginRight: 30, marginTop: 70 }}>
             <div className={styles.text}><span className={styles.importantText}>Click here</span> to <span className={styles.importantText}>Like</span> videos = memecoins that you like! Each like will earn you <span className={styles.importantText}>MEMETICS</span> as <span className={styles.importantText}>reward</span>!</div>
             <div className={styles.text}>The <span className={styles.importantText}>more quality</span> content & memecoins you <span className={styles.importantText}>like</span>, the more <span className={styles.importantText}>MEMETICS</span> you can receive as <span className={styles.importantText}>your reputation</span> score increase.</div>
             {arrowRightBottom}
@@ -283,7 +289,7 @@ export default function Guiding() {
         locationStyle: { paddingLeft: 40 },
         content: <Panel style={{ width: 256, marginLeft: 40, marginTop: 20 }}>
             <div className={styles.text}>Although Genesis stage<span className={styles.importantText}> doesn’t allow trading</span>, but you can still <span className={styles.importantText}>bet</span> in a memecoin by <span className={styles.importantText}>Flip it!</span></div>
-            <div className={styles.text}><span className={styles.importantText}>Flip</span> allows you the <span className={styles.importantText}>secure the earliest slot</span> to <span className={styles.importantText}>purchase</span> the memecoin as <span className={styles.importantText}>soon</span> as it moves to <span className={styles.importantText}>Ticking</span> phase!</div>
+            <div className={styles.text}><span className={styles.importantText}>Flip</span> allows you the <span className={styles.importantText}>secure the earliest slot</span> to <span className={styles.importantText}>purchase</span> the memecoin as <span className={styles.importantText}>soon</span> as it moves to <span className={styles.importantText}>Bonding</span> phase!</div>
             {arrowLeftBottom}
         </Panel>,
         type: 'button',
@@ -333,7 +339,7 @@ export default function Guiding() {
         placement: MaskPlacement.Top,
         showAction: false,
         triggerEvent: 'click',
-        content: <div style={{ position: 'relative', color: '#fff', fontSize: 11, marginLeft: '25vw', marginTop: 0, transform: 'rotate(-15deg)' }}>
+        content: <div style={{ position: 'relative', color: '#fff', fontSize: 11, marginLeft: '35vw', marginTop: 40, transform: 'rotate(-15deg)' }}>
             Click here!
             {arrowRightBottom2}
         </div>,
@@ -492,9 +498,9 @@ export default function Guiding() {
         eleOffset: { left: 30 },
         content: <div>
             <div>
-                <div style={{ width: 250, marginLeft: '54vw', transform: 'rotate(-15deg)', marginTop: -10 }} className={styles.arrowText}>Click here</div>
+                <div style={{ width: 250, marginLeft: '60vw', transform: 'rotate(-15deg)', marginTop: -10 }} className={styles.arrowText}>Click here</div>
             </div>
-            <img src={icons[6]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '88vw', top: '3vh' }} />
+            <img src={icons[6]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '93vw', top: '3vh' }} />
         </div>,
         type: 'button',
         showOuter: false,
@@ -518,7 +524,7 @@ export default function Guiding() {
         placement: MaskPlacement.Bottom,
         showAction: true,
         actionLocation: 'left',
-        content: <Panel style={{ width: 260, marginTop: 100, textAlign: 'center' }}>
+        content: <Panel style={{ width: 240, marginTop: 100, textAlign: 'center' }}>
             <div className={styles.text} style={{ fontWeight: 700 }}>
                 Tutorial finished!
             </div>
@@ -530,8 +536,8 @@ export default function Guiding() {
             </div>
             <img src={icons[1]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '52vw', top: '-12vh', width: 114 }} />
             <img src={icons[2]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-2vw', top: '-15vh', width: 114 }} />
-            <img src={icons[3]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '40vw', top: '35vh', width: 134 }} />
-            <img src={icons[4]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-8vw', top: '28vh', width: 114 }} />
+            <img src={icons[3]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '40vw', top: '36vh', width: 134 }} />
+            <img src={icons[4]} alt="arrow" className={styles.arrowLeftBottom2} style={{ left: '-8vw', top: '32vh', width: 114 }} />
         </Panel>,
     }]} />
 }
