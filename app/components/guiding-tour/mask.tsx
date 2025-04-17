@@ -26,6 +26,7 @@ interface MaskProps {
   onNext: () => void;
   showOuter?: boolean;
   eleOffset?: { left?: number, top?: number };
+  eleOuterOffset?: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => { left?: number, top?: number, width?: number, height?: number };
 }
 
 export const Mask: React.FC<MaskProps> = (props) => {
@@ -43,7 +44,8 @@ export const Mask: React.FC<MaskProps> = (props) => {
     showAction = true,
     triggerEvent,
     showOuter = true,
-    eleOffset
+    eleOffset,
+    eleOuterOffset
   } = props;
   const { isMobile } = useUserAgent();
   const [outerHTML, setOuterHTML] = useState<string>('');
@@ -162,13 +164,21 @@ export const Mask: React.FC<MaskProps> = (props) => {
     ];
   }, [elementRect, elementWidth]);
 
+  let outStyles: any = {
+    width: elementWidth,
+    height: elementHeight,
+    left: elementRect.left,
+    top: elementRect.top,
+  }
+
+  if (eleOuterOffset) {
+    outStyles = eleOuterOffset(elementWidth, elementHeight, elementRect);
+  }
+
   const btnWrapper: any = {
     button: <div
       style={{
-        width: elementWidth,
-        height: elementHeight,
-        left: elementRect.left,
-        top: elementRect.top,
+        ...outStyles,
         border: showOuter ? '1px solid #FBCA04' : 'none'
       }}
       className={styles.ButtonWrapper}
@@ -222,7 +232,11 @@ export const Mask: React.FC<MaskProps> = (props) => {
   }
 
   return (
-    <div className={styles.Mask}>
+    <div className={styles.Mask} onClick={() => {
+      if (!showAction && !triggerEvent) {
+        props.onNext();
+      }
+    }}>
       {type && btnWrapper[type]}
 
       {top !== undefined && left !== undefined && (

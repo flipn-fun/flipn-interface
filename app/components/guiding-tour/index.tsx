@@ -24,9 +24,11 @@ export interface GuidingTourStepConfig {
   type?: string;
   showAction?: boolean;
   actionLocation?: 'left' | 'right';
+  locationStyle?: React.CSSProperties;
   triggerEvent?: 'click' | 'hover' | null;
   showOuter?: boolean;
   eleOffset?: { left?: number, top?: number };
+  eleOuterOffset?: (elementWidth: number, elementHeight: number, elementRect: ClientRect) => { left?: number, top?: number, width?: number, height?: number };
 }
 
 const GuidingTour: FC<IGuidingTourProps> = (props) => {
@@ -110,11 +112,11 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
       return null;
     }
 
-    const { content, showAction, actionLocation = 'right' } = config;
+    const { content, showAction, actionLocation = 'right', locationStyle = {} } = config;
 
     const operation = (
       <button className={styles.Button} style={{
-        width: currentStep === steps.length - 1 ? '100%' : 'auto'
+        width: currentStep === steps.length - 1 ? '100%' : 'auto',
       }} onClick={() => forward()}>
         {
           currentStep === steps.length - 1 && 'Make Memes Great Again!'
@@ -144,7 +146,7 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
           showAction && (
             <div className={styles.Operation}  style={{
               justifyContent: actionLocation === 'left' ? 'flex-start' : 'flex-end',
-
+              ...locationStyle
             }}>
               {
                 currentStep !== steps.length - 1 && (
@@ -214,6 +216,7 @@ const GuidingTour: FC<IGuidingTourProps> = (props) => {
       }}
       showOuter={getCurrentStep().showOuter}
       eleOffset={getCurrentStep().eleOffset}
+      eleOuterOffset={getCurrentStep().eleOuterOffset}
     />
   );
 
