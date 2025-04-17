@@ -106,7 +106,13 @@ export default function Laptop() {
 
 
         <Button onClick={async () => {    
-          const tx = await createMint({})
+          const tx = await createMint({
+            tokenName: 'test',
+            ticker: 'test',
+            about: 'test',
+            tokenImg: 'test',
+            tokenIcon: 'test'
+          })
         }}>Raudium</Button>
 
         <Button onClick={async () => {
@@ -115,7 +121,7 @@ export default function Laptop() {
         }}>Get Quote</Button>
 
         <Button onClick={async () => {
-          const tx = await trade('1000000000', 'buy', 100)
+          const tx = await trade('100000000', 'buy', 100)
           console.log('tx', tx)
         }}>Buy</Button>
 

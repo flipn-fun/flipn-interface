@@ -16,6 +16,9 @@ import type { Project } from "@/app/type";
 import { httpGet, isValidURL } from "@/app/utils";
 import StepAction from "./components/stepAction";
 import Remove from "@/app/components/icons/remove";
+import {
+  DEV_LAUNCHPAD_PROGRAM,
+} from '@raydium-io/raydium-sdk-v2';
 
 
 interface Props {
@@ -28,6 +31,55 @@ interface Props {
 
 const name_reg = /^[a-zA-Z0-9]{1,10}$/;
 
+const noteIcon = <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="9" cy="9" r="9" fill="#FBCA04" />
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M8.80949 6.81429C9.44856 6.81429 9.96663 6.29621 9.96663 5.65714C9.96663 5.01807 9.44856 4.5 8.80949 4.5C8.17041 4.5 7.65234 5.01807 7.65234 5.65714C7.65234 6.29621 8.17041 6.81429 8.80949 6.81429ZM7.65306 7.71898H8.03793H9.9665H9.96735V8.87612H9.9665V12.6145H10.3531V13.7716H9.9665V13.7717H8.03793V13.7716H7.65306V12.6145H8.03793V8.87612H7.65306V7.71898Z" fill="black" />
+</svg>
+
+
+
+const Platforms = [
+  {
+    name: 'Raydium',
+    img: '/img/create/raydium.png',
+    value: 'Raydium',
+    programId: DEV_LAUNCHPAD_PROGRAM.toBase58(),
+    note: <div className={styles.platformNote}>
+      {noteIcon}
+      <div className={styles.platformNoteContent}>
+        <div className={styles.platformNoteTitle}>
+          <strong>NOTE:</strong>
+          <span className={styles.platformNoteTitleText}>Once the Token is created, it can be exposed directly on the LaunchPad platform.</span>
+        </div>
+        <div className={styles.platformNoteText}>
+          After hit bounding curve, your token will be listed to Raydium, and permanently enjoy X% commission rebate.
+        </div>
+      </div>
+    </div>
+  },
+  {
+    name: 'FlipN',
+    img: '/img/create/flip.png',
+    value: 'FlipN',
+    programId: process.env.NEXT_PUBLIC_PROGRAM_ID,
+  },
+  {
+    name: 'Meteora',
+    img: '/img/create/meteora.png',
+    value: 'Meteora',
+    note: <div className={styles.platformNote}>
+      {noteIcon}
+      <div className={styles.platformNoteContent}>
+        <div className={styles.platformNoteTitle}>
+          <strong>NOTE:</strong>
+          <span className={styles.platformNoteTitleText}>After hit bounding curve, your token will be listed to Meteora, and permanently enjoy X% commission rebate.</span>
+        </div>
+      </div>
+    </div>,
+    programId: 'Meteora'
+  },
+]
+
 export default forwardRef(function CreateNode(
   { onAddDataFill, step, onNext, onBack, show }: Props,
   ref: any
@@ -38,6 +90,7 @@ export default forwardRef(function CreateNode(
   const { isMobile } = useUserAgent();
   const [tokenName, setTokenName] = useState("");
   const [ticker, setTicker] = useState("");
+  const [platform, setPlatform] = useState(Platforms[0]);
   const [about, setAbout] = useState("");
   const [website, setWebsite] = useState("");
   const [x, setTwitter] = useState("");
@@ -342,7 +395,8 @@ export default forwardRef(function CreateNode(
       x,
       tg,
       discord,
-      status: 0
+      status: 0,
+      platform
     });
 
     if (!isMobile) {
@@ -709,6 +763,30 @@ export default forwardRef(function CreateNode(
             />
           </div>
           {inValidVals["ticker"] && <ErrMsg>{inValidVals["ticker"]}</ErrMsg>}
+        </div>
+
+        <div className={styles.group}>
+          <div className={styles.groupTitle}>
+            <div>
+              <span className={styles.require}>* </span>
+              Platform
+            </div>
+          </div>
+          <div className={styles.groupContent}>
+            <div className={styles.platformList}>
+              {
+                Platforms.map(item => {
+                  return <div onClick={() => {
+                    setPlatform(item)
+                  }} className={styles.platformItem + ' ' + (platform.value === item.value ? styles.selected : '')} key={item.value}>
+                    <img className={styles.platformImg} src={item.img} alt={item.name} />
+                    <div className={styles.platformName}>{item.name}</div>
+                  </div>
+                })
+              }
+            </div>
+          </div>
+          <div className={styles.platformTip}>{platform.note}</div>
         </div>
 
         <div className={styles.group}>

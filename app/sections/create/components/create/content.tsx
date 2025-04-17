@@ -25,6 +25,7 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { useUser } from "@/app/store/useUser";
 import StepAction from "../stepAction";
 import { SpinLoading } from "antd-mobile";
+import { useRay } from "@/app/hooks/useRay";
 
 type Token = {
   tokenName: string;
@@ -91,6 +92,16 @@ export default function Create({
     tokenSymbol,
     tokenDecimals: 6,
     loadData: false
+  });
+
+  const { programId, createMint } = useRay({
+    token: {
+      tokenName,
+      ticker: data.ticker.toUpperCase(),
+      about: data.about,
+      tokenImg: data.tokenImg,
+      tokenIcon: data.tokenIcon
+    }
   });
 
   const { solBalance } = useBalance({
@@ -185,16 +196,28 @@ export default function Create({
           throw "Upload token meta error";
         }
 
-        const hash = await createToken({
-          name: tokenName,
-          symbol: tokenSymbol,
-          uri: filePath,
-          launching: launchChecked,
-          amount:
-            ignorePrepaid !== 0 && totalRef.current.inputVal
-              ? new Big(totalRef.current.inputVal).mul(10 ** 9).toString()
-              : ""
-        });
+        let hash = ''
+
+        if (data.platform.name === 'Raydium') {
+          hash = await createMint({
+            tokenName,
+            ticker: data.ticker,
+            about: data.about,
+            tokenImg: filePath,
+            tokenDecimals: 6
+          })
+        } else if (data.platform.name === 'FlipN') {
+          hash = await createToken({
+            name: tokenName,
+            symbol: tokenSymbol,
+            uri: filePath,
+            launching: launchChecked,
+            amount:
+              ignorePrepaid !== 0 && totalRef.current.inputVal
+                ? new Big(totalRef.current.inputVal).mul(10 ** 9).toString()
+                : ""
+          });
+        }
 
         if (!hash) {
           throw "Create token error";

@@ -78,8 +78,11 @@ export default forwardRef(function PreviewNode(
       token_symbol: data.tokenSymbol,
       video: data.tokenImg,
       website: data.website,
-      x: data.x
+      x: data.x,
+      program_id: data.platform.programId,
     };
+
+    console.log('query:', query)
 
     const queryStr = Object.keys(query)
       .map((key) => `${key}=${encodeURIComponent(query[key])}`)

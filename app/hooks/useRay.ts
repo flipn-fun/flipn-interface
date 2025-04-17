@@ -29,8 +29,6 @@ export const useRay = (params: Params | null) => {
     (async () => {
       if (!publicKey || raydiumInstance.current) return;
 
-      console.log('publicKey', publicKey)
-
       let raydium = await Raydium.load({
         owner: publicKey,
         connection,
@@ -47,7 +45,7 @@ export const useRay = (params: Params | null) => {
     })();
   }, []);
 
-  const createMint = useCallback(async (params: any) => {
+  const createMint = useCallback(async (params: Project) => {
     if (!raydiumInstance.current) return;
 
     const programId = DEV_LAUNCHPAD_PROGRAM // currently only support in devent
@@ -65,25 +63,30 @@ export const useRay = (params: Params | null) => {
     const mintBInfo = await raydiumInstance.current.token.getTokenInfo(configInfo.mintB)
 
     const inAmount = new BN(10000)
+    
+    console.log('configInfo:', configInfo.minSupplyA.toNumber())
 
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
       mintA,
-      decimals: 6,
-      name: 'new launchpad flipN mint',
-      symbol: 'flipN',
+      decimals: params.tokenDecimals,
+      name: params.tokenName,
+      symbol: params.ticker,
       migrateType: 'amm',
-      uri: 'https://flipn.s3.us-east-1.amazonaws.com/flipn/dev/ray_test.json',
+      uri: params.tokenImg,
 
       configId,
-      configInfo, // optional, sdk will get data by configId if not provided
+      configInfo: {
+        ...configInfo,
+        minSupplyA: new BN(20000000),
+      }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
       // platformId: new PublicKey('your platform id'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: inAmount,
-      createOnly: false, // true means create mint only, false will "create and buy together"
+      createOnly: true, // true means create mint only, false will "create and buy together"
 
       // shareFeeReceiver: new PublicKey('share wallet'), // only works when createOnly=false
       // shareFeeRate: new BN(1000),  // only works when createOnly=false
@@ -169,6 +172,8 @@ export const useRay = (params: Params | null) => {
     let _transaction: VersionedTransaction | undefined
 
     if (type === 'buy') {
+      console.log('raydiumInstance.current:', raydiumInstance.current)
+
       const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.buyToken({
         programId,
         mintA,
@@ -179,7 +184,7 @@ export const useRay = (params: Params | null) => {
         platformFeeRate: platformInfo.feeRate,
         txVersion: TxVersion.V0,
         buyAmount: inAmount,
-        // shareFeeReceiver, // optional
+        // shareFeeReceiver: new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP'), // optional
         // shareFeeRate,  // optional, do not exceed poolInfo.configInfo.maxShareFeeRate
       })
 
@@ -193,6 +198,7 @@ export const useRay = (params: Params | null) => {
         platformFeeRate: platformInfo.feeRate,
         txVersion: TxVersion.V0,
         sellAmount: inAmount,
+        shareFeeReceiver: new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP'), // optional
       })
 
       _transaction = transaction
@@ -214,6 +220,7 @@ export const useRay = (params: Params | null) => {
     createMint,
     getQoute,
     trade,
+    programId: DEV_LAUNCHPAD_PROGRAM,
   }
 }
 

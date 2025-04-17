@@ -2,7 +2,6 @@
 
 import { memo, useCallback } from "react";
 import Mobile from "./mobile";
-import Laptop from "./laptop";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useState } from "react";
 import { useRouter } from "next/navigation";

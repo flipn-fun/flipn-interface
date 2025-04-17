@@ -234,3 +234,59 @@
     }
   }
 }
+
+
+.platformList {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.platformItem {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 0;
+  width: 140px;
+  border-radius: 10px;
+  border: 1px solid rgba(146, 144, 177, 0.4);
+  cursor: pointer;
+}
+
+.platformItem.selected {
+  border: 1.5px solid rgba(251, 202, 4, 1);
+}
+
+.platformImg {
+  width: 36px;
+  height: 36px;
+}
+
+.platformName {
+  font-size: 14px;
+  color: #fff;
+}
+
+.platformNote {
+  background-color: rgba(251, 202, 4, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+  color: rgba(251, 202, 4, 1);
+}
+
+.platformNoteTitleText {
+  font-weight: 300;
+}
+
+.platformNoteText {
+  margin-top: 10px;
+}
+
+
