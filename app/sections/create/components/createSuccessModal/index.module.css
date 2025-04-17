@@ -139,6 +139,15 @@
   color: #000;
 }
 
+.platformImg {
+  width: 78px;
+  margin: 20px auto;
+}
+
+.platformImg img {
+  width: 100%;
+}
+
 .mainPc {
   margin-top: -120px;
   .tokenTitle {

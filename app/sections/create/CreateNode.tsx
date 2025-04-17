@@ -19,6 +19,7 @@ import Remove from "@/app/components/icons/remove";
 import {
   DEV_LAUNCHPAD_PROGRAM,
 } from '@raydium-io/raydium-sdk-v2';
+import { Keypair, PublicKey } from "@solana/web3.js";
 
 
 interface Props {
@@ -32,11 +33,15 @@ interface Props {
 const name_reg = /^[a-zA-Z0-9]{1,10}$/;
 
 const noteIcon = <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="9" cy="9" r="9" fill="#FBCA04" />
+  <circle cx="9" cy="9" r="9" fill="url(#paint0_linear_10788_2111)" />
   <path fill-rule="evenodd" clip-rule="evenodd" d="M8.80949 6.81429C9.44856 6.81429 9.96663 6.29621 9.96663 5.65714C9.96663 5.01807 9.44856 4.5 8.80949 4.5C8.17041 4.5 7.65234 5.01807 7.65234 5.65714C7.65234 6.29621 8.17041 6.81429 8.80949 6.81429ZM7.65306 7.71898H8.03793H9.9665H9.96735V8.87612H9.9665V12.6145H10.3531V13.7716H9.9665V13.7717H8.03793V13.7716H7.65306V12.6145H8.03793V8.87612H7.65306V7.71898Z" fill="black" />
+  <defs>
+    <linearGradient id="paint0_linear_10788_2111" x1="2" y1="14" x2="18" y2="4.5" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBCA04" />
+      <stop offset="1" stop-color="#C9FF5D" />
+    </linearGradient>
+  </defs>
 </svg>
-
-
 
 const Platforms = [
   {
@@ -45,16 +50,15 @@ const Platforms = [
     value: 'Raydium',
     programId: DEV_LAUNCHPAD_PROGRAM.toBase58(),
     note: <div className={styles.platformNote}>
-      {noteIcon}
-      <div className={styles.platformNoteContent}>
-        <div className={styles.platformNoteTitle}>
-          <strong>NOTE:</strong>
-          <span className={styles.platformNoteTitleText}>Once the Token is created, it can be exposed directly on the LaunchPad platform.</span>
-        </div>
-        <div className={styles.platformNoteText}>
+      <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
+      <ul className={styles.platformNoteContent}>
+        <li className={styles.platformNoteText}>
+          Once the Token is created, it can be exposed directly on the LaunchPad platform.
+        </li>
+        <li className={styles.platformNoteText}>
           After hit bounding curve, your token will be listed to Raydium, and permanently enjoy X% commission rebate.
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   },
   {
@@ -68,13 +72,12 @@ const Platforms = [
     img: '/img/create/meteora.png',
     value: 'Meteora',
     note: <div className={styles.platformNote}>
-      {noteIcon}
-      <div className={styles.platformNoteContent}>
-        <div className={styles.platformNoteTitle}>
-          <strong>NOTE:</strong>
-          <span className={styles.platformNoteTitleText}>After hit bounding curve, your token will be listed to Meteora, and permanently enjoy X% commission rebate.</span>
-        </div>
-      </div>
+      <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
+      <ul className={styles.platformNoteContent}>
+        <li className={styles.platformNoteText}>
+          In the process of bounding, you will enjoy an amount bonus of 0.25% of the total transaction amount.
+        </li>
+      </ul>
     </div>,
     programId: 'Meteora'
   },
@@ -384,6 +387,8 @@ export default forwardRef(function CreateNode(
       return isValid;
     }
 
+  
+
     onAddDataFill({
       tokenName,
       ticker,
@@ -396,7 +401,7 @@ export default forwardRef(function CreateNode(
       tg,
       discord,
       status: 0,
-      platform
+      platform,
     });
 
     if (!isMobile) {

@@ -112,7 +112,7 @@ export default function Laptop() {
             about: 'test',
             tokenImg: 'test',
             tokenIcon: 'test'
-          })
+          }, '')
         }}>Raudium</Button>
 
         <Button onClick={async () => {

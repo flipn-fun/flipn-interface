@@ -16,10 +16,13 @@ import { NATIVE_MINT } from '@solana/spl-token';
 import { BN } from '@coral-xyz/anchor';
 import { Keypair, PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { Project } from '../type';
+import { number } from 'echarts';
 
 interface Params {
     token: Project;
 }
+
+export const tokenAddresses: any = {}
 export const useRay = (params: Params | null) => {
   const { connection } = useConnection();
   const { publicKey, walletProvider } = useAccount();
@@ -45,7 +48,7 @@ export const useRay = (params: Params | null) => {
     })();
   }, []);
 
-  const createMint = useCallback(async (params: Project) => {
+  const createMint = useCallback(async (params: Project, amount: string) => {
     if (!raydiumInstance.current) return;
 
     const programId = DEV_LAUNCHPAD_PROGRAM // currently only support in devent
@@ -62,9 +65,13 @@ export const useRay = (params: Params | null) => {
     const configInfo = LaunchpadConfig.decode(configData.data)
     const mintBInfo = await raydiumInstance.current.token.getTokenInfo(configInfo.mintB)
 
-    const inAmount = new BN(10000)
-    
-    console.log('configInfo:', configInfo.minSupplyA.toNumber())
+    const inAmount = new BN(amount)
+    let createOnly = true
+    if (amount && Number(amount) > 0) {
+      createOnly = false
+    }
+
+    console.log('createMint params', params)
 
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
@@ -78,15 +85,15 @@ export const useRay = (params: Params | null) => {
       configId,
       configInfo: {
         ...configInfo,
-        minSupplyA: new BN(20000000),
+        // minSupplyA: new BN(20000000),
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
       // platformId: new PublicKey('your platform id'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
-      buyAmount: inAmount,
-      createOnly: true, // true means create mint only, false will "create and buy together"
+      buyAmount: createOnly ? new BN(1) : inAmount,
+      createOnly: createOnly, // true means create mint only, false will "create and buy together"
 
       // shareFeeReceiver: new PublicKey('share wallet'), // only works when createOnly=false
       // shareFeeRate: new BN(1000),  // only works when createOnly=false
@@ -108,6 +115,8 @@ export const useRay = (params: Params | null) => {
       needFeeEstimate: false,
     })
 
+    tokenAddresses[params.tokenName + '-' + params.ticker] = mintA.toBase58()
+
     console.log('tx: success', tx)
 
     return tx;
@@ -116,7 +125,6 @@ export const useRay = (params: Params | null) => {
   const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;
     
-
     const mintA = new PublicKey(params.token.address as string)
     const mintB = NATIVE_MINT
 
@@ -155,6 +163,8 @@ export const useRay = (params: Params | null) => {
 
     const mintA = new PublicKey(params.token.address as string)
     const mintB = NATIVE_MINT
+
+    console.log('trade params', amount, type, slip)
 
     const programId = DEV_LAUNCHPAD_PROGRAM
     const inAmount = new BN(amount)

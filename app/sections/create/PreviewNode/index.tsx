@@ -82,8 +82,6 @@ export default forwardRef(function PreviewNode(
       program_id: data.platform.programId,
     };
 
-    console.log('query:', query)
-
     const queryStr = Object.keys(query)
       .map((key) => `${key}=${encodeURIComponent(query[key])}`)
       .join("&");
@@ -228,7 +226,8 @@ export default forwardRef(function PreviewNode(
             tokenName: data.tokenName,
             tokenSymbol: data.tokenSymbol,
             tokenDecimals: 6,
-            tokenUri: data.tokenIcon || data.tokenImg
+            tokenUri: data.tokenIcon || data.tokenImg,
+            platform: data.platform
           }}
           data={data}
           getSubmitFn={(submitFn: any) => {

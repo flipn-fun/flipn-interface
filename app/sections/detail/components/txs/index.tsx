@@ -87,7 +87,7 @@ export default function Txs({ from, data }: any) {
       url = `/project/trade/list`
     }
 
-    if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund")) {
+    if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund" || data.DApp === "ray_launchpad")) {
       canGet = true
       url = `/project/trade_pump/list`
     }
@@ -122,7 +122,7 @@ export default function Txs({ from, data }: any) {
 
   // useEffect(() => {
   //   getData(true);
-  // }, [data, filter]);
+  // }, [data, filter]); 
 
   useInterval(() => {
     if (offset === 0 || offset === LIMIT || (!wrapperRef.current?.parentElement?.scrollTop) || (wrapperRef.current?.parentElement?.scrollTop && wrapperRef.current?.parentElement?.scrollTop < 300)) {
@@ -313,7 +313,7 @@ export default function Txs({ from, data }: any) {
                           <span>
                             {formatAddress(item.address)}
                             {isSelf && (
-                              <span style={{ color: "#FBCA04" }}>(Self)</span>
+                              <div style={{ color: "#FBCA04" }}>(Self)</div>
                             )}
                           </span>
                           {from === "panel" && <div style={{ height: 2 }} />}
