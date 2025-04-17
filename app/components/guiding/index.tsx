@@ -3,6 +3,7 @@ import { MaskPlacement } from "@/app/components/guiding-tour/get-style-rect";
 import { useUserAgent } from "@/app/context/user-agent";
 import styles from './index.module.css';
 import { useAccount } from "@/app/hooks/useAccount";
+import { useUser } from "@/app/store/useUser";
 
 const icons = {
     1: '/img/home/guide/step1.png',
@@ -69,9 +70,10 @@ function topTabRect(elementWidth: number, elementHeight: number, elementRect: Cl
 
 export default function Guiding() {
     const { address } = useAccount();
+    const { userInfo } = useUser();
     const { innerWidth, isMobile } = useUserAgent();
 
-    if (!address) {
+    if (!address || !userInfo.id) {
         return null;
     }
 
