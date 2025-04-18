@@ -40,7 +40,7 @@
   z-index: 10;
 }
 
-.ImgContainer.ImgContainer {
+.ImgContainer.MobileImgContainer {
   left: auto;
   right: 10px;
   top: 80px;
