@@ -71,6 +71,8 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
+    console.log('configInfo', configInfo);
+
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
       mintA,
@@ -83,7 +85,7 @@ export const useRay = (params: Params | null) => {
       configId,
       configInfo: {
         ...configInfo,
-        // minSupplyA: new BN(20000000),
+        minSupplyA: new BN(20000000),
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */

@@ -24,8 +24,7 @@ export default function TokenTags({ token }: Props) {
       <LaunchTag type={status as number} />
       {token.DApp === "pump" && <Import />}
       {token.DApp === "gofund" && <Gofund />}
-      {/* {token.DApp === "ray_launchpad" && <Raydium />} */}
-      {token.DApp === "sexy" && <Raydium />}
+      {token.DApp === "ray_launchpad" && <Raydium />}
     </div>
   );
 }
