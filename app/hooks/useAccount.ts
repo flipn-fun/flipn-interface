@@ -263,6 +263,9 @@ export function useAccount() {
           const base58Transaction = bs58.encode(serializedTransaction);
           tx = await jitoClient.sendTxn([base58Transaction], false);
         } else {
+
+          console.log('tx   222:', _transaction)
+
           tx = await sendTransaction(_transaction, connection, {
             ...confirmationStrategy,
             ...sendOptions
@@ -301,9 +304,13 @@ export function useAccount() {
         //   }
         // } else {
         while (!done && Date.now() - startTime < timeout) {
+          // console.log('tx   111:', tx)
+
           status = await connection.getSignatureStatus(tx, {
             searchTransactionHistory: true
           });
+
+          // console.log('status:', status)
 
           if (
             status?.value?.confirmationStatus === "finalized" ||
