@@ -10,6 +10,7 @@ import TGProvider from "./context/TGProvider";
 import PrivyWalletProvider from "@/app/context/privy";
 import Script from "next/script";
 import Rpc from "./components/rpc";
+import Guiding from "./components/guiding";
 
 export default function RootLayout({
   children
@@ -69,6 +70,7 @@ export default function RootLayout({
                 <Suspense>
                   <Layout>{children}</Layout>
                   <Rpc />
+                  <Guiding />
                 </Suspense>
               </UserAgentProvider>
             </WalletConnect>
