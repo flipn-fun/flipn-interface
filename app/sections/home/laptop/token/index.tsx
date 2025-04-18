@@ -16,7 +16,7 @@ import useHolders from "@/app/sections/home/mobile/hooks/use-holders";
 import { useUserAgent } from "@/app/context/user-agent";
 import TipsButton from "@/app/sections/home/laptop/tips-button";
 import SpecFrame from "../../spec-frame";
-import TokenExt from "./token-ext";
+import TokenExt from "@/app/components/tokenExt/token-ext";
 
 export default function Token({
   isCurrent,

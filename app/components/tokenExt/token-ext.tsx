@@ -8,21 +8,21 @@ interface Props {
 export default function TokenExt({ token }: Props) {
     const { isMobile } = useUserAgent();
 
-    if (isMobile) {
-        return null;
-    }
+    // if (isMobile) {
+    //     return null;
+    // }
 
     //   if (token.DApp === "sexy") {
     //     return null;
     //   }
 
     // ray_launchpad
-    if (token?.DApp === "ray_launchpad") {
+    if (token?.DApp === "sexy") {
         return (
             <>
-                <div className={styles.TokenExtContainer}>
+                <div className={styles.TokenExtContainer + ' ' + styles.Mobile}>
                 </div>
-                <div className={styles.ImgContainer}>
+                <div className={styles.ImgContainer + ' ' + styles.MobileImgContainer}>
                     <img src="/img/create/raydium.png" className={styles.PlatformImg} alt="raydium" />
                     <div className={styles.ImgText}>Raydium</div>
                 </div>

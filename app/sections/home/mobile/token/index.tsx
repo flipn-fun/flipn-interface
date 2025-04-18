@@ -17,7 +17,7 @@ import { useUserAgent } from "@/app/context/user-agent";
 import { useHome } from "../context";
 import useHolders from "@/app/sections/home/mobile/hooks/use-holders";
 import SpecFrame from "../../spec-frame";
-
+import TokenExt from "@/app/components/tokenExt/token-ext";
 export default function Token({
   isCurrent,
   onUpdate,
@@ -157,6 +157,8 @@ export default function Token({
             )}
           </div>
         )}
+
+        <TokenExt token={token} />
       </div>
       {!isPreview && token && (
         <>
