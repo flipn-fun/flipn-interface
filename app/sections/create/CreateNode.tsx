@@ -53,10 +53,10 @@ const Platforms = [
       <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
       <ul className={styles.platformNoteContent}>
         <li className={styles.platformNoteText}>
-          Once the Token is created, it can be exposed directly on the LaunchPad platform.
+        Once the Token is created, it can be exposed directly on the LaunchPad platform.
         </li>
         <li className={styles.platformNoteText}>
-          After hit bounding curve, your token will be listed to Raydium, and permanently enjoy X% commission rebate.
+          In the process of bounding, you will enjoy an amount bonus of 0.5% of the total transaction amount.
         </li>
       </ul>
     </div>
