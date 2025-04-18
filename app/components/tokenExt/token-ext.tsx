@@ -17,7 +17,7 @@ export default function TokenExt({ token }: Props) {
     //   }
 
     // ray_launchpad
-    if (token?.DApp === "sexy") {
+    if (token?.DApp === "ray_launchpad") {
         return (
             <>
                 <div className={styles.TokenExtContainer + ' ' + styles.Mobile}>
