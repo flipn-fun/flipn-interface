@@ -20,9 +20,9 @@ export default function TokenExt({ token }: Props) {
     if (token?.DApp === "ray_launchpad") {
         return (
             <>
-                <div className={styles.TokenExtContainer + ' ' + styles.Mobile}>
+                <div className={styles.TokenExtContainer + ' ' + (isMobile ? styles.Mobile : '')}>
                 </div>
-                <div className={styles.ImgContainer + ' ' + styles.MobileImgContainer}>
+                <div className={styles.ImgContainer + ' ' + (isMobile ? styles.MobileImgContainer : '')}>
                     <img src="/img/create/raydium.png" className={styles.PlatformImg} alt="raydium" />
                     <div className={styles.ImgText}>Raydium</div>
                 </div>
