@@ -9,7 +9,7 @@ import styles from "./index.module.css";
 import Steps from "./step";
 import PreviewNode from "../PreviewNode";
 import { useUserAgent } from "@/app/context/user-agent";
-import { createMint } from "@solana/spl-token";
+
 import { useRay } from "@/app/hooks/useRay";
 import { Button } from "antd-mobile";
 
@@ -19,9 +19,9 @@ export default function Laptop() {
   const createRef = useRef<any>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { isMobile } = useUserAgent();
-  const { createMint, getQoute, trade } = useRay({
+  const { createMint, getQoute, trade, createPlatform } = useRay({
     token: {
-      address: 'HNdZwxxPgJzMYg85wmK9Z8zUV5q71QRRCNWK49MUY87A',
+      address: 'HsqBuChQcXPYxo2qE1ir8RGRFd3a2nAG1pTNGnF61GKh',
       about: '',
       tokenImg: '',
       tokenName: '',
@@ -126,9 +126,14 @@ export default function Laptop() {
         }}>Buy</Button>
 
         <Button onClick={async () => {
-          const tx = await trade('100000000', 'sell', 100)
+          const tx = await trade('100000000000', 'sell', 100)
           console.log('tx', tx)
         }}>Sell</Button>  
+
+        <Button onClick={async () => {
+          const tx = await createPlatform()
+          console.log('tx', tx)
+        }}>Create Platform</Button>
 
       </motion.div>
     </>

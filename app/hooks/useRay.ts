@@ -12,11 +12,10 @@ import {
 import { useConnection } from '@solana/wallet-adapter-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAccount } from './useAccount';
-import { NATIVE_MINT } from '@solana/spl-token';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BN } from '@coral-xyz/anchor';
-import { Keypair, PublicKey, VersionedTransaction } from '@solana/web3.js';
+import { Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { Project } from '../type';
-import { number } from 'echarts';
 
 interface Params {
   token: Project;
@@ -71,7 +70,7 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    console.log('configInfo', configInfo);
+    console.log('configInfo', configInfo, configInfo.maxShareFeeRate.toString());
 
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
@@ -81,19 +80,25 @@ export const useRay = (params: Params | null) => {
       symbol: params.ticker,
       migrateType: 'amm',
       uri: params.tokenImg,
-
+      supply: new BN('10000000000000000000'),
+      totalSellA: new BN('6000000000000000000'),
       configId,
       configInfo: {
         ...configInfo,
-        minSupplyA: new BN(20000000),
+        migrateFee: new BN(0),
+        minSupplyA: new BN('1000000000'),
+        minFundRaisingB: new BN(1 * (10 ** 9)),
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
-      // platformId: new PublicKey('your platform id'),
+      platformId: new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
       createOnly: createOnly, // true means create mint only, false will "create and buy together"
+      totalFundRaisingB: new BN(30 * (10 ** 9)),
+      totalLockedAmount: new BN('1000000000000000000'),
+
 
       // shareFeeReceiver: new PublicKey('share wallet'), // only works when createOnly=false
       // shareFeeRate: new BN(1000),  // only works when createOnly=false
@@ -172,13 +177,52 @@ export const useRay = (params: Params | null) => {
       }
     }
 
-
-
-
-
     return null
 
   }, [raydiumInstance.current, params])
+
+  const createPlatform = useCallback(async () => {
+    if (!raydiumInstance.current) return;
+
+    const owner = new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP')
+    // const owner = publicKey
+
+    const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
+      programId: DEV_LAUNCHPAD_PROGRAM, // launchpad currently only support in devent
+      platformAdmin: publicKey,
+      platformClaimFeeWallet: owner,
+      platformLockNftWallet: owner,
+      migrateCpLockNftScale: {
+        platformScale: new BN(400000), // set up your config
+        creatorScale: new BN(400000), // set up your config
+        burnScale: new BN(200000), // set up your config
+      },
+      feeRate: new BN(1125), // set up your config
+      name: 'Flipn',
+      web: 'https://test.flipn.fun',
+      img: 'https://test.flipn.fun/img/create/flip.png',
+      txVersion: TxVersion.V0,
+      feePayer: publicKey,
+      // totalFundRaisingAmount: new BN(1000000000000000000),
+      // computeBudgetConfig: {
+      //   units: 600000,
+      //   microLamports: 600000,
+      // },
+    })
+
+    console.log(`platformId: ${extInfo.platformId.toBase58()}`)
+
+    const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
+      isVersionedTransaction: true,
+      canJitoable: true,
+      needFeeEstimate: false,
+    })
+
+    console.log('tx: success', tx)
+
+    return tx
+
+  }, [raydiumInstance.current])
 
   const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;
@@ -196,17 +240,17 @@ export const useRay = (params: Params | null) => {
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
 
-    console.log('poolId', poolId.toBase58())
+    console.log('platformInfo', platformInfo, poolInfo.configInfo.maxShareFeeRate.toString(), platformInfo.feeRate.toString())
 
     const shareFeeReceiver = undefined
     const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000)
 
-    let _transaction: VersionedTransaction | undefined
+    let _transaction: Transaction | undefined
 
     if (type === 'buy') {
       console.log('poolInfo:', poolInfo)
 
-      const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.buyToken({
+      const { transaction, extInfo, execute, builder } = await raydiumInstance.current.launchpad.buyToken({
         programId,
         mintA,
         // mintB: poolInfo.configInfo.mintB, // optional, default is sol
@@ -220,11 +264,15 @@ export const useRay = (params: Params | null) => {
         platformFeeRate: platformInfo.feeRate,
         txVersion: TxVersion.V0,
         buyAmount: inAmount,
-        // shareFeeReceiver: new PublicKey('82gnQysWJCXJZXDJ6oPpjkpdgz5VroPZyzboE6xwBV6D'), // optional
-        // shareFeeRate: new BN(100),  // optional, do not exceed poolInfo.configInfo.maxShareFeeRate
+        // shareFeeReceiver: new PublicKey('AZpx1fy3wHUYLvqtkNLAAt3J3B22aP87Gk349LA1Liwq'), // optional
+        // shareFeeRate: new BN(625),  // optional, do not exceed poolInfo.configInfo.maxShareFeeRate
       })
 
+      console.log('transaction:', transaction,extInfo,builder)
+      // _transaction.add(transaction)
+
       _transaction = transaction
+      
     } else if (type === 'sell') {
       const { execute, transaction, builder } = await raydiumInstance.current.launchpad.sellToken({
         programId,
@@ -234,7 +282,7 @@ export const useRay = (params: Params | null) => {
         platformFeeRate: platformInfo.feeRate,
         txVersion: TxVersion.V0,
         sellAmount: inAmount,
-        shareFeeReceiver: new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP'), // optional
+        // shareFeeReceiver: new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP'), // optional
       })
 
       _transaction = transaction
@@ -256,6 +304,7 @@ export const useRay = (params: Params | null) => {
     createMint,
     getQoute,
     trade,
+    createPlatform,
     programId: DEV_LAUNCHPAD_PROGRAM,
   }
 }
