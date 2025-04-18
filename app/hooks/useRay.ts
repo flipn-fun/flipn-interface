@@ -19,7 +19,7 @@ import { Project } from '../type';
 import { number } from 'echarts';
 
 interface Params {
-    token: Project;
+  token: Project;
 }
 
 export const tokenAddresses: any = {}
@@ -122,7 +122,7 @@ export const useRay = (params: Params | null) => {
 
   const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;
-    
+
     const mintA = new PublicKey(params.token.address as string)
     const mintB = NATIVE_MINT
 
@@ -133,24 +133,48 @@ export const useRay = (params: Params | null) => {
     const poolInfo = await raydiumInstance.current.launchpad.getRpcPoolInfo({ poolId })
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
-  
+
     const shareFeeReceiver = undefined
     const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000) // do not exceed poolInfo.configInfo.maxShareFeeRate
 
-    const res = Curve.buyExactIn({
-      poolInfo,
-      amountB: inAmount,
-      protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
-      platformFeeRate: platformInfo.feeRate,
-      curveType: poolInfo.configInfo.curveType,
-      shareFeeRate,
-    })
+    let res: any = null;
+    if (type === 'buy') {
+      res = Curve.buyExactIn({
+        poolInfo,
+        amountB: inAmount,
+        protocolFeeRate: new BN(0),
+        platformFeeRate: new BN(0),
+        curveType: poolInfo.configInfo.curveType,
+        shareFeeRate,
+      })
 
-    console.log('res', res)
+      console.log('res', res, res.amountA.toNumber());
+      if (res && res.amountA) {
+        return res.amountA.toString()
+      }
+    } else if (type === 'sell') {
 
-    if (res && res.amountA) {
-      return res.amountA.toString()
+      res = Curve.sellExactIn({
+        poolInfo,
+        amountA: inAmount,
+        protocolFeeRate: new BN(0),
+        platformFeeRate: new BN(0),
+        // protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
+        // platformFeeRate: platformInfo.feeRate,
+        curveType: poolInfo.configInfo.curveType,
+        shareFeeRate,
+      })
+
+
+      console.log('res', res, res.amountB.toNumber());
+      if (res && res.amountB) {
+        return res.amountB.toString()
+      }
     }
+
+
+
+
 
     return null
 
@@ -173,9 +197,9 @@ export const useRay = (params: Params | null) => {
     const platformInfo = PlatformConfig.decode(data!.data)
 
     console.log('poolId', poolId.toBase58())
-  
+
     const shareFeeReceiver = undefined
-    const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000) 
+    const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000)
 
     let _transaction: VersionedTransaction | undefined
 
@@ -225,7 +249,7 @@ export const useRay = (params: Params | null) => {
     console.log('tx: success', tx)
 
     return tx
-    
+
   }, [raydiumInstance.current, params])
 
   return {
