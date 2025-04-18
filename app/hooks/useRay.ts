@@ -71,8 +71,6 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    console.log('createMint params', params)
-
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
       mintA,
@@ -106,8 +104,6 @@ export const useRay = (params: Params | null) => {
 
     builder.addInstruction({ signers: [pair] })
     const { execute, transaction } = await builder.buildV0()
-
-    console.log('transaction', transaction)
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
@@ -182,7 +178,7 @@ export const useRay = (params: Params | null) => {
     let _transaction: VersionedTransaction | undefined
 
     if (type === 'buy') {
-      console.log('raydiumInstance.current:', raydiumInstance.current)
+      console.log('poolInfo:', poolInfo)
 
       const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.buyToken({
         programId,
@@ -190,12 +186,16 @@ export const useRay = (params: Params | null) => {
         // mintB: poolInfo.configInfo.mintB, // optional, default is sol
         // minMintAAmount: res.amountA, // optional, default sdk will calculated by realtime rpc data
         slippage: new BN(slip || 100),
-        configInfo: poolInfo.configInfo,
+        configInfo: {
+          ...poolInfo.configInfo,
+          // protocolFeeOwner: new PublicKey('82gnQysWJCXJZXDJ6oPpjkpdgz5VroPZyzboE6xwBV6D'), // optional
+          // migrateFeeOwner: new PublicKey('82gnQysWJCXJZXDJ6oPpjkpdgz5VroPZyzboE6xwBV6D'), // optional
+        },
         platformFeeRate: platformInfo.feeRate,
         txVersion: TxVersion.V0,
         buyAmount: inAmount,
-        // shareFeeReceiver: new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP'), // optional
-        // shareFeeRate,  // optional, do not exceed poolInfo.configInfo.maxShareFeeRate
+        // shareFeeReceiver: new PublicKey('82gnQysWJCXJZXDJ6oPpjkpdgz5VroPZyzboE6xwBV6D'), // optional
+        // shareFeeRate: new BN(100),  // optional, do not exceed poolInfo.configInfo.maxShareFeeRate
       })
 
       _transaction = transaction
