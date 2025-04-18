@@ -179,7 +179,7 @@ export default function BuySellPump({
             getQoute(
               new Big(debounceVal).mul(10 ** desToken.tokenDecimals).toString(),
               "buy",
-              slip / 100
+              slip
             )
               .then((res) => {
                 setBuyIn(debounceVal);
@@ -214,7 +214,7 @@ export default function BuySellPump({
             getQoute(
               new Big(debounceVal).mul(10 ** desToken.tokenDecimals).toString(),
               "sell",
-              slip / 100
+              slip
             )
               .then((res) => {
                 setSellOutSol(
