@@ -12,6 +12,7 @@ import { useUserAgent } from "@/app/context/user-agent";
 
 import { useRay } from "@/app/hooks/useRay";
 import { Button } from "antd-mobile";
+import { useMeteoraToken } from "@/app/hooks/useMeteoraToken";
 
 export default function Laptop() {
   const [step, setStep] = useState(1);
@@ -28,6 +29,8 @@ export default function Laptop() {
       ticker: '',
     }
   });
+
+  const { } = useMeteoraToken()
 
   const query = useMemo(() => {
     const query: any = {

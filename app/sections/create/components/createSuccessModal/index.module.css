@@ -168,6 +168,25 @@
   .avatar {
     width: 142px;
     height: 142px;
+    position: relative;
+  }
+
+  .platformPcImg {
+    width: 40px;
+    height: 40px;
+    background-color: #3C3C3C;  
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pcImg {
+    width: 60%;
   }
 
   .name {
