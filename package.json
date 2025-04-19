@@ -19,7 +19,7 @@
     "@metaplex-foundation/js": "^0.20.1",
     "@okxconnect/solana-provider": "1.6.7",
     "@okxconnect/ui": "1.6.7",
-    "@privy-io/react-auth": "^2.0.7",
+    "@privy-io/react-auth": "2.0.7",
     "@project-serum/anchor": "^0.26.0",
     "@raydium-io/raydium-sdk-v2": "0.1.119-alpha",
     "@reown/appkit": "1.6.3",
@@ -78,6 +78,7 @@
   },
   "resolutions": {
     "@solana-developers/helpers": "2.5.6",
-    "viem": "2.23.12"
+    "viem": "2.23.12",
+    "@privy-io/react-auth/viem": "2.24.1"
   }
 }
