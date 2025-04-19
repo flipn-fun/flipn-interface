@@ -80,8 +80,8 @@ export const useRay = (params: Params | null) => {
       symbol: params.ticker,
       migrateType: 'amm',
       uri: params.tokenImg,
-      supply: new BN('10000000000000000000'),
-      totalSellA: new BN('6000000000000000000'),
+      supply: new BN('1000000000000000'),
+      totalSellA: new BN('800000000000000'),
       configId,
       configInfo: {
         ...configInfo,
@@ -96,8 +96,8 @@ export const useRay = (params: Params | null) => {
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
       createOnly: createOnly, // true means create mint only, false will "create and buy together"
-      totalFundRaisingB: new BN(30 * (10 ** 9)),
-      totalLockedAmount: new BN('1000000000000000000'),
+      totalFundRaisingB: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(45 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalLockedAmount: new BN('0'),
 
 
       // shareFeeReceiver: new PublicKey('share wallet'), // only works when createOnly=false
@@ -140,15 +140,20 @@ export const useRay = (params: Params | null) => {
     const platformInfo = PlatformConfig.decode(data!.data)
 
     const shareFeeReceiver = undefined
-    const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000) // do not exceed poolInfo.configInfo.maxShareFeeRate
+    const shareFeeRate = !shareFeeReceiver ? new BN(0) : new BN(10000) // do not exceed poolInfo.configInfo.maxShareFeeRate
+
+
+    console.log('Curve', Curve)
 
     let res: any = null;
     if (type === 'buy') {
       res = Curve.buyExactIn({
         poolInfo,
         amountB: inAmount,
-        protocolFeeRate: new BN(0),
-        platformFeeRate: new BN(0),
+        // protocolFeeRate: new BN(0),
+        // platformFeeRate: new BN(0),
+        protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
+        platformFeeRate: platformInfo.feeRate,
         curveType: poolInfo.configInfo.curveType,
         shareFeeRate,
       })
@@ -162,10 +167,10 @@ export const useRay = (params: Params | null) => {
       res = Curve.sellExactIn({
         poolInfo,
         amountA: inAmount,
-        protocolFeeRate: new BN(0),
-        platformFeeRate: new BN(0),
-        // protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
-        // platformFeeRate: platformInfo.feeRate,
+        // protocolFeeRate: new BN(0),
+        // platformFeeRate: new BN(0),
+        protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
+        platformFeeRate: platformInfo.feeRate,
         curveType: poolInfo.configInfo.curveType,
         shareFeeRate,
       })
@@ -240,7 +245,7 @@ export const useRay = (params: Params | null) => {
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
 
-    console.log('platformInfo', platformInfo, poolInfo.configInfo.maxShareFeeRate.toString(), platformInfo.feeRate.toString())
+    console.log('platformInfo', platformInfo, poolInfo, platformInfo.feeRate.toString())
 
     const shareFeeReceiver = undefined
     const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000)

@@ -114,9 +114,12 @@ function SuccessModal({
       style={{ width: isMobile ? "90vw" : 432 }}
     >
       <div className={style.tokenInfo}>
-        <div className={style.platformImg}>
-          <img src={data.platform.img} alt={data.platform.name} />
-        </div>
+        {
+          isMobile && <div className={style.platformImg}>
+            <img src={data.platform.img} alt={data.platform.name} />
+          </div>
+        }
+
         <div className={style.tokenTitle}>Token is live!</div>
         <div className={style.tokenAmount}>
           You will get
@@ -134,6 +137,12 @@ function SuccessModal({
             className={style.avatarImg}
             src={token.tokenUri || token.tokenIcon || token.tokenImg}
           />
+
+          {
+            !isMobile && <div className={style.platformPcImg}>
+              <img src={data.platform.img} className={style.pcImg} alt={data.platform.name} />
+            </div>
+          }
         </div>
 
         <div className={style.nameContent}>
