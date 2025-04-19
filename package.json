@@ -1,6 +1,6 @@
 {
   "name": "mainsite",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "packageManager": "yarn@1.22.22",
   "scripts": {
@@ -21,7 +21,6 @@
     "@okxconnect/ui": "1.6.7",
     "@privy-io/react-auth": "^2.0.7",
     "@project-serum/anchor": "^0.26.0",
-    "@raydium-io/raydium-sdk-v2": "0.1.119-alpha",
     "@reown/appkit": "1.6.3",
     "@reown/appkit-adapter-solana": "1.6.3",
     "@solana/buffer-layout": "^4.0.1",
@@ -33,6 +32,8 @@
     "@solana/wallet-adapter-react-ui": "0.9.35",
     "@solana/wallet-adapter-wallets": "0.19.32",
     "@solana/web3.js": "^1.95.4",
+    "@types/dom-to-image": "^2.6.7",
+    "@types/hammerjs": "^2.0.46",
     "ahooks": "^3.8.1",
     "antd-mobile": "^5.34.0",
     "big.js": "^6.2.2",
@@ -58,7 +59,8 @@
     "react-dom": "^18",
     "react-lazy-load-image-component": "^1.6.3",
     "recharts": "^2.15.1",
-    "zustand": "^5.0.2"
+    "zustand": "^5.0.2",
+    "@raydium-io/raydium-sdk-v2": "0.1.119-alpha"
   },
   "devDependencies": {
     "@types/big.js": "^6.2.2",
@@ -68,8 +70,6 @@
     "@types/node": "^20",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18",
-    "@types/dom-to-image": "^2.6.7",
-    "@types/hammerjs": "^2.0.46",
     "@types/react-dom": "^18",
     "@types/react-lazy-load-image-component": "^1.6.4",
     "eslint": "^8",
@@ -78,7 +78,6 @@
   },
   "resolutions": {
     "@solana-developers/helpers": "2.5.6",
-    "@privy-io/react-auth/viem": "2.24.1",
     "viem": "2.23.12"
   }
 }
