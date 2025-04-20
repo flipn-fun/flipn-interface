@@ -240,6 +240,12 @@ export default function Token({
               </div>
             )
           }
+
+          <div className={styles.platformIcon}>
+            { data.DApp === 'sexy' && <img src="/img/create/flip.png" alt="" /> }
+            { data.DApp === 'ray_launchpad' && <img src="/img/create/raydium.png" alt="" /> }
+            { data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" /> }
+          </div>
           <LaunchTag type={data.status as number} />
           {
             data.DApp === "pump" && (
