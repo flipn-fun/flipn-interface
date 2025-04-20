@@ -151,9 +151,13 @@ function SuccessModal({
           <div className={style.ticker}>Ticker: {token.tokenSymbol}</div>
         </div>
 
-        <div className={style.successNote}>
-          Collect 100 Likes to Bonding now!
-        </div>
+        {
+          data.platform.name === 'FlipN' && (
+            <div className={style.successNote}>
+              Collect 100 Likes to Bonding now!
+            </div>
+          ) 
+        }
 
         <div className={style.btnBox}>
           <MainBtn

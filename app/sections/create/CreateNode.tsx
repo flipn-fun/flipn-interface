@@ -400,7 +400,7 @@ export default forwardRef(function CreateNode(
       x,
       tg,
       discord,
-      status: 0,
+      status: platform.name === 'Raydium' ? 1 : 0,
       platform,
     });
 
