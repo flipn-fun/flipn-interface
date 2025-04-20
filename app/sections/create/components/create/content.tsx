@@ -338,7 +338,7 @@ export default function Create({
           </div>
 
           {
-            data.platform.name === 'FlipN' ? <div className={[styles.cationArea, styles.panel].join(" ")}>
+            data.platform.name === 'FlipN' || data.platform.name === 'Raydium' ? <div className={[styles.cationArea, styles.panel].join(" ")}>
               <div className={styles.launchTip}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -355,10 +355,21 @@ export default function Create({
                     fill="#FBCA04"
                   />
                 </svg>
-                <span>
-                  After successful creation, the creator will not be able to flip
-                  again
-                </span>
+                {
+                  data.platform.name === 'FlipN' && (
+                    <span>
+                      After successful creation, the creator will not be able to flip
+                      again
+                    </span>
+                  )
+                }
+                {
+                  data.platform.name === 'Raydium' && (
+                    <span>
+                      It’s Optional but buying a small amount of coins helps protect your coin from snipers.
+                    </span>
+                  )
+                }
               </div>
             </div> : <div/>
           }

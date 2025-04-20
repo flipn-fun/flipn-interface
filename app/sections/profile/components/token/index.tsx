@@ -242,7 +242,7 @@ export default function Token({
           }
 
           <div className={styles.platformIcon}>
-            { data.DApp === 'sexy' && <img src="/img/create/flip.png" alt="" /> }
+            { data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" /> }
             { data.DApp === 'ray_launchpad' && <img src="/img/create/raydium.png" alt="" /> }
             { data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" /> }
           </div>
