@@ -185,3 +185,25 @@
   width: 20px;
   height: 20px;
 }
+
+
+.platformIcon {
+  position: absolute;
+  left: 5px;
+  top: 4px;
+  z-index: 10;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  border: 1px solid #515B63;
+  background-color: #00000099;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.platformIcon img {
+  width: 80%;
+  object-fit: cover;
+}

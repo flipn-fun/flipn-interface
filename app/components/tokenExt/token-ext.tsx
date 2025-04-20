@@ -3,9 +3,10 @@ import type { Project } from "@/app/type";
 import { useUserAgent } from "@/app/context/user-agent";
 interface Props {
     token: Project;
+    showTrade?: boolean;
 }
 
-export default function TokenExt({ token }: Props) {
+export default function TokenExt({ token, showTrade }: Props) {
     const { isMobile } = useUserAgent();
 
     // if (isMobile) {
@@ -20,8 +21,12 @@ export default function TokenExt({ token }: Props) {
     if (token?.DApp === "ray_launchpad") {
         return (
             <>
-                <div className={styles.TokenExtContainer + ' ' + (isMobile ? styles.Mobile : '')}>
-                </div>
+                {
+                    (!showTrade || isMobile) && (
+                        <div className={styles.TokenExtContainer + ' ' + (isMobile ? styles.Mobile : '')}>
+                        </div>
+                    )
+                }
                 <div className={styles.ImgContainer + ' ' + (isMobile ? styles.MobileImgContainer : '')}>
                     <img src="/img/create/raydium.png" className={styles.PlatformImg} alt="raydium" />
                     <div className={styles.ImgText}>Raydium</div>
