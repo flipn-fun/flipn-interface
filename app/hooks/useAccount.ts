@@ -190,11 +190,13 @@ export function useAccount() {
         {
           isVersionedTransaction = false,
           canJitoable = false,
-          needFeeEstimate = true
+          needFeeEstimate = true,
+          beforeSend
         }: {
           isVersionedTransaction?: boolean,
           canJitoable?: boolean,
-          needFeeEstimate?: boolean
+          needFeeEstimate?: boolean,
+          beforeSend?: (signature: string, transaction?: Transaction) => void
         } = {}
       ) => {
         const confirmationStrategy: any = {
@@ -207,6 +209,13 @@ export function useAccount() {
 
         let _transaction: any = transaction
         const jitoClient = new JitoJsonRpcClient('https://mainnet.block-engine.jito.wtf/api/v1', "");
+
+        const latestBlockhash = await connection?.getLatestBlockhash();
+        transaction.feePayer = publicKey;
+        transaction.recentBlockhash = latestBlockhash!.blockhash;
+
+        let lookupTableAccount: any = []
+
         if (!isVersionedTransaction) {
           if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
             const jitoTipAccounts = await jitoClient.getTipAccounts();
@@ -218,10 +227,6 @@ export function useAccount() {
               }),
             )
           }
-
-          const latestBlockhash = await connection?.getLatestBlockhash();
-          transaction.feePayer = publicKey;
-          transaction.recentBlockhash = latestBlockhash!.blockhash;
 
           if (needFeeEstimate) {
             const microLamports = await getPriorityFeeEstimate(
@@ -240,33 +245,37 @@ export function useAccount() {
           }
 
           if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
-            const lookupTableAccount = (
+            lookupTableAccount = [(
               await connection.getAddressLookupTable(lookupTableAddress)
-            ).value;
-
-            const message = new TransactionMessage({
-              payerKey: publicKey!, // Public key of the account paying for the transaction
-              recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
-              instructions: transaction.instructions, // Instructions to be included in the transaction
-            }).compileToV0Message([lookupTableAccount!])
-
-            const versionedTransaction = new VersionedTransaction(message)
-
-            _transaction = versionedTransaction
+            ).value];
           }
+
+          const message = new TransactionMessage({
+            payerKey: publicKey!, // Public key of the account paying for the transaction
+            recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
+            instructions: transaction.instructions, // Instructions to be included in the transaction
+          }).compileToV0Message(lookupTableAccount)
+
+          const versionedTransaction = new VersionedTransaction(message)
+
+          _transaction = versionedTransaction
         }
 
         let tx
+
+        const signedTransaction = await signTransaction!(_transaction)
+        const serializedTransaction = signedTransaction.serialize();
+
+        if (beforeSend && signedTransaction.signatures.length > 0) {
+          const signature = bs58.encode(signedTransaction.signatures[0]);
+          beforeSend(signature, _transaction)
+        }
+
         if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
-          const signedTransaction = await signTransaction!(_transaction)
-          const serializedTransaction = signedTransaction.serialize();
           const base58Transaction = bs58.encode(serializedTransaction);
           tx = await jitoClient.sendTxn([base58Transaction], false);
         } else {
-
-          console.log('tx   222:', _transaction)
-
-          tx = await sendTransaction(_transaction, connection, {
+          tx = await connection.sendRawTransaction(serializedTransaction, {
             ...confirmationStrategy,
             ...sendOptions
           });
