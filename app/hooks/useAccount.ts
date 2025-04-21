@@ -249,17 +249,18 @@ export function useAccount() {
               await connection.getAddressLookupTable(lookupTableAddress)
             ).value];
           }
+
+          const message = new TransactionMessage({
+            payerKey: publicKey!, // Public key of the account paying for the transaction
+            recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
+            instructions: transaction.instructions, // Instructions to be included in the transaction
+          }).compileToV0Message(lookupTableAccount)
+  
+          const versionedTransaction = new VersionedTransaction(message)
+  
+          _transaction = versionedTransaction
         }
 
-        const message = new TransactionMessage({
-          payerKey: publicKey!, // Public key of the account paying for the transaction
-          recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
-          instructions: transaction.instructions, // Instructions to be included in the transaction
-        }).compileToV0Message(lookupTableAccount)
-
-        const versionedTransaction = new VersionedTransaction(message)
-
-        _transaction = versionedTransaction
 
         let tx
 
