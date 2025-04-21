@@ -19,6 +19,7 @@ interface Props {
   show: boolean;
   onHide: () => void;
   token: Project;
+  data: Project;
   pointByVolume: string | undefined;
   onShare: () => void;
 }
@@ -27,6 +28,7 @@ export default function CreateSuccessModal({
   show,
   onHide,
   token,
+  data,
   pointByVolume,
   onShare
 }: Props) {
@@ -36,6 +38,7 @@ export default function CreateSuccessModal({
     return (
       <SuccessModal
         token={token}
+        data={data}
         pointByVolume={pointByVolume}
         onClose={() => {
           onHide();
@@ -56,6 +59,7 @@ export default function CreateSuccessModal({
       >
         <SuccessModal
           token={token}
+          data={data}
           pointByVolume={pointByVolume}
           onClose={() => {
             onHide();
@@ -71,10 +75,12 @@ function SuccessModal({
   onClose,
   onShare,
   pointByVolume,
-  token
+  token,
+  data
 }: {
   onClose: () => void;
   token: any;
+  data: Project;
   onShare: () => void;
   pointByVolume: string | undefined;
 }) {
@@ -108,7 +114,13 @@ function SuccessModal({
       style={{ width: isMobile ? "90vw" : 432 }}
     >
       <div className={style.tokenInfo}>
-        <div className={style.tokenTitle}>A Genesis Token is live!</div>
+        {
+          isMobile && <div className={style.platformImg}>
+            <img src={data.platform.img} alt={data.platform.name} />
+          </div>
+        }
+
+        <div className={style.tokenTitle}>Token is live!</div>
         <div className={style.tokenAmount}>
           You will get
           <span className={style.tokenSymbol}>
@@ -125,6 +137,12 @@ function SuccessModal({
             className={style.avatarImg}
             src={token.tokenUri || token.tokenIcon || token.tokenImg}
           />
+
+          {
+            !isMobile && <div className={style.platformPcImg}>
+              <img src={data.platform.img} className={style.pcImg} alt={data.platform.name} />
+            </div>
+          }
         </div>
 
         <div className={style.nameContent}>
@@ -133,9 +151,13 @@ function SuccessModal({
           <div className={style.ticker}>Ticker: {token.tokenSymbol}</div>
         </div>
 
-        <div className={style.successNote}>
-          Collect 100 Likes to Bonding now!
-        </div>
+        {
+          data.platform.name === 'FlipN' && (
+            <div className={style.successNote}>
+              Collect 100 Likes to Bonding now!
+            </div>
+          ) 
+        }
 
         <div className={style.btnBox}>
           <MainBtn

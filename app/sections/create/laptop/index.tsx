@@ -10,12 +10,27 @@ import Steps from "./step";
 import PreviewNode from "../PreviewNode";
 import { useUserAgent } from "@/app/context/user-agent";
 
+import { useRay } from "@/app/hooks/useRay";
+import { Button } from "antd-mobile";
+// import { useMeteoraToken } from "@/app/hooks/useMeteoraToken";
+
 export default function Laptop() {
   const [step, setStep] = useState(1);
   const [dataAdd, setDataAdd] = useState<Project>();
   const createRef = useRef<any>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { isMobile } = useUserAgent();
+  const { createMint, getQoute, trade, createPlatform } = useRay({
+    token: {
+      address: 'HsqBuChQcXPYxo2qE1ir8RGRFd3a2nAG1pTNGnF61GKh',
+      about: '',
+      tokenImg: '',
+      tokenName: '',
+      ticker: '',
+    }
+  });
+
+  // const { } = useMeteoraToken()
 
   const query = useMemo(() => {
     const query: any = {
@@ -90,6 +105,38 @@ export default function Laptop() {
             </motion.div>
           )}
         </div>
+
+
+        <Button onClick={async () => {    
+          const tx = await createMint({
+            tokenName: 'test',
+            ticker: 'test',
+            about: 'test',
+            tokenImg: 'test',
+            tokenIcon: 'test'
+          }, '')
+        }}>Raudium</Button>
+
+        <Button onClick={async () => {
+          const quote = await getQoute('10000', 'buy')
+          console.log('quote', quote)
+        }}>Get Quote</Button>
+
+        <Button onClick={async () => {
+          const tx = await trade('100000000', 'buy', 100)
+          console.log('tx', tx)
+        }}>Buy</Button>
+
+        <Button onClick={async () => {
+          const tx = await trade('100000000000', 'sell', 100)
+          console.log('tx', tx)
+        }}>Sell</Button>  
+
+        <Button onClick={async () => {
+          const tx = await createPlatform()
+          console.log('tx', tx)
+        }}>Create Platform</Button>
+
       </motion.div>
     </>
   );

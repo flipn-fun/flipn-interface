@@ -2,7 +2,6 @@
 
 import { memo, useCallback } from "react";
 import Mobile from "./mobile";
-import Laptop from "./laptop";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -10,6 +9,7 @@ import { httpGet } from "@/app/utils";
 import { useMessage } from "@/app/context/messageContext";
 import { mapDataToProject } from "@/app/utils/mapTo";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
+import { tokenAddresses } from "@/app/hooks/useRay";
 
 export default memo(function Create(props: any) {
   const router = useRouter();
@@ -25,13 +25,20 @@ export default memo(function Create(props: any) {
 
   const share = useCallback(async () => {
     if (tokenInfo) {
-      const tokenAddress = tokenInfo![0].toBase58()
+      let tokenAddress = ''
+      if (props.token.platform.name === 'Raydium') {
+        tokenAddress = tokenAddresses[props.token.tokenName + '-' + props.token.tokenSymbol.toUpperCase()]
+      } else {
+        tokenAddress = tokenInfo![0].toBase58()
+      }
       const v = await httpGet("/project?address=" + tokenAddress);
-      if (v.code === 0) {
+      if (v.code === 0 && v.data.length > 0) {
         const data = v.data[0];
         showShare(mapDataToProject(data), true, () => {
           router.push("/detail?address=" + tokenAddress);
         })
+      } else {
+        router.push("/")
       }
     }
   }, [tokenInfo]);

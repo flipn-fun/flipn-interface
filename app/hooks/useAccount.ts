@@ -190,13 +190,11 @@ export function useAccount() {
         {
           isVersionedTransaction = false,
           canJitoable = false,
-          needFeeEstimate = true,
-          beforeSend
+          needFeeEstimate = true
         }: {
           isVersionedTransaction?: boolean,
           canJitoable?: boolean,
-          needFeeEstimate?: boolean,
-          beforeSend?: (signature: string, transaction?: Transaction) => void
+          needFeeEstimate?: boolean
         } = {}
       ) => {
         const confirmationStrategy: any = {
@@ -209,13 +207,6 @@ export function useAccount() {
 
         let _transaction: any = transaction
         const jitoClient = new JitoJsonRpcClient('https://mainnet.block-engine.jito.wtf/api/v1', "");
-
-        const latestBlockhash = await connection?.getLatestBlockhash();
-        transaction.feePayer = publicKey;
-        transaction.recentBlockhash = latestBlockhash!.blockhash;
-
-        let lookupTableAccount: any = []
-
         if (!isVersionedTransaction) {
           if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
             const jitoTipAccounts = await jitoClient.getTipAccounts();
@@ -227,6 +218,10 @@ export function useAccount() {
               }),
             )
           }
+
+          const latestBlockhash = await connection?.getLatestBlockhash();
+          transaction.feePayer = publicKey;
+          transaction.recentBlockhash = latestBlockhash!.blockhash;
 
           if (needFeeEstimate) {
             const microLamports = await getPriorityFeeEstimate(
@@ -245,47 +240,40 @@ export function useAccount() {
           }
 
           if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
-            lookupTableAccount = [(
+            const lookupTableAccount = (
               await connection.getAddressLookupTable(lookupTableAddress)
-            ).value];
+            ).value;
+
+            const message = new TransactionMessage({
+              payerKey: publicKey!, // Public key of the account paying for the transaction
+              recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
+              instructions: transaction.instructions, // Instructions to be included in the transaction
+            }).compileToV0Message([lookupTableAccount!])
+
+            const versionedTransaction = new VersionedTransaction(message)
+
+            _transaction = versionedTransaction
           }
         }
 
-        const message = new TransactionMessage({
-          payerKey: publicKey!, // Public key of the account paying for the transaction
-          recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
-          instructions: transaction.instructions, // Instructions to be included in the transaction
-        }).compileToV0Message(lookupTableAccount)
-
-        const versionedTransaction = new VersionedTransaction(message)
-
-        _transaction = versionedTransaction
-
         let tx
-
-        const signedTransaction = await signTransaction!(_transaction)
-        const serializedTransaction = signedTransaction.serialize();
-
-        if (beforeSend && signedTransaction.signatures.length > 0) {
-          const signature = bs58.encode(signedTransaction.signatures[0]);
-          beforeSend(signature, _transaction)
-        }
-
         if (jitoable && canJitoable && process.env.NEXT_PUBLIC_NET === 'Mainnet') {
+          const signedTransaction = await signTransaction!(_transaction)
+          const serializedTransaction = signedTransaction.serialize();
           const base58Transaction = bs58.encode(serializedTransaction);
           tx = await jitoClient.sendTxn([base58Transaction], false);
         } else {
-          tx = await connection.sendRawTransaction(serializedTransaction, {
+
+          console.log('tx   222:', _transaction)
+
+          tx = await sendTransaction(_transaction, connection, {
             ...confirmationStrategy,
             ...sendOptions
           });
-          // tx = await sendTransaction(_transaction, connection, {
-          //   ...confirmationStrategy,
-          //   ...sendOptions
-          // });
         }
 
-        // console.log('tx:', tx, _transaction)
+        console.log('tx:', tx)
+
 
         // console.log(tx)
         // const tx = await connection.sendTransaction(transaction, [payer], {
@@ -316,9 +304,13 @@ export function useAccount() {
         //   }
         // } else {
         while (!done && Date.now() - startTime < timeout) {
+          // console.log('tx   111:', tx)
+
           status = await connection.getSignatureStatus(tx, {
             searchTransactionHistory: true
           });
+
+          // console.log('status:', status)
 
           if (
             status?.value?.confirmationStatus === "finalized" ||

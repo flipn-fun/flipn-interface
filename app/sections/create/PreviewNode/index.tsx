@@ -78,7 +78,8 @@ export default forwardRef(function PreviewNode(
       token_symbol: data.tokenSymbol,
       video: data.tokenImg,
       website: data.website,
-      x: data.x
+      x: data.x,
+      program_id: data.platform.programId,
     };
 
     const queryStr = Object.keys(query)
@@ -225,7 +226,8 @@ export default forwardRef(function PreviewNode(
             tokenName: data.tokenName,
             tokenSymbol: data.tokenSymbol,
             tokenDecimals: 6,
-            tokenUri: data.tokenIcon || data.tokenImg
+            tokenUri: data.tokenIcon || data.tokenImg,
+            platform: data.platform
           }}
           data={data}
           getSubmitFn={(submitFn: any) => {
