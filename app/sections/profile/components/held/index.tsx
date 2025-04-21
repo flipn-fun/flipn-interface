@@ -48,7 +48,6 @@ export default function Held({ from, address }: any) {
 
   const getTokenSelf = useCallback(async (address: string[]) => {
     const v = await httpGet(`/project/address/list?address_list=${address.join(",")}`);
-    console.log('v:', v)
     if (v.code === 0 && v.data) {
       v.data.forEach((item: any) => {
         tokenSelf[item.address] = item;

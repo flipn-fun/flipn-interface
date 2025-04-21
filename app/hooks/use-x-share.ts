@@ -55,7 +55,6 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
                 const cleanedRedirectUri = url.origin + url.pathname.replace(/\/$/, '') + url.search;
 
                 const res = await httpAuthPost(`/bind/twitter?code=${code}&redirect_uri=${encodeURIComponent(cleanedRedirectUri)}`);
-                console.log('res:', res);
                 if (res.code === 0) {
                     // success("Share successfully");
                     setXUserInfo(res.data);
@@ -84,11 +83,39 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
         setXUserInfo(null);
     }, []);
 
+    const getAuthUrl = useCallback(async () => {
+        setLoading(true);
+        try {
+            const result = await httpAuthGet('/twitter/oauth1/url');
+            if (result.code === 0) {
+                window.open(result.data, "_blank");
+                setLoading(false);
+                return true;
+            }
+        } catch (err: any) {
+            setLoading(false);
+            fail(err.message || "Share failed!");
+            return false;
+        }
+    }, [token]);
+
+    const bindTwitter = useCallback(async (verifier: string) => {
+        const result = await httpAuthPost(`/twitter/oauth1/bind?verifier=${verifier}`);
+        if (result.code === 0) {
+            success("Bind successfully");
+            setXUserInfo(result.data);
+            return true;
+        }
+        return false;
+    }, []);
+
     return {
         loading,
         code,
         xUserInfo,
         shareToTwitter,
+        bindTwitter,
+        getAuthUrl,
         clear,
     };
 }

@@ -126,7 +126,7 @@ export default function Txs({ from, data }: any) {
 
   useInterval(() => {
     if (offset === 0 || offset === LIMIT || (!wrapperRef.current?.parentElement?.scrollTop) || (wrapperRef.current?.parentElement?.scrollTop && wrapperRef.current?.parentElement?.scrollTop < 300)) {
-      if (wrapperRef.current?.parentElement?.scrollTop) {
+      if (wrapperRef.current?.parentElement?.scrollTop && offset > LIMIT) {
         wrapperRef.current.parentElement.scrollTo({
           top: 0,
           behavior: 'smooth'

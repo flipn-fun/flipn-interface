@@ -69,7 +69,6 @@ export default function WalletConnect({
   }, [network]);
   const wallets = useMemo(() => {
     if (typeof window === "undefined") return [];
-    console.log(getDeviceType());
     return (
       getDeviceType().mobile
         ? [

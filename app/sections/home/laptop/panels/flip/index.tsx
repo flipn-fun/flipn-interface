@@ -11,10 +11,8 @@ import { numberFormatter } from "@/app/utils/common";
 import { fail, success } from "@/app/utils/toast";
 import CircleLoading from "@/app/components/icons/loading";
 import clsx from "clsx";
-import { reportTradeData, ReportDataType } from "@/app/utils/report";
 import dayjs from "dayjs";
 import { usePrepaidDelayTimeStore } from "@/app/store/usePrepaidDelayTime";
-
 
 const isPrepaidCache = new Map<string, any>();
 export default function FlipPanel(props: any) {
@@ -55,8 +53,6 @@ export default function FlipPanel(props: any) {
     loadData: false
   });
 
-  console.log('token', token)
-
   const delayTime = useMemo(() => {
     if (!token.createdAt || !prepaidDelayTime) return 0;
     const createdAt = new Date(token.createdAt);
@@ -76,7 +72,6 @@ export default function FlipPanel(props: any) {
       const hash = await prePaid(inputNum, false);
       setLoading(false);
       if (hash) {
-        reportTradeData(ReportDataType.FLIP, hash);
         isPrepaidCache.set(token.address, inputVal);
         success("Flip success");
         onSuccess?.(inputVal);

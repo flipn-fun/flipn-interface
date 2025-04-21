@@ -6,6 +6,7 @@ import { useUserAgent } from '@/app/context/user-agent';
 import { httpAuthPost, httpGet } from '@/app/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { success } from '@/app/utils/toast';
+import SpinLoading from 'antd-mobile/es/components/spin-loading';
 
 interface PreviewProps {
     isOpen: boolean;
@@ -18,6 +19,7 @@ interface PreviewProps {
 export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: PreviewProps) {
     const { isMobile } = useUserAgent();
     const [shareCopy, setShareCopy] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const getShareCopy = async () => {
@@ -37,18 +39,21 @@ export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: 
     }, []);
 
     const share = useCallback(async () => {
-        if (!token) return;
+        if (!token || isLoading) return;
         try {
+            setIsLoading(true);
             const res = await httpAuthPost(`/contents/publish?project_id=${token?.id}&sharing_copy=${encodeURIComponent(shareCopy)}`);
             if (res.code === 0) {
                 success("Share successfully");
                 onClose();
                 onClear();
             }
+            setIsLoading(false);
         } catch (error) {
             console.error("Failed to share:", error);
+            setIsLoading(false);
         }
-    }, [token, shareCopy]);
+    }, [token, shareCopy, isLoading]);
 
     if (!token) {
         return null;
@@ -78,7 +83,9 @@ export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: 
                     </div>
                     <button className={styles.postButton} onClick={() => {
                         share();
-                    }}>Post</button>
+                    }}>
+                        {isLoading ? <SpinLoading color='#fff' style={{ fontSize: 14 }} /> : 'Post'}
+                    </button>
                 </div>
 
                 <div className={styles.tokenMsg}>

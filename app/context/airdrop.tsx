@@ -46,7 +46,6 @@ export const AirdropContextProvider: React.FC<any> = ({ children }) => {
     }
     setAirdropUserData(res.data);
     setReferral(res.data.referral_account);
-    console.log("referral saved: %o", res.data.referral_account);
     Cookies.set("referral", res.data.referral_account, { path: "/" });
     setReferer(res.data.allow_login);
     if (
