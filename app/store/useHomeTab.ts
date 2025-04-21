@@ -7,6 +7,7 @@ export const useHomeTab = create(
       homeTabIndex: 0,
       profileTabName: "Liked",
       currentSummary: "",
+      currentPlatform: "",
       set: (params: any) => set(() => ({ ...params }))
     }),
     {
