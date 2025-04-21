@@ -1,6 +1,7 @@
 import {
   TxVersion,
   DEV_LAUNCHPAD_PROGRAM,
+  LAUNCHPAD_PROGRAM,
   printSimulate,
   getPdaLaunchpadConfigId,
   LaunchpadConfig,
@@ -20,6 +21,8 @@ import { Project } from '../type';
 interface Params {
   token: Project;
 }
+
+const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM : DEV_LAUNCHPAD_PROGRAM
 
 export const tokenAddresses: any = {}
 export const useRay = (params: Params | null) => {
@@ -50,7 +53,6 @@ export const useRay = (params: Params | null) => {
   const createMint = useCallback(async (params: Project, amount: string) => {
     if (!raydiumInstance.current) return;
 
-    const programId = DEV_LAUNCHPAD_PROGRAM // currently only support in devent
 
     const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
@@ -85,18 +87,18 @@ export const useRay = (params: Params | null) => {
       configId,
       configInfo: {
         ...configInfo,
-        migrateFee: new BN(0),
+        migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(0),
         minSupplyA: new BN('1000000000'),
         minFundRaisingB: new BN(1 * (10 ** 9)),
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
-      platformId: new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
+      platformId: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
       createOnly: createOnly, // true means create mint only, false will "create and buy together"
-      totalFundRaisingB: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(45 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalFundRaisingB: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(30 * (10 ** 9)) : new BN(30 * (10 ** 9)),
       totalLockedAmount: new BN('0'),
 
 
@@ -157,7 +159,7 @@ export const useRay = (params: Params | null) => {
     const mintA = new PublicKey(params.token.address as string)
     const mintB = NATIVE_MINT
 
-    const programId = DEV_LAUNCHPAD_PROGRAM
+    
     const inAmount = new BN(amount)
 
     const poolId = getPdaLaunchpadPoolId(programId, mintA, mintB).publicKey
@@ -218,7 +220,7 @@ export const useRay = (params: Params | null) => {
     // const owner = publicKey
 
     const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
-      programId: DEV_LAUNCHPAD_PROGRAM, // launchpad currently only support in devent
+      programId, // launchpad currently only support in devent
       platformAdmin: publicKey,
       platformClaimFeeWallet: owner,
       platformLockNftWallet: owner,
@@ -229,8 +231,8 @@ export const useRay = (params: Params | null) => {
       },
       feeRate: new BN(1125), // set up your config
       name: 'Flipn',
-      web: 'https://test.flipn.fun',
-      img: 'https://test.flipn.fun/img/create/flip.png',
+      web: 'https://flipn.fun',
+      img: 'https://app.flipn.fun/img/create/flip.png',
       txVersion: TxVersion.V0,
       feePayer: publicKey,
       // totalFundRaisingAmount: new BN(1000000000000000000),
@@ -262,7 +264,7 @@ export const useRay = (params: Params | null) => {
 
     console.log('trade params', amount, type, slip)
 
-    const programId = DEV_LAUNCHPAD_PROGRAM
+    const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM : DEV_LAUNCHPAD_PROGRAM
     const inAmount = new BN(amount)
 
     const poolId = getPdaLaunchpadPoolId(programId, mintA, mintB).publicKey
@@ -335,7 +337,7 @@ export const useRay = (params: Params | null) => {
     getQoute,
     trade,
     createPlatform,
-    programId: DEV_LAUNCHPAD_PROGRAM,
+    programId,
   }
 }
 
