@@ -2,6 +2,8 @@ import { Button, SpinLoading } from 'antd-mobile';
 import Modal from '../modal';
 import styles from './auth.module.css';
 import { useCallback, useState } from 'react';
+import { useCountDown } from 'ahooks';
+import useTimeLeft from '@/app/hooks/useTimeLeft';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -11,10 +13,16 @@ interface AuthModalProps {
     bindTwitter: (verifier: string) => Promise<boolean>;
 }
 
+
+
+
 export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bindTwitter }: AuthModalProps) {
     const [step, setStep] = useState<1 | 2>(1);
     const [verificationCode, setVerificationCode] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [targetTime, setTargetTime] = useState(Date.now())
+
+    const { timeFormat, minutes, seconds } = useTimeLeft({ time: targetTime })
 
     const handleContinue = useCallback(async () => {
         if (isLoading) {
@@ -24,11 +32,12 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
         const result = await getAuthUrl();
         if (result) {
             setStep(2);
+            setTargetTime(Date.now() + 1000 * 60 * 5)
         }
         setIsLoading(false);
     }, [getAuthUrl, isLoading]);
 
-    const handleConfirm = useCallback(async     () => {
+    const handleConfirm = useCallback(async () => {
         if (verificationCode) {
             if (isLoading) {
                 return;
@@ -43,9 +52,11 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
         }
     }, [bindTwitter, verificationCode, onSuccess]);
 
+  
+
 
     return (
-        <Modal forceNoCloseIcon style={{ zIndex: 1000, backdropFilter: 'blur(10px)', }}  open={isOpen} onClose={() => {
+        <Modal forceNoCloseIcon style={{ zIndex: 1000, backdropFilter: 'blur(10px)', }} open={isOpen} onClose={() => {
             setStep(1)
             onClose && onClose()
         }}>
@@ -81,6 +92,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
                 ) : (
                     <div className={styles.authenticationContainer}>
                         <div className={styles.box}>
+                            <div className={styles.time}>{minutes}:{seconds}:00</div>
                             <h2 className={styles.title}>Authentication</h2>
                             <p className={styles.subtitle}>
                                 We have sent you the verification code. Please enter it correctly.
@@ -97,7 +109,10 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
                         <Button loading={isLoading} loadingIcon={<SpinLoading />} disabled={!verificationCode} className={styles.confirmButton} onClick={handleConfirm}>
                             confirm
                         </Button>
-                        <button className={styles.resendButton} onClick={() => handleContinue()}>
+                        <button className={styles.resendButton} onClick={() => {
+                            handleContinue()
+                            setTargetTime(Date.now() + 1000 * 60 * 5)
+                        }}>
                             resend
                         </button>
                     </div>
@@ -106,3 +121,13 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
         </Modal>
     );
 }
+
+
+const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
+};

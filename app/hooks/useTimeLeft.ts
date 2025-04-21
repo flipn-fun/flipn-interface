@@ -2,7 +2,7 @@ import { useCountDown } from "ahooks";
 import { useMemo } from "react";
 
 export default function useTimeLeft({ time }: any) {
-  const [countdown, { days, hours, minutes, seconds }] = useCountDown({
+  const [countdown, { days, hours, minutes, seconds, milliseconds }] = useCountDown({
     leftTime: time ? (time - Date.now() < 0 ? 0 : time - Date.now()) : 0
   });
 
@@ -31,6 +31,7 @@ export default function useTimeLeft({ time }: any) {
     hours,
     minutes,
     seconds,
+    milliseconds,
     countdown
   };
 }
