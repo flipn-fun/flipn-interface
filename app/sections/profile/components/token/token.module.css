@@ -10,12 +10,14 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  position: relative;
 }
 
 .tokenMagMobile {
   composes: tokenMag;
   flex: 1;
   width: 0;
+  position: relative;
 }
 
 .tokenImgContent {
@@ -206,4 +208,14 @@
 .platformIcon img {
   width: 80%;
   object-fit: cover;
+}
+
+.collectIcon {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 10;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }

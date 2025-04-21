@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./token.module.css";
 import type { Project } from "@/app/type";
-import { simplifyNum } from "@/app/utils";
+import { httpAuthPost, simplifyNum } from "@/app/utils";
 import { useRouter } from "next/navigation";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import TokenAction from "../tokenAction";
@@ -44,18 +44,11 @@ export default function Token({
   const { connection } = useConnection();
   const { isMobile } = useUserAgent();
 
-  const [mc, setMC] = useState<string | number>(0);
   const [prepaidRealAmount, setPrepaidRealAmount] = useState(Big(0));
   const [prepaidAmount, setPrepaidAmount] = useState(Big(0));
   const [tokenAmount, setTokenAmount] = useState(Big(0));
 
-  const { mc: pumpMc } = useMc({
-    tokenAddress: data?.address,
-    disable: data?.status! < 1
-  });
-
   const {
-    getMC,
     pool,
     checkPrePayed,
     prepaidSolWithdraw,
@@ -97,25 +90,7 @@ export default function Token({
     [isDelay, isOther, isPrepaid]
   );
 
-  useEffect(() => {
-    if (
-      pool &&
-      pool.length > 0 &&
-      data?.DApp === "sexy" &&
-      data?.status === 1
-    ) {
-      getMC().then((res) => {
-        setMC(res as number);
-      });
-    }
-  }, [
-    pool,
-    data?.tokenName,
-    data?.tokenSymbol,
-    data?.tokenDecimals,
-    data?.DApp,
-    data?.status
-  ]);
+
 
   useEffect(() => {
     if (
@@ -242,10 +217,11 @@ export default function Token({
           }
 
           <div className={styles.platformIcon}>
-            { data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" /> }
-            { data.DApp === 'ray_launchpad' && <img src="/img/create/raydium.png" alt="" /> }
-            { data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" /> }
+            {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
+            {data.DApp === 'ray_launchpad' && <img src="/img/create/raydium.png" alt="" />}
+            {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
           </div>
+
           <LaunchTag type={data.status as number} />
           {
             data.DApp === "pump" && (
@@ -266,16 +242,14 @@ export default function Token({
               <div
                 className={styles.tickerNameAvatar}
                 style={{
-                  backgroundImage: `url("${
-                    data.tokenIcon || "/img/token-placeholder.png"
-                  }")`,
+                  backgroundImage: `url("${data.tokenIcon || "/img/token-placeholder.png"
+                    }")`,
                   border:
                     data.status === 0 && !!smookeable && !showWithdraw
-                      ? `${
-                          smookeable === 1
-                            ? "1px dashed #FFF"
-                            : "1px dashed #9290B1"
-                        }`
+                      ? `${smookeable === 1
+                        ? "1px dashed #FFF"
+                        : "1px dashed #9290B1"
+                      }`
                       : ""
                 }}
               />
@@ -312,9 +286,21 @@ export default function Token({
           ) : (
             <div className={styles.MarketCap}>
               MarketCap:{" "}
-              {pumpMc || mc ? `$${simplifyNum(Number(pumpMc || mc), 2)}` : "-"}
+              {`$${simplifyNum(Number((data as any).market_cap || 0), 2)}`}
             </div>
           )}
+        </div>
+
+        <div className={styles.collectIcon} onClick={async (e) => {
+          e.stopPropagation();
+          const res = await httpAuthPost('/project/like?id=' + data.id)
+          console.log('res:', res)
+          if (res.code === 0) {
+          }
+        }}>
+          <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 1.11768L12.5153 6.14623L12.6313 6.37828L12.8879 6.41697L18.4476 7.25521L14.4424 11.2013L14.2576 11.3834L14.3001 11.6393L15.2209 17.1859L10.2303 14.5962L10 14.4767L9.7697 14.5962L4.77911 17.1859L5.69992 11.6393L5.74242 11.3834L5.55759 11.2013L1.55242 7.25521L7.11211 6.41697L7.36867 6.37828L7.48474 6.14623L10 1.11768Z" stroke="white" />
+          </svg>
         </div>
       </div>
 
