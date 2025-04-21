@@ -125,6 +125,32 @@ export const useRay = (params: Params | null) => {
     return tx;
   }, [raydiumInstance.current, publicKey])
 
+  // const getQouteBeforeBuy = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+  //   if (!raydiumInstance.current || !params) return;
+
+  //   const mintA = new PublicKey(params.token.address as string)
+  //   const mintB = NATIVE_MINT
+
+  //   const inAmount = new BN(amount)
+
+  //   const itemBuy = Curve.buyExactIn({
+  //     poolInfo: {
+  //       virtualA: a,
+  //       virtualB: b,
+  //       realA,
+  //       realB,
+  //       totalFundRaisingB: new BN(0),
+  //       totalSellA: new BN('800000000000000'),
+  //     },
+  //     amountB: inAmount,
+  //     protocolFeeRate: new BN(0),
+  //     platformFeeRate: new BN(0),
+  //     curveType: 0,
+  //     shareFeeRate: new BN(0),
+  //   });
+    
+  // }, [raydiumInstance.current, params])
+
   const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;
 
@@ -142,11 +168,10 @@ export const useRay = (params: Params | null) => {
     const shareFeeReceiver = undefined
     const shareFeeRate = !shareFeeReceiver ? new BN(0) : new BN(10000) // do not exceed poolInfo.configInfo.maxShareFeeRate
 
-
-    console.log('Curve', Curve)
-
     let res: any = null;
     if (type === 'buy') {
+      console.log('buy', poolInfo, inAmount)
+
       res = Curve.buyExactIn({
         poolInfo,
         amountB: inAmount,

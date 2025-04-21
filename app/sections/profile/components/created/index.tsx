@@ -39,6 +39,13 @@ const SUMMARIES_DEFAULT: Record<string, Summary[]> = {
   ]
 };
 
+const platFormats = [
+  { label: "All Platforms", icon: '', value: "" },
+  { label: "FlipN", icon: '/img/create/flip.svg', value: 1 },
+  { label: "Raydium", icon: '/img/create/raydium.png', value: 2 },
+  { label: "MeteOra", icon: '/img/create/meteora.png', value: 3 },
+]
+
 export default function Created({
   address,
   type,
@@ -50,6 +57,7 @@ export default function Created({
   isCurrent
 }: any) {
   const popoverRef = useRef<any>();
+  const platformPopoverRef = useRef<any>();
   const homeTabStore: any = useHomeTab();
   const [summaries, setSummaries] =
     useState<Record<string, Summary[]>>(SUMMARIES_DEFAULT);
@@ -182,6 +190,12 @@ export default function Created({
     loadMore(true, LIMIT, { status: summary.value });
   };
 
+  const handlePlatformSelect = (platform: Summary) => {
+    platformPopoverRef.current?.onClose?.();
+    homeTabStore.set({ currentPlatform: platform });
+    // loadMore(true, LIMIT, { platform: platform.value });
+  };
+
   useEffect(() => {
     setSummaries(SUMMARIES_DEFAULT);
     homeTabStore.set({ currentSummary: SUMMARIES_DEFAULT[0] });
@@ -218,6 +232,14 @@ export default function Created({
 
   return (
     <div className={styles.ProfileCreatedContainer}>
+
+      <PlatformSelect
+        type={type}
+        popoverRef={platformPopoverRef}
+        currentSummary={homeTabStore.currentPlatform}
+        handleSelect={handlePlatformSelect}
+      />
+
       <StatusSelect
         type={type}
         popoverRef={popoverRef}
@@ -225,6 +247,7 @@ export default function Created({
         currentSummary={homeTabStore.currentSummary}
         handleSelect={handleSelect}
       />
+
       <div className={from === "page" ? styles.PcListWrapper : ""}>
         {list.map((item) => {
           const isSuperLike = !isOther
@@ -299,6 +322,75 @@ const StatusSelect = (props: any) => {
         <div className={styles.Select}>
           <div className={styles.SelectValue}>
             {currentSummary?.label || "All"} {currentSummary?.amount || "0"}
+          </div>
+          <div className={styles.SelectArrow}>
+            <svg
+              width="11"
+              height="7"
+              viewBox="0 0 11 7"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.8335 1L5.50016 5L1.16683 1"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        </div>
+      </Popover>
+    </div>
+  );
+};
+
+const PlatformSelect = (props: any) => {
+  const { type, popoverRef, currentSummary, handleSelect } = props;
+  const { isMobile } = useUserAgent();
+  if (type !== "liked") return null;
+
+  return (
+    <div
+      className={
+        isMobile ? styles.SelectContainerMobile : styles.PlatformContainer
+      }
+      style={{
+        backgroundColor: isMobile ? "" : "transparent"
+      }}
+    >
+      <Popover
+        ref={popoverRef}
+        placement={PopoverPlacement.BottomRight}
+        trigger={PopoverTrigger.Click}
+        content={
+          <div className={styles.SelectDropdown}>
+            <ul className={styles.SelectList}>
+              {platFormats.map((s: any, idx: any) => (
+                <li
+                  key={idx}
+                  className={
+                    currentSummary?.label === s.label
+                      ? styles.SelectItemActive
+                      : styles.SelectItem
+                  }
+                  onClick={() => handleSelect(s)}
+                >
+                  {
+                    s.icon && (
+                      <img src={s.icon} style={{ width: 20, height: 20 }} alt="" />
+                    )
+                  }
+                  <div className={styles.SelectItemLeft}>{s.label}</div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        }
+      >
+        <div className={styles.Select}>
+          <div className={styles.SelectValue}>
+            {currentSummary?.label || "All Platforms"}
           </div>
           <div className={styles.SelectArrow}>
             <svg
