@@ -22,7 +22,7 @@ export default function TokenExt({ token, showTrade }: Props) {
         return (
             <>
                 {
-                    (!showTrade || isMobile) && (
+                    (token as any).data_type !== "top_project" && (!showTrade || isMobile) && (
                         <div className={styles.TokenExtContainer + ' ' + (isMobile ? styles.Mobile : '')}>
                         </div>
                     )
