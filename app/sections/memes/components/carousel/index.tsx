@@ -158,7 +158,7 @@ const Carousel: React.FC<CarouselProps> = ({
                   // transition={{ duration: 0.5 }}
                 >
                   <MediaItem item={item} />
-                  <div className={styles.slideContent}>
+                  <div className={isMobile ? styles.slideContent : styles.slideContentLaptop}>
                     <div
                       className={styles.CarouselAvatar}
                       onClick={() => {

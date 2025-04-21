@@ -43,7 +43,7 @@
 
 .slideContent {
   position: absolute;
-  padding-top: 55px;
+  padding-top: 60px;
   height: 100%;
   width: 100%;
   left: 0;
@@ -52,6 +52,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.slideContentLaptop {
+  composes: slideContent;
+  padding-top: 102px;
 }
 
 .indicators {
@@ -223,10 +227,21 @@
   margin-top: 10px;
 }
 .CarouselMarketCapWithProgress {
+  position: absolute;
+  z-index: 1;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .CarouselMarketCapWithProgressLaptop {
+  composes: CarouselMarketCapWithProgress;
   width: 333px;
   margin-left: auto;
+  margin-top: unset;
+  bottom: 20px;
+  right: 21px;
+  left: unset;
+  transform: unset;
 }
 @media screen and (min-width: 768px) and ( max-width: 1010px){
   .CarouselMarketCapWithProgressLaptop {
