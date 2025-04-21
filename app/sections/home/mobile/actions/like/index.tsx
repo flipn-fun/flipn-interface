@@ -57,7 +57,7 @@ export default function Like({
         }
       }}
     >
-      {mergedLiked && <LikedLabel className={styles.LikedLabel} />}
+      {/* {mergedLiked && <LikedLabel className={styles.LikedLabel} />}
       {showHearts && <FloatingHearts />}
       <Image
         src="/img/home/liked.gif"
@@ -70,7 +70,7 @@ export default function Like({
           bottom: -30,
           opacity: showAnimation ? 1 : 0
         }}
-      />
+      /> */}
       <motion.div
         initial={{ opacity: showAnimation ? 1 : 0 }}
         animate={{ opacity: showAnimation ? 0 : 1 }}
