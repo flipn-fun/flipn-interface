@@ -1,7 +1,7 @@
 import bs58 from "bs58";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { sleep } from "../utils";
-import { ComputeBudgetProgram, PublicKey, SystemProgram, Transaction, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
+import { ComputeBudgetProgram, Keypair, PublicKey, SystemProgram, Transaction, TransactionMessage, VersionedTransaction } from "@solana/web3.js";
 import Big from "big.js";
 import { useContext } from 'react';
 import { PrivyWalletContext } from '@/app/context/privy';
@@ -264,7 +264,16 @@ export function useAccount() {
           tx = await jitoClient.sendTxn([base58Transaction], false);
         } else {
 
-          console.log('tx   222:', _transaction)
+          // console.log('sendOptions', sendOptions)
+          // const proxy = Keypair.fromSecretKey(bs58.decode(''));
+
+
+          // const tx = await connection.sendTransaction(_transaction, [proxy], {
+          //   ...confirmationStrategy,
+          //   ...sendOptions
+          // });
+
+          // console.log('tx:', tx)
 
           tx = await sendTransaction(_transaction, connection, {
             ...confirmationStrategy,

@@ -11,6 +11,7 @@ import PreviewNode from "../PreviewNode";
 import { useUserAgent } from "@/app/context/user-agent";
 
 import { useRay } from "@/app/hooks/useRay";
+import { useMeteoraToken } from "@/app/hooks/useMeteoraToken";
 import { Button } from "antd-mobile";
 
 export default function Laptop() {
@@ -21,13 +22,15 @@ export default function Laptop() {
   const { isMobile } = useUserAgent();
   const { createMint, getQoute, trade, createPlatform } = useRay({
     token: {
-      address: 'HsqBuChQcXPYxo2qE1ir8RGRFd3a2nAG1pTNGnF61GKh',
+      address: '7q634CacKMqRcTsYV8kp89bhEFRBy43ht7rYGoiLQaZL',
       about: '',
       tokenImg: '',
       tokenName: '',
       ticker: '',
     }
   });
+
+  const { createMint2022, createConfig, trade: tradeMeteora } = useMeteoraToken()
 
   const query = useMemo(() => {
     const query: any = {
@@ -57,7 +60,7 @@ export default function Laptop() {
         animate={{ opacity: 1 }}
         className={styles.Wrapper}
       >
-        { step <= 3 && <Steps step={step} /> }
+        {step <= 3 && <Steps step={step} />}
         <div className={styles.Container}>
           <motion.div
             initial={{ opacity: 0 }}
@@ -66,25 +69,25 @@ export default function Laptop() {
           >
             <div style={{ height: step === 1 ? '60px' : '0px' }}></div>
             <CreateNode
-                ref={createRef}
-                step={step}
-                // @ts-ignore
-                show={step === 1}
-                onNext={() => {
-                  setStep(step + 1);
-                }}
-                onBack={() => {
-                  setStep(step - 1);
-                }}
-                onAddDataFill={(value: any) => {
-                  setDataAdd(value);
-                  setStep(2);
-                  window.scrollTo(0, 0);
-                }}
-              />
-            
+              ref={createRef}
+              step={step}
+              // @ts-ignore
+              show={step === 1}
+              onNext={() => {
+                setStep(step + 1);
+              }}
+              onBack={() => {
+                setStep(step - 1);
+              }}
+              onAddDataFill={(value: any) => {
+                setDataAdd(value);
+                setStep(2);
+                window.scrollTo(0, 0);
+              }}
+            />
+
           </motion.div>
-          { step >= 2 && (
+          {step >= 2 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <PreviewNode
                 show={true}
@@ -105,35 +108,55 @@ export default function Laptop() {
         </div>
 
 
-        <Button onClick={async () => {    
-          const tx = await createMint({
-            tokenName: 'test',
-            ticker: 'test',
-            about: 'test',
-            tokenImg: 'test',
-            tokenIcon: 'test'
-          }, '')
-        }}>Raudium</Button>
+        <div>
+          <Button onClick={async () => {
+            const tx = await createMint({
+              tokenName: 'test',
+              ticker: 'test',
+              about: 'test',
+              tokenImg: 'test',
+              tokenIcon: 'test'
+            }, '')
+          }}>Raudium</Button>
 
-        <Button onClick={async () => {
-          const quote = await getQoute('10000', 'buy')
-          console.log('quote', quote)
-        }}>Get Quote</Button>
+          <Button onClick={async () => {
+            const quote = await getQoute('10000', 'buy')
+            console.log('quote', quote)
+          }}>Get Quote</Button>
 
-        <Button onClick={async () => {
-          const tx = await trade('100000000', 'buy', 100)
-          console.log('tx', tx)
-        }}>Buy</Button>
+          <Button onClick={async () => {
+            const tx = await trade('100000000', 'buy', 100)
+            console.log('tx', tx)
+          }}>Buy</Button>
 
-        <Button onClick={async () => {
-          const tx = await trade('100000000000', 'sell', 100)
-          console.log('tx', tx)
-        }}>Sell</Button>  
+          <Button onClick={async () => {
+            const tx = await trade('100000000000', 'sell', 100)
+            console.log('tx', tx)
+          }}>Sell</Button>
 
-        <Button onClick={async () => {
-          const tx = await createPlatform()
-          console.log('tx', tx)
-        }}>Create Platform</Button>
+          <Button onClick={async () => {
+            const tx = await createPlatform()
+            console.log('tx', tx)
+          }}>Create Platform</Button>
+        </div>
+
+
+        <div>
+          <Button onClick={async () => {
+              const tx = await createMint2022()
+              console.log('tx', tx)
+            }}>Create Mint 2022</Button>
+
+          <Button onClick={async () => {
+            const tx = await createConfig()
+            console.log('tx', tx)
+          }}>Create Config</Button>
+
+          <Button onClick={async () => {
+            const tx = await tradeMeteora()
+            console.log('tx', tx)
+          }}>Trade</Button>
+        </div>
 
       </motion.div>
     </>

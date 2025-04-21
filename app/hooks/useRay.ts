@@ -110,6 +110,8 @@ export const useRay = (params: Params | null) => {
     })
 
     builder.addInstruction({ signers: [pair] })
+
+
     const { execute, transaction } = await builder.buildV0()
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
@@ -136,6 +138,9 @@ export const useRay = (params: Params | null) => {
 
     const poolId = getPdaLaunchpadPoolId(programId, mintA, mintB).publicKey
     const poolInfo = await raydiumInstance.current.launchpad.getRpcPoolInfo({ poolId })
+
+    console.log('poolInfo', poolInfo)
+
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
 
