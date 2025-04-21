@@ -159,6 +159,9 @@
   width: 20px;
   height: 20px;
 }
+.MemesTableFavorite:disabled {
+  cursor: not-allowed;
+}
 
 .MemesTableToken {
   display: flex;
@@ -231,4 +234,8 @@
   height: 100%;
   border-radius: 32px;
   background: #C9FF5D;
+}
+
+.MemesTableNoMore {
+  padding: 10px 0;
 }

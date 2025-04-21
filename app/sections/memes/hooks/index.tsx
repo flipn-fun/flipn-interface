@@ -22,8 +22,6 @@ import { DebouncedFunc, minBy } from 'lodash-es';
 import { useAccount } from '@/app/hooks/useAccount';
 import { useAuth } from '@/app/context/auth';
 import { GridTableSortDirection } from '@/app/components/grid-table';
-import { fail, success } from '@/app/utils/toast';
-import { numberFormatter } from '@/app/utils/common';
 
 export function useMemes(props?: { isLoadData?: boolean }): Memes {
   const { isLoadData } = props ?? {};
@@ -418,10 +416,6 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     { wait: 1000 }
   );
 
-  const { run: onFavorite, loading: favoritePending } = useRequest(async (data: any) => {
-
-  }, { manual: true, throttleWait: 1000 });
-
   const initMemesList = () => {
     setMemesGenesisList([]);
     setMemesTickingList([]);
@@ -472,6 +466,8 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     setMemesListCountdown,
     memesListHolders,
     memesListHoldersLoading,
+    memesListPageOffset,
+    setMemesListPageOffset,
 
     memesListSortDataIndex,
     memesListSortDirection,
@@ -481,9 +477,6 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     setMemesListPlatform,
     memesListSearchText,
     setMemesListSearchText,
-
-    onFavorite,
-    favoritePending,
   };
 }
 
@@ -512,6 +505,8 @@ export interface Memes extends MemesState {
   setMemesListCountdown: (obj: Record<string, number>) => void;
   memesListHolders: Record<string, number>;
   memesListHoldersLoading: Record<string, boolean>;
+  memesListPageOffset: number;
+  setMemesListPageOffset: (offset: number) => void;
 
   memesListSortDataIndex: MemeSort;
   memesListSortDirection: GridTableSortDirection;
@@ -521,7 +516,4 @@ export interface Memes extends MemesState {
   setMemesListPlatform: (platform: MemePlatformItem) => void;
   memesListSearchText: string;
   setMemesListSearchText: (searchText: string) => void;
-
-  favoritePending: boolean;
-  onFavorite: (data: any) => void;
 }

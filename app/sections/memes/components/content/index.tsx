@@ -1,16 +1,17 @@
 import styles from './index.module.css';
 import { MemePhase, MemePhases, MemePlatforms, MemeSort, Order } from '@/app/sections/memes/config';
 import GridTable, { GridTableSortDirection } from '@/app/components/grid-table';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useUserAgent } from '@/app/context/user-agent';
 import { MemesContext } from '@/app/sections/memes/context';
 import { trim } from 'lodash-es';
-import Image from 'next/image';
 import FallbackImg from '@/app/components/fallback-img';
 import { formatLongText, numberFormatter } from '@/app/utils/common';
 import { motion } from 'framer-motion';
 import Big from 'big.js';
 import Loading from '@/app/components/icons/loading';
+import { actionLikeTrigger } from '@/app/components/timesLike/ActionTrigger';
+import SexInfiniteScroll from '@/app/components/sexInfiniteScroll';
 
 const MemesContent = (props: any) => {
   const { } = props;
@@ -34,8 +35,6 @@ const MemesContent = (props: any) => {
     memesListSearchText,
     setMemesListSearchText,
     getMemesListDelay,
-    onFavorite,
-    favoritePending,
   } = useContext(MemesContext);
 
   const columns = [
@@ -45,38 +44,8 @@ const MemesContent = (props: any) => {
       title: "",
       width: 30,
       render: (record: any) => {
-        let favoriteIconStyles: any = {
-          stroke: "white",
-          strokeOpacity: 0.6,
-        };
-        if (record.favorite) {
-          favoriteIconStyles = {
-            fill: "white",
-            fillOpacity: 0.6,
-          };
-        }
         return (
-          <button
-            type="button"
-            disabled={favoritePending}
-            onClick={() => {
-              onFavorite?.(record);
-            }}
-            className={styles.MemesTableFavorite}
-          >
-            {
-              favoritePending ? (
-                <Loading size={14} />
-              ) : (
-                <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M10 0L12.9624 5.92255L19.5106 6.90983L14.7933 11.5574L15.8779 18.0902L10 15.04L4.12215 18.0902L5.20668 11.5574L0.489435 6.90983L7.03756 5.92255L10 0Z"
-                    {...favoriteIconStyles}
-                  />
-                </svg>
-              )
-            }
-          </button>
+          <Favorite record={record} />
         );
       },
     },
@@ -297,7 +266,6 @@ const MemesContent = (props: any) => {
         className={styles.MemesTable}
         columns={columns}
         data={list}
-        loading={memesListLoading}
         sortDataIndex={memesListSortDataIndex}
         sortDirection={memesListSortDirection}
         onSort={(dataIndex: string, direction: GridTableSortDirection)  => {
@@ -309,8 +277,68 @@ const MemesContent = (props: any) => {
           });
         }}
       />
+      <SexInfiniteScroll
+        loadMore={onMemesListNextPage}
+        hasMore={memesListPageNext}
+        noMoreContent={(
+          <div className={styles.MemesTableNoMore}>No more memes</div>
+        )}
+      />
     </div>
   );
 };
 
 export default MemesContent;
+
+const Favorite = (props: any) => {
+  const { record } = props;
+
+  const [pending, setPending] = useState(false);
+  const [isLike, setIsLike] = useState(record.is_like);
+
+  let favoriteIconStyles: any = {
+    stroke: "white",
+    strokeOpacity: 0.6,
+  };
+  if (isLike) {
+    favoriteIconStyles = {
+      fill: "white",
+      fillOpacity: 0.6,
+    };
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={pending || isLike}
+      onClick={async () => {
+        if (!window.sexAddress) {
+          window.connect();
+          return;
+        }
+        setPending(true);
+        const res = await actionLikeTrigger({
+          data: record,
+        });
+        if (res) {
+          setIsLike(true);
+        }
+        setPending(false);
+      }}
+      className={styles.MemesTableFavorite}
+    >
+      {
+        pending ? (
+          <Loading size={14} />
+        ) : (
+          <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M10 0L12.9624 5.92255L19.5106 6.90983L14.7933 11.5574L15.8779 18.0902L10 15.04L4.12215 18.0902L5.20668 11.5574L0.489435 6.90983L7.03756 5.92255L10 0Z"
+              {...favoriteIconStyles}
+            />
+          </svg>
+        )
+      }
+    </button>
+  );
+};
