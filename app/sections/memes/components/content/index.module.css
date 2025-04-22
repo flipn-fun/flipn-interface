@@ -173,6 +173,8 @@
   height: 40px;
   backdrop-filter: blur(2px);
   border-radius: 50%;
+  cursor: pointer;
+  object-fit: cover;
 }
 .MemesTableTokenInfo {}
 .MemesTableTokenSymbolWrap {
@@ -187,6 +189,7 @@
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  cursor: pointer;
 }
 .MemesTableTokenPlatform {
   width: 14px;
@@ -200,6 +203,7 @@
   font-style: normal;
   font-weight: 300;
   line-height: normal;
+  cursor: pointer;
 }
 
 .MemesTablePhase {

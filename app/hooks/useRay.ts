@@ -93,7 +93,7 @@ export const useRay = (params: Params | null) => {
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
-      platformId: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
+      platformId: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T') : new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,

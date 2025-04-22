@@ -1,7 +1,7 @@
 import styles from './index.module.css';
 import { MemePhase, MemePhases, MemePlatforms, MemeSort, Order } from '@/app/sections/memes/config';
 import GridTable, { GridTableSortDirection } from '@/app/components/grid-table';
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useUserAgent } from '@/app/context/user-agent';
 import { MemesContext } from '@/app/sections/memes/context';
 import { trim } from 'lodash-es';
@@ -12,6 +12,7 @@ import Big from 'big.js';
 import Loading from '@/app/components/icons/loading';
 import { actionLikeTrigger } from '@/app/components/timesLike/ActionTrigger';
 import SexInfiniteScroll from '@/app/components/sexInfiniteScroll';
+import { useRouter } from 'next/navigation';
 
 const MemesContent = (props: any) => {
   const { } = props;
@@ -35,7 +36,15 @@ const MemesContent = (props: any) => {
     memesListSearchText,
     setMemesListSearchText,
     getMemesListDelay,
+    memesListHolders,
+    memesListHoldersLoading,
   } = useContext(MemesContext);
+  const router = useRouter();
+
+  const onDetail = (record: any) => {
+    const { address } = record;
+    router.push(`/detail?address=${address}&from=memes`);
+  };
 
   const columns = [
     {
@@ -62,10 +71,14 @@ const MemesContent = (props: any) => {
               src={record.icon}
               alt=""
               className={styles.MemesTableTokenIcon}
+              onClick={() => onDetail(record)}
             />
             <div className={styles.MemesTableTokenInfo}>
               <div className={styles.MemesTableTokenSymbolWrap}>
-                <div className={styles.MemesTableTokenSymbol}>
+                <div
+                  className={styles.MemesTableTokenSymbol}
+                  onClick={() => onDetail(record)}
+                >
                   {record.token_symbol}
                 </div>
                 <FallbackImg
@@ -74,7 +87,10 @@ const MemesContent = (props: any) => {
                   className={styles.MemesTableTokenPlatform}
                 />
               </div>
-              <div className={styles.MemesTableTokenAddress}>
+              <div
+                className={styles.MemesTableTokenAddress}
+                onClick={() => onDetail(record)}
+              >
                 {formatLongText(record.address, 5, 5)}
               </div>
             </div>
@@ -170,8 +186,24 @@ const MemesContent = (props: any) => {
       width: "1fr",
       title: "Holders",
       sort: true,
+      render: (record: any) => {
+        if (memesListHoldersLoading?.[record.address]) {
+          return (
+            <Loading size={12} />
+          );
+        }
+        return numberFormatter(record.holders, 0, true, { isShort: true, isShortUppercase: true });
+      },
     },
   ];
+
+  const shownList = useMemo(() => {
+    if (!list) return [];
+    return list.map((item: any) => {
+      item.holders = memesListHolders?.[item.address] ?? "0";
+      return item;
+    });
+  }, [list, memesListHolders]);
 
   return (
     <div className={styles.MemesContentContainer}>
@@ -265,7 +297,8 @@ const MemesContent = (props: any) => {
       <GridTable
         className={styles.MemesTable}
         columns={columns}
-        data={list}
+        data={shownList}
+        loading={shownList.length <= 0 ? memesListLoading : false}
         sortDataIndex={memesListSortDataIndex}
         sortDirection={memesListSortDirection}
         onSort={(dataIndex: string, direction: GridTableSortDirection)  => {
@@ -280,9 +313,9 @@ const MemesContent = (props: any) => {
       <SexInfiniteScroll
         loadMore={onMemesListNextPage}
         hasMore={memesListPageNext}
-        noMoreContent={(
+        noMoreContent={shownList.length > 0 ? (
           <div className={styles.MemesTableNoMore}>No more memes</div>
-        )}
+        ) : null}
       />
     </div>
   );
