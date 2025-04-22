@@ -98,7 +98,6 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
   };
 
   const listShown = useMemo<Hot[] | Meme[]>(() => {
-    console.log("currentTab: %o", currentTab);
     return _currentMemesList(currentTab.type);
   }, [
     hotList,
@@ -283,8 +282,6 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       search,
     } = params ?? {};
 
-    console.log('getMemesList params:', params);
-
     const _getMinId = () => {
       let _mim_id: any = void 0;
       switch (type) {
@@ -341,8 +338,6 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       if (search) {
         memesListParams.search = search;
       }
-
-      console.log('getMemesList memesListParams:', memesListParams);
 
       let res: any;
       if (auth) {

@@ -121,10 +121,14 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
   setMemesListSearchText: (searchText) => set((state) => ({ ...state, memesListSearchText: searchText })),
 }), {
   name: "_memes_list",
-  version: 0.2,
+  version: 0.3,
   storage: createJSONStorage(() => sessionStorage),
   partialize: (state) => ({
     memesListCountdown: state.memesListCountdown,
+    memesListPlatform: state.memesListPlatform,
+    memesListSearchText: state.memesListSearchText,
+    memesListSortDataIndex: state.memesListSortDataIndex,
+    memesListSortDirection: state.memesListSortDirection,
   } as any)
 }));
 

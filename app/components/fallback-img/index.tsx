@@ -32,7 +32,7 @@ const FallbackImg = (props: Props) => {
       {
         !isLoaded && (
           <img
-            src={fallback ?? "/img/logo.svg"}
+            src={fallback ?? "/img/airdrop/user-avatar.svg"}
             alt={alt}
             className={clsx(styles.Img, styles.ImgFallback, className)}
             {...rest}
