@@ -13,8 +13,8 @@
   background: rgba(60, 60, 60, 0.50);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 8px;
   padding-left: 13px;
   padding-right: 10px;
 }
@@ -55,4 +55,15 @@
 .MemesSelectDropdownItemActive {
   composes: MemesSelectDropdownItem;
   background: #3B3B3B;
+}
+
+.MemesSelectLabel {
+  flex: 1;
+  width: 0;
+  overflow: hidden;
+}
+
+.MemesSelectArrow {
+  flex-shrink: 0;
+  margin-left: auto;
 }

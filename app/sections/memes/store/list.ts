@@ -111,7 +111,7 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
     };
   }),
 
-  memesListSortDataIndex: MemeSort.Latest,
+  memesListSortDataIndex: MemeSort.Age,
   memesListSortDirection: GridTableSortDirection.Asc,
   memesListPlatform: MemePlatforms[MemePlatform.Raydium],
   memesListSearchText: "",
