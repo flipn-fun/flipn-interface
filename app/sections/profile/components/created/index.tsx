@@ -41,9 +41,9 @@ const SUMMARIES_DEFAULT: Record<string, Summary[]> = {
 
 const platFormats = [
   { label: "All Platforms", icon: '', value: "" },
-  { label: "FlipN", icon: '/img/create/flip.svg', value: 1 },
-  { label: "Raydium", icon: '/img/create/raydium.png', value: 2 },
-  { label: "MeteOra", icon: '/img/create/meteora.png', value: 3 },
+  { label: "FlipN", icon: '/img/create/flip.svg', value: 'sexy' },
+  { label: "Raydium", icon: '/img/create/raydium.png', value: 'ray_launchpad' },
+  { label: "MeteOra", icon: '/img/create/meteora.png', value: 'meteora' },
 ]
 
 export default function Created({
@@ -89,7 +89,7 @@ export default function Created({
     async (
       isInit?: boolean,
       limit?: number,
-      opts?: { status?: "" | number }
+      opts?: { status?: "" | number, DApp?: string }
     ) => {
       setLoading(true);
       try {
@@ -106,6 +106,11 @@ export default function Created({
         if (type === "liked" && typeof _summary !== "undefined") {
           params.project_status = _summary;
         }
+
+        if (type === "liked" && typeof opts?.DApp !== "undefined") {
+          params.DApp = opts?.DApp;
+        }
+
         const res = await httpAuthGet(urls[type],  params);
         if (!res) {
           setLoading(false);
@@ -193,7 +198,7 @@ export default function Created({
   const handlePlatformSelect = (platform: Summary) => {
     platformPopoverRef.current?.onClose?.();
     homeTabStore.set({ currentPlatform: platform });
-    // loadMore(true, LIMIT, { platform: platform.value });
+    loadMore(true, LIMIT, { DApp: (platform.value as any) });
   };
 
   useEffect(() => {
@@ -358,9 +363,12 @@ const StatusSelect = (props: any) => {
 };
 
 const PlatformSelect = (props: any) => {
+
   const { type, popoverRef, currentSummary, handleSelect } = props;
   const { isMobile } = useUserAgent();
   if (type !== "liked") return null;
+
+  console.log(type, type !== "liked")
 
   return (
     <div
