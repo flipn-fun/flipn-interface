@@ -105,6 +105,8 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
             success("Bind successfully");
             setXUserInfo(result.data);
             return true;
+        } else {
+            fail(result.message || "Bind failed!");
         }
         return false;
     }, []);

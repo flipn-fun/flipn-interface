@@ -13,9 +13,6 @@ interface AuthModalProps {
     bindTwitter: (verifier: string) => Promise<boolean>;
 }
 
-
-
-
 export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bindTwitter }: AuthModalProps) {
     const [step, setStep] = useState<1 | 2>(1);
     const [verificationCode, setVerificationCode] = useState('');
@@ -51,9 +48,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
             setIsLoading(false);
         }
     }, [bindTwitter, verificationCode, onSuccess]);
-
-  
-
 
     return (
         <Modal forceNoCloseIcon style={{ zIndex: 1000, backdropFilter: 'blur(10px)', }} open={isOpen} onClose={() => {
@@ -92,7 +86,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess, getAuthUrl, bind
                 ) : (
                     <div className={styles.authenticationContainer}>
                         <div className={styles.box}>
-                            <div className={styles.time}>{minutes}:{seconds}:00</div>
+                            <div className={styles.time}>{minutes < 10 ? '0' + minutes : minutes}:{seconds < 10 ? '0' + seconds : seconds}:00</div>
                             <h2 className={styles.title}>Authentication</h2>
                             <p className={styles.subtitle}>
                                 We have sent you the verification code. Please enter it correctly.
