@@ -1,5 +1,5 @@
 import styles from './index.module.css';
-import { MemePhase, MemePhases, MemePlatforms, MemeSort, Order } from '@/app/sections/memes/config';
+import { MemePhase, MemePhases, MemePlatforms, MemeSort, MemeSortOptions, Order } from '@/app/sections/memes/config';
 import GridTable, { GridTableSortDirection } from '@/app/components/grid-table';
 import { useContext, useMemo, useState } from 'react';
 import { useUserAgent } from '@/app/context/user-agent';
@@ -13,6 +13,8 @@ import Loading from '@/app/components/icons/loading';
 import { actionLikeTrigger } from '@/app/components/timesLike/ActionTrigger';
 import SexInfiniteScroll from '@/app/components/sexInfiniteScroll';
 import { useRouter } from 'next/navigation';
+import Search from '@/app/sections/memes/components/content/search';
+import MemesSelect from '@/app/sections/memes/components/select';
 
 const MemesContent = (props: any) => {
   const { } = props;
@@ -206,10 +208,10 @@ const MemesContent = (props: any) => {
   }, [list, memesListHolders]);
 
   return (
-    <div className={styles.MemesContentContainer}>
-      <div className={styles.MemesFilters}>
-        <div className={styles.MemesFiltersLeft}>
-          <div className={styles.MemesPlatforms}>
+    <div className={isMobile ? styles.MemesContentContainerMobile : styles.MemesContentContainer}>
+      <div className={isMobile ? styles.MemesFiltersMobile : styles.MemesFilters}>
+        <div className={isMobile ? styles.MemesFiltersLeftMobile : styles.MemesFiltersLeft}>
+          <div className={isMobile ? styles.MemesPlatformsMobile : styles.MemesPlatforms}>
             {
               Object.values(MemePlatforms).map((item, index) => (
                 <button
@@ -234,7 +236,24 @@ const MemesContent = (props: any) => {
               ))
             }
           </div>
-          <div className={styles.MemesPhases}>
+          <div className={isMobile ? styles.MemesPhasesMobile : styles.MemesPhases}>
+            {
+              isMobile && (
+                <Search
+                  width={28}
+                  loading={memesListLoading}
+                  searchText={memesListSearchText}
+                  onChange={(val: string) => {
+                    setMemesListSearchText?.(val);
+                    initMemesList?.();
+                    getMemesListDelay?.({
+                      search: trim(val),
+                      offset: 0,
+                    });
+                  }}
+                />
+              )
+            }
             {
               Object.values(MemePhases).map((item, index) => (
                 <button
@@ -257,42 +276,61 @@ const MemesContent = (props: any) => {
                 </button>
               ))
             }
-          </div>
-        </div>
-        <div className={styles.MemesFiltersRight}>
-          <div className={styles.MemesSearch}>
-            <img src="/img/memes/icon-search.svg" className={styles.MemesSearchIcon} />
-            <input
-              type="text"
-              className={styles.MemesSearchInput}
-              placeholder=""
-              value={memesListSearchText}
-              onChange={(e) => {
-                setMemesListSearchText?.(e.target.value);
-                initMemesList?.();
-                getMemesListDelay?.({
-                  search: trim(e.target.value),
-                  offset: 0,
-                });
-              }}
-            />
             {
-              trim(memesListSearchText) && (
-                <button
-                  type="button"
-                  className={styles.MemesSearchClear}
-                  onClick={() => {
-                    setMemesListSearchText?.('');
-                    initMemesList?.();
+              isMobile && (
+                <MemesSelect
+                  className={styles.MemesFiltersOrderMobile}
+                  value={memesListSortDataIndex}
+                  loading={memesListLoading}
+                  onChange={(option: any) => {
+                    if (memesListLoading) return;
+                    let nextDirection = memesListSortDirection === GridTableSortDirection.Asc ? GridTableSortDirection.Desc : GridTableSortDirection.Asc;
+                    if (option.value !== memesListSortDataIndex) {
+                      nextDirection = GridTableSortDirection.Asc;
+                    }
+                    setMemesListSortDataIndex?.(option.value as MemeSort);
+                    setMemesListSortDirection?.(nextDirection);
                     getMemesList?.({
-                      offset: 0,
+                      order: nextDirection,
+                      sort: option.value,
                     });
+                  }}
+                  options={Object.values(MemeSortOptions)}
+                  renderSelectedLabel={(option: any) => {
+                    return (
+                      <div className={styles.MemesFiltersOrderSelectedLabel}>
+                        <div
+                          className={memesListSortDirection === GridTableSortDirection.Asc ? styles.MemesFiltersOrderSelectedLabelDirection : styles.MemesFiltersOrderSelectedLabelDirectionUp}
+                        />
+                        <div className={styles.MemesFiltersOrderSelectedLabelValue}>
+                          {option.label}
+                        </div>
+                      </div>
+                    );
                   }}
                 />
               )
             }
           </div>
         </div>
+        {
+          !isMobile && (
+            <div className={styles.MemesFiltersRight}>
+              <Search
+                searchText={memesListSearchText}
+                loading={memesListLoading}
+                onChange={(val: string) => {
+                  setMemesListSearchText?.(val);
+                  initMemesList?.();
+                  getMemesListDelay?.({
+                    search: trim(val),
+                    offset: 0,
+                  });
+                }}
+              />
+            </div>
+          )
+        }
       </div>
       <GridTable
         className={styles.MemesTable}

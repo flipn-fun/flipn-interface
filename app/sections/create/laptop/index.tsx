@@ -106,7 +106,6 @@ export default function Laptop() {
           )}
         </div>
 
-
         <Button onClick={async () => {    
           const tx = await createMint({
             tokenName: 'test',
@@ -114,7 +113,7 @@ export default function Laptop() {
             about: 'test',
             tokenImg: 'test',
             tokenIcon: 'test'
-          }, '')
+          }, '10000000')
         }}>Raudium</Button>
 
         <Button onClick={async () => {
