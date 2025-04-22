@@ -178,7 +178,7 @@ export default function Token({
         flexDirection: from === "page" ? "column" : "row",
         gap: from === "page" ? 10 : 0,
         padding: from === "page" ? 0 : "10px 15px",
-        alignItems: from === "page" ? "flex-start" : "center"
+        alignItems: from === "page" ? "flex-start" : "center",
       }}
       onClick={() => {
         router.push("/detail?address=" + data.address + "&from=profile");
@@ -191,7 +191,7 @@ export default function Token({
           // width: from === "page" ? "100%" : "auto",
           backgroundColor:
             from === "page" ? "rgba(255, 255, 255, 0.05)" : "transparent",
-          padding: from === "page" ? "4px 12px 15px" : 0,
+          padding: from === "page" ? "4px 12px 15px" : '0 0 0 40px',
           borderRadius: from === "page" ? 10 : 0
         }}
       >
@@ -301,7 +301,7 @@ export default function Token({
           )}
         </div>
 
-        <div className={styles.collectIcon} onClick={async (e) => {
+        <div className={styles.collectIcon + ' ' + (isMobile ? styles.collectIconMobile : '')} onClick={async (e) => {
           if (isLoading) return;
           e.stopPropagation();
           setIsLoading(true);
