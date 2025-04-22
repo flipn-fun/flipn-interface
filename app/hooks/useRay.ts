@@ -72,7 +72,7 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    getQouteBeforeBuy(amount)
+    // getQouteBeforeBuy(amount)
 
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
