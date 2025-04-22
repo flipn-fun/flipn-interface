@@ -1,0 +1,148 @@
+.ListContainer {
+  margin-top: 18px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.ListLoading {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ListRecord {
+  width: 100%;
+  padding: 10px;
+  background: #1B1B1B;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.ListRecordLeft {
+  flex-shrink: 0;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.ListRecordRight {
+  flex: 1;
+  width: 0;
+  position: relative;
+}
+.ListRecordIcon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.ListRecordRightInfo {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.ListRecordName {
+  color: #FFF;
+  font-family: Unbounded;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ListRecordSymbol {}
+.ListRecordPlatformIcon {
+  width: 14px;
+  height: 14px;
+}
+.ListRecordMC {
+  color: #C9FF5D;
+  text-align: right;
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.ListRecordAddress {
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  font-family: Unbounded;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+  margin-top: 3px;
+}
+.LabelValueContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 4px;
+  color: #FFF;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  font-family: Unbounded;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+.LabelValueLabel {
+  color: rgba(255, 255, 255, 0.4);
+}
+.LabelValueValue {}
+.ListRecordSummaries {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 3px;
+}
+.IconHolders {
+  width: 12px;
+  height: 12px;
+  object-fit: contain;
+  object-position: center;
+  flex-shrink: 0;
+}
+.ListRecordAddressWrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ListRecordAge {
+  color: rgba(255, 255, 255, 0.60);
+  text-align: right;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  font-family: Unbounded;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: normal;
+}
+.ListRecordProgress {
+  width: 100%;
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  border-radius: 32px;
+  background: rgba(60, 60, 60, 0.50);
+  backdrop-filter: blur(5px);
+  left: 0;
+  bottom: -10px;
+}
+.ListRecordProgressValue {
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  background: #C9FF5D;
+}

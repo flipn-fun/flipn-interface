@@ -1,6 +1,7 @@
 .MemesContainer {
   width: 1190px;
   padding-top: 60px;
+  margin: 0 auto;
 }
 .MemesContainerMobile {
   width: 100%;
