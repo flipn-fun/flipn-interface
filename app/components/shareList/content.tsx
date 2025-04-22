@@ -21,25 +21,22 @@ interface ShareListProps {
   xUserInfo: any;
   getAuthUrl: () => Promise<boolean>;
   bindTwitter: (verifier: string) => Promise<boolean>;
+  getXUserInfo: () => Promise<boolean>;
 }
 
 const isInit = true;
 
-const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareToTwitter, clear, xUserInfo, getAuthUrl, bindTwitter }) => {
+const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareToTwitter, clear, xUserInfo, getAuthUrl, bindTwitter, getXUserInfo}) => {
   const { isMobile } = useUserAgent();
   const [preview, setPreview] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  // useEffect(() => {
-  //   if (xUserInfo) {
-  //     setPreview(true);
-  //   }
-  // }, [xUserInfo]);
 
   const handleAuthSuccess = useCallback(async (code: string) => {
     setIsAuthModalOpen(false);
     setPreview(true);
   }, [bindTwitter]);
 
+  console.log(xUserInfo, 'xUserInfo')
 
   return (
     <div className={isMobile ? styles.mobile : styles.pc}>
@@ -47,12 +44,20 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
           <div className={styles.iconItem} onClick={async () => {
+            if (xUserInfo) {
+              setPreview(true);
+            }
+
             if (!xUserInfo) {
-              setIsAuthModalOpen(true);
+              const _xUserInfo = await getXUserInfo()
+              if (_xUserInfo) {
+                setPreview(true);
+              } else {
+                setIsAuthModalOpen(true);
+              }
             } else {
               setPreview(true);
             }
-           
           }}>
             {isInit ? (
               <>

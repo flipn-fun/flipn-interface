@@ -16,7 +16,7 @@ interface ShareListProps {
 const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose, openSelf }) => {
     const { isMobile } = useUserAgent();
 
-    const { shareToTwitter, code, xUserInfo, clear, getAuthUrl, bindTwitter } = useXShare({
+    const { shareToTwitter, code, xUserInfo, clear, getAuthUrl, bindTwitter, getXUserInfo } = useXShare({
         openSelf,
         token
     });
@@ -39,7 +39,7 @@ const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose, open
                 <Content clear={() => {
                     onClose();
                     clear();
-                }} data={token} bindTwitter={bindTwitter as any} xUserInfo={xUserInfo} getAuthUrl={getAuthUrl as any} code={code} shareToTwitter={shareToTwitter} openX={openX} openSelf={openSelf} />
+                }} data={token} bindTwitter={bindTwitter as any} getXUserInfo={getXUserInfo as any} xUserInfo={xUserInfo} getAuthUrl={getAuthUrl as any} code={code} shareToTwitter={shareToTwitter} openX={openX} openSelf={openSelf} />
             </Popup>
         )
     }
@@ -52,7 +52,7 @@ const ShareList: React.FC<ShareListProps> = ({ token, show, openX, onClose, open
             <Content clear={() => {
                 onClose();
                 clear();
-            }} data={token} bindTwitter={bindTwitter as any} xUserInfo={xUserInfo} getAuthUrl={getAuthUrl as any} code={code} shareToTwitter={shareToTwitter} openX={openX} openSelf={openSelf} />
+            }} data={token} bindTwitter={bindTwitter as any} getXUserInfo={getXUserInfo as any} xUserInfo={xUserInfo} getAuthUrl={getAuthUrl as any} code={code} shareToTwitter={shareToTwitter} openX={openX} openSelf={openSelf} />
         </Modal>
     );
 };
