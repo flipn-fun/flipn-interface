@@ -20,6 +20,7 @@ export default function Like({
   const [showHearts, setShowHearts] = useState(false);
   const [mergedLiked, setMergedLiked] = useState(false);
   const [mergedNum, setMergedNum] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setMergedLiked(token.is_collect);
@@ -32,6 +33,8 @@ export default function Like({
       className={styles.Like}
       onClick={async () => {
         if (disabled) return;
+        if (isLoading) return;
+        setIsLoading(true);
 
         if (!window.sexAddress) {
           window.connect();
@@ -49,20 +52,27 @@ export default function Like({
         // }, 6000);
 
         console.log('token:', token)
+        const isCollect = token.is_collect;
+        setMergedLiked(!isCollect);
+        setMergedNum(!isCollect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
 
         let res
-        if (token.is_collect) {
+        if (isCollect) {
           res = await httpAuthDelete('/project/collect?id=' + token.id)
         } else {
           res = await httpAuthPost('/project/collect?id=' + token.id)
         }
 
         if (res) {
-          setMergedLiked(!token.is_collect);
-          setMergedNum(!token.is_collect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
+          // setMergedLiked(!isCollect);
+          // setMergedNum(!isCollect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
           onSuccess("like");
-          token.is_collect = !token.is_collect;
+          token.is_collect = !isCollect;
         }
+
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       }}
     >
       {/* {mergedLiked && <LikedLabel className={styles.LikedLabel} />}
