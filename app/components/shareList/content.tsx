@@ -2,13 +2,14 @@ import { useUserAgent } from "@/app/context/user-agent";
 import styles from "./index.module.css";
 import usePhyllo from "@/app/hooks/use-phyllo";
 import Preview from "./priview";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Project } from "@/app/type";
 import { Loading, SpinLoading } from "antd-mobile";
 import { success } from "@/app/utils/toast";
 import useTwitterBind from "@/app/hooks/use-twitter-bind";
 import { useSearchParams } from "next/navigation";
 import useXShare from "@/app/hooks/use-x-share";
+import AuthModal from "./auth";
 
 interface ShareListProps {
   data: Project | undefined;
@@ -18,19 +19,26 @@ interface ShareListProps {
   shareToTwitter: () => Promise<boolean>;
   clear: () => void;
   xUserInfo: any;
+  getAuthUrl: () => Promise<boolean>;
+  bindTwitter: (verifier: string) => Promise<boolean>;
 }
 
 const isInit = true;
 
-const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareToTwitter, clear, xUserInfo }) => {
+const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareToTwitter, clear, xUserInfo, getAuthUrl, bindTwitter }) => {
   const { isMobile } = useUserAgent();
   const [preview, setPreview] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  // useEffect(() => {
+  //   if (xUserInfo) {
+  //     setPreview(true);
+  //   }
+  // }, [xUserInfo]);
 
-  useEffect(() => {
-    if (xUserInfo) {
-      setPreview(true);
-    }
-  }, [xUserInfo]);
+  const handleAuthSuccess = useCallback(async (code: string) => {
+    setIsAuthModalOpen(false);
+    setPreview(true);
+  }, [bindTwitter]);
 
 
   return (
@@ -39,14 +47,16 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
           <div className={styles.iconItem} onClick={async () => {
-            if (!code || !xUserInfo) {
-              const result = await shareToTwitter();
-              if (result) {
-                setPreview(true);
-              } 
-            } else {
-              setPreview(true);
-            }
+            // if (!code || !xUserInfo) {
+            //   const result = await shareToTwitter();
+            //   if (result) {
+            //     setPreview(true);
+            //   }
+            // } else {
+            //   setPreview(true);
+            // }
+
+            setIsAuthModalOpen(true);
           }}>
             {isInit ? (
               <>
@@ -116,6 +126,14 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
       <Preview token={data} isOpen={preview} xUserInfo={xUserInfo} onClear={() => {
         clear();
       }} onClose={() => setPreview(false)} />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+        getAuthUrl={getAuthUrl}
+        bindTwitter={bindTwitter}
+      />
     </div>
   );
 };
