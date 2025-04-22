@@ -16,8 +16,7 @@ import { getVideoExt } from "@/app/components/upload";
 import { useContext, useMemo, useState } from "react";
 import Big from "big.js";
 import { useRouter } from "next/navigation";
-import { MemesContext } from "@/app/sections/memes/context";
-import { Tab, TABS } from "@/app/sections/memes/config";
+import { MemePhaseType, Tab } from '@/app/sections/memes/config';
 
 const TokenItem = (props: {
   className?: string;
@@ -300,7 +299,7 @@ export const TokenItemSummaries = (props: any) => {
 
   return (
     <div className={clsx(styles.TokenItemSummaries, className)}>
-      {currentTab?.value !== TABS[1].value && (
+      {currentTab?.value !== MemePhaseType.New && (
         <>
           {/*{[0, 1, 2].includes(token.status) ? (
             <SummaryItem
@@ -323,7 +322,7 @@ export const TokenItemSummaries = (props: any) => {
           />
         </>
       )}
-      {currentTab?.value === TABS[1].value && (
+      {currentTab?.value === MemePhaseType.New && (
         <>
           {token.status === 0 && (
             <SummaryItem

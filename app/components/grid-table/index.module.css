@@ -1,0 +1,64 @@
+.GridTable {
+  width: 100%;
+  background: #1B1B1B;
+  border-radius: 20px;
+}
+.GridTableHeader {}
+.GridTableBody {}
+.GridTableRow {
+  display: grid;
+  column-gap: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.GridTableHeaderRow {}
+.GridTableBodyRow {
+  border-top: 1px solid #323232;
+}
+.GridTableCol {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  color: #FFF;
+  font-family: Unbounded;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.GridTableHeaderCol {
+  color: rgba(255, 255, 255, 0.40);
+  font-size: 12px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.GridTableHeaderColInner {
+  display: inline-block;
+}
+.GridTableBodyColInner {
+  max-width: 100%;
+  display: inline-block;
+  line-height: normal;
+}
+.GridTableBodyColEllipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.GridTableHeaderColSort {
+  flex-shrink: 0;
+  width: 7px;
+  height: 10px;
+  margin-left: 6px;
+}
+.GridTableBodyCol {
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.GridTableLoading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 150px;
+}

@@ -1,6 +1,6 @@
 import { DotLoading, InfiniteScroll } from "antd-mobile";
 
-const InfiniteScrollContent = ({ hasMore }: { hasMore?: boolean }) => {
+const InfiniteScrollContent = ({ hasMore, noMoreContent }: { hasMore?: boolean; noMoreContent?: any; }) => {
   return (
     <>
       {hasMore ? (
@@ -9,16 +9,16 @@ const InfiniteScrollContent = ({ hasMore }: { hasMore?: boolean }) => {
           <DotLoading />
         </div>
       ) : (
-        <span></span>
+        <span>{noMoreContent}</span>
       )}
     </>
   );
 };
 
-export default function SexInfiniteScroll({ loadMore, hasMore }: any) {
+export default function SexInfiniteScroll({ loadMore, hasMore, noMoreContent }: any) {
   return (
     <InfiniteScroll loadMore={loadMore} hasMore={hasMore} style={{ padding: 0 }}>
-      <InfiniteScrollContent hasMore={hasMore} />
+      <InfiniteScrollContent hasMore={hasMore} noMoreContent={noMoreContent} />
     </InfiniteScroll>
   );
 }
