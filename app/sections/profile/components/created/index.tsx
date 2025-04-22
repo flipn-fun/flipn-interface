@@ -209,9 +209,11 @@ export default function Created({
     if (isCurrent) {
       timerRef.current = setTimeout(() => {
         loadMore(true, list.length);
-      }, 3000);
+      }, 300);
     }
   }, [isCurrent]);
+
+ 
 
   if (list.length === 0) {
     return (
@@ -250,7 +252,7 @@ export default function Created({
       </div>
 
       <div className={from === "page" ? styles.PcListWrapper : ""}>
-        {list.map((item) => {
+        {list.map((item, index) => {
           const isSuperLike = !isOther
             ? item.isSuperLike
             : !unfliped?.includes(item.address);
@@ -270,6 +272,15 @@ export default function Created({
               }}
               onWithdrawSuccess={async () => {
                 loadMoreDelay(true, LIMIT);
+              }}
+              onCollectSuccess={async () => {
+                if (type === 'liked') {
+                  list.splice(index, 1);
+                  setList([
+                    ...list
+                  ]);
+                }
+                
               }}
             />
           );

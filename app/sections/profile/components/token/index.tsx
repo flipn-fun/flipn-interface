@@ -28,6 +28,7 @@ interface Props {
   type?: string;
   isOther: boolean;
   onWithdrawSuccess?(): void;
+  onCollectSuccess?(): void;
 }
 
 const likeStatus: any = {}
@@ -40,17 +41,20 @@ export default function Token({
   type,
   from,
   isOther,
-  onWithdrawSuccess
+  onWithdrawSuccess,
+  onCollectSuccess
 }: Props) {
   const router = useRouter();
   const { userInfo }: any = useUser();
   const { connection } = useConnection();
   const { isMobile } = useUserAgent();
   const [_likeStatus, setLikeStatus] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const [prepaidRealAmount, setPrepaidRealAmount] = useState(Big(0));
   const [prepaidAmount, setPrepaidAmount] = useState(Big(0));
   const [tokenAmount, setTokenAmount] = useState(Big(0));
+
 
   const {
     pool,
@@ -298,25 +302,31 @@ export default function Token({
         </div>
 
         <div className={styles.collectIcon} onClick={async (e) => {
+          if (isLoading) return;
           e.stopPropagation();
+          setIsLoading(true);
           let res = null;
           const isCollect = typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!];
+
+          likeStatus[data.id!] = !(data as any).is_collect;
+          setLikeStatus(likeStatus)
           if (isCollect) {
             res = await httpAuthDelete('/project/collect?id=' + data.id)
-            console.log('res:', res)
+            onCollectSuccess?.()
           } else {
             res = await httpAuthPost('/project/collect?id=' + data.id)
-            console.log('res:', res)
           }
 
           if (res?.code === 0) {
             (data as any).is_collect = !isCollect;
-            likeStatus[data.id!] = (data as any).is_collect;
             success('Request Success')
-            setLikeStatus(likeStatus)
           } else {
             fail('Request Failed')
           }
+
+          likeStatus[data.id!] = (data as any).is_collect;
+          setLikeStatus(likeStatus)
+          setIsLoading(false);
         }}>
           {
             (typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!])
