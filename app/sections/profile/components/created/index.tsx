@@ -41,9 +41,9 @@ const SUMMARIES_DEFAULT: Record<string, Summary[]> = {
 
 const platFormats = [
   { label: "All Platforms", icon: '', value: "" },
-  { label: "FlipN", icon: '/img/create/flip.svg', value: 'sexy' },
-  { label: "Raydium", icon: '/img/create/raydium.png', value: 'ray_launchpad' },
-  { label: "MeteOra", icon: '/img/create/meteora.png', value: 'meteora' },
+  { label: "FlipN", icon: '/img/create/flip.svg', value: 'FlipN' },
+  { label: "Raydium", icon: '/img/create/raydium.png', value: 'Raydium' },
+  { label: "MeteOra", icon: '/img/create/meteora.png', value: 'Meteora' },
 ]
 
 export default function Created({
@@ -111,7 +111,7 @@ export default function Created({
           params.DApp = opts?.DApp;
         }
 
-        const res = await httpAuthGet(urls[type],  params);
+        const res = await httpAuthGet(urls[type], params);
         if (!res) {
           setLoading(false);
           if (isInit) {
@@ -218,18 +218,27 @@ export default function Created({
     }
   }, [isCurrent]);
 
- 
+
 
   if (list.length === 0) {
     return (
       <>
-        <StatusSelect
-          type={type}
-          popoverRef={popoverRef}
-          summaries={summaries}
-          currentSummary={homeTabStore.currentSummary}
-          handleSelect={handleSelect}
-        />
+        <div className={isMobile ? styles.CreatedHeaderMobile : styles.CreatedHeader}>
+          <PlatformSelect
+            type={type}
+            popoverRef={platformPopoverRef}
+            currentSummary={homeTabStore.currentPlatform}
+            handleSelect={handlePlatformSelect}
+          />
+
+          <StatusSelect
+            type={type}
+            popoverRef={popoverRef}
+            summaries={summaries}
+            currentSummary={homeTabStore.currentSummary}
+            handleSelect={handleSelect}
+          />
+        </div>
         <div style={{ paddingTop: 116 }}>
           <Empty text={"No Fun coins " + (type === 'liked' ? 'collected' : type) + " yet"} id={type} />
         </div>
@@ -285,7 +294,7 @@ export default function Created({
                     ...list
                   ]);
                 }
-                
+
               }}
             />
           );
