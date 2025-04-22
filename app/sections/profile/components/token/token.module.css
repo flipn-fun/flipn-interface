@@ -222,7 +222,7 @@
 
 .collectIconMobile {
   right: auto;
-  left: 10px;
+  left: 0px;
   top: 50%;
-  transform: translateY(-50%) scale(1.5);
+  transform: translateY(-50%) scale(1.2);
 }

@@ -191,7 +191,7 @@ export default function Token({
           // width: from === "page" ? "100%" : "auto",
           backgroundColor:
             from === "page" ? "rgba(255, 255, 255, 0.05)" : "transparent",
-          padding: from === "page" ? "4px 12px 15px" : '0 0 0 40px',
+          padding: from === "page" ? "4px 12px 15px" : '0 0 0 32px',
           borderRadius: from === "page" ? 10 : 0
         }}
       >
