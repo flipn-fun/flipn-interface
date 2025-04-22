@@ -5,6 +5,8 @@ import LikedLabel from "../liked-label";
 import FloatingHearts from "./hearts";
 import LikeIcon from "./like-icon";
 import { useEffect, useState } from "react";
+import { httpAuthPost } from "@/app/utils";
+import { httpAuthDelete } from "@/app/utils";
 
 export default function Like({
   token,
@@ -20,41 +22,48 @@ export default function Like({
   const [mergedNum, setMergedNum] = useState(0);
 
   useEffect(() => {
-    setMergedLiked(token.isLike);
-    setMergedNum(token.like);
+    setMergedLiked(token.is_collect);
+    setMergedNum(token.collect);
   }, [token]);
+
+  console.log('mergedLiked:', mergedLiked)
 
   return (
     <div
       className={styles.Like}
       id="home-like-button"
       onClick={async () => {
-        if (mergedLiked || disabled) return;
+        if (disabled) return;
+
         if (!window.sexAddress) {
           window.connect();
           return;
         }
 
-        setShowAnimation(true);
-        setShowHearts(true);
-        setTimeout(() => {
-          setShowAnimation(false);
-        }, 1000);
+        // setShowAnimation(true);
+        // setShowHearts(true);
+        // setTimeout(() => {
+        //   setShowAnimation(false);
+        // }, 1000);
 
-        setTimeout(() => {
-          setShowHearts(false);
-        }, 6000);
+        // setTimeout(() => {
+        //   setShowHearts(false);
+        // }, 6000);
 
-        const res = await actionLikeTrigger({
-          data: token,
-          onShare: showShare,
-          onSuccess: updateUserLikeNum
-        });
+        console.log('token:', token)
+
+        let res
+        if (token.is_collect) {
+          res = await httpAuthDelete('/project/collect?id=' + token.id)
+        } else {
+          res = await httpAuthPost('/project/collect?id=' + token.id)
+        }
 
         if (res) {
-          setMergedLiked(true);
-          setMergedNum(mergedNum + 1);
+          setMergedLiked(!token.is_collect);
+          setMergedNum(!token.is_collect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
           onSuccess("like");
+          token.is_collect = !token.is_collect;
         }
       }}
     >

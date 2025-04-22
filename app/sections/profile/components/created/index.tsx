@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Token from "../token";
-import { http, httpGet } from "@/app/utils";
+import { http, httpAuthGet } from "@/app/utils";
 import Empty from "@/app/components/empty";
 import type { Project } from "@/app/type";
 import { mapDataToProject } from "@/app/utils/mapTo";
@@ -19,7 +19,7 @@ import { useUserAgent } from "@/app/context/user-agent";
 const urls: Record<string, string> = {
   created: "/project/account/list",
   flipped: "/project/pre_paid/list",
-  liked: "/project/like/list"
+  liked: "/project/collect/list",
 };
 
 const LIMIT = 10;
@@ -69,7 +69,7 @@ export default function Created({
   const { updateCurrentUserInfo, accountRefresher, userInfo } = useAuth();
   const timerRef = useRef<any>();
   const { unfliped } = useCheckFliped(list, isOther);
-
+  const { isMobile } = useUserAgent();
   useEffect(() => {
     if (address) {
       loadMore(true);
@@ -106,7 +106,7 @@ export default function Created({
         if (type === "liked" && typeof _summary !== "undefined") {
           params.project_status = _summary;
         }
-        const res = await http(urls[type], "GET", params, {});
+        const res = await httpAuthGet(urls[type],  params);
         if (!res) {
           setLoading(false);
           if (isInit) {
@@ -232,21 +232,22 @@ export default function Created({
 
   return (
     <div className={styles.ProfileCreatedContainer}>
+      <div className={isMobile ? styles.CreatedHeaderMobile : styles.CreatedHeader}>
+        <PlatformSelect
+          type={type}
+          popoverRef={platformPopoverRef}
+          currentSummary={homeTabStore.currentPlatform}
+          handleSelect={handlePlatformSelect}
+        />
 
-      <PlatformSelect
-        type={type}
-        popoverRef={platformPopoverRef}
-        currentSummary={homeTabStore.currentPlatform}
-        handleSelect={handlePlatformSelect}
-      />
-
-      <StatusSelect
-        type={type}
-        popoverRef={popoverRef}
-        summaries={summaries}
-        currentSummary={homeTabStore.currentSummary}
-        handleSelect={handleSelect}
-      />
+        <StatusSelect
+          type={type}
+          popoverRef={popoverRef}
+          summaries={summaries}
+          currentSummary={homeTabStore.currentSummary}
+          handleSelect={handleSelect}
+        />
+      </div>
 
       <div className={from === "page" ? styles.PcListWrapper : ""}>
         {list.map((item) => {

@@ -16,10 +16,16 @@
   padding-right: 15px;
 }
 
+.CreatedHeaderMobile {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
 .PlatformContainer {
   position: absolute;
   right: 150px;
-  top: 8px;
+  top: 7px;
   cursor: pointer;
 }
 

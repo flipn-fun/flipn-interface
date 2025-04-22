@@ -1,31 +1,20 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { Filter, Tab, TABS } from '@/app/sections/memes/config';
-import { cloneDeep } from 'lodash-es';
+import { MemePhase, MemePhaseItem, MemePhases } from '@/app/sections/memes/config';
 
 export interface MemesState {
-  currentTab: Tab;
-  prevTab: Tab;
-  currentFilter?: Filter;
-  setCurrentTab: (tab: Tab) => void;
-  setPrevTab: (tab?: Tab) => void;
-  setCurrentFilter: (filter?: Filter) => void;
+  currentTab: MemePhaseItem;
+  setCurrentTab: (tab: MemePhaseItem) => void;
 }
 
 export const useMemesStore = create(persist<MemesState>((set) => ({
-  currentTab: cloneDeep(TABS[0]),
-  prevTab: cloneDeep(TABS[0]),
-  currentFilter: { ...TABS[0].filters?.[0] } as Filter,
+  currentTab: MemePhases[MemePhase.All],
   setCurrentTab: (tab) => set((state) => ({ ...state, currentTab: tab })),
-  setPrevTab: (tab) => set((state) => ({ ...state, prevTab: tab })),
-  setCurrentFilter: (filter) => set((state) => ({ ...state, currentFilter: filter })),
 }), {
   name: '_memes_tab',
-  version: 0.2,
+  version: 0.3,
   storage: createJSONStorage(() => localStorage),
   partialize: (state) => ({
     currentTab: state.currentTab,
-    prevTab: state.prevTab,
-    currentFilter: state.currentFilter,
   } as any)
 }));
