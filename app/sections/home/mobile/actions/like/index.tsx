@@ -26,7 +26,6 @@ export default function Like({
     setMergedNum(token.collect);
   }, [token]);
 
-  console.log('mergedLiked:', mergedLiked)
 
   return (
     <div

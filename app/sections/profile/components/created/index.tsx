@@ -224,7 +224,7 @@ export default function Created({
           handleSelect={handleSelect}
         />
         <div style={{ paddingTop: 116 }}>
-          <Empty text={"No Fun coins " + type + " yet"} id={type} />
+          <Empty text={"No Fun coins " + (type === 'liked' ? 'collected' : type) + " yet"} id={type} />
         </div>
       </>
     );

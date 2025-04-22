@@ -203,3 +203,31 @@
   cursor: pointer;  
   font-weight: 500; 
 }
+
+.receiveBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px ;
+  background: #3C3C3C80;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.receiveBoxTitle {
+  color: #9290B1;
+}
+
+                
+.receiveBoxAmount {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+}
+
+.receiveBoxAmount img {
+  width: 16px;
+  height: 16px;
+  border-radius: 16px;
+}
