@@ -144,6 +144,11 @@
   .MemesPhase:not(:last-child) {
     border: 1px solid #282828;
   }
+  .MemesPhaseActive {
+    composes: MemesPhase;
+    color: rgba(255, 255, 255, 1) ;
+    background: rgba(255, 255, 255, 0.10);
+  }
 }
 .MemesFiltersOrderMobile {
   width: 80px;
@@ -191,17 +196,6 @@
 
 .MemesTable {
   margin-top: 20px;
-}
-
-.MemesTableFavorite {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-}
-.MemesTableFavorite:disabled {
-  cursor: not-allowed;
 }
 
 .MemesTableToken {
@@ -283,4 +277,9 @@
 
 .MemesTableNoMore {
   padding: 10px 0;
+}
+
+.MemesListContainer {
+  width: 100%;
+  min-height: 50dvh;
 }
