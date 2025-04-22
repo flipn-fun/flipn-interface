@@ -18,7 +18,7 @@ import {
 import { useDebounceFn, useRequest, useThrottleFn } from 'ahooks';
 import { fetchData, getGranularityByResolution } from '@/app/components/chart/fetch-data';
 import { getTokenMeta } from '@/app/utils/solanaScanApi';
-import { DebouncedFunc, minBy } from 'lodash-es';
+import { DebouncedFunc, minBy, trim } from 'lodash-es';
 import { useAccount } from '@/app/hooks/useAccount';
 import { useAuth } from '@/app/context/auth';
 import { GridTableSortDirection } from '@/app/components/grid-table';
@@ -279,7 +279,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       type = currentTab.type,
       auth,
       query_dApp = memesListPlatform.label,
-      search,
+      search = trim(memesListSearchText),
     } = params ?? {};
 
     const _getMinId = () => {
@@ -336,7 +336,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
         delete memesListParams.min_id;
       }
       if (search) {
-        memesListParams.search = search;
+        memesListParams.test = search;
       }
 
       let res: any;

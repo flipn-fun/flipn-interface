@@ -15,6 +15,8 @@ import SexInfiniteScroll from '@/app/components/sexInfiniteScroll';
 import { useRouter } from 'next/navigation';
 import Search from '@/app/sections/memes/components/content/search';
 import MemesSelect from '@/app/sections/memes/components/select';
+import List from '@/app/sections/memes/components/content/list';
+import Favorite from '@/app/sections/memes/components/content/favorite';
 
 const MemesContent = (props: any) => {
   const { } = props;
@@ -169,7 +171,7 @@ const MemesContent = (props: any) => {
       title: "Volume",
       sort: true,
       render: (record: any) => {
-        return numberFormatter(record.volume, 2, true, { isShort: true, isShortUppercase: true });
+        return numberFormatter(record.volume, 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
       },
     },
     {
@@ -179,7 +181,7 @@ const MemesContent = (props: any) => {
       title: "Market Cap",
       sort: true,
       render: (record: any) => {
-        return numberFormatter(record.market_cap, 2, true, { isShort: true, isShortUppercase: true });
+        return numberFormatter(record.market_cap, 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
       },
     },
     {
@@ -206,6 +208,15 @@ const MemesContent = (props: any) => {
       return item;
     });
   }, [list, memesListHolders]);
+
+  const handleSort = (dataIndex: string, direction: GridTableSortDirection)  => {
+    setMemesListSortDataIndex?.(dataIndex as MemeSort);
+    setMemesListSortDirection?.(direction);
+    getMemesList?.({
+      order: direction,
+      sort: dataIndex,
+    });
+  };
 
   return (
     <div className={isMobile ? styles.MemesContentContainerMobile : styles.MemesContentContainer}>
@@ -332,22 +343,28 @@ const MemesContent = (props: any) => {
           )
         }
       </div>
-      <GridTable
-        className={styles.MemesTable}
-        columns={columns}
-        data={shownList}
-        loading={shownList.length <= 0 ? memesListLoading : false}
-        sortDataIndex={memesListSortDataIndex}
-        sortDirection={memesListSortDirection}
-        onSort={(dataIndex: string, direction: GridTableSortDirection)  => {
-          setMemesListSortDataIndex?.(dataIndex as MemeSort);
-          setMemesListSortDirection?.(direction);
-          getMemesList?.({
-            order: direction,
-            sort: dataIndex,
-          });
-        }}
-      />
+      <div className={styles.MemesListContainer}>
+        {
+          isMobile ? (
+            <List
+              data={shownList}
+              loading={shownList.length <= 0 ? memesListLoading : false}
+              onDetail={onDetail}
+              memesListHoldersLoading={memesListHoldersLoading}
+            />
+          ) : (
+            <GridTable
+              className={styles.MemesTable}
+              columns={columns}
+              data={shownList}
+              loading={shownList.length <= 0 ? memesListLoading : false}
+              sortDataIndex={memesListSortDataIndex}
+              sortDirection={memesListSortDirection}
+              onSort={handleSort}
+            />
+          )
+        }
+      </div>
       <SexInfiniteScroll
         loadMore={onMemesListNextPage}
         hasMore={memesListPageNext}
@@ -360,56 +377,3 @@ const MemesContent = (props: any) => {
 };
 
 export default MemesContent;
-
-const Favorite = (props: any) => {
-  const { record } = props;
-
-  const [pending, setPending] = useState(false);
-  const [isLike, setIsLike] = useState(record.is_like);
-
-  let favoriteIconStyles: any = {
-    stroke: "white",
-    strokeOpacity: 0.6,
-  };
-  if (isLike) {
-    favoriteIconStyles = {
-      fill: "white",
-      fillOpacity: 0.6,
-    };
-  }
-
-  return (
-    <button
-      type="button"
-      disabled={pending || isLike}
-      onClick={async () => {
-        if (!window.sexAddress) {
-          window.connect();
-          return;
-        }
-        setPending(true);
-        const res = await actionLikeTrigger({
-          data: record,
-        });
-        if (res) {
-          setIsLike(true);
-        }
-        setPending(false);
-      }}
-      className={styles.MemesTableFavorite}
-    >
-      {
-        pending ? (
-          <Loading size={14} />
-        ) : (
-          <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              d="M10 0L12.9624 5.92255L19.5106 6.90983L14.7933 11.5574L15.8779 18.0902L10 15.04L4.12215 18.0902L5.20668 11.5574L0.489435 6.90983L7.03756 5.92255L10 0Z"
-              {...favoriteIconStyles}
-            />
-          </svg>
-        )
-      }
-    </button>
-  );
-};
