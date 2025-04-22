@@ -1,0 +1,55 @@
+.MemesSearch {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  border: 1px solid #323232;
+  background: rgba(217, 217, 217, 0.00);
+  width: 355px;
+  height: 30px;
+  padding-left: 10px;
+  padding-right: 26px;
+  gap: 10px;
+  position: relative;
+  flex-shrink: 0;
+}
+.MemesSearchMobile {
+  composes: MemesSearch;
+  border: 1px solid #282828;
+  width: 28px;
+  height: 28px;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  background: #000;
+}
+.MemesSearchMobileActive {
+  composes: MemesSearchMobile;
+  background: #242424;
+}
+.MemesSearchIcon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  object-position: center;
+}
+.MemesSearchInput {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.6);
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+  font-family: Unbounded;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+.MemesSearchClear {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  background: url("/img/memes/icon-clear.svg") no-repeat center / contain;
+  right: 5px;
+}
