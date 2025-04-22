@@ -349,9 +349,6 @@ const MemesContent = (props: any) => {
             <List
               data={shownList}
               loading={shownList.length <= 0 ? memesListLoading : false}
-              sortDataIndex={memesListSortDataIndex}
-              sortDirection={memesListSortDirection}
-              onSort={handleSort}
               onDetail={onDetail}
               memesListHoldersLoading={memesListHoldersLoading}
             />

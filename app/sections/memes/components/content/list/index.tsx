@@ -5,10 +5,12 @@ import Empty from '@/app/components/empty';
 import Favorite from '@/app/sections/memes/components/content/favorite';
 import FallbackImg from '@/app/components/fallback-img';
 import { formatLongText, numberFormatter } from '@/app/utils/common';
-import { MemePlatforms } from '@/app/sections/memes/config';
+import { MemePhase, MemePhases, MemePlatforms } from '@/app/sections/memes/config';
+import Big from 'big.js';
+import { motion } from 'framer-motion';
 
 const List = (props: any) => {
-  const { className, data, loading, sortDataIndex, sortDirection, onSort, onDetail, memesListHoldersLoading } = props;
+  const { className, data, loading, onDetail, memesListHoldersLoading } = props;
 
   return (
     <div className={clsx(styles.ListContainer, className)}>
@@ -41,7 +43,10 @@ export default List;
 const Record = (props: any) => {
   const { record, onDetail, memesListHoldersLoading } = props;
 
+  const { status } = record;
+
   const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
+  const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
   return (
     <div className={styles.ListRecord}>
@@ -101,6 +106,17 @@ const Record = (props: any) => {
             }
           </LabelValue>
         </div>
+        {
+          status === MemePhases[MemePhase.New].status && (
+            <div className={styles.ListRecordProgress}>
+              <motion.div
+                className={styles.ListRecordProgressValue}
+                initial={{ x: "-100%" }}
+                animate={{ x: `-${Big(100).minus(record.bonding_progress).toFixed(2, Big.roundDown)}%` }}
+              />
+            </div>
+          )
+        }
       </div>
     </div>
   );

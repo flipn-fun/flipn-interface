@@ -32,6 +32,7 @@
 .ListRecordRight {
   flex: 1;
   width: 0;
+  position: relative;
 }
 .ListRecordIcon {
   width: 42px;
@@ -127,4 +128,21 @@
   font-style: normal;
   font-weight: 300;
   line-height: normal;
+}
+.ListRecordProgress {
+  width: 100%;
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  border-radius: 32px;
+  background: rgba(60, 60, 60, 0.50);
+  backdrop-filter: blur(5px);
+  left: 0;
+  bottom: -10px;
+}
+.ListRecordProgressValue {
+  width: 100%;
+  height: 100%;
+  border-radius: 32px;
+  background: #C9FF5D;
 }
