@@ -18,7 +18,7 @@ export default function TokenExt({ token, showTrade }: Props) {
     //   }
 
     // ray_launchpad
-    if (token?.DApp === "ray_launchpad") {
+    if (token?.DApp?.includes("ray_launchpad")) {
         return (
             <>
                 {

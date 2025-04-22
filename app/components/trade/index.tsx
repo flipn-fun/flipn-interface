@@ -38,7 +38,7 @@ export default function Trade({
           onSuccess={onSuccess}
         />
       )}
-      {token.status === 1 && token.DApp === "ray_launchpad" && (
+      {token.status === 1 && token.DApp?.includes("ray_launchpad") && (
         <BuySellRaydium
           token={token}
           initType={initType}
