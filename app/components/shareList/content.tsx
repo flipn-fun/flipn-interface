@@ -47,16 +47,12 @@ const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareT
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
           <div className={styles.iconItem} onClick={async () => {
-            // if (!code || !xUserInfo) {
-            //   const result = await shareToTwitter();
-            //   if (result) {
-            //     setPreview(true);
-            //   }
-            // } else {
-            //   setPreview(true);
-            // }
-
-            setIsAuthModalOpen(true);
+            if (!xUserInfo) {
+              setIsAuthModalOpen(true);
+            } else {
+              setPreview(true);
+            }
+           
           }}>
             {isInit ? (
               <>

@@ -83,6 +83,15 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
         setXUserInfo(null);
     }, []);
 
+    useEffect(() => {
+        (async () => {
+            const result = await httpAuthGet('/twitter/user_info');
+            if (result.code === 0) {
+                setXUserInfo(result.data);
+            }
+        })()
+    }, [])
+
     const getAuthUrl = useCallback(async () => {
         setLoading(true);
         try {
@@ -109,7 +118,7 @@ export default function useXShare({ openSelf, token }: { openSelf: (token: Proje
             fail(result.message || "Bind failed!");
         }
         return false;
-    }, []);
+    }, [xUserInfo]);
 
     return {
         loading,
