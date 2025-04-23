@@ -90,9 +90,9 @@ const Record = (props: any) => {
           </div>
         </div>
         <div className={styles.ListRecordSummaries}>
-          <LabelValue label="Liq">
+          {/*<LabelValue label="Liq">
             -
-          </LabelValue>
+          </LabelValue>*/}
           <LabelValue label="Vol">
             {numberFormatter(record.volume, 2, true, { prefix: "$", isShort: true, isShortUppercase: true })}
           </LabelValue>

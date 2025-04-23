@@ -112,7 +112,7 @@ export enum MemeSort {
   Holders = "holders",
 }
 
-export type MemeSortOptionTypes = MemeSort.Age | MemeSort.Liq | MemeSort.MC | MemeSort.Volume | MemeSort.Holders;
+export type MemeSortOptionTypes = MemeSort.Age | MemeSort.MC | MemeSort.Volume;
 
 export interface MemeSortOption {
   value: MemeSortOptionTypes;
@@ -124,10 +124,10 @@ export const MemeSortOptions: Record<MemeSortOptionTypes, MemeSortOption> = {
     value: MemeSort.Age,
     label: "Age",
   },
-  [MemeSort.Liq]: {
-    value: MemeSort.Liq,
-    label: "Liq",
-  },
+  // [MemeSort.Liq]: {
+  //   value: MemeSort.Liq,
+  //   label: "Liq",
+  // },
   [MemeSort.Volume]: {
     value: MemeSort.Volume,
     label: "Vol",
@@ -136,8 +136,8 @@ export const MemeSortOptions: Record<MemeSortOptionTypes, MemeSortOption> = {
     value: MemeSort.MC,
     label: "MCap",
   },
-  [MemeSort.Holders]: {
-    value: MemeSort.Holders,
-    label: "Holders",
-  },
+  // [MemeSort.Holders]: {
+  //   value: MemeSort.Holders,
+  //   label: "Holders",
+  // },
 };
