@@ -157,13 +157,13 @@ const MemesContent = (props: any) => {
         );
       },
     },
-    {
-      key: "liq",
-      dataIndex: "liq",
-      width: "1fr",
-      title: "Liq",
-      sort: true,
-    },
+    // {
+    //   key: "liq",
+    //   dataIndex: "liq",
+    //   width: "1fr",
+    //   title: "Liq",
+    //   sort: true,
+    // },
     {
       key: "volume",
       dataIndex: "volume",
@@ -189,7 +189,6 @@ const MemesContent = (props: any) => {
       dataIndex: "holders",
       width: "1fr",
       title: "Holders",
-      sort: true,
       render: (record: any) => {
         if (memesListHoldersLoading?.[record.address]) {
           return (
