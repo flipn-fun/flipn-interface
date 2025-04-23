@@ -10,7 +10,7 @@ import {
   PlatformConfig,
   Curve,
 } from '@raydium-io/raydium-sdk-v2'
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAccount } from './useAccount';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
@@ -115,11 +115,6 @@ export const useRay = (params: Params | null) => {
 
     console.log('transaction:', transaction)
 
-    const simulated = await connection.simulateTransaction(transaction)
-
-    console.log('simulated:', simulated)
-
-
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
       canJitoable: false,
@@ -140,8 +135,6 @@ export const useRay = (params: Params | null) => {
 
     const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
-    console.log('getQouteBeforeBuy', configId.toBase58(), programId.toBase58(), LAUNCHPAD_PROGRAM.toBase58())
-
     const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
     if (!configData) throw new Error('config not found')
 
@@ -153,7 +146,7 @@ export const useRay = (params: Params | null) => {
       totalFundRaising: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(43 * (10 ** 9)) : new BN(30 * (10 ** 9)),
       totalSell: new BN('800000000000000'),
       totalLockedAmount: new BN('0'),
-      migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(0),
+      migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(0) : new BN(0),
     });
 
     const itemBuy = Curve.buyExactIn({
