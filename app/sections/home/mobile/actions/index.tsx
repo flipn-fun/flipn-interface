@@ -17,7 +17,7 @@ import TipsButton from "@/app/sections/home/laptop/tips-button";
 
 export default function Actions({
   token,
-  onClick = () => {},
+  onClick = () => { },
   onSuccess,
   isCurrent,
   disabled,
@@ -31,9 +31,8 @@ export default function Actions({
 
   return (
     <div
-      className={`${styles.Actions} ${
-        isMobile ? styles.MbActions : styles.PcActions
-      }`}
+      className={`${styles.Actions} ${isMobile ? styles.MbActions : styles.PcActions
+        }`}
       style={{
         opacity: disabled && !isPreviewNoOpacity ? 0.3 : 1
       }}
@@ -85,9 +84,8 @@ export default function Actions({
             }}
           >
             <button
-              className={`${!disabled ? "button" : ""} ${
-                !isMobile && styles.PcItem
-              }`}
+              className={`${!disabled ? "button" : ""} ${!isMobile && styles.PcItem
+                }`}
             >
               <HomeIcon
                 size={22}
@@ -114,7 +112,17 @@ export default function Actions({
             actionLikeTrigger={actionLikeTrigger}
             onSuccess={onSuccess}
           /> */}
-
+          <div style={{ height: 14 }}></div>
+          <Like
+            {...{
+              token,
+              onSuccess,
+              disabled,
+              actionLikeTrigger,
+              showShare,
+              updateUserLikeNum
+            }}
+          />
           <div
             className={styles.Item}
             onClick={() => {
@@ -122,9 +130,8 @@ export default function Actions({
             }}
           >
             <button
-              className={`${!disabled ? "button" : ""} ${
-                !isMobile && styles.PcItem
-              }`}
+              className={`${!disabled ? "button" : ""} ${!isMobile && styles.PcItem
+                }`}
             >
               <HolderIcon />
             </button>
@@ -142,9 +149,8 @@ export default function Actions({
             }}
           >
             <button
-              className={`${!disabled ? "button" : ""} ${
-                !isMobile && styles.PcItem
-              }`}
+              className={`${!disabled ? "button" : ""} ${!isMobile && styles.PcItem
+                }`}
             >
               <TxIcon />
             </button>
@@ -165,9 +171,8 @@ export default function Actions({
           }}
         >
           <button
-            className={`${!disabled ? "button" : ""} ${
-              !isMobile && styles.PcItem
-            }`}
+            className={`${!disabled ? "button" : ""} ${!isMobile && styles.PcItem
+              }`}
           >
             <CommentIcon size={26} />
           </button>
@@ -193,9 +198,8 @@ export default function Actions({
         }}
       >
         <button
-          className={`${!disabled ? "button" : ""} ${
-            !isMobile && styles.PcItem
-          }`}
+          className={`${!disabled ? "button" : ""} ${!isMobile && styles.PcItem
+            }`}
         >
           <ShareIcon size={24} />
         </button>

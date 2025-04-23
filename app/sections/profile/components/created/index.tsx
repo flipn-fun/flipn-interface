@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Token from "../token";
-import { http, httpGet } from "@/app/utils";
+import { http, httpAuthGet } from "@/app/utils";
 import Empty from "@/app/components/empty";
 import type { Project } from "@/app/type";
 import { mapDataToProject } from "@/app/utils/mapTo";
@@ -19,7 +19,7 @@ import { useUserAgent } from "@/app/context/user-agent";
 const urls: Record<string, string> = {
   created: "/project/account/list",
   flipped: "/project/pre_paid/list",
-  liked: "/project/like/list"
+  liked: "/project/collect/list",
 };
 
 const LIMIT = 10;
@@ -41,9 +41,9 @@ const SUMMARIES_DEFAULT: Record<string, Summary[]> = {
 
 const platFormats = [
   { label: "All Platforms", icon: '', value: "" },
-  { label: "FlipN", icon: '/img/create/flip.svg', value: 1 },
-  { label: "Raydium", icon: '/img/create/raydium.png', value: 2 },
-  { label: "MeteOra", icon: '/img/create/meteora.png', value: 3 },
+  { label: "FlipN", icon: '/img/create/flip.svg', value: 'FlipN' },
+  { label: "Raydium", icon: '/img/create/raydium.png', value: 'Raydium' },
+  { label: "MeteOra", icon: '/img/create/meteora.png', value: 'Meteora' },
 ]
 
 export default function Created({
@@ -61,6 +61,8 @@ export default function Created({
   const homeTabStore: any = useHomeTab();
   const [summaries, setSummaries] =
     useState<Record<string, Summary[]>>(SUMMARIES_DEFAULT);
+  const [platformSummaries, setPlatformSummaries] =
+    useState<Record<string, Summary[]>>(SUMMARIES_DEFAULT);
   const [list, setList] = useState<Project[]>([]);
   const [refresh, setRefresh] = useState<number>(1);
   const [hasMore, setHasMore] = useState(false);
@@ -69,7 +71,7 @@ export default function Created({
   const { updateCurrentUserInfo, accountRefresher, userInfo } = useAuth();
   const timerRef = useRef<any>();
   const { unfliped } = useCheckFliped(list, isOther);
-
+  const { isMobile } = useUserAgent();
   useEffect(() => {
     if (address) {
       loadMore(true);
@@ -89,7 +91,7 @@ export default function Created({
     async (
       isInit?: boolean,
       limit?: number,
-      opts?: { status?: "" | number }
+      opts?: { status?: "" | number, DApp?: string }
     ) => {
       setLoading(true);
       try {
@@ -106,7 +108,17 @@ export default function Created({
         if (type === "liked" && typeof _summary !== "undefined") {
           params.project_status = _summary;
         }
-        const res = await http(urls[type], "GET", params, {});
+
+        let _platformSummary: any = homeTabStore.currentPlatform?.value;
+        if (typeof opts?.DApp !== "undefined") {
+          _platformSummary = opts?.DApp;
+        }
+
+        if (type === "liked" && typeof _platformSummary !== "undefined") {
+          params.DApp = _platformSummary;
+        }
+
+        const res = await httpAuthGet(urls[type], params);
         if (!res) {
           setLoading(false);
           if (isInit) {
@@ -187,13 +199,16 @@ export default function Created({
       return;
     }
     homeTabStore.set({ currentSummary: summary });
-    loadMore(true, LIMIT, { status: summary.value });
+    loadMore(true, LIMIT, { status: summary.value, DApp: homeTabStore.currentPlatform?.value });
   };
 
   const handlePlatformSelect = (platform: Summary) => {
     platformPopoverRef.current?.onClose?.();
+    if (platform.label === homeTabStore.currentPlatform?.label || loading) {
+      return;
+    }
     homeTabStore.set({ currentPlatform: platform });
-    // loadMore(true, LIMIT, { platform: platform.value });
+    loadMore(true, LIMIT, { DApp: (platform.value as any), status: homeTabStore.currentSummary?.value });
   };
 
   useEffect(() => {
@@ -209,22 +224,33 @@ export default function Created({
     if (isCurrent) {
       timerRef.current = setTimeout(() => {
         loadMore(true, list.length);
-      }, 3000);
+      }, 300);
     }
   }, [isCurrent]);
+
+
 
   if (list.length === 0) {
     return (
       <>
-        <StatusSelect
-          type={type}
-          popoverRef={popoverRef}
-          summaries={summaries}
-          currentSummary={homeTabStore.currentSummary}
-          handleSelect={handleSelect}
-        />
+        <div className={isMobile ? styles.CreatedHeaderMobile : styles.CreatedHeader}>
+          <PlatformSelect
+            type={type}
+            popoverRef={platformPopoverRef}
+            currentSummary={homeTabStore.currentPlatform}
+            handleSelect={handlePlatformSelect}
+          />
+
+          <StatusSelect
+            type={type}
+            popoverRef={popoverRef}
+            summaries={summaries}
+            currentSummary={homeTabStore.currentSummary}
+            handleSelect={handleSelect}
+          />
+        </div>
         <div style={{ paddingTop: 116 }}>
-          <Empty text={"No Fun coins " + type + " yet"} id={type} />
+          <Empty text={"No Fun coins " + (type === 'liked' ? 'collected' : type) + " yet"} id={type} />
         </div>
       </>
     );
@@ -232,24 +258,25 @@ export default function Created({
 
   return (
     <div className={styles.ProfileCreatedContainer}>
+      <div className={isMobile ? styles.CreatedHeaderMobile : styles.CreatedHeader}>
+        <PlatformSelect
+          type={type}
+          popoverRef={platformPopoverRef}
+          currentSummary={homeTabStore.currentPlatform}
+          handleSelect={handlePlatformSelect}
+        />
 
-      <PlatformSelect
-        type={type}
-        popoverRef={platformPopoverRef}
-        currentSummary={homeTabStore.currentPlatform}
-        handleSelect={handlePlatformSelect}
-      />
-
-      <StatusSelect
-        type={type}
-        popoverRef={popoverRef}
-        summaries={summaries}
-        currentSummary={homeTabStore.currentSummary}
-        handleSelect={handleSelect}
-      />
+        <StatusSelect
+          type={type}
+          popoverRef={popoverRef}
+          summaries={summaries}
+          currentSummary={homeTabStore.currentSummary}
+          handleSelect={handleSelect}
+        />
+      </div>
 
       <div className={from === "page" ? styles.PcListWrapper : ""}>
-        {list.map((item) => {
+        {list.map((item, index) => {
           const isSuperLike = !isOther
             ? item.isSuperLike
             : !unfliped?.includes(item.address);
@@ -269,6 +296,15 @@ export default function Created({
               }}
               onWithdrawSuccess={async () => {
                 loadMoreDelay(true, LIMIT);
+              }}
+              onCollectSuccess={async () => {
+                if (type === 'liked') {
+                  list.splice(index, 1);
+                  setList([
+                    ...list
+                  ]);
+                }
+
               }}
             />
           );
@@ -312,7 +348,7 @@ const StatusSelect = (props: any) => {
                   onClick={() => handleSelect(s)}
                 >
                   <div className={styles.SelectItemLeft}>{s.label}</div>
-                  <div className={styles.SelectItemRight}>{s.amount}</div>
+                  {/* <div className={styles.SelectItemRight}>{s.amount}</div> */}
                 </li>
               ))}
             </ul>
@@ -321,7 +357,8 @@ const StatusSelect = (props: any) => {
       >
         <div className={styles.Select}>
           <div className={styles.SelectValue}>
-            {currentSummary?.label || "All"} {currentSummary?.amount || "0"}
+            {currentSummary?.label || "All"} 
+            {/* {currentSummary?.amount || "0"} */}
           </div>
           <div className={styles.SelectArrow}>
             <svg
@@ -346,9 +383,12 @@ const StatusSelect = (props: any) => {
 };
 
 const PlatformSelect = (props: any) => {
+
   const { type, popoverRef, currentSummary, handleSelect } = props;
   const { isMobile } = useUserAgent();
   if (type !== "liked") return null;
+
+  console.log(type, type !== "liked")
 
   return (
     <div

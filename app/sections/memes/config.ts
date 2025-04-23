@@ -17,53 +17,127 @@ export enum Order {
   Desc = "desc"
 }
 
-export const TABS: Tab[] = [
-  {
-    value: "hot",
-    label: "Hot",
-    filters: [
-      { value: "virtual_volume", label: "Volume", order: Order.Desc },
-      { value: "market_cap", label: "MCap", order: Order.Desc }
-      // { value: 'holder', label: 'Holders', order: Order.Desc },
-    ]
+export enum MemePlatform {
+  Raydium = "Raydium",
+  Meteora = "Meteora",
+  FlipN = "sexy",
+}
+
+export interface MemePlatformItem {
+  value: MemePlatform;
+  label: string;
+  icon: string;
+  // used for back-end params
+  dApp: string[];
+}
+
+export const MemePlatforms: Record<MemePlatform, MemePlatformItem> = {
+  [MemePlatform.Raydium]: {
+    value: MemePlatform.Raydium,
+    label: "Raydium",
+    icon: "/img/memes/icon-raydium.svg",
+    dApp: ["ray_launchpad"],
   },
-  {
-    value: "genesis",
-    label: "Genesis",
-    filters: [
-      { value: "likes", label: "Likes", order: Order.Desc },
-      { value: "flips", label: "Flips", order: Order.Desc },
-      { value: "latest", label: "Latest", order: Order.Desc }
-    ]
+  [MemePlatform.Meteora]: {
+    value: MemePlatform.Meteora,
+    label: "Meteora",
+    icon: "/img/memes/icon-meteora.svg",
+    dApp: ["ray_launchpad"],
   },
-  {
-    value: "ticking",
+  [MemePlatform.FlipN]: {
+    value: MemePlatform.FlipN,
+    label: "FlipN",
+    icon: "/img/memes/icon-flipn.svg",
+    dApp: ["ray_launchpad"],
+  },
+};
+
+export enum MemePhase {
+  All = "All",
+  New = "New",
+  Bonding = "Bonding",
+  Listed = "Listed",
+}
+
+export enum MemePhaseType {
+  All = "all",
+  New = "genesis",
+  Bonding = "ticking",
+  Listed = "listed",
+}
+
+export interface MemePhaseItem {
+  value: MemePhase;
+  label: string;
+  status: number | "";
+  type: MemePhaseType;
+}
+
+export const MemePhases: Record<MemePhase, MemePhaseItem> = {
+  [MemePhase.All]: {
+    value: MemePhase.All,
+    label: "All",
+    status: "",
+    type: MemePhaseType.All,
+  },
+  [MemePhase.New]: {
+    value: MemePhase.New,
+    label: "New",
+    status: 0,
+    type: MemePhaseType.New,
+  },
+  [MemePhase.Bonding]: {
+    value: MemePhase.Bonding,
     label: "Bonding",
-    filters: [
-      { value: "almost", label: "Almost", order: Order.Desc },
-      { value: "volume", label: "Volume", order: Order.Desc },
-      { value: "mcap", label: "MCap", order: Order.Desc },
-      // { value: 'holders', label: 'Holders', order: Order.Desc },
-      { value: "latest", label: "Latest", order: Order.Desc }
-    ]
+    status: 1,
+    type: MemePhaseType.Bonding,
   },
-  {
-    value: "listed",
+  [MemePhase.Listed]: {
+    value: MemePhase.Listed,
     label: "Listed",
-    filters: [
-      { value: "volume", label: "Volume", order: Order.Desc },
-      { value: "mcap", label: "MCap", order: Order.Desc },
-      // { value: 'holders', label: 'Holders', order: Order.Desc },
-      { value: "latest", label: "Latest", order: Order.Desc }
-    ]
+    status: 3,
+    type: MemePhaseType.Listed,
   },
-  {
-    value: "import",
-    label: "Import",
-    filters: [
-      { value: "import", label: "All", order: Order.Desc },
-      { value: "pump", label: "Pump", order: Order.Desc },
-      { value: "gofund", label: "GoFund", order: Order.Desc },
-    ]
-  }
-];
+};
+
+export enum MemeSort {
+  MC = "mcap",
+  Almost = "almost",
+  Volume = "volume",
+  Age = "latest",
+  Likes = "likes",
+  Flips = "flips",
+  Import = "import",
+  Liq = "liq",
+  Holders = "holders",
+}
+
+export type MemeSortOptionTypes = MemeSort.Age | MemeSort.Liq | MemeSort.MC | MemeSort.Volume | MemeSort.Holders;
+
+export interface MemeSortOption {
+  value: MemeSortOptionTypes;
+  label: string;
+}
+
+export const MemeSortOptions: Record<MemeSortOptionTypes, MemeSortOption> = {
+  [MemeSort.Age]: {
+    value: MemeSort.Age,
+    label: "Age",
+  },
+  [MemeSort.Liq]: {
+    value: MemeSort.Liq,
+    label: "Liq",
+  },
+  [MemeSort.Volume]: {
+    value: MemeSort.Volume,
+    label: "Vol",
+  },
+  [MemeSort.MC]: {
+    value: MemeSort.MC,
+    label: "MCap",
+  },
+  [MemeSort.Holders]: {
+    value: MemeSort.Holders,
+    label: "Holders",
+  },
+};

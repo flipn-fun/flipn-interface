@@ -1,5 +1,11 @@
 .Like {
   position: relative;
+  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+  font-family: Unbounded;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 .LikeNum {
@@ -21,6 +27,14 @@
   transition: 0.3s;
   position: relative;
   z-index: 2;
+  
+}
+
+.PcLike {
+  /* width: 42px;
+  height: 42px;
+  background-color: #ffffff1a;
+  border-radius: 42px; */
 }
 
 .HeartGif {

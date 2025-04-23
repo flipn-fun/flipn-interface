@@ -193,7 +193,7 @@
   position: absolute;
   left: 5px;
   top: 4px;
-  z-index: 10;
+  z-index: 4;
   width: 20px;
   height: 20px;
   border-radius: 20px;
@@ -206,16 +206,22 @@
 }
 
 .platformIcon img {
-  width: 80%;
-  object-fit: cover;
+  height: 80%;
 }
 
 .collectIcon {
   position: absolute;
   right: 10px;
   top: 10px;
-  z-index: 10;
+  z-index: 5;
   width: 20px;
   height: 20px;
   cursor: pointer;
+}
+
+.collectIconMobile {
+  right: auto;
+  left: 0px;
+  top: 50%;
+  transform: translateY(-50%) scale(1.2);
 }

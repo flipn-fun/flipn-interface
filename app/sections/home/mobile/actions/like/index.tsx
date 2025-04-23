@@ -5,7 +5,10 @@ import LikedLabel from "../liked-label";
 import FloatingHearts from "./hearts";
 import LikeIcon from "./like-icon";
 import { useEffect, useState } from "react";
-
+import { httpAuthPost } from "@/app/utils";
+import { httpAuthDelete } from "@/app/utils";
+import { useUserAgent } from "@/app/context/user-agent";
+import { fail, success } from "@/app/utils/toast";
 export default function Like({
   token,
   onSuccess,
@@ -18,43 +21,62 @@ export default function Like({
   const [showHearts, setShowHearts] = useState(false);
   const [mergedLiked, setMergedLiked] = useState(false);
   const [mergedNum, setMergedNum] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const { isMobile } = useUserAgent();
+  
 
   useEffect(() => {
-    setMergedLiked(token.isLike);
-    setMergedNum(token.like);
+    setMergedLiked(token.is_collect);
+    setMergedNum(token.collect);
   }, [token]);
 
   return (
     <div
-      className={styles.Like}
+      className={styles.Like + ' ' + (isMobile ? styles.MbLike : styles.PcLike)}
       onClick={async () => {
-        if (mergedLiked || disabled) return;
+        if (disabled) return;
+        if (isLoading) return;
+        setIsLoading(true);
+
         if (!window.sexAddress) {
           window.connect();
           return;
         }
 
-        setShowAnimation(true);
-        setShowHearts(true);
-        setTimeout(() => {
-          setShowAnimation(false);
-        }, 1000);
+        // setShowAnimation(true);
+        // setShowHearts(true);
+        // setTimeout(() => {
+        //   setShowAnimation(false);
+        // }, 1000);
 
-        setTimeout(() => {
-          setShowHearts(false);
-        }, 6000);
+        // setTimeout(() => {
+        //   setShowHearts(false);
+        // }, 6000);
 
-        const res = await actionLikeTrigger({
-          data: token,
-          onShare: showShare,
-          onSuccess: updateUserLikeNum
-        });
+        const isCollect = token.is_collect;
+        setMergedLiked(!isCollect);
+        setMergedNum(!isCollect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
+
+        let res
+        if (isCollect) {
+          res = await httpAuthDelete('/project/collect?id=' + token.id)
+        } else {
+          res = await httpAuthPost('/project/collect?id=' + token.id)
+        }
 
         if (res) {
-          setMergedLiked(true);
-          setMergedNum(mergedNum + 1);
+          // setMersuccess('Request Success')gedLiked(!isCollect);
+          // setMergedNum(!isCollect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
           onSuccess("like");
+          token.is_collect = !isCollect;
+          success(isCollect ? 'Successfully canceled' : 'Successfully collected')
+        } else {
+          fail(isCollect ? 'Unliked' : 'Liked')
         }
+
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       }}
     >
       {/* {mergedLiked && <LikedLabel className={styles.LikedLabel} />}

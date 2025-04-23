@@ -72,7 +72,7 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    console.log('configInfo', configInfo, configInfo.maxShareFeeRate.toString());
+    // getQouteBeforeBuy(amount)
 
     const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
@@ -87,13 +87,13 @@ export const useRay = (params: Params | null) => {
       configId,
       configInfo: {
         ...configInfo,
-        migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(0),
+        migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(3 * (10 ** 9)),
         minSupplyA: new BN('1000000000'),
         minFundRaisingB: new BN(1 * (10 ** 9)),
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
-      platformId: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
+      platformId: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T') : new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
@@ -127,31 +127,46 @@ export const useRay = (params: Params | null) => {
     return tx;
   }, [raydiumInstance.current, publicKey])
 
-  // const getQouteBeforeBuy = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
-  //   if (!raydiumInstance.current || !params) return;
+  const getQouteBeforeBuy = useCallback(async (amount: string) => {
+    if (!raydiumInstance.current || !params) return;
 
-  //   const mintA = new PublicKey(params.token.address as string)
-  //   const mintB = NATIVE_MINT
+    const inAmount = new BN(amount)
 
-  //   const inAmount = new BN(amount)
+    const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
-  //   const itemBuy = Curve.buyExactIn({
-  //     poolInfo: {
-  //       virtualA: a,
-  //       virtualB: b,
-  //       realA,
-  //       realB,
-  //       totalFundRaisingB: new BN(0),
-  //       totalSellA: new BN('800000000000000'),
-  //     },
-  //     amountB: inAmount,
-  //     protocolFeeRate: new BN(0),
-  //     platformFeeRate: new BN(0),
-  //     curveType: 0,
-  //     shareFeeRate: new BN(0),
-  //   });
+    const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
+    if (!configData) throw new Error('config not found')
+
+    const configInfo = LaunchpadConfig.decode(configData.data)
+
+    const curve = Curve.getCurve(0);
+    const initParam = curve.getInitParam({
+      supply: new BN('1000000000000000'),
+      totalFundRaising: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(45 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalSell: new BN('800000000000000'),
+      totalLockedAmount: new BN('0'),
+      migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(0),
+    });
+
+    const itemBuy = Curve.buyExactIn({
+      poolInfo: {
+        virtualA: initParam.a,
+        virtualB: initParam.b,
+        realA: new BN(0),
+        realB: new BN(0),
+        totalFundRaisingB: new BN(0),
+        totalSellA: new BN('800000000000000'),
+      },
+      amountB: inAmount,
+      protocolFeeRate: configInfo.tradeFeeRate,
+      platformFeeRate: new BN(1125),
+      curveType: 0,
+      shareFeeRate: new BN(0),
+    });
+
+    return itemBuy.amountA.toString()
     
-  // }, [raydiumInstance.current, params])
+  }, [raydiumInstance.current, params])
 
   const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;
@@ -173,6 +188,9 @@ export const useRay = (params: Params | null) => {
     let res: any = null;
     if (type === 'buy') {
       console.log('buy', poolInfo, inAmount)
+      console.log('virtualA', poolInfo.virtualA.toString(), poolInfo.virtualB.toString(), poolInfo.realA.toString(), poolInfo.realB.toString())
+
+      console.log('platformInfo', poolInfo.configInfo.tradeFeeRate.toString())
 
       res = Curve.buyExactIn({
         poolInfo,
@@ -337,6 +355,7 @@ export const useRay = (params: Params | null) => {
     getQoute,
     trade,
     createPlatform,
+    getQouteBeforeBuy,
     programId,
   }
 }

@@ -1,21 +1,27 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { httpGet, timeAgo } from "@/app/utils";
-import { PublicKey } from "@solana/web3.js";
-import { programId_address } from "@/app/utils/config";
-import Big from "big.js";
-import { Program } from "@coral-xyz/anchor";
-import idl from "@/app/hooks/meme_launchpad.json";
-import { useConnection } from "@solana/wallet-adapter-react";
-import { Hot, Meme, useMemesListStore } from "@/app/sections/memes/store/list";
-import { MemesState, useMemesStore } from "@/app/sections/memes/store";
-import { Order, TABS } from "@/app/sections/memes/config";
-import { useThrottleFn } from "ahooks";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { httpAuthGet, httpAuthPost, httpGet, timeAgo } from '@/app/utils';
+import { PublicKey } from '@solana/web3.js';
+import { programId_address } from '@/app/utils/config';
+import Big from 'big.js';
+import { Program } from '@coral-xyz/anchor';
+import idl from '@/app/hooks/meme_launchpad.json';
+import { useConnection } from '@solana/wallet-adapter-react';
+import { Hot, Meme, useMemesListStore } from '@/app/sections/memes/store/list';
+import { MemesState, useMemesStore } from '@/app/sections/memes/store';
 import {
-  fetchData,
-  getGranularityByResolution
-} from "@/app/components/chart/fetch-data";
-import { getTokenMeta } from "@/app/utils/solanaScanApi";
-import { minBy } from "lodash-es";
+  MemePhase,
+  MemePhaseType,
+  MemePlatform,
+  MemePlatformItem,
+  MemeSort,
+} from '@/app/sections/memes/config';
+import { useDebounceFn, useRequest, useThrottleFn } from 'ahooks';
+import { fetchData, getGranularityByResolution } from '@/app/components/chart/fetch-data';
+import { getTokenMeta } from '@/app/utils/solanaScanApi';
+import { DebouncedFunc, minBy, trim } from 'lodash-es';
+import { useAccount } from '@/app/hooks/useAccount';
+import { useAuth } from '@/app/context/auth';
+import { GridTableSortDirection } from '@/app/components/grid-table';
 
 export function useMemes(props?: { isLoadData?: boolean }): Memes {
   const { isLoadData } = props ?? {};
@@ -25,6 +31,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     hotListLoading,
     setHotList,
     setHotListLoading,
+    memesAllList,
     memesGenesisList,
     memesImportList,
     memesListedList,
@@ -33,6 +40,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     memesListPageLimit,
     memesListPageNext,
     memesListPageOffset,
+    setMemesAllList,
     setMemesListedList,
     setMemesTickingList,
     setMemesImportList,
@@ -48,74 +56,57 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     setMemesHoldersQueue,
     spliceMemesHoldersQueue,
     memesListHoldersLoading,
-    setMemesListHoldersLoading
+    setMemesListHoldersLoading,
+
+    memesListSortDataIndex,
+    memesListSortDirection,
+    memesListPlatform,
+    setMemesListSortDataIndex,
+    setMemesListSortDirection,
+    setMemesListPlatform,
+    memesListSearchText,
+    setMemesListSearchText,
   } = useMemesListStore();
-  const {
-    currentTab,
-    setCurrentTab,
-    prevTab,
-    setPrevTab,
-    currentFilter,
-    setCurrentFilter
-  } = useMemesStore();
+  const { currentTab, setCurrentTab } = useMemesStore();
   const { connection } = useConnection();
+  const { address } = useAccount();
+  const { accountRefresher } = useAuth();
 
   const memesContainerRef = useRef<any>();
   const [holdersLoading, setHoldersLoading] = useState(false);
 
   const _currentMemesList = (_type: string) => {
-    if (_type === TABS[1].value) {
+    if (_type === MemePhaseType.All) {
+      return memesAllList;
+    }
+    if (_type === MemePhaseType.New) {
       return memesGenesisList;
     }
-    if (_type === TABS[2].value) {
+    if (_type === MemePhaseType.Bonding) {
       return memesTickingList;
     }
-    if (_type === TABS[3].value) {
+    if (_type === MemePhaseType.Listed) {
       return memesListedList;
     }
-    if (_type === TABS[4].value) {
-      return memesImportList;
-    }
-    if (_type === 'pump') {
-      return memesImportList;
-    }
-    if (_type === 'gofund') {
-      return memesImportList;
-    }
+    // if (_type === 'pump') {
+    //   return memesImportList;
+    // }
+    // if (_type === 'gofund') {
+    //   return memesImportList;
+    // }
     return [];
   };
 
   const listShown = useMemo<Hot[] | Meme[]>(() => {
-    let _list: any = _currentMemesList(currentTab.value);
-    if (currentTab.value === TABS[0].value) {
-      _list = hotList;
-      if (currentFilter) {
-        _list = _list.sort((a: any, b: any) => {
-          const aValue = Big(a[currentFilter.value]);
-          const bValue = Big(b[currentFilter.value]);
-
-          if (aValue.eq(bValue)) {
-            const aSort = a.ranking || 0;
-            const bSort = b.ranking || 0;
-            return aSort - bSort;
-          }
-
-          if (currentFilter.order === Order.Asc) {
-            return aValue.lt(bValue) ? -1 : 1;
-          }
-          return aValue.gt(bValue) ? -1 : 1;
-        });
-      }
-    }
-    return _list;
+    return _currentMemesList(currentTab.type);
   }, [
     hotList,
+    memesAllList,
     memesGenesisList,
     memesImportList,
     memesListedList,
     memesTickingList,
     currentTab,
-    currentFilter,
     _currentMemesList
   ]);
 
@@ -283,38 +274,45 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     setMemesListLoading(true);
     const {
       offset = memesListPageOffset,
-      order = currentFilter?.order,
-      sort = currentFilter?.value,
-      type = currentTab.value
+      order = memesListSortDirection,
+      sort = memesListSortDataIndex,
+      type = currentTab.type,
+      auth,
+      query_dApp = memesListPlatform.label,
+      search = trim(memesListSearchText),
     } = params ?? {};
-
-    console.log('getMemesList params:', params);
 
     const _getMinId = () => {
       let _mim_id: any = void 0;
       switch (type) {
         // Genesis
-        case TABS[1].value:
+        case MemePhase.All:
+          _mim_id = minBy(memesAllList, "id")?.id;
+          break;
+        // Genesis
+        case MemePhase.New:
           _mim_id = minBy(memesGenesisList, "id")?.id;
           break;
         // Ticking
-        case TABS[2].value:
+        case MemePhase.Bonding:
           _mim_id = minBy(memesTickingList, "id")?.id;
           break;
         // Listed
-        case TABS[3].value:
+        case MemePhase.Listed:
           _mim_id = minBy(memesListedList, "id")?.id;
           break;
+        //#region 👇Useless anymore
         // Import
-        case TABS[4].value:
-          _mim_id = minBy(memesImportList, "id")?.id;
-          break;
-        case 'pump':
-          _mim_id = minBy(memesImportList, "id")?.id;
-          break;
-        case 'gofund':
-          _mim_id = minBy(memesImportList, "id")?.id;
-          break;
+        // case TABS[4].value:
+        //   _mim_id = minBy(memesImportList, "id")?.id;
+        //   break;
+        // case 'pump':
+        //   _mim_id = minBy(memesImportList, "id")?.id;
+        //   break;
+        // case 'gofund':
+        //   _mim_id = minBy(memesImportList, "id")?.id;
+        //   break;
+        //#endregion 👆
         default:
           break;
       }
@@ -327,7 +325,8 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
         offset: offset * memesListPageLimit,
         order,
         sort,
-        type
+        type,
+        query_dApp,
       };
 
       if (offset !== 0) {
@@ -336,34 +335,49 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       if (!memesListParams.min_id) {
         delete memesListParams.min_id;
       }
-      const res = await httpGet(`/project/memes/list`, memesListParams);
+      if (search) {
+        memesListParams.test = search;
+      }
+
+      let res: any;
+      if (auth) {
+        res = await httpAuthGet(`/project/memes/list`, memesListParams);
+      } else {
+        res = await httpGet(`/project/memes/list`, memesListParams);
+      }
 
       const _memes_list = await formatMemesList(res.data.list, type);
 
       const _setMemesList = (val: any) => {
         switch (type) {
+          // All
+          case MemePhaseType.All:
+            setMemesAllList(val);
+            break;
           // Genesis
-          case TABS[1].value:
+          case MemePhaseType.New:
             setMemesGenesisList(val);
             break;
           // Ticking
-          case TABS[2].value:
+          case MemePhaseType.Bonding:
             setMemesTickingList(val);
             break;
           // Listed
-          case TABS[3].value:
+          case MemePhaseType.Listed:
             setMemesListedList(val);
             break;
+          //#region 👇Useless anymore
           // Import
-          case TABS[4].value:
-            setMemesImportList(val);
-            break;
-          case 'pump':
-            setMemesImportList(val);
-            break;
-          case 'gofund':
-            setMemesImportList(val);
-            break;
+          // case TABS[4].value:
+          //   setMemesImportList(val);
+          //   break;
+          // case 'pump':
+          //   setMemesImportList(val);
+          //   break;
+          // case 'gofund':
+          //   setMemesImportList(val);
+          //   break;
+          //#endregion 👆
           default:
             break;
         }
@@ -384,14 +398,14 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       setMemesListLoading(false);
     }
   };
+  const { run: getMemesListDelay } = useDebounceFn(getMemesList, { wait: 1000 });
 
   const { run: onMemesListNextPage } = useThrottleFn(
     () => {
       if (memesListLoading || !memesListPageNext) return;
-      console.log('currentFilter?.value:', currentFilter);
       getMemesList({
         offset: memesListPageOffset + 1,
-        type: currentTab.value === TABS[4].value ? currentFilter?.value : currentTab.value
+        type: currentTab.type
       });
     },
     { wait: 1000 }
@@ -411,11 +425,16 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     if (!isLoadData) return;
 
     getHotList();
-
-    getMemesList({
-      type: currentTab.value === 'import' ? currentFilter?.value : currentTab.value
-    });
   }, [isLoadData]);
+
+  useEffect(() => {
+    if (!isLoadData) return;
+
+    getMemesListDelay({
+      auth: address && accountRefresher,
+      type: currentTab.type
+    });
+  }, [isLoadData, address, accountRefresher]);
 
   useEffect(() => {
     if (holdersLoading) return;
@@ -430,36 +449,48 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
     list: listShown,
     getHotList,
     getMemesList,
+    getMemesListDelay,
     hotListLoading,
     memesListLoading,
     currentTab,
     setCurrentTab,
-    prevTab,
-    setPrevTab,
-    currentFilter,
-    setCurrentFilter,
     memesListPageNext,
     onMemesListNextPage,
     initMemesList,
     memesContainerRef,
     setMemesListCountdown,
     memesListHolders,
-    memesListHoldersLoading
+    memesListHoldersLoading,
+    memesListPageOffset,
+    setMemesListPageOffset,
+
+    memesListSortDataIndex,
+    memesListSortDirection,
+    memesListPlatform,
+    setMemesListSortDataIndex,
+    setMemesListSortDirection,
+    setMemesListPlatform,
+    memesListSearchText,
+    setMemesListSearchText,
   };
 }
 
 interface MemesListParams {
   offset?: number;
-  order?: Order;
+  order?: GridTableSortDirection;
   sort?: string;
   type?: string;
+  auth?: boolean;
+  query_dApp?: MemePlatform;
+  search?: string;
 }
 
 export interface Memes extends MemesState {
   hotList: Hot[];
   list: Hot[] | Meme[];
   getHotList(): Promise<void>;
-  getMemesList(params?: MemesListParams): Promise<void>;
+  getMemesList: (params?: (MemesListParams | undefined)) => Promise<void>;
+  getMemesListDelay: DebouncedFunc<(params?: (MemesListParams | undefined)) => Promise<void>>;
   hotListLoading: boolean;
   memesListLoading: boolean;
   memesListPageNext: boolean;
@@ -469,4 +500,15 @@ export interface Memes extends MemesState {
   setMemesListCountdown: (obj: Record<string, number>) => void;
   memesListHolders: Record<string, number>;
   memesListHoldersLoading: Record<string, boolean>;
+  memesListPageOffset: number;
+  setMemesListPageOffset: (offset: number) => void;
+
+  memesListSortDataIndex: MemeSort;
+  memesListSortDirection: GridTableSortDirection;
+  memesListPlatform: MemePlatformItem;
+  setMemesListSortDataIndex: (sort: MemeSort) => void;
+  setMemesListSortDirection: (direction: GridTableSortDirection) => void;
+  setMemesListPlatform: (platform: MemePlatformItem) => void;
+  memesListSearchText: string;
+  setMemesListSearchText: (searchText: string) => void;
 }

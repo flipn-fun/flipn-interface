@@ -28,6 +28,7 @@ interface Props {
   type?: string;
   isOther: boolean;
   onWithdrawSuccess?(): void;
+  onCollectSuccess?(): void;
 }
 
 const likeStatus: any = {}
@@ -40,17 +41,20 @@ export default function Token({
   type,
   from,
   isOther,
-  onWithdrawSuccess
+  onWithdrawSuccess,
+  onCollectSuccess
 }: Props) {
   const router = useRouter();
   const { userInfo }: any = useUser();
   const { connection } = useConnection();
   const { isMobile } = useUserAgent();
   const [_likeStatus, setLikeStatus] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const [prepaidRealAmount, setPrepaidRealAmount] = useState(Big(0));
   const [prepaidAmount, setPrepaidAmount] = useState(Big(0));
   const [tokenAmount, setTokenAmount] = useState(Big(0));
+
 
   const {
     pool,
@@ -174,7 +178,7 @@ export default function Token({
         flexDirection: from === "page" ? "column" : "row",
         gap: from === "page" ? 10 : 0,
         padding: from === "page" ? 0 : "10px 15px",
-        alignItems: from === "page" ? "flex-start" : "center"
+        alignItems: from === "page" ? "flex-start" : "center",
       }}
       onClick={() => {
         router.push("/detail?address=" + data.address + "&from=profile");
@@ -187,7 +191,7 @@ export default function Token({
           // width: from === "page" ? "100%" : "auto",
           backgroundColor:
             from === "page" ? "rgba(255, 255, 255, 0.05)" : "transparent",
-          padding: from === "page" ? "4px 12px 15px" : 0,
+          padding: from === "page" ? "4px 12px 15px" : '0 0 0 32px',
           borderRadius: from === "page" ? 10 : 0
         }}
       >
@@ -224,7 +228,7 @@ export default function Token({
 
           <div className={styles.platformIcon}>
             {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
-            {data.DApp === 'ray_launchpad' && <img src="/img/create/raydium.png" alt="" />}
+            {data.DApp?.includes('ray_launchpad') && <img src="/img/create/raydium.png" alt="" />}
             {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
           </div>
 
@@ -297,28 +301,35 @@ export default function Token({
           )}
         </div>
 
-        <div className={styles.collectIcon} onClick={async (e) => {
+        <div className={styles.collectIcon + ' ' + (isMobile ? styles.collectIconMobile : '')} onClick={async (e) => {
+          if (isLoading) return;
           e.stopPropagation();
+          setIsLoading(true);
           let res = null;
-          if (data.isLike) {
-            res = await httpAuthDelete('/project/like?id=' + data.id)
-            console.log('res:', res)
+          const isCollect = typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!];
+
+          likeStatus[data.id!] = !(data as any).is_collect;
+          setLikeStatus(likeStatus)
+          if (isCollect) {
+            res = await httpAuthDelete('/project/collect?id=' + data.id)
+            onCollectSuccess?.()
           } else {
-            res = await httpAuthPost('/project/like?id=' + data.id)
-            console.log('res:', res)
+            res = await httpAuthPost('/project/collect?id=' + data.id)
           }
 
           if (res?.code === 0) {
-            data.isLike = !data.isLike;
-            likeStatus[data.id!] = data.isLike;
-            success('Request Success')
-            setLikeStatus(likeStatus)
+            (data as any).is_collect = !isCollect;
+            success(isCollect ? 'Successfully canceled' : 'Successfully collected')
           } else {
             fail('Request Failed')
           }
+
+          likeStatus[data.id!] = (data as any).is_collect;
+          setLikeStatus(likeStatus)
+          setIsLoading(false);
         }}>
           {
-            (typeof (_likeStatus[data.id!]) === 'undefined' ? data.isLike : likeStatus[data.id!])
+            (typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!])
               ? <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10 0L12.9624 5.92255L19.5106 6.90983L14.7933 11.5574L15.8779 18.0902L10 15.04L4.12215 18.0902L5.20668 11.5574L0.489435 6.90983L7.03756 5.92255L10 0Z" fill="white" fill-opacity="0.6" />
               </svg>
