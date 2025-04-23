@@ -686,6 +686,7 @@ export default function BuySellLaunched({
                     let showBuyInToken: any =
                       Number(buyIn) * 10 ** token.tokenDecimals!;
                     setIsLoading(true);
+
                     if (activeIndex === 0) {
                       if (dexType === 0) {
                         hash = await trade(buyInSol, "buy", slip * 100);

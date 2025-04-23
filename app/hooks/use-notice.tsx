@@ -59,7 +59,7 @@ export default function useNotice() {
               <div style={{ fontSize: 13, fontWeight: 300 }}>
                 The token{" "}
                 <span style={{ fontWeight: 600 }}>{notice.content_2}</span> you
-                created just listed!
+                created just bonding!
               </div>
             )}
 
