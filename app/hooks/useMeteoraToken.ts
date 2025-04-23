@@ -28,7 +28,7 @@ export const useMeteoraToken = () => {
         const transaction = await poolService.createPool({
             quoteMint: NATIVE_MINT,
             baseMint: baseMint.publicKey,
-            config: new PublicKey('FAxXAjXYyEYrtBD9Fgqyo3LiMBrENPc4Fuzs8opWBcLv'),
+            config: new PublicKey('E2LQe6Xg5SLSnSECzxNjiNgHj1wxKuX5ieXBGNUMveYF'),
             baseTokenType: TokenType.SPL,
             quoteTokenType: TokenType.SPL,
             name: 'Test Pool',
