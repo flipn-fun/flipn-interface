@@ -105,8 +105,9 @@ const MemesContent = (props: any) => {
     {
       key: "platform",
       dataIndex: "platform",
-      width: "1fr",
+      width: "124px",
       title: "Platform",
+      ellipsis: true,
       render: (record: any) => {
         const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
 
@@ -116,7 +117,7 @@ const MemesContent = (props: any) => {
     {
       key: "age",
       dataIndex: "latest",
-      width: "1fr",
+      width: "124px",
       title: "Age",
       sort: true,
       ellipsis: true,
@@ -127,8 +128,9 @@ const MemesContent = (props: any) => {
     {
       key: "phase",
       dataIndex: "phase",
-      width: "1fr",
+      width: "124px",
       title: "Phase",
+      ellipsis: true,
       render: (record: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
@@ -167,9 +169,10 @@ const MemesContent = (props: any) => {
     {
       key: "volume",
       dataIndex: "volume",
-      width: "1fr",
+      width: "124px",
       title: "Volume",
       sort: true,
+      ellipsis: true,
       render: (record: any) => {
         return numberFormatter(record.volume, 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
       },
@@ -177,8 +180,9 @@ const MemesContent = (props: any) => {
     {
       key: "marketCap",
       dataIndex: "mcap",
-      width: "1fr",
+      width: "124px",
       title: "Market Cap",
+      ellipsis: true,
       sort: true,
       render: (record: any) => {
         return numberFormatter(record.market_cap, 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
@@ -187,8 +191,9 @@ const MemesContent = (props: any) => {
     {
       key: "holders",
       dataIndex: "holders",
-      width: "1fr",
+      width: "124px",
       title: "Holders",
+      ellipsis: true,
       render: (record: any) => {
         if (memesListHoldersLoading?.[record.address]) {
           return (
