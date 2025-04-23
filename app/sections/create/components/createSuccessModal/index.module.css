@@ -168,7 +168,13 @@
   .avatar {
     width: 142px;
     height: 142px;
+  }
+
+  .avatarBox {
+    width: 142px;
+    height: 142px;
     position: relative;
+    margin: 0 auto;
   }
 
   .platformPcImg {

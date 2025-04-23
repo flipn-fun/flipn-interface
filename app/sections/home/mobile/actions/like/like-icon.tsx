@@ -1,6 +1,8 @@
 export default function LikeIcon({ isActive, size = 32 }: any) {
   const id = String(Math.random() + Date.now());
   return (
-    isActive ? <img src="/img/home/star-full.svg" style={{ width: size, height: size }} /> : <img src="/img/home/star-empty.svg" style={{ width: size, height: size }} />
+    isActive ? 
+    <img src="/img/home/star-full.svg" style={{ width: size, height: size, textShadow: '0px 0px 4px rgba(0, 0, 0, 0.5)' }} /> : 
+    <img src="/img/home/star-empty.svg" style={{ width: size, height: size, textShadow: '0px 0px 4px rgba(0, 0, 0, 0.5)' }} />
   );
 }

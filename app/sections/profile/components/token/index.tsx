@@ -319,7 +319,7 @@ export default function Token({
 
           if (res?.code === 0) {
             (data as any).is_collect = !isCollect;
-            success('Request Success')
+            success(isCollect ? 'Successfully canceled' : 'Successfully collected')
           } else {
             fail('Request Failed')
           }

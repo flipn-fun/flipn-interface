@@ -61,6 +61,8 @@ export default function Created({
   const homeTabStore: any = useHomeTab();
   const [summaries, setSummaries] =
     useState<Record<string, Summary[]>>(SUMMARIES_DEFAULT);
+  const [platformSummaries, setPlatformSummaries] =
+    useState<Record<string, Summary[]>>(SUMMARIES_DEFAULT);
   const [list, setList] = useState<Project[]>([]);
   const [refresh, setRefresh] = useState<number>(1);
   const [hasMore, setHasMore] = useState(false);
@@ -107,8 +109,13 @@ export default function Created({
           params.project_status = _summary;
         }
 
-        if (type === "liked" && typeof opts?.DApp !== "undefined") {
-          params.DApp = opts?.DApp;
+        let _platformSummary: any = homeTabStore.currentPlatform?.value;
+        if (typeof opts?.DApp !== "undefined") {
+          _platformSummary = opts?.DApp;
+        }
+
+        if (type === "liked" && typeof _platformSummary !== "undefined") {
+          params.DApp = _platformSummary;
         }
 
         const res = await httpAuthGet(urls[type], params);
@@ -192,13 +199,16 @@ export default function Created({
       return;
     }
     homeTabStore.set({ currentSummary: summary });
-    loadMore(true, LIMIT, { status: summary.value });
+    loadMore(true, LIMIT, { status: summary.value, DApp: homeTabStore.currentPlatform?.value });
   };
 
   const handlePlatformSelect = (platform: Summary) => {
     platformPopoverRef.current?.onClose?.();
+    if (platform.label === homeTabStore.currentPlatform?.label || loading) {
+      return;
+    }
     homeTabStore.set({ currentPlatform: platform });
-    loadMore(true, LIMIT, { DApp: (platform.value as any) });
+    loadMore(true, LIMIT, { DApp: (platform.value as any), status: homeTabStore.currentSummary?.value });
   };
 
   useEffect(() => {
@@ -338,7 +348,7 @@ const StatusSelect = (props: any) => {
                   onClick={() => handleSelect(s)}
                 >
                   <div className={styles.SelectItemLeft}>{s.label}</div>
-                  <div className={styles.SelectItemRight}>{s.amount}</div>
+                  {/* <div className={styles.SelectItemRight}>{s.amount}</div> */}
                 </li>
               ))}
             </ul>
@@ -347,7 +357,8 @@ const StatusSelect = (props: any) => {
       >
         <div className={styles.Select}>
           <div className={styles.SelectValue}>
-            {currentSummary?.label || "All"} {currentSummary?.amount || "0"}
+            {currentSummary?.label || "All"} 
+            {/* {currentSummary?.amount || "0"} */}
           </div>
           <div className={styles.SelectArrow}>
             <svg

@@ -132,18 +132,20 @@ function SuccessModal({
       </div>
 
       <div className={style.content}>
-        <div className={style.avatar}>
-          <img
-            className={style.avatarImg}
-            src={token.tokenUri || token.tokenIcon || token.tokenImg}
-          />
-
+        <div className={style.avatarBox}>
+          <div className={style.avatar}>
+            <img
+              className={style.avatarImg}
+              src={token.tokenUri || token.tokenIcon || token.tokenImg}
+            />
+          </div>
           {
             !isMobile && <div className={style.platformPcImg}>
               <img src={data.platform.img} className={style.pcImg} alt={data.platform.name} />
             </div>
           }
         </div>
+
 
         <div className={style.nameContent}>
           <div className={style.time} style={{ visibility: 'hidden' }}>3:00:00</div>
@@ -156,7 +158,7 @@ function SuccessModal({
             <div className={style.successNote}>
               Collect 100 Likes to Bonding now!
             </div>
-          ) 
+          )
         }
 
         <div className={style.btnBox}>
