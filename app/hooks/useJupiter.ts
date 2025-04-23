@@ -110,8 +110,9 @@ export default function useJupiter({ tokenAddress, token }: Params) {
           transaction,
           {},
           {
-            isVersionedTransaction: true,
+            isVersionedTransaction: false,
             canJitoable: settingStore.jitoable,
+            needFeeEstimate: false,
             beforeSend: (signature: string) => {
               reportTradeData(ReportDataType.SWAP, signature, uuids[token.address as string]);
             }

@@ -44,6 +44,8 @@ const platFormats = [
   { label: "FlipN", icon: '/img/create/flip.svg', value: 'FlipN' },
   { label: "Raydium", icon: '/img/create/raydium.png', value: 'Raydium' },
   { label: "MeteOra", icon: '/img/create/meteora.png', value: 'Meteora' },
+  { label: "Gofund", icon: '/img/home/GFM.svg', value: 'Gofund' },
+  { label: "Pump", icon: '/img/home/pump.png', value: 'Pump' },
 ]
 
 export default function Created({
