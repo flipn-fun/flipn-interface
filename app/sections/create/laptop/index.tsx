@@ -22,7 +22,7 @@ export default function Laptop() {
   const { isMobile } = useUserAgent();
   const { createMint, getQoute, trade, createPlatform } = useRay({
     token: {
-      address: 'HsqBuChQcXPYxo2qE1ir8RGRFd3a2nAG1pTNGnF61GKh',
+      address: '5FqUeNGvTY4kThG8pckse4haAdMA64CrqVBuY9LbaB4i',
       about: '',
       tokenImg: '',
       tokenName: '',

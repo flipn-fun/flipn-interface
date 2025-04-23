@@ -1951,10 +1951,10 @@
   dependencies:
     "@randlabs/communication-bridge" "1.0.1"
 
-"@raydium-io/raydium-sdk-v2@0.1.125-alpha":
-  version "0.1.125-alpha"
-  resolved "https://registry.yarnpkg.com/@raydium-io/raydium-sdk-v2/-/raydium-sdk-v2-0.1.125-alpha.tgz#79626ff7ece4ea657b998790fbdbfdd898727f56"
-  integrity sha512-2Qofurq6jB82Fn8K/xqSizKOvEYN3hacXJ8ULlbcisZsIc6QpgNVJyugDKlqk34hDaaSwFtSvh0h2nFakDshtQ==
+"@raydium-io/raydium-sdk-v2@0.1.126-alpha":
+  version "0.1.126-alpha"
+  resolved "https://registry.yarnpkg.com/@raydium-io/raydium-sdk-v2/-/raydium-sdk-v2-0.1.126-alpha.tgz#ea05a198a031840a5f916261cfff4b12edf1d666"
+  integrity sha512-wpCb1rDvlENO+nfdjC1QVh6P4ImzgF/uhApw5194ycU1i8OSJrb0iZc1Egy5chafcn4i3gY2B1ivMdEeaNsSzA==
   dependencies:
     "@solana/buffer-layout" "^4.0.1"
     "@solana/spl-token" "^0.4.8"

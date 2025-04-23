@@ -53,11 +53,12 @@ export const useRay = (params: Params | null) => {
   const createMint = useCallback(async (params: Project, amount: string) => {
     if (!raydiumInstance.current) return;
 
-
     const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
     const pair = Keypair.generate()
     const mintA = pair.publicKey
+
+    console.log('createMint', configId, programId, LAUNCHPAD_PROGRAM)
 
     const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
 
@@ -72,9 +73,7 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    // getQouteBeforeBuy(amount)
-
-    const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
+    const { builder, extInfo, transaction: t } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
       mintA,
       decimals: params.tokenDecimals,
@@ -98,7 +97,7 @@ export const useRay = (params: Params | null) => {
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
       createOnly: createOnly, // true means create mint only, false will "create and buy together"
-      totalFundRaisingB: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(30 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalFundRaisingB: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(43 * (10 ** 9)) : new BN(30 * (10 ** 9)),
       totalLockedAmount: new BN('0'),
 
 
@@ -114,9 +113,16 @@ export const useRay = (params: Params | null) => {
     builder.addInstruction({ signers: [pair] })
     const { execute, transaction } = await builder.buildV0()
 
+    console.log('transaction:', transaction)
+
+    const simulated = await connection.simulateTransaction(transaction)
+
+    console.log('simulated:', simulated)
+
+
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
-      canJitoable: true,
+      canJitoable: false,
       needFeeEstimate: false,
     })
 
@@ -134,6 +140,8 @@ export const useRay = (params: Params | null) => {
 
     const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
+    console.log('getQouteBeforeBuy', configId.toBase58(), programId.toBase58(), LAUNCHPAD_PROGRAM.toBase58())
+
     const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
     if (!configData) throw new Error('config not found')
 
@@ -142,7 +150,7 @@ export const useRay = (params: Params | null) => {
     const curve = Curve.getCurve(0);
     const initParam = curve.getInitParam({
       supply: new BN('1000000000000000'),
-      totalFundRaising: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(45 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalFundRaising: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(43 * (10 ** 9)) : new BN(30 * (10 ** 9)),
       totalSell: new BN('800000000000000'),
       totalLockedAmount: new BN('0'),
       migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(0),
@@ -152,8 +160,8 @@ export const useRay = (params: Params | null) => {
       poolInfo: {
         virtualA: initParam.a,
         virtualB: initParam.b,
-        realA: new BN(0),
-        realB: new BN(0),
+        realA: new BN('0'),
+        realB: new BN('1'),
         totalFundRaisingB: new BN(0),
         totalSellA: new BN('800000000000000'),
       },
@@ -264,7 +272,7 @@ export const useRay = (params: Params | null) => {
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
-      canJitoable: true,
+      canJitoable: false,
       needFeeEstimate: false,
     })
 
@@ -298,7 +306,7 @@ export const useRay = (params: Params | null) => {
     let _transaction: Transaction | undefined
 
     if (type === 'buy') {
-      console.log('poolInfo:', poolInfo)
+      console.log('poolInfo:', poolInfo, poolInfo.realA.toString(), poolInfo.realB.toString())
 
       const { transaction, extInfo, execute, builder } = await raydiumInstance.current.launchpad.buyToken({
         programId,
