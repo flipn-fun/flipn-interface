@@ -106,8 +106,9 @@ export default function useJupiter({ tokenAddress, token }: Params) {
           transaction,
           {},
           {
-            isVersionedTransaction: true,
-            canJitoable: settingStore.jitoable
+            isVersionedTransaction: false,
+            canJitoable: settingStore.jitoable,
+            needFeeEstimate: false
           }
         );
 
