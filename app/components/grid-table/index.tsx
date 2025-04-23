@@ -145,7 +145,14 @@ const GridTable = (props: Props, ref: any) => {
                     >
                       {
                         typeof col.render === "function"
-                          ? col.render(item, index, col, idx)
+                          ? (
+                            <div
+                              className={clsx(styles.GridTableBodyColInner, col.ellipsis && styles.GridTableBodyColEllipsis)}
+                              title={col.ellipsis && item[col.dataIndex]}
+                            >
+                              {col.render(item, index, col, idx)}
+                            </div>
+                          )
                           : (
                             <div
                               className={clsx(styles.GridTableBodyColInner, col.ellipsis && styles.GridTableBodyColEllipsis)}
