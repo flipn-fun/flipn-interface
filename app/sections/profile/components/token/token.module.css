@@ -206,8 +206,7 @@
 }
 
 .platformIcon img {
-  width: 80%;
-  object-fit: cover;
+  height: 80%;
 }
 
 .collectIcon {
