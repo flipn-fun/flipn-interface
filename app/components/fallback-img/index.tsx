@@ -30,7 +30,7 @@ const FallbackImg = (props: Props) => {
         {...rest}
       />
       {
-        !isLoaded && (
+        (!isLoaded || !src) && (
           <img
             src={fallback ?? "/img/airdrop/user-avatar.svg"}
             alt={alt}

@@ -36,19 +36,19 @@ export const MemePlatforms: Record<MemePlatform, MemePlatformItem> = {
     value: MemePlatform.Raydium,
     label: "Raydium",
     icon: "/img/memes/icon-raydium.svg",
-    dApp: ["ray_launchpad"],
+    dApp: ["ray_launchpad", "ray_launchpad_other"],
   },
   [MemePlatform.Meteora]: {
     value: MemePlatform.Meteora,
     label: "Meteora",
     icon: "/img/memes/icon-meteora.svg",
-    dApp: ["ray_launchpad"],
+    dApp: ["meteora"],
   },
   [MemePlatform.FlipN]: {
     value: MemePlatform.FlipN,
     label: "FlipN",
     icon: "/img/memes/icon-flipn.svg",
-    dApp: ["ray_launchpad"],
+    dApp: ["sexy", "pump"],
   },
 };
 

@@ -260,6 +260,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       const it = _list[i];
       it.kind = "Meme";
       it.created2Now = timeAgo(it.DApp === "pump" ? it.time : it.created_at);
+      it.created2Now = it.created2Now?.replace(/minutes/i, "min");
 
       setMemesHoldersQueue(it.address);
 
