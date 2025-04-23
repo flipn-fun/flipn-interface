@@ -18,7 +18,7 @@ export const useMeteoraToken = () => {
     //     console.log('client', client)
     //   }, [])
 
-    const createMint2022 = useCallback(async () => {
+    const createMint = useCallback(async () => {
         const client = new VirtualCurveProgramClient(connection)
         const poolService = new PoolService(client)
 
@@ -72,6 +72,14 @@ export const useMeteoraToken = () => {
 
         console.log('config', config.publicKey.toBase58())
 
+        const curves = []
+        for (let i = 1; i <= 20; i++) {
+          curves.push({
+              sqrtPrice: MAX_SQRT_PRICE.muln(i * 5).divn(100),
+              liquidity: U64_MAX.shln(30 + i),
+          });
+        }
+
         // Execute
         const transaction = await partnerService.createConfig({
             config: config.publicKey,
@@ -81,10 +89,7 @@ export const useMeteoraToken = () => {
             payer,
             migrationQuoteThreshold: new BN('3750000000000'),
             collectFeeMode: 0,
-            curve: [{
-                sqrtPrice: new BN('79226673521066979257578248091'),
-                liquidity: new BN('15061703465432641408260926897979921'),
-            }],
+            curve: curves,
             activationType: 0,
             partnerLockedLpPercentage: 100,
             partnerLpPercentage: 0,
@@ -103,15 +108,15 @@ export const useMeteoraToken = () => {
                     binStepU128: new BN('1844674407370955'),
                     filterPeriod: 10,
                     decayPeriod: 120,
-                    reductionFactor: 5000,
+                    reductionFactor: 3000,
                     maxVolatilityAccumulator: 100000,
-                    variableFeeControl: 2000000,
+                    variableFeeControl: 100000,
                 },
             },
             migrationOption: 0,
             tokenDecimal: 9,
             tokenType: 0,
-            sqrtStartPrice: new BN('28240693997686202'),
+            sqrtStartPrice: new BN('195078983761054748'),
             padding: [],
             lockedVesting: {
                 amountPerPeriod: new BN(0),
@@ -202,9 +207,35 @@ export const useMeteoraToken = () => {
         
     }, [publicKey, walletProvider])  
 
+    const getQoute = useCallback(async () => {
+      const client = new VirtualCurveProgramClient(connection)
+
+      const poolConfig = await client.getPoolConfig(
+          connection,
+          new PublicKey('FAxXAjXYyEYrtBD9Fgqyo3LiMBrENPc4Fuzs8opWBcLv')
+      )
+
+      const pool = await client.getPool(
+          connection,
+          new PublicKey('FSzD8CrMnGAKg5wJGZ1ABXoRPgMzWUKSv1TfkuihUHd2')
+      )
+
+      const quote = await client.swapQuote(
+          pool!,
+          poolConfig,
+          false,
+          new BN(1000000),
+          false,
+          new BN(0)
+      )
+
+      console.log('quote', quote.amountOut.toString())
+  }, [])
+
     return {
-        createMint2022,
+        createMint,
         createConfig,
-        trade
+        trade,
+        getQoute
     };
 };
