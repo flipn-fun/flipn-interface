@@ -7,7 +7,8 @@ import LikeIcon from "./like-icon";
 import { useEffect, useState } from "react";
 import { httpAuthPost } from "@/app/utils";
 import { httpAuthDelete } from "@/app/utils";
-
+import { useUserAgent } from "@/app/context/user-agent";
+import { fail, success } from "@/app/utils/toast";
 export default function Like({
   token,
   onSuccess,
@@ -21,16 +22,17 @@ export default function Like({
   const [mergedLiked, setMergedLiked] = useState(false);
   const [mergedNum, setMergedNum] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const { isMobile } = useUserAgent();
+  
 
   useEffect(() => {
     setMergedLiked(token.is_collect);
     setMergedNum(token.collect);
   }, [token]);
 
-
   return (
     <div
-      className={styles.Like}
+      className={styles.Like + ' ' + (isMobile ? styles.MbLike : styles.PcLike)}
       onClick={async () => {
         if (disabled) return;
         if (isLoading) return;
@@ -51,7 +53,6 @@ export default function Like({
         //   setShowHearts(false);
         // }, 6000);
 
-        console.log('token:', token)
         const isCollect = token.is_collect;
         setMergedLiked(!isCollect);
         setMergedNum(!isCollect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
@@ -64,10 +65,13 @@ export default function Like({
         }
 
         if (res) {
-          // setMergedLiked(!isCollect);
+          // setMersuccess('Request Success')gedLiked(!isCollect);
           // setMergedNum(!isCollect ? mergedNum + 1 : Math.max(mergedNum - 1, 0));
           onSuccess("like");
           token.is_collect = !isCollect;
+          success(isCollect ? 'Successfully canceled' : 'Successfully collected')
+        } else {
+          fail(isCollect ? 'Unliked' : 'Liked')
         }
 
         setTimeout(() => {

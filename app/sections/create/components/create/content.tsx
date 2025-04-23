@@ -356,7 +356,7 @@ export default function Create({
                   You receive:
                 </div>
                 <div className={styles.receiveBoxAmount}>
-                  <span>{rayReceiveAmount} {tokenSymbol}</span>
+                  <span>{numberFormatter(rayReceiveAmount, 2, true)} {tokenSymbol}</span>
                   <img src={data.tokenIcon} alt="" />
                 </div>
               </div>
