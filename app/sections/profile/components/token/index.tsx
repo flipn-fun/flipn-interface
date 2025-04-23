@@ -226,18 +226,30 @@ export default function Token({
             )
           }
 
-          <div className={styles.platformIcon}>
-            {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
-            {data.DApp?.includes('ray_launchpad') && <img src="/img/create/raydium.png" alt="" />}
-            {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
-          </div>
+          {
+            (data.DApp === 'sexy' || data.DApp === 'meteora' || data.DApp?.includes('ray_launchpad')) && (
+              <div className={styles.platformIcon}>
+                {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
+                {data.DApp?.includes('ray_launchpad') && <img src="/img/create/raydium.png" alt="" />}
+                {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
+                </div>
+            )
+          }
+
+          {
+            (data.DApp === 'gofund' || data.DApp === 'pump') && (
+              <div className={styles.importTag}>
+                <img src="/img/create/import.svg" alt="" />
+              </div>
+            )
+          }
 
           <LaunchTag type={data.status as number} />
-          {
+          {/* {
             data.DApp === "pump" && (
               <img src="/img/profile/icon-pump.svg" alt="" className={styles.PumpIcon} />
             )
-          }
+          } */}
         </div>
 
         <div

@@ -3,7 +3,6 @@ import { trim } from 'lodash-es';
 import clsx from 'clsx';
 import { useUserAgent } from '@/app/context/user-agent';
 import { useEffect, useRef, useState } from 'react';
-import Loading from '@/app/components/icons/loading';
 import { motion } from 'framer-motion';
 import { useDebounceFn } from 'ahooks';
 
@@ -68,17 +67,11 @@ const Search = (props: any) => {
         paddingRight: open ? 26 : 0,
       } : void 0}
     >
-      {
-        loading ? (
-          <Loading size={14} />
-        ) : (
-          <img
-            src="/img/memes/icon-search.svg"
-            className={styles.MemesSearchIcon}
-            onClick={toggleOpen}
-          />
-        )
-      }
+      <img
+        src="/img/memes/icon-search.svg"
+        className={styles.MemesSearchIcon}
+        onClick={toggleOpen}
+      />
       {
         open && (
           <>
