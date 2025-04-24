@@ -39,7 +39,6 @@ const MemesContent = (props: any) => {
     setMemesListPlatform,
     memesListSearchText,
     setMemesListSearchText,
-    getMemesListDelay,
     memesListHolders,
     memesListHoldersLoading,
   } = useContext(MemesContext);
@@ -225,6 +224,7 @@ const MemesContent = (props: any) => {
     setMemesListSortDataIndex?.(dataIndex as MemeSort);
     setMemesListSortDirection?.(direction);
     getMemesList?.({
+      offset: 0,
       order: direction,
       sort: dataIndex,
     });
@@ -269,7 +269,7 @@ const MemesContent = (props: any) => {
                   onChange={(val: string) => {
                     setMemesListSearchText?.(val);
                     initMemesList?.();
-                    getMemesListDelay?.({
+                    getMemesList?.({
                       search: trim(val),
                       offset: 0,
                     });
@@ -314,6 +314,7 @@ const MemesContent = (props: any) => {
                     setMemesListSortDataIndex?.(option.value as MemeSort);
                     setMemesListSortDirection?.(nextDirection);
                     getMemesList?.({
+                      offset: 0,
                       order: nextDirection,
                       sort: option.value,
                     });
@@ -345,7 +346,7 @@ const MemesContent = (props: any) => {
                 onChange={(val: string) => {
                   setMemesListSearchText?.(val);
                   initMemesList?.();
-                  getMemesListDelay?.({
+                  getMemesList?.({
                     search: trim(val),
                     offset: 0,
                   });
