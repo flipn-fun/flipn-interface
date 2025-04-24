@@ -356,7 +356,7 @@ export function useAccount() {
   };
 }
 
-async function getPriorityFeeEstimate(
+export async function getPriorityFeeEstimate(
   transaction: Transaction,
   rpcEndpoint: string
 ) {
