@@ -45,7 +45,9 @@ const Record = (props: any) => {
 
   const { status } = record;
 
-  const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
+  const currPlatform = Object.values(MemePlatforms).find((p) => {
+    return p.dApp.some((reg) => reg.test(record.DApp));
+  });
   const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
   return (
@@ -107,7 +109,11 @@ const Record = (props: any) => {
           </LabelValue>
         </div>
         {
-          status === MemePhases[MemePhase.New].status && (
+          (
+            Big(record.bonding_progress || 0).lt(100)
+            && Big(record.bonding_progress || 0).gte(0)
+            && status !== MemePhases[MemePhase.Listed].status
+          ) && (
             <div className={styles.ListRecordProgress}>
               <motion.div
                 className={styles.ListRecordProgressValue}

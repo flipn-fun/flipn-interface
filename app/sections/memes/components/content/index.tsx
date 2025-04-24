@@ -68,7 +68,9 @@ const MemesContent = (props: any) => {
       title: "Token",
       width: "2fr",
       render: (record: any) => {
-        const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
+        const currPlatform = Object.values(MemePlatforms).find((p) => {
+          return p.dApp.some((reg) => reg.test(record.DApp));
+        });
         return (
           <div className={styles.MemesTableToken}>
             <FallbackImg
@@ -109,7 +111,9 @@ const MemesContent = (props: any) => {
       title: "Platform",
       ellipsis: true,
       render: (record: any) => {
-        const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
+        const currPlatform = Object.values(MemePlatforms).find((p) => {
+          return p.dApp.some((reg) => reg.test(record.DApp));
+        });
 
         return currPlatform?.label ?? record.DApp;
       },
@@ -135,7 +139,11 @@ const MemesContent = (props: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
-        if (status === MemePhases[MemePhase.New].status) {
+        if (
+          Big(record.bonding_progress || 0).lt(100)
+          && Big(record.bonding_progress || 0).gte(0)
+          && status !== MemePhases[MemePhase.Listed].status
+        ) {
           return (
             <div className={styles.MemesTablePhase}>
               <div className={styles.MemesTablePhaseValue}>
