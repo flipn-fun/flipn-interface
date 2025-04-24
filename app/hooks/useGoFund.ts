@@ -111,7 +111,7 @@ export default function useGoFund({ token }: Params) {
                 canJitoable: true,
                 needFeeEstimate: false,
                 beforeSend: (signature: string) => {
-                    reportTradeData(ReportDataType.FLIP, signature, uuids[token.address as string]);
+                    reportTradeData(ReportDataType.SWAP, signature, uuids[token.address as string]);
                 }
             })
 
