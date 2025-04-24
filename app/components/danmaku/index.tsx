@@ -78,6 +78,12 @@ function DanmakuComp({ id, onRefresher }: any) {
                           <LikeIcon isActive={true} size={20} />
                         </>
                       )}
+                      {item.type === "collect" && (
+                        <>
+                          <span>Collected</span>
+                          <LikeIcon isActive={true} size={20} />
+                        </>
+                      )}
                       {item.type === "launchedLike" && (
                         <>
                           <span>LFG</span>
