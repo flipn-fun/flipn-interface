@@ -8,7 +8,7 @@ import { uniq } from "lodash-es";
 
 export enum LaunchType {
   forYou = "forYou",
-  genesis = "genesis",
+  // genesis = "genesis",
   ticking = "ticking",
   listed = "listed",
   other = "other"
@@ -100,11 +100,11 @@ export const useProjects = create(
 
         if (item.status !== currentItem.status) {
           let list = [];
-          let type: LaunchType = LaunchType.genesis;
-          if (currentItem.status === 0) {
-            list = get().genesisList;
-            type = LaunchType.genesis;
-          }
+          let type: LaunchType = LaunchType.ticking;
+          // if (currentItem.status === 0) {
+          //   list = get().genesisList;
+          //   type = LaunchType.genesis;
+          // }
           if (currentItem.status === 1) {
             list = get().tickingList;
             type = LaunchType.ticking;
