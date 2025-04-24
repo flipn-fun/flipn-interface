@@ -255,12 +255,11 @@ export function useAccount() {
             recentBlockhash: latestBlockhash.blockhash, // Blockhash of the most recent block
             instructions: transaction.instructions, // Instructions to be included in the transaction
           }).compileToV0Message(lookupTableAccount)
-  
+
           const versionedTransaction = new VersionedTransaction(message)
-  
+
           _transaction = versionedTransaction
         }
-
 
         let tx
 
@@ -280,13 +279,10 @@ export function useAccount() {
             ...confirmationStrategy,
             ...sendOptions
           });
-          // tx = await sendTransaction(_transaction, connection, {
-          //   ...confirmationStrategy,
-          //   ...sendOptions
-          // });
         }
 
-        // console.log('tx:', tx, _transaction)
+        console.log('tx:', tx)
+
 
         // console.log(tx)
         // const tx = await connection.sendTransaction(transaction, [payer], {
@@ -360,7 +356,7 @@ export function useAccount() {
   };
 }
 
-async function getPriorityFeeEstimate(
+export async function getPriorityFeeEstimate(
   transaction: Transaction,
   rpcEndpoint: string
 ) {

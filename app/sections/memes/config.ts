@@ -28,7 +28,7 @@ export interface MemePlatformItem {
   label: string;
   icon: string;
   // used for back-end params
-  dApp: string[];
+  dApp: RegExp[];
 }
 
 export const MemePlatforms: Record<MemePlatform, MemePlatformItem> = {
@@ -36,19 +36,19 @@ export const MemePlatforms: Record<MemePlatform, MemePlatformItem> = {
     value: MemePlatform.Raydium,
     label: "Raydium",
     icon: "/img/memes/icon-raydium.svg",
-    dApp: ["ray_launchpad", "ray_launchpad_other"],
+    dApp: [/^ray[a-zA-Z0-9_]*$/i],
   },
   [MemePlatform.Meteora]: {
     value: MemePlatform.Meteora,
     label: "Meteora",
     icon: "/img/memes/icon-meteora.svg",
-    dApp: ["meteora"],
+    dApp: [/^meteora$/i],
   },
   [MemePlatform.FlipN]: {
     value: MemePlatform.FlipN,
     label: "FlipN",
     icon: "/img/memes/icon-flipn.svg",
-    dApp: ["sexy", "pump"],
+    dApp: [/^sexy$/i],
   },
 };
 

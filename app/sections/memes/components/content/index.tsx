@@ -39,7 +39,6 @@ const MemesContent = (props: any) => {
     setMemesListPlatform,
     memesListSearchText,
     setMemesListSearchText,
-    getMemesListDelay,
     memesListHolders,
     memesListHoldersLoading,
   } = useContext(MemesContext);
@@ -68,7 +67,9 @@ const MemesContent = (props: any) => {
       title: "Token",
       width: "2fr",
       render: (record: any) => {
-        const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
+        const currPlatform = Object.values(MemePlatforms).find((p) => {
+          return p.dApp.some((reg) => reg.test(record.DApp));
+        });
         return (
           <div className={styles.MemesTableToken}>
             <FallbackImg
@@ -109,7 +110,9 @@ const MemesContent = (props: any) => {
       title: "Platform",
       ellipsis: true,
       render: (record: any) => {
-        const currPlatform = Object.values(MemePlatforms).find((p) => p.dApp.includes(record.DApp));
+        const currPlatform = Object.values(MemePlatforms).find((p) => {
+          return p.dApp.some((reg) => reg.test(record.DApp));
+        });
 
         return currPlatform?.label ?? record.DApp;
       },
@@ -135,7 +138,11 @@ const MemesContent = (props: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
-        if (status === MemePhases[MemePhase.New].status) {
+        if (
+          Big(record.bonding_progress || 0).lt(100)
+          && Big(record.bonding_progress || 0).gte(0)
+          && status !== MemePhases[MemePhase.Listed].status
+        ) {
           return (
             <div className={styles.MemesTablePhase}>
               <div className={styles.MemesTablePhaseValue}>
@@ -217,6 +224,7 @@ const MemesContent = (props: any) => {
     setMemesListSortDataIndex?.(dataIndex as MemeSort);
     setMemesListSortDirection?.(direction);
     getMemesList?.({
+      offset: 0,
       order: direction,
       sort: dataIndex,
     });
@@ -261,7 +269,7 @@ const MemesContent = (props: any) => {
                   onChange={(val: string) => {
                     setMemesListSearchText?.(val);
                     initMemesList?.();
-                    getMemesListDelay?.({
+                    getMemesList?.({
                       search: trim(val),
                       offset: 0,
                     });
@@ -306,6 +314,7 @@ const MemesContent = (props: any) => {
                     setMemesListSortDataIndex?.(option.value as MemeSort);
                     setMemesListSortDirection?.(nextDirection);
                     getMemesList?.({
+                      offset: 0,
                       order: nextDirection,
                       sort: option.value,
                     });
@@ -337,7 +346,7 @@ const MemesContent = (props: any) => {
                 onChange={(val: string) => {
                   setMemesListSearchText?.(val);
                   initMemesList?.();
-                  getMemesListDelay?.({
+                  getMemesList?.({
                     search: trim(val),
                     offset: 0,
                   });
