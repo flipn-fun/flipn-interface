@@ -17,7 +17,7 @@
     "@gofundmeme/sdk-frontend": "^1.0.4",
     "@mercurial-finance/dynamic-amm-sdk": "^1.1.23",
     "@metaplex-foundation/js": "^0.20.1",
-    "@meteora-ag/virtual-curve-sdk": "^1.0.0-rc.5",
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.1.1-rc.1",
     "@okxconnect/solana-provider": "1.6.7",
     "@okxconnect/ui": "1.6.7",
     "@privy-io/react-auth": "^2.0.7",

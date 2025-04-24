@@ -19,7 +19,8 @@ import Remove from "@/app/components/icons/remove";
 import {
   DEV_LAUNCHPAD_PROGRAM,
 } from '@raydium-io/raydium-sdk-v2';
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { DYNAMIC_BONDING_CURVE_PROGRAM_ID } from "@meteora-ag/dynamic-bonding-curve-sdk";
+
 
 
 interface Props {
@@ -79,7 +80,7 @@ const Platforms = [
         </li>
       </ul>
     </div>,
-    programId: 'Meteora'
+    programId: DYNAMIC_BONDING_CURVE_PROGRAM_ID
   },
 ]
 

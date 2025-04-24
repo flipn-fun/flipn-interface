@@ -30,7 +30,7 @@ export default function Laptop() {
     }
   });
 
-  const { createMint: createMintMeteora, createConfig, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken()
+  const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken()
 
   const query = useMemo(() => {
     const query: any = {
@@ -146,11 +146,6 @@ export default function Laptop() {
             const tx = await createMintMeteora()
             console.log('tx', tx)
           }}>Create MintMeteora</Button>
-
-          <Button onClick={async () => {
-            const tx = await createConfig()
-            console.log('tx', tx)
-          }}>Create Config</Button>
 
           <Button onClick={async () => {
             const quote = await getQouteMeteora()
