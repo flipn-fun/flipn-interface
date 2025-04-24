@@ -11,7 +11,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { simplifyNum, formatAddress } from "@/app/utils";
 
-export default function TotalPanel({ info, userInfo }: any) {
+export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
   const homeTabStore: any = useHomeTab();
   const router = useRouter();
   const { isMobile } = useUserAgent();
@@ -167,21 +167,26 @@ export default function TotalPanel({ info, userInfo }: any) {
               }}
             >
               <span>
-                {info?.my_kickback
-                  ? numberFormatter(info.my_kickback, 3, true, {
+                {info?.RaydiumFee
+                  ? numberFormatter(info.RaydiumFee, 3, true, {
                       isShort: true,
                       round: 0
                     })
-                  : info?.my_kickback === 0
+                  : info?.RaydiumFee === 0
                   ? 0
                   : "-"}
               </span>
-              <Image
+              {/* <Image
                 src="/img/home/solana.png"
                 width={20}
                 height={20}
                 alt="Solana"
-              />
+              /> */}
+              {
+                info?.RaydiumFee > 0 && (
+                  <button style={{ background: "#FBCA04", color: "#000", padding: "5px 10px", borderRadius: "50px", cursor: "pointer" }} onClick={() => claimRaydiumFee(info?.RaydiumFee)}>Claim</button>
+                )
+              }
             </div>
           </div>
           <div

@@ -46,6 +46,9 @@ export default function useDanmaku({ id }: any) {
           if (item.type === "flip") {
             text = `flipped ${numberFormatter(item.content_1, 4, true)} SOL`;
           }
+          if (item.type === "collect") {
+            text = `collected `;
+          }
           return {
             text,
             icon: item.account_icon,

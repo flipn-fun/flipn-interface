@@ -17,6 +17,9 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, g
 import { BN } from '@coral-xyz/anchor';
 import { ComputeBudgetProgram, Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { Project } from '../type';
+import { reportTradeData } from '../utils/report';
+import { ReportDataType } from '../utils/report';
+import { useUUID } from '../store/useUUID';
 
 interface Params {
   token: Project;
@@ -38,6 +41,7 @@ export const useRay = (params: Params | null) => {
   const { connection } = useConnection();
   const { publicKey, walletProvider } = useAccount();
   const raydiumInstance = useRef<any>(null);
+  const { uuids }: any = useUUID();
 
   useEffect(() => {
     (async () => {
@@ -367,6 +371,9 @@ export const useRay = (params: Params | null) => {
       isVersionedTransaction: true,
       canJitoable: true,
       needFeeEstimate: false,
+      beforeSend: (signature: string) => {
+        reportTradeData(ReportDataType.SWAP, signature, uuids[params.token.address as string]);
+      }
     })
 
     console.log('tx: success', tx)

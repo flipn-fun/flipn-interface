@@ -10,7 +10,7 @@ import { useAuth } from "@/app/context/auth";
 
 export default memo(function Mining(props: any) {
   const { isMobile } = useUserAgent();
-  const { info, loading: infoLoading } = useUserMining();
+  const { info, claimRaydiumFee, loading: infoLoading } = useUserMining();
   const { isLoading: rateLoading, rate } = useReferralRate();
   const { userInfo } = useAuth();
 
@@ -19,7 +19,8 @@ export default memo(function Mining(props: any) {
     infoLoading,
     rate,
     rateLoading,
-    userInfo
+    userInfo,
+    claimRaydiumFee
   };
 
   return isMobile ? (
