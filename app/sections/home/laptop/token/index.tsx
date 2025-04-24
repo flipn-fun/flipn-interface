@@ -212,7 +212,7 @@ export default function Token({
         />
       )}
 
-      <TokenExt token={token} />
+      <TokenExt token={token} showTrade={showTrade} />
     </div>
   );
 }

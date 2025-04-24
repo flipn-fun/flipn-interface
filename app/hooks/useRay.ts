@@ -1,6 +1,7 @@
 import {
   TxVersion,
   DEV_LAUNCHPAD_PROGRAM,
+  LAUNCHPAD_PROGRAM,
   printSimulate,
   getPdaLaunchpadConfigId,
   LaunchpadConfig,
@@ -9,7 +10,7 @@ import {
   PlatformConfig,
   Curve,
 } from '@raydium-io/raydium-sdk-v2'
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAccount } from './useAccount';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
@@ -20,6 +21,8 @@ import { Project } from '../type';
 interface Params {
   token: Project;
 }
+
+const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM : DEV_LAUNCHPAD_PROGRAM
 
 export const tokenAddresses: any = {}
 export const useRay = (params: Params | null) => {
@@ -50,12 +53,12 @@ export const useRay = (params: Params | null) => {
   const createMint = useCallback(async (params: Project, amount: string) => {
     if (!raydiumInstance.current) return;
 
-    const programId = DEV_LAUNCHPAD_PROGRAM // currently only support in devent
-
     const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
     const pair = Keypair.generate()
     const mintA = pair.publicKey
+
+    console.log('createMint', configId, programId, LAUNCHPAD_PROGRAM)
 
     const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
 
@@ -70,9 +73,7 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    console.log('configInfo', configInfo, configInfo.maxShareFeeRate.toString());
-
-    const { builder, extInfo } = await raydiumInstance.current.launchpad.createLaunchpad({
+    const { builder, extInfo, transaction: t } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
       mintA,
       decimals: params.tokenDecimals,
@@ -80,24 +81,24 @@ export const useRay = (params: Params | null) => {
       symbol: params.ticker,
       migrateType: 'amm',
       uri: params.tokenImg,
-      supply: new BN('10000000000000000000'),
-      totalSellA: new BN('6000000000000000000'),
+      supply: new BN('1000000000000000'),
+      totalSellA: new BN('800000000000000'),
       configId,
       configInfo: {
         ...configInfo,
-        migrateFee: new BN(0),
+        migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(3 * (10 ** 9)) : new BN(3 * (10 ** 9)),
         minSupplyA: new BN('1000000000'),
         minFundRaisingB: new BN(1 * (10 ** 9)),
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
-      platformId: new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
+      platformId: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T') : new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
       createOnly: createOnly, // true means create mint only, false will "create and buy together"
-      totalFundRaisingB: new BN(30 * (10 ** 9)),
-      totalLockedAmount: new BN('1000000000000000000'),
+      totalFundRaisingB: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(43 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalLockedAmount: new BN('0'),
 
 
       // shareFeeReceiver: new PublicKey('share wallet'), // only works when createOnly=false
@@ -114,9 +115,11 @@ export const useRay = (params: Params | null) => {
 
     const { execute, transaction } = await builder.buildV0()
 
+    console.log('transaction:', transaction)
+
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
-      canJitoable: true,
+      canJitoable: false,
       needFeeEstimate: false,
     })
 
@@ -127,33 +130,82 @@ export const useRay = (params: Params | null) => {
     return tx;
   }, [raydiumInstance.current, publicKey])
 
+  const getQouteBeforeBuy = useCallback(async (amount: string) => {
+    if (!raydiumInstance.current || !params) return;
+
+    const inAmount = new BN(amount)
+
+    const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
+
+    const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
+    if (!configData) throw new Error('config not found')
+
+    const configInfo = LaunchpadConfig.decode(configData.data)
+
+    const curve = Curve.getCurve(0);
+    const initParam = curve.getInitParam({
+      supply: new BN('1000000000000000'),
+      totalFundRaising: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(43 * (10 ** 9)) : new BN(30 * (10 ** 9)),
+      totalSell: new BN('800000000000000'),
+      totalLockedAmount: new BN('0'),
+      migrateFee: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN(0) : new BN(0),
+    });
+
+    const itemBuy = Curve.buyExactIn({
+      poolInfo: {
+        virtualA: initParam.a,
+        virtualB: initParam.b,
+        realA: new BN('0'),
+        realB: new BN('1'),
+        totalFundRaisingB: new BN(0),
+        totalSellA: new BN('800000000000000'),
+      },
+      amountB: inAmount,
+      protocolFeeRate: configInfo.tradeFeeRate,
+      platformFeeRate: new BN(1125),
+      curveType: 0,
+      shareFeeRate: new BN(0),
+    });
+
+    return itemBuy.amountA.toString()
+    
+  }, [raydiumInstance.current, params])
+
   const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;
 
     const mintA = new PublicKey(params.token.address as string)
     const mintB = NATIVE_MINT
 
-    const programId = DEV_LAUNCHPAD_PROGRAM
     const inAmount = new BN(amount)
 
     const poolId = getPdaLaunchpadPoolId(programId, mintA, mintB).publicKey
     const poolInfo = await raydiumInstance.current.launchpad.getRpcPoolInfo({ poolId })
 
     console.log('poolInfo', poolInfo)
+    console.log('poolInfo.totalFundRaisingB', poolInfo.totalFundRaisingB.toString())
+
 
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
 
     const shareFeeReceiver = undefined
-    const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000) // do not exceed poolInfo.configInfo.maxShareFeeRate
+    const shareFeeRate = !shareFeeReceiver ? new BN(0) : new BN(10000) // do not exceed poolInfo.configInfo.maxShareFeeRate
 
     let res: any = null;
     if (type === 'buy') {
+      console.log('buy', poolInfo, inAmount)
+      console.log('virtualA', poolInfo.virtualA.toString(), poolInfo.virtualB.toString(), poolInfo.realA.toString(), poolInfo.realB.toString())
+
+      console.log('platformInfo', poolInfo.configInfo.tradeFeeRate.toString())
+
       res = Curve.buyExactIn({
         poolInfo,
         amountB: inAmount,
-        protocolFeeRate: new BN(0),
-        platformFeeRate: new BN(0),
+        // protocolFeeRate: new BN(0),
+        // platformFeeRate: new BN(0),
+        protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
+        platformFeeRate: platformInfo.feeRate,
         curveType: poolInfo.configInfo.curveType,
         shareFeeRate,
       })
@@ -167,10 +219,10 @@ export const useRay = (params: Params | null) => {
       res = Curve.sellExactIn({
         poolInfo,
         amountA: inAmount,
-        protocolFeeRate: new BN(0),
-        platformFeeRate: new BN(0),
-        // protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
-        // platformFeeRate: platformInfo.feeRate,
+        // protocolFeeRate: new BN(0),
+        // platformFeeRate: new BN(0),
+        protocolFeeRate: poolInfo.configInfo.tradeFeeRate,
+        platformFeeRate: platformInfo.feeRate,
         curveType: poolInfo.configInfo.curveType,
         shareFeeRate,
       })
@@ -193,7 +245,7 @@ export const useRay = (params: Params | null) => {
     // const owner = publicKey
 
     const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
-      programId: DEV_LAUNCHPAD_PROGRAM, // launchpad currently only support in devent
+      programId, // launchpad currently only support in devent
       platformAdmin: publicKey,
       platformClaimFeeWallet: owner,
       platformLockNftWallet: owner,
@@ -204,8 +256,8 @@ export const useRay = (params: Params | null) => {
       },
       feeRate: new BN(1125), // set up your config
       name: 'Flipn',
-      web: 'https://test.flipn.fun',
-      img: 'https://test.flipn.fun/img/create/flip.png',
+      web: 'https://flipn.fun',
+      img: 'https://app.flipn.fun/img/create/flip.png',
       txVersion: TxVersion.V0,
       feePayer: publicKey,
       // totalFundRaisingAmount: new BN(1000000000000000000),
@@ -219,7 +271,7 @@ export const useRay = (params: Params | null) => {
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
-      canJitoable: true,
+      canJitoable: false,
       needFeeEstimate: false,
     })
 
@@ -237,7 +289,7 @@ export const useRay = (params: Params | null) => {
 
     console.log('trade params', amount, type, slip)
 
-    const programId = DEV_LAUNCHPAD_PROGRAM
+    const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM : DEV_LAUNCHPAD_PROGRAM
     const inAmount = new BN(amount)
 
     const poolId = getPdaLaunchpadPoolId(programId, mintA, mintB).publicKey
@@ -245,7 +297,7 @@ export const useRay = (params: Params | null) => {
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
 
-    console.log('platformInfo', platformInfo, poolInfo.configInfo.maxShareFeeRate.toString(), platformInfo.feeRate.toString())
+    console.log('platformInfo', platformInfo, poolInfo, platformInfo.feeRate.toString())
 
     const shareFeeReceiver = undefined
     const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000)
@@ -253,7 +305,7 @@ export const useRay = (params: Params | null) => {
     let _transaction: Transaction | undefined
 
     if (type === 'buy') {
-      console.log('poolInfo:', poolInfo)
+      console.log('poolInfo:', poolInfo, poolInfo.realA.toString(), poolInfo.realB.toString())
 
       const { transaction, extInfo, execute, builder } = await raydiumInstance.current.launchpad.buyToken({
         programId,
@@ -310,7 +362,8 @@ export const useRay = (params: Params | null) => {
     getQoute,
     trade,
     createPlatform,
-    programId: DEV_LAUNCHPAD_PROGRAM,
+    getQouteBeforeBuy,
+    programId,
   }
 }
 

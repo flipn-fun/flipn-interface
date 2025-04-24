@@ -148,6 +148,13 @@
   width: 100%;
 }
 
+.avatarBox {
+  width: 142px;
+  height: 142px;
+  position: relative;
+  margin: 0 auto;
+}
+
 .mainPc {
   margin-top: -120px;
   .tokenTitle {
@@ -168,6 +175,22 @@
   .avatar {
     width: 142px;
     height: 142px;
+  }
+
+  .platformPcImg {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pcImg {
+    width: 60%;
+    border-radius: 20px;
   }
 
   .name {

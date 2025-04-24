@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import styles from "./token.module.css";
 import type { Project } from "@/app/type";
-import { simplifyNum } from "@/app/utils";
+import { httpAuthDelete, httpAuthPost, simplifyNum } from "@/app/utils";
 import { useRouter } from "next/navigation";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
 import TokenAction from "../tokenAction";
@@ -14,6 +14,7 @@ import { Program } from "@coral-xyz/anchor";
 import idl from "@/app/hooks/meme_launchpad.json";
 import { useConnection } from "@solana/wallet-adapter-react";
 import dayjs from "dayjs";
+import { fail, success } from '@/app/utils/toast';
 import Media from "@/app/components/thumbnail/media";
 import { useUserAgent } from "@/app/context/user-agent";
 import { videoReg } from '@/app/components/upload';
@@ -27,7 +28,10 @@ interface Props {
   type?: string;
   isOther: boolean;
   onWithdrawSuccess?(): void;
+  onCollectSuccess?(): void;
 }
+
+const likeStatus: any = {}
 
 export default function Token({
   data,
@@ -37,25 +41,22 @@ export default function Token({
   type,
   from,
   isOther,
-  onWithdrawSuccess
+  onWithdrawSuccess,
+  onCollectSuccess
 }: Props) {
   const router = useRouter();
   const { userInfo }: any = useUser();
   const { connection } = useConnection();
   const { isMobile } = useUserAgent();
+  const [_likeStatus, setLikeStatus] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [mc, setMC] = useState<string | number>(0);
   const [prepaidRealAmount, setPrepaidRealAmount] = useState(Big(0));
   const [prepaidAmount, setPrepaidAmount] = useState(Big(0));
   const [tokenAmount, setTokenAmount] = useState(Big(0));
 
-  const { mc: pumpMc } = useMc({
-    tokenAddress: data?.address,
-    disable: data?.status! < 1
-  });
 
   const {
-    getMC,
     pool,
     checkPrePayed,
     prepaidSolWithdraw,
@@ -97,25 +98,7 @@ export default function Token({
     [isDelay, isOther, isPrepaid]
   );
 
-  useEffect(() => {
-    if (
-      pool &&
-      pool.length > 0 &&
-      data?.DApp === "sexy" &&
-      data?.status === 1
-    ) {
-      getMC().then((res) => {
-        setMC(res as number);
-      });
-    }
-  }, [
-    pool,
-    data?.tokenName,
-    data?.tokenSymbol,
-    data?.tokenDecimals,
-    data?.DApp,
-    data?.status
-  ]);
+
 
   useEffect(() => {
     if (
@@ -183,6 +166,8 @@ export default function Token({
     setTokenAmount(Big(0));
   }, [pool, data, data?.tokenDecimals, prepaidRealAmount, showWithdraw]);
 
+  // console.log('likeStatus:', likeStatus)
+
   return (
     <div
       className={styles.main}
@@ -193,7 +178,7 @@ export default function Token({
         flexDirection: from === "page" ? "column" : "row",
         gap: from === "page" ? 10 : 0,
         padding: from === "page" ? 0 : "10px 15px",
-        alignItems: from === "page" ? "flex-start" : "center"
+        alignItems: from === "page" ? "flex-start" : "center",
       }}
       onClick={() => {
         router.push("/detail?address=" + data.address + "&from=profile");
@@ -206,7 +191,7 @@ export default function Token({
           // width: from === "page" ? "100%" : "auto",
           backgroundColor:
             from === "page" ? "rgba(255, 255, 255, 0.05)" : "transparent",
-          padding: from === "page" ? "4px 12px 15px" : 0,
+          padding: from === "page" ? "4px 12px 15px" : '0 0 0 32px',
           borderRadius: from === "page" ? 10 : 0
         }}
       >
@@ -240,12 +225,33 @@ export default function Token({
               </div>
             )
           }
-          <LaunchTag type={data.status as number} />
+
           {
+            (data.DApp === 'sexy' || data.DApp === 'meteora' || data.DApp?.includes('ray_launchpad') || data.DApp === 'gofund' || data.DApp === 'pump') && (
+              <div className={styles.platformIcon}>
+                {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
+                {data.DApp?.includes('ray_launchpad') && <img src="/img/create/raydium.png" alt="" />}
+                {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
+                {data.DApp === 'gofund' && <img src="/img/home/GFM.svg" alt="" />}
+                {data.DApp === 'pump' && <img src="/img/home/pump.png" alt="" />}
+                </div>
+            )
+          }
+
+          {
+            (data.DApp === 'import') && (
+              <div className={styles.importTag}>
+                <img src="/img/create/import.svg" alt="" />
+              </div>
+            )
+          }
+
+          <LaunchTag type={data.status as number} />
+          {/* {
             data.DApp === "pump" && (
               <img src="/img/profile/icon-pump.svg" alt="" className={styles.PumpIcon} />
             )
-          }
+          } */}
         </div>
 
         <div
@@ -260,16 +266,14 @@ export default function Token({
               <div
                 className={styles.tickerNameAvatar}
                 style={{
-                  backgroundImage: `url("${
-                    data.tokenIcon || "/img/token-placeholder.png"
-                  }")`,
+                  backgroundImage: `url("${data.tokenIcon || "/img/token-placeholder.png"
+                    }")`,
                   border:
                     data.status === 0 && !!smookeable && !showWithdraw
-                      ? `${
-                          smookeable === 1
-                            ? "1px dashed #FFF"
-                            : "1px dashed #9290B1"
-                        }`
+                      ? `${smookeable === 1
+                        ? "1px dashed #FFF"
+                        : "1px dashed #9290B1"
+                      }`
                       : ""
                 }}
               />
@@ -306,9 +310,47 @@ export default function Token({
           ) : (
             <div className={styles.MarketCap}>
               MarketCap:{" "}
-              {pumpMc || mc ? `$${simplifyNum(Number(pumpMc || mc), 2)}` : "-"}
+              {`$${simplifyNum(Number((data as any).market_cap || 0), 2)}`}
             </div>
           )}
+        </div>
+
+        <div className={styles.collectIcon + ' ' + (isMobile ? styles.collectIconMobile : '')} onClick={async (e) => {
+          if (isLoading) return;
+          e.stopPropagation();
+          setIsLoading(true);
+          let res = null;
+          const isCollect = typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!];
+
+          likeStatus[data.id!] = !(data as any).is_collect;
+          setLikeStatus(likeStatus)
+          if (isCollect) {
+            res = await httpAuthDelete('/project/collect?id=' + data.id)
+            onCollectSuccess?.()
+          } else {
+            res = await httpAuthPost('/project/collect?id=' + data.id)
+          }
+
+          if (res?.code === 0) {
+            (data as any).is_collect = !isCollect;
+            success(isCollect ? 'Successfully canceled' : 'Successfully collected')
+          } else {
+            fail('Request Failed')
+          }
+
+          likeStatus[data.id!] = (data as any).is_collect;
+          setLikeStatus(likeStatus)
+          setIsLoading(false);
+        }}>
+          {
+            (typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!])
+              ? <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 0L12.9624 5.92255L19.5106 6.90983L14.7933 11.5574L15.8779 18.0902L10 15.04L4.12215 18.0902L5.20668 11.5574L0.489435 6.90983L7.03756 5.92255L10 0Z" fill="white" fill-opacity="0.6" />
+              </svg>
+              : <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 1.11768L12.5153 6.14623L12.6313 6.37828L12.8879 6.41697L18.4476 7.25521L14.4424 11.2013L14.2576 11.3834L14.3001 11.6393L15.2209 17.1859L10.2303 14.5962L10 14.4767L9.7697 14.5962L4.77911 17.1859L5.69992 11.6393L5.74242 11.3834L5.55759 11.2013L1.55242 7.25521L7.11211 6.41697L7.36867 6.37828L7.48474 6.14623L10 1.11768Z" stroke="white" />
+              </svg>
+          }
         </div>
       </div>
 

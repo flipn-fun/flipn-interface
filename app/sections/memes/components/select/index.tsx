@@ -3,12 +3,20 @@
 import { motion } from 'framer-motion';
 import styles from './index.module.css';
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Popover, { PopoverPlacement } from '@/app/components/popover';
 import { Order } from '@/app/sections/memes/config';
+import Loading from '@/app/components/icons/loading';
 
 const MemesSelect = (props: any) => {
-  const { className, value, onChange, options, renderSelectedLabel, renderLabel, memesContainerRef } = props;
+  const { className, value, onChange, options, renderSelectedLabel, renderLabel, memesContainerRef, loading } = props;
+
+  const currentValue = useMemo(() => {
+    if (typeof value === "object") {
+      return value;
+    }
+    return options?.find((item: any) => item.value === value);
+  }, [value]);
 
   const popoverRef = useRef<any>();
 
@@ -41,7 +49,7 @@ const MemesSelect = (props: any) => {
             options?.map?.((item: any, index: number) => (
               <div
                 key={index}
-                className={value?.value === item.value ? styles.MemesSelectDropdownItemActive : styles.MemesSelectDropdownItem}
+                className={currentValue?.value === item.value ? styles.MemesSelectDropdownItemActive : styles.MemesSelectDropdownItem}
                 onClick={() => handleSelect(item)}
               >
                 {
@@ -67,16 +75,22 @@ const MemesSelect = (props: any) => {
       >
         <div className={styles.MemesSelectLabel}>
           {
-            typeof renderSelectedLabel == 'function' ? renderSelectedLabel(value) : value?.label
+            typeof renderSelectedLabel == 'function' ? renderSelectedLabel(currentValue) : currentValue?.label
           }
         </div>
-        <motion.img
-          src="/img/memes/icon-arrow-down.svg"
-          alt=""
-          className={styles.MemesSelectArrow}
-          animate={{ rotate: open ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-        />
+        {
+          loading ? (
+            <Loading size={12} />
+          ) : (
+            <motion.img
+              src="/img/memes/icon-arrow-down.svg"
+              alt=""
+              className={styles.MemesSelectArrow}
+              animate={{ rotate: open ? 180 : 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          )
+        }
       </button>
     </Popover>
   );

@@ -1,13 +1,13 @@
 "use client";
 
 import Carousel from "@/app/sections/memes/components/carousel";
-import MemesTabs from "@/app/sections/memes/components/tabs";
 import { MemesContext } from "@/app/sections/memes/context";
 import { useMemes } from "@/app/sections/memes/hooks";
 import styles from "./index.module.css";
 import PageHeader from "@/app/components/page-header/mobile";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useMemo } from 'react';
+import MemesContent from '@/app/sections/memes/components/content';
 
 const MemesView = (props: any) => {
   const {} = props;
@@ -23,12 +23,12 @@ const MemesView = (props: any) => {
 
   return (
     <MemesContext.Provider value={{ ...data }}>
-      <div ref={data.memesContainerRef} className={styles.MemesContainer}>
+      <div ref={data.memesContainerRef} className={isMobile ? styles.MemesContainerMobile : styles.MemesContainer}>
         {isMobile && (
           <PageHeader from="memes" style={{ position: "static" }} title="" />
         )}
         <Carousel data={carouselData} holders={data.memesListHolders} holdersLoading={data.memesListHoldersLoading} />
-        <MemesTabs />
+        <MemesContent />
       </div>
     </MemesContext.Provider>
   );

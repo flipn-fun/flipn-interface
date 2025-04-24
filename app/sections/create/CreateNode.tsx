@@ -18,6 +18,7 @@ import StepAction from "./components/stepAction";
 import Remove from "@/app/components/icons/remove";
 import {
   DEV_LAUNCHPAD_PROGRAM,
+  LAUNCHPAD_PROGRAM,
 } from '@raydium-io/raydium-sdk-v2';
 import { DYNAMIC_BONDING_CURVE_PROGRAM_ID } from "@meteora-ag/dynamic-bonding-curve-sdk";
 
@@ -49,7 +50,7 @@ const Platforms = [
     name: 'Raydium',
     img: '/img/create/raydium.png',
     value: 'Raydium',
-    programId: DEV_LAUNCHPAD_PROGRAM.toBase58(),
+    programId: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM.toBase58() : DEV_LAUNCHPAD_PROGRAM.toBase58(),
     note: <div className={styles.platformNote}>
       <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
       <ul className={styles.platformNoteContent}>
@@ -401,7 +402,7 @@ export default forwardRef(function CreateNode(
       x,
       tg,
       discord,
-      status: 0,
+      status: platform.name === 'Raydium' ? 1 : 0,
       platform,
     });
 

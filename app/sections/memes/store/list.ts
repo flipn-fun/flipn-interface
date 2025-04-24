@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import Big from 'big.js';
+import { MemePlatform, MemePlatformItem, MemePlatforms, MemeSort } from '@/app/sections/memes/config';
+import { GridTableSortDirection } from '@/app/components/grid-table';
 
 interface MemesState {
   hotListLoading: boolean;
@@ -8,6 +10,7 @@ interface MemesState {
   setHotList: (list: Hot[]) => void;
   setHotListLoading: (loading: boolean) => void;
   memesListLoading: boolean;
+  memesAllList: Meme[];
   memesGenesisList: Meme[];
   memesTickingList: Meme[];
   memesListedList: Meme[];
@@ -19,6 +22,7 @@ interface MemesState {
   memesListPageOffset: number;
   memesListPageNext: boolean;
   memesHoldersQueue: any[];
+  setMemesAllList: (list: Meme[]) => void;
   setMemesGenesisList: (list: Meme[]) => void;
   setMemesTickingList: (list: Meme[]) => void;
   setMemesListedList: (list: Meme[]) => void;
@@ -32,6 +36,15 @@ interface MemesState {
   setMemesListHoldersLoading: (obj: Record<string, boolean>) => void;
   setMemesHoldersQueue: (item: any) => void;
   spliceMemesHoldersQueue: (index: number) => void;
+
+  memesListSortDataIndex: MemeSort;
+  memesListSortDirection: GridTableSortDirection;
+  memesListPlatform: MemePlatformItem;
+  setMemesListSortDataIndex: (sort: MemeSort) => void;
+  setMemesListSortDirection: (direction: GridTableSortDirection) => void;
+  setMemesListPlatform: (platform: MemePlatformItem) => void;
+  memesListSearchText: string;
+  setMemesListSearchText: (searchText: string) => void;
 }
 
 export const useMemesListStore = create(persist<MemesState>((set) => ({
@@ -40,6 +53,7 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
   setHotList: (list: Hot[]) => set((state) => ({ ...state, hotList: list })),
   setHotListLoading: (loading) => set((state) => ({ ...state, hotListLoading: loading })),
   memesListLoading: false,
+  memesAllList: [],
   memesGenesisList: [],
   memesTickingList: [],
   memesListedList: [],
@@ -51,6 +65,7 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
   memesListHolders: {},
   memesListHoldersLoading: {},
   memesHoldersQueue: [],
+  setMemesAllList: (list: Meme[]) => set((state) => ({ ...state, memesAllList: list })),
   setMemesGenesisList: (list: Meme[]) => set((state) => ({ ...state, memesGenesisList: list })),
   setMemesTickingList: (list: Meme[]) => set((state) => ({ ...state, memesTickingList: list })),
   setMemesListedList: (list: Meme[]) => set((state) => ({ ...state, memesListedList: list })),
@@ -95,12 +110,25 @@ export const useMemesListStore = create(persist<MemesState>((set) => ({
       memesHoldersQueue: _memesHoldersQueue
     };
   }),
+
+  memesListSortDataIndex: MemeSort.Age,
+  memesListSortDirection: GridTableSortDirection.Asc,
+  memesListPlatform: MemePlatforms[MemePlatform.Raydium],
+  memesListSearchText: "",
+  setMemesListSortDataIndex: (sort) => set((state) => ({ ...state, memesListSortDataIndex: sort })),
+  setMemesListSortDirection: (direction) => set((state) => ({ ...state, memesListSortDirection: direction })),
+  setMemesListPlatform: (platform) => set((state) => ({ ...state, memesListPlatform: platform })),
+  setMemesListSearchText: (searchText) => set((state) => ({ ...state, memesListSearchText: searchText })),
 }), {
   name: "_memes_list",
-  version: 0.2,
+  version: 0.3,
   storage: createJSONStorage(() => sessionStorage),
   partialize: (state) => ({
     memesListCountdown: state.memesListCountdown,
+    memesListPlatform: state.memesListPlatform,
+    memesListSearchText: state.memesListSearchText,
+    memesListSortDataIndex: state.memesListSortDataIndex,
+    memesListSortDirection: state.memesListSortDirection,
   } as any)
 }));
 

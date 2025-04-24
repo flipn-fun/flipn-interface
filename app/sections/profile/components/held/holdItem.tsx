@@ -59,9 +59,12 @@ export default function HoldItem(props: any) {
             <div className={styles.tokenNames}>
                 <div className={styles.name}>
                     {tokenInfo[item.token_address].token_name}
-
                     { tokenSelf[item.token_address].DApp === "gofund" && <img style={{ width: 20, height: 20 }} src="/img/home/GFM.svg" />}
                     { tokenSelf[item.token_address].DApp === "pump" && <img style={{ width: 14, height: 14 }} src="/img/home/pump.png" />}
+                    { tokenSelf[item.token_address].DApp === "sexy" && <img style={{ width: 14,  }} src="/img/create/flip.svg" />}
+                    { tokenSelf[item.token_address].DApp === "import" && <img style={{ width: 14,  }} src="/img/create/import.svg" />}
+                    { tokenSelf[item.token_address].DApp?.includes('ray_launchpad') && <img style={{ width: 14,  }} src="/img/create/raydium.png" />}
+                    { tokenSelf[item.token_address].DApp === "meteora" && <img style={{ width: 14,  }} src="/img/create/meteora.png" />}
                 </div>
                 <div
                     className={styles.viewCoin}

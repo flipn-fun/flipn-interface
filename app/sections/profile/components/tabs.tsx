@@ -44,8 +44,8 @@ export default function Tabs({
 
   const baseTabs = [
     {
-      name: "Liked",
-      ...createTabContent("liked", "Liked")
+      name: "Collected",
+      ...createTabContent("liked", "Collected")
     },
     {
       name: "Created",

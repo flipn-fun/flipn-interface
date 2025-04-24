@@ -87,7 +87,7 @@ export default function Txs({ from, data }: any) {
       url = `/project/trade/list`
     }
 
-    if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund" || data.DApp === "ray_launchpad")) {
+    if (data && data.tokenName && data.status === 1 && (data.DApp === "pump" || data.DApp === "gofund" || data.DApp?.includes("ray_launchpad"))) {
       canGet = true
       url = `/project/trade_pump/list`
     }

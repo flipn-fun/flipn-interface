@@ -7,19 +7,74 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import { Keypair, PublicKey, Transaction, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import { useCallback, useEffect } from 'react';
 
-export const useMeteoraToken = () => {
+
+const fakePool: any = {
+    "volatilityTracker": {
+        "lastUpdateTimestamp": new BN("00"),
+        "padding": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ],
+        "sqrtPriceReference": new BN("00"),
+        "volatilityAccumulator": new BN("00"),
+        "volatilityReference": new BN("00")
+    },
+    "config": new PublicKey("3gFSuiBCmupykjZVLrQrm2CctgqEjrR11QFMUFQpbZ8B"),
+    "creator": new PublicKey("82gnQysWJCXJZXDJ6oPpjkpdgz5VroPZyzboE6xwBV6D"),
+    "baseMint": new PublicKey("8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8"),
+    "baseVault": new PublicKey("FdhrwbCPAz3PYRXdT55P8Y7PmmNiieneHs4FrhX5d5Pe"),
+    "quoteVault": new PublicKey("63ffWfjxkuoX3h4akt3aAPV2cATwHX3Lnzzzg4oWrfeD"),
+    "baseReserve": new BN(parseInt("038d7ea4c68000", 16)),
+    "quoteReserve": new BN("00"),
+    "protocolBaseFee": new BN("00"),
+    "protocolQuoteFee": new BN("00"),
+    "tradingBaseFee": new BN("00"),
+    "tradingQuoteFee": new BN("00"),
+    "sqrtPrice": new BN('17860983147306975'),
+    "activationPoint": new BN(parseInt("166e5227", 16)),
+    "poolType": 0,
+    "isMigrated": 0,
+    "isPartnerWithdrawSurplus": 0,
+    "isProcotolWithdrawSurplus": 0,
+    "migrationProgress": 0,
+    "isWithdrawLeftover": 0,
+    "padding0": [
+        0,
+        0
+    ],
+    "metrics": {
+        "totalProtocolBaseFee": "00",
+        "totalProtocolQuoteFee": "00",
+        "totalTradingBaseFee": "00",
+        "totalTradingQuoteFee": "00"
+    },
+    "finishCurveTimestamp": "00",
+    "padding1": [
+        "00",
+        "00",
+        "00",
+        "00",
+        "00",
+        "00",
+        "00",
+        "00",
+        "00"
+    ]
+}
+
+const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('6g98qaTAxqodvDV2boPhinEBMs3AZF4b3ekNDGuh8Ar7') : new PublicKey('3gFSuiBCmupykjZVLrQrm2CctgqEjrR11QFMUFQpbZ8B')
+export const useMeteoraToken = ({ token }: { token: Project }) => {
     const { publicKey, walletProvider } = useAccount();
     const { connection } = useConnection()
 
-
-    //   useEffect(() => {
-    //     const client = new VirtualCurveClient(connection)
-
-    //     console.log('client', client)
-    //   }, [])
-
-    const createMint = useCallback(async () => {
-        const client = new DynamicBondingCurveClient(connection)
+    const createMint = useCallback(async (params: Project, amount: string) => {
+        const client = new DynamicBondingCurveClient(connection as any)
 
         const baseMint = Keypair.generate()
         const creator = publicKey!
@@ -30,12 +85,12 @@ export const useMeteoraToken = () => {
         const transaction = await client.pools.createPool({
             quoteMint: NATIVE_MINT,
             baseMint: baseMint.publicKey,
-            config: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('6g98qaTAxqodvDV2boPhinEBMs3AZF4b3ekNDGuh8Ar7') : new PublicKey('3gFSuiBCmupykjZVLrQrm2CctgqEjrR11QFMUFQpbZ8B'),
+            config,
             baseTokenType: TokenType.SPL,
             quoteTokenType: TokenType.SPL,
-            name: 'Test Flipn',
-            symbol: 'TFLIPN',
-            uri: 'https://example.com/metadata.json',
+            name: params.tokenName,
+            symbol: params.ticker,
+            uri: params.tokenImg,
             creator,
         })
 
@@ -56,11 +111,13 @@ export const useMeteoraToken = () => {
 
         const tx = await walletProvider.signAndSendTransaction(versionedTransaction, {}, {
             isVersionedTransaction: true,
-            canJitoable: true,
+            canJitoable: false,
             needFeeEstimate: false,
         })
 
         console.log('tx', tx)
+
+        return tx
     }, [publicKey, walletProvider])
 
     // const createConfig = useCallback(async () => {
@@ -155,32 +212,28 @@ export const useMeteoraToken = () => {
 
     // }, [publicKey, walletProvider])
 
-    const trade = useCallback(async () => {
-        const client = new DynamicBondingCurveClient(connection)
-        const programclient = new DynamicBondingCurveProgramClient(connection)
+    const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+        const client = new DynamicBondingCurveClient(connection as any)
+        const programclient = new DynamicBondingCurveProgramClient(connection as any)
 
-        const virtualPoolState = await programclient.getPool(
-            'FSzD8CrMnGAKg5wJGZ1ABXoRPgMzWUKSv1TfkuihUHd2'
+        const poolAddress = await programclient.getPoolAddress(
+            NATIVE_MINT,
+            new PublicKey('FEvrgVQbpe775fBxVSixevt1xwh7VH2ZLcBVMqvfGWHw'),
+            config
         )
-       
-
-        const poolConfigState = await programclient.getPoolConfig(
-            virtualPoolState!.config
-        )
-
-        console.log('poolConfigState', poolConfigState, virtualPoolState)
-
-        // const pool = await poolService.getPool(connection, 'FSzD8CrMnGAKg5wJGZ1ABXoRPgMzWUKSv1TfkuihUHd2')
 
         const transaction = await client.pools.swap(
-            new PublicKey('FSzD8CrMnGAKg5wJGZ1ABXoRPgMzWUKSv1TfkuihUHd2'),
+            poolAddress,
             {
                 amountIn: new BN(1000000),
-                minimumAmountOut: new BN(900000),
-                swapBaseForQuote: false,
+                minimumAmountOut: new BN(0),
+                swapBaseForQuote: true,
                 owner: publicKey!,
             },
         )
+
+
+        console.log('transaction', transaction)
 
         const _transaction = new Transaction()
 
@@ -191,41 +244,51 @@ export const useMeteoraToken = () => {
         // _transaction.add(transaction.instructions[0])
         // _transaction.add(transaction.instructions[5])
 
-        console.log('transaction', transaction)
+        _transaction.add(transaction.instructions[1])
+        _transaction.add(transaction.instructions[0])
+        _transaction.add(transaction.instructions[2])
 
         const tx = await walletProvider.signAndSendTransaction(_transaction, {}, {
             isVersionedTransaction: false,
             canJitoable: true,
-            needFeeEstimate: false,
+            needFeeEstimate: true,
         })
 
         console.log('tx', tx)
-        
-    }, [publicKey, walletProvider])  
 
-    const getQoute = useCallback(async () => {
-      const client = new DynamicBondingCurveClient(connection)
-      const programclient = new DynamicBondingCurveProgramClient(connection)
+    }, [publicKey, walletProvider])
 
-      const poolConfig = await programclient.getPoolConfig(
-          new PublicKey('FAxXAjXYyEYrtBD9Fgqyo3LiMBrENPc4Fuzs8opWBcLv')
-      )
+    const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+        const client = new DynamicBondingCurveClient(connection as any)
+        const programclient = new DynamicBondingCurveProgramClient(connection as any)
 
-      const pool = await programclient.getPool(
-          new PublicKey('FSzD8CrMnGAKg5wJGZ1ABXoRPgMzWUKSv1TfkuihUHd2')
-      )
+        const poolAddress = await programclient.getPoolAddress(
+            NATIVE_MINT,
+            new PublicKey('8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8'),
+            config
+        )
 
-      const quote = await client.pools.swapQuote({
-        virtualPool: pool!,
-        config: poolConfig,
-        swapBaseForQuote: false,
-        amountIn: new BN(1000000),
-        hasReferral: false,
-        currentPoint: new BN(0)
-      })
+        console.log('poolAddress', poolAddress.toBase58())
 
-      console.log('quote', quote.amountOut.toString())
-  }, [])
+        const poolConfig = await programclient.getPoolConfig(config)
+
+        const pool = await programclient.getPool(poolAddress)
+
+        console.log('pool', pool!.sqrtPrice.toString())
+
+        const quote = await client.pools.swapQuote({
+            virtualPool: fakePool!,
+            config: poolConfig,
+            swapBaseForQuote: false,
+            amountIn: new BN(1000000),
+            hasReferral: false,
+            currentPoint: new BN(0)
+        })
+
+        console.log('quote', quote.amountOut.toString())
+
+        return quote.amountOut.toString()
+    }, [])
 
     return {
         createMint,
@@ -233,3 +296,4 @@ export const useMeteoraToken = () => {
         getQoute
     };
 };
+
