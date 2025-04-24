@@ -7,18 +7,21 @@ import { motion } from 'framer-motion';
 import { useDebounceFn } from 'ahooks';
 
 const Search = (props: any) => {
-  const { className, searchText, onChange, loading, width = 28 } = props;
+  const { className, searchText, onChange, loading, width = 28, searchWait = 1000 } = props;
 
   const inputRef = useRef<any>();
   const containerRef = useRef<any>();
 
   const { isMobile } = useUserAgent();
 
+  const [searchTextInner, setSearchTextInner] = useState("");
   const [open, setOpen] = useState(false);
 
   const { run: onFocus } = useDebounceFn(() => {
     inputRef.current?.focus();
   }, { wait: 300 });
+
+  const { run: onSearch, cancel: cancelSearch } = useDebounceFn(onChange, { wait: searchWait });
 
   const toggleOpen = () => {
     if (!isMobile) return;
@@ -52,10 +55,14 @@ const Search = (props: any) => {
     };
   }, [isMobile, open]);
 
+  useEffect(() => {
+    setSearchTextInner(searchText);
+  }, [searchText]);
+
   return (
     <motion.div
       ref={containerRef}
-      className={clsx(isMobile ? (!!trim(searchText) ? styles.MemesSearchMobileActive : styles.MemesSearchMobile) : styles.MemesSearch, className)}
+      className={clsx(isMobile ? (!!trim(searchTextInner) ? styles.MemesSearchMobileActive : styles.MemesSearchMobile) : styles.MemesSearch, className)}
       initial={isMobile ? {
         width: width,
         paddingLeft: 0,
@@ -80,19 +87,23 @@ const Search = (props: any) => {
               type="text"
               className={styles.MemesSearchInput}
               placeholder=""
-              value={searchText}
+              value={searchTextInner}
               onChange={(e) => {
-                onChange?.(e.target.value);
+                cancelSearch();
+                onSearch(e.target.value);
+                setSearchTextInner(e.target.value);
               }}
             />
             {
-              trim(searchText) && (
+              trim(searchTextInner) && (
                 <button
                   type="button"
                   className={styles.MemesSearchClear}
                   onClick={() => {
                     if (loading) return;
-                    onChange?.('');
+                    cancelSearch();
+                    onChange("");
+                    setSearchTextInner("");
                     if (isMobile) {
                       setOpen(false);
                     }

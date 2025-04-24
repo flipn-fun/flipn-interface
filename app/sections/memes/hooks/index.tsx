@@ -413,6 +413,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
   );
 
   const initMemesList = () => {
+    setMemesAllList([]);
     setMemesGenesisList([]);
     setMemesTickingList([]);
     setMemesListedList([]);
