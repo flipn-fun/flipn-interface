@@ -21,6 +21,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useConnection } from "@solana/wallet-adapter-react";
 import { Project } from "../type";
 import { useSetting } from "../store/use-setting";
+import { reportTradeData } from "../utils/report";
+import { ReportDataType } from "../utils/report";
+import { useUUID } from "../store/useUUID";
 interface Params {
   tokenAddress: string | undefined;
   token: Project
@@ -34,6 +37,7 @@ export default function useJupiter({ tokenAddress, token }: Params) {
   const { publicKey, walletProvider } = useAccount();
   const [qoute, setQoute] = useState(1);
   const settingStore: any = useSetting();
+  const { uuids }: any = useUUID();
 
   useEffect(() => {
     if (tokenAddress) {
@@ -108,7 +112,10 @@ export default function useJupiter({ tokenAddress, token }: Params) {
           {
             isVersionedTransaction: false,
             canJitoable: settingStore.jitoable,
-            needFeeEstimate: false
+            needFeeEstimate: false,
+            beforeSend: (signature: string) => {
+              reportTradeData(ReportDataType.SWAP, signature, uuids[token.address as string]);
+            }
           }
         );
 

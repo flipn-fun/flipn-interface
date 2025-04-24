@@ -17,7 +17,6 @@ import { useAuth } from "@/app/context/auth";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
-import { reportTradeData, ReportDataType } from "@/app/utils/report";
 
 interface Props {
   token: Project;
@@ -227,7 +226,6 @@ export default function Trade({
                   const inputNum = new Big(inputVal).mul(10 ** 9).toFixed(0);
                   const hash = await prePaid(inputNum, false);
 
-                  reportTradeData(ReportDataType.FLIP, hash);
                   // const res = true
                   setIsLoading(false);
                   if (hash) {

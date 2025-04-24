@@ -141,7 +141,6 @@ export default forwardRef(function CreateNode(
       show: false,
       onChange: (val: string) => {
         setWebsite(val);
-        console.log(x, links)
         setLinks({ ...linkRef.current, website: { ...linkRef.current.website, value: val } });
       },
       onBlur: () => {
@@ -292,7 +291,6 @@ export default forwardRef(function CreateNode(
   }, []);
 
   const validateTwitter = useCallback((x: string) => {
-    console.log(x, links)
     if (x && !isValidURL(x)) {
       return "Twitter is not a valid url";
     }
@@ -851,7 +849,6 @@ export default forwardRef(function CreateNode(
         step={step}
         onBack={onBack}
         onNext={async () => {
-          console.log('onNext', step)
           const isValid = await onPreview(step);
           if (!isValid) {
             onNext();
