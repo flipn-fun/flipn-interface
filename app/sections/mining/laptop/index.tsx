@@ -18,7 +18,10 @@ export default function Laptop({
   userInfo,
   codeInfo,
   rate,
-  onCopyShareLink
+  onCopyShareLink,
+  rateLoading,
+  onQuery,
+  claimRaydiumFee
 }: any) {
   const configStore: any = useConfig((store: any) => store.config);
 
@@ -40,7 +43,7 @@ export default function Laptop({
       >
         <div className={styles.Left}>
           <Panel isTape className={styles.TotalPanel}>
-            <TotalPanel info={info} userInfo={userInfo} />
+            <TotalPanel info={info} userInfo={userInfo} claimRaydiumFee={claimRaydiumFee} />
           </Panel>
           <Panel isTape={false} className={styles.PanelWrapper}>
             <div className={styles.PanelTitle}>Earn</div>

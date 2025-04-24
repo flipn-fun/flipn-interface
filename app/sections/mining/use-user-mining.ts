@@ -1,4 +1,4 @@
-import { httpAuthGet } from "@/app/utils";
+import { httpAuthGet, httpAuthPost } from "@/app/utils";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/auth";
 
@@ -12,21 +12,39 @@ export default function useUserMining() {
       setLoading(true);
       const response = await httpAuthGet("/account/mining");
       let clime_created = false;
+      let RaydiumFeeResponse = null;
       try {
         const pointsResponse = await httpAuthGet(
           `/airdrop/account/level_points?account=${userInfo.address}`
         );
+ 
+        RaydiumFeeResponse = await httpAuthGet(
+          `/account/launchpad/fee?DApp=ray_launchpad&token=So11111111111111111111111111111111111111112`
+        )
+
         clime_created = Number(pointsResponse?.data?.points) > 0;
       } catch (err) {}
 
       setInfo({
         ...response.data,
-        clime_created
+        clime_created,
+        RaydiumFee: RaydiumFeeResponse?.data || 0
       });
     } catch (err) {
       console.log("err:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const claimRaydiumFee = async (amount: number) => {
+    try {
+      const response = await httpAuthPost(`/account/launchpad/fee/claim?DApp=ray_launchpad&token=So11111111111111111111111111111111111111112&amount=${amount}`);
+      if (response.code === 0) {
+        onQuery();
+      }
+    } catch (err) {
+      console.log("err:", err);
     }
   };
 
@@ -37,6 +55,7 @@ export default function useUserMining() {
   return {
     info,
     loading,
-    onQuery
+    onQuery,
+    claimRaydiumFee
   };
 }
