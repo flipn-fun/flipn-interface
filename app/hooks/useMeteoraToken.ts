@@ -1,11 +1,12 @@
 import { BN } from '@coral-xyz/anchor';
 import type { Project } from '../type';
 import { useAccount } from "./useAccount";
-import { TokenType, DynamicBondingCurveClient, DYNAMIC_BONDING_CURVE_PROGRAM_ID, DynamicBondingCurveProgramClient } from "@meteora-ag/dynamic-bonding-curve-sdk";
-import { NATIVE_MINT } from '@solana/spl-token';
+import { TokenType, DynamicBondingCurveClient, DYNAMIC_BONDING_CURVE_PROGRAM_ID, DynamicBondingCurveProgramClient, SwapAccounts } from "@meteora-ag/dynamic-bonding-curve-sdk";
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountIdempotentInstruction, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { useConnection } from "@solana/wallet-adapter-react";
-import { Keypair, PublicKey, Transaction, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
+import { Keypair, PublicKey, Transaction, TransactionInstruction, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import { useCallback, useEffect } from 'react';
+import { unwrapSOLInstruction, wrapSOLInstruction } from '@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils';
 
 
 const fakePool: any = {
@@ -75,12 +76,15 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
 
     const createMint = useCallback(async (params: Project, amount: string) => {
         const client = new DynamicBondingCurveClient(connection as any)
+        const programclient = new DynamicBondingCurveProgramClient(connection as any)
 
         const baseMint = Keypair.generate()
         const creator = publicKey!
 
         console.log('baseMint', baseMint.publicKey.toBase58())
         console.log('DYNAMIC_BONDING_CURVE_PROGRAM_ID', DYNAMIC_BONDING_CURVE_PROGRAM_ID.toBase58())
+
+        console.log('config', params)
 
         const transaction = await client.pools.createPool({
             quoteMint: NATIVE_MINT,
@@ -91,13 +95,144 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
             name: params.tokenName,
             symbol: params.ticker,
             uri: params.tokenImg,
-            creator,
+            payer: creator,
+            poolCreator: creator,
         })
 
-        console.log('transaction', transaction)
+        const program = programclient.getProgram()
+        const eventAuthority = deriveEventAuthority()
+        const poolAuthority = derivePoolAuthority(program.programId)
+
+     
+
+        const amountIn = new BN(100000000)
+        const minimumAmountOut = new BN(0)
+        const swapBaseForQuote = false
+        const owner = publicKey!
+
+        const inputMint = NATIVE_MINT
+        const outputMint = baseMint.publicKey
+        const inputTokenProgram = TOKEN_PROGRAM_ID
+        const outputTokenProgram = TOKEN_PROGRAM_ID
+        
+     
+        const isSOLInput = true
+        const isSOLOutput = false
+
+        const inputTokenAccount = findAssociatedTokenAddress(
+            owner,
+            inputMint,
+            inputTokenProgram
+        )
+
+        const outputTokenAccount = findAssociatedTokenAddress(
+            owner,
+            outputMint,
+            outputTokenProgram
+        )
+
+        const pool = derivePool(NATIVE_MINT, baseMint.publicKey, config, program.programId)
+        const baseVault = deriveTokenVaultAddress(
+            pool,
+            baseMint.publicKey,
+            program.programId
+        )
+        const quoteVault = deriveTokenVaultAddress(
+            pool,
+            NATIVE_MINT,
+            program.programId
+        )
+    
+
+        const accounts: SwapAccounts = {
+            baseMint: baseMint.publicKey,
+            quoteMint: NATIVE_MINT,
+            pool: pool,
+            baseVault: baseVault,
+            quoteVault: quoteVault,
+            config: config,
+            eventAuthority,
+            poolAuthority,
+            referralTokenAccount: null,
+            inputTokenAccount,
+            outputTokenAccount,
+            payer: owner,
+            tokenBaseProgram: swapBaseForQuote
+                ? inputTokenProgram
+                : outputTokenProgram,
+            tokenQuoteProgram: swapBaseForQuote
+                ? outputTokenProgram
+                : inputTokenProgram,
+            program: program.programId,
+        }
+
+        // Add preInstructions for ATA creation and SOL wrapping
+        const preInstructions: TransactionInstruction[] = []
+
+        // Check and create ATAs if needed
+        const inputTokenAccountInfo =
+            await connection.getAccountInfo(inputTokenAccount)
+        if (!inputTokenAccountInfo) {
+            preInstructions.push(
+                createAssociatedTokenAccountIdempotentInstruction(
+                    owner,
+                    inputTokenAccount,
+                    owner,
+                    inputMint,
+                    inputTokenProgram
+                )
+            )
+        }
+
+        const outputTokenAccountInfo =
+            await connection.getAccountInfo(outputTokenAccount)
+        if (!outputTokenAccountInfo) {
+            preInstructions.push(
+                createAssociatedTokenAccountIdempotentInstruction(
+                    owner,
+                    outputTokenAccount,
+                    owner,
+                    outputMint,
+                    outputTokenProgram
+                )
+            )
+        }
+
+        // Add SOL wrapping instructions if needed
+        if (isSOLInput) {
+            preInstructions.push(
+                ...wrapSOLInstruction(
+                    owner,
+                    inputTokenAccount,
+                    BigInt(amountIn.toString())
+                )
+            )
+        }
+
+        // Add postInstructions for SOL unwrapping
+        const postInstructions: TransactionInstruction[] = []
+        // if (isSOLInput || isSOLOutput) {
+        //     const unwrapIx = unwrapSOLInstruction(owner)
+        //     if (unwrapIx) {
+        //         postInstructions.push(unwrapIx as any)
+        //     }
+        // }
+
+        const swapInstruction = await program.methods
+            .swap({
+                amountIn,
+                minimumAmountOut,
+            })
+            .accounts(accounts)
+            .preInstructions(preInstructions)
+            .postInstructions(postInstructions)
+            .transaction()
+
+        console.log('transaction', transaction, swapInstruction)
 
         const latestBlockhash = await connection?.getLatestBlockhash();
         transaction.recentBlockhash = latestBlockhash!.blockhash;
+        transaction.add(...swapInstruction.instructions)
 
         const message = new TransactionMessage({
             payerKey: publicKey!, // Public key of the account paying for the transaction
@@ -119,6 +254,13 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
 
         return tx
     }, [publicKey, walletProvider])
+
+    const getSwapInstruction = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+        const client = new DynamicBondingCurveClient(connection as any)
+        const programclient = new DynamicBondingCurveProgramClient(connection as any)
+        
+        
+    }, [])  
 
     // const createConfig = useCallback(async () => {
     //     const client = new DynamicBondingCurveClient(connection)
@@ -226,8 +368,8 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
             poolAddress,
             {
                 amountIn: new BN(1000000),
-                minimumAmountOut: new BN(0),
-                swapBaseForQuote: true,
+                minimumAmountOut: new BN(900000),
+                swapBaseForQuote: false,
                 owner: publicKey!,
             },
         )
@@ -244,11 +386,11 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         // _transaction.add(transaction.instructions[0])
         // _transaction.add(transaction.instructions[5])
 
-        _transaction.add(transaction.instructions[1])
-        _transaction.add(transaction.instructions[0])
-        _transaction.add(transaction.instructions[2])
+        // _transaction.add(transaction.instructions[1])
+        // _transaction.add(transaction.instructions[0])
+        // _transaction.add(transaction.instructions[2])
 
-        const tx = await walletProvider.signAndSendTransaction(_transaction, {}, {
+        const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
             isVersionedTransaction: false,
             canJitoable: true,
             needFeeEstimate: true,
@@ -297,3 +439,98 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
     };
 };
 
+
+const SEED = Object.freeze({
+    POOL_AUTHORITY: 'pool_authority',
+    EVENT_AUTHORITY: '__event_authority',
+    POOL: 'pool',
+    TOKEN_VAULT: 'token_vault',
+    METADATA: 'metadata',
+    PARTNER_METADATA: 'partner_metadata',
+    CLAIM_FEE_OPERATOR: 'cf_operator',
+    DAMM_V1_MIGRATION_METADATA: 'meteora',
+    DAMM_V2_MIGRATION_METADATA: 'damm_v2',
+    LP_MINT: 'lp_mint',
+    FEE: 'fee',
+    POSITION: 'position',
+    POSITION_NFT_ACCOUNT: 'position_nft_account',
+    LOCK_ESCROW: 'lock_escrow',
+    VIRTUAL_POOL_METADATA: 'virtual_pool_metadata',
+    ESCROW: 'escrow',
+    BASE_LOCKER: 'base_locker',
+    VAULT: 'vault',
+})
+
+export function deriveEventAuthority(): PublicKey {
+    const [eventAuthority] = PublicKey.findProgramAddressSync(
+        [Buffer.from(SEED.EVENT_AUTHORITY)],
+        DYNAMIC_BONDING_CURVE_PROGRAM_ID
+    )
+    return eventAuthority
+}
+
+
+export function derivePoolAuthority(programId: PublicKey): PublicKey {
+    const [poolAuthority] = PublicKey.findProgramAddressSync(
+        [Buffer.from(SEED.POOL_AUTHORITY)],
+        programId
+    )
+
+    return poolAuthority
+}
+
+export function findAssociatedTokenAddress(
+    walletAddress: PublicKey,
+    tokenMintAddress: PublicKey,
+    tokenProgramId: PublicKey
+): PublicKey {
+    return PublicKey.findProgramAddressSync(
+        [
+            walletAddress.toBuffer(),
+            tokenProgramId.toBuffer(),
+            tokenMintAddress.toBuffer(),
+        ],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+    )[0]
+}
+
+export function derivePool(
+    quoteMint: PublicKey,
+    baseMint: PublicKey,
+    config: PublicKey,
+    programId: PublicKey
+): PublicKey {
+    const isQuoteMintBiggerThanBaseMint =
+        new PublicKey(quoteMint)
+            .toBuffer()
+            .compare(new Uint8Array(new PublicKey(baseMint).toBuffer())) > 0
+
+    const [pool] = PublicKey.findProgramAddressSync(
+        [
+            Buffer.from(SEED.POOL),
+            new PublicKey(config).toBuffer(),
+            isQuoteMintBiggerThanBaseMint
+                ? new PublicKey(quoteMint).toBuffer()
+                : new PublicKey(baseMint).toBuffer(),
+            isQuoteMintBiggerThanBaseMint
+                ? new PublicKey(baseMint).toBuffer()
+                : new PublicKey(quoteMint).toBuffer(),
+        ],
+        programId
+    )
+
+    return pool
+}
+
+export function deriveTokenVaultAddress(
+    pool: PublicKey,
+    mint: PublicKey,
+    programId: PublicKey
+): PublicKey {
+    const [tokenVault] = PublicKey.findProgramAddressSync(
+        [Buffer.from(SEED.TOKEN_VAULT), mint.toBuffer(), pool.toBuffer()],
+        programId
+    )
+
+    return tokenVault
+}
