@@ -261,6 +261,7 @@ export function useAccount() {
           _transaction = versionedTransaction
         }
 
+
         let tx
 
         const signedTransaction = await signTransaction!(_transaction)
@@ -279,10 +280,13 @@ export function useAccount() {
             ...confirmationStrategy,
             ...sendOptions
           });
+          // tx = await sendTransaction(_transaction, connection, {
+          //   ...confirmationStrategy,
+          //   ...sendOptions
+          // });
         }
 
-        console.log('tx:', tx)
-
+        // console.log('tx:', tx, _transaction)
 
         // console.log(tx)
         // const tx = await connection.sendTransaction(transaction, [payer], {
