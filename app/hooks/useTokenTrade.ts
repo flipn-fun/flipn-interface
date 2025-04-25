@@ -1130,6 +1130,16 @@ export function useTokenTrade({
     }
   }, [programId, state, pool, tokenDecimals, connection]);
 
+  const getQouteBeforeBuy = useCallback((solAmount: string) => {
+    const _solAmount = new Big(solAmount).mul(1 - 100 / 10000);
+    const result = new Big('1095840542120770')
+      .mul(_solAmount)
+      .div(new Big('1000000000').plus(_solAmount))
+      .toFixed(0, 0);
+
+    return result
+  }, [])
+
   // useEffect(() => {
   //   if (
   //     programId &&
@@ -1202,7 +1212,8 @@ export function useTokenTrade({
     pool,
     tokenInfo,
     programId,
-    getPool
+    getPool,
+    getQouteBeforeBuy
   };
 }
 
@@ -1222,6 +1233,10 @@ async function _getRate(
   const solToken = new Big(poolData!.virtualWsolAmount.toNumber());
 
   const maxBuy = poolToken.minus(295_840_542_120_770);
+
+  console.log('stateData.buyFeeRate', stateData.buyFeeRate)
+  console.log('poolToken', poolToken.toString())
+  console.log('solToken', solToken.toString())
 
   // buy
   if (solAmount && type === "buy") {

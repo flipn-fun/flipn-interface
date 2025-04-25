@@ -88,7 +88,7 @@ export default function Create({
   });
   const [launchChecked, setLaunchChecked] = useState(false);
 
-  const { createToken } = useTokenTrade({
+  const { createToken, getQouteBeforeBuy: getQouteBeforeBuyFlipN } = useTokenTrade({
     tokenName,
     tokenSymbol,
     tokenDecimals: 6,
@@ -177,8 +177,12 @@ export default function Create({
           const amount = new Big(res).div(10 ** 6).toFixed(2)
           setRayReceiveAmount(amount)
         })
+      } else if (data.platform.name === 'FlipN') {
+        setRayReceiveAmount('0')
+        const res = getQouteBeforeBuyFlipN(new Big(debounceVal).mul(10 ** 9).toString())
+        const amount = new Big(res).div(10 ** 6).toFixed(2)
+        setRayReceiveAmount(amount)
       }
-      
     }
   }, [debounceVal]);
 
@@ -351,7 +355,7 @@ export default function Create({
 
           <div>
             {
-              data.platform.name === 'Raydium' && <div className={styles.receiveBox}>
+              (data.platform.name === 'Raydium' || data.platform.name === 'FlipN') && <div className={styles.receiveBox}>
                 <div className={styles.receiveBoxTitle}>
                   You receive:
                 </div>
@@ -362,7 +366,7 @@ export default function Create({
               </div>
             }
 
-            {
+            {/* {
               data.platform.name === 'FlipN' ? <div className={[styles.cationArea, styles.panel].join(" ")}>
                 <div className={styles.launchTip}>
                   <svg
@@ -388,16 +392,10 @@ export default function Create({
                       </span>
                     )
                   }
-                  {/* {
-                    data.platform.name === 'Raydium' && (
-                      <span>
-                        It’s Optional but buying a small amount of coins helps protect your coin from snipers.
-                      </span>
-                    )
-                  } */}
+             
                 </div>
               </div> : <div />
-            }
+            } */}
           </div>
 
           <StepAction
