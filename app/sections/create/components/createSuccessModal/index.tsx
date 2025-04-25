@@ -71,6 +71,11 @@ export default function CreateSuccessModal({
   );
 }
 
+const MEMETICS: any = {
+  'Raydium': 1338.75,
+  'FlipN': 4614.75
+}
+
 function SuccessModal({
   onClose,
   onShare,
@@ -125,7 +130,7 @@ function SuccessModal({
           You will get
           <span className={style.tokenSymbol}>
             {" "}
-            {numberFormatter(5950, 4, true)} MEMETICS{" "}
+            {numberFormatter(MEMETICS[data.platform.name], 4, true)} MEMETICS{" "}
           </span>
           when this token hit bonding curve.
         </div>
