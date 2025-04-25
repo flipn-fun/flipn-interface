@@ -1132,7 +1132,7 @@ export function useTokenTrade({
 
   const getQouteBeforeBuy = useCallback((solAmount: string) => {
     console.log('solAmount', solAmount)
-    const _solAmount = new Big(solAmount).mul(1 - 100 / 10000);
+    const _solAmount = new Big(solAmount).mul(1 - 150 / 10000);
     const result = new Big('1095840542120770')
       .mul(_solAmount)
       .div(new Big('1000000000').plus(_solAmount))
