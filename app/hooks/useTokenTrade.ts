@@ -1131,6 +1131,7 @@ export function useTokenTrade({
   }, [programId, state, pool, tokenDecimals, connection]);
 
   const getQouteBeforeBuy = useCallback((solAmount: string) => {
+    console.log('solAmount', solAmount)
     const _solAmount = new Big(solAmount).mul(1 - 100 / 10000);
     const result = new Big('1095840542120770')
       .mul(_solAmount)
