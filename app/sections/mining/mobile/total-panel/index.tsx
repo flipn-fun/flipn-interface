@@ -16,6 +16,7 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
   const router = useRouter();
   const { isMobile } = useUserAgent();
   const [showReferrals, setShowReferrals] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
 
   const LikeNum = () => (
     <div
@@ -48,8 +49,8 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
             {userInfo?.name
               ? userInfo.name
               : userInfo?.address
-              ? formatAddress(userInfo.address, 4)
-              : ""}
+                ? formatAddress(userInfo.address, 4)
+                : ""}
           </div>
         </div>
         <div className={styles.Panels}>
@@ -85,9 +86,9 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
               <div className={styles.MyLike}>
                 {info?.minted
                   ? numberFormatter(info.minted, 3, true, {
-                      isShort: true,
-                      round: 0
-                    })
+                    isShort: true,
+                    round: 0
+                  })
                   : "-"}
               </div>
               <div className={styles.PanelBottom}>
@@ -140,8 +141,8 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
                 {info?.referral_number
                   ? addThousandSeparator(info.referral_number)
                   : info?.referral_number === 0
-                  ? 0
-                  : "-"}
+                    ? 0
+                    : "-"}
               </span>
               <span
                 style={{
@@ -166,15 +167,16 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
                 fontSize: 14
               }}
             >
-              <span>
-                {info?.RaydiumFee
-                  ? numberFormatter(info.RaydiumFee, 3, true, {
-                      isShort: true,
-                      round: 0
-                    })
-                  : info?.RaydiumFee === 0
-                  ? 0
-                  : "-"}
+              <span className={styles.ClaimTipBox} style={{ position: 'relative' }}>
+                {info?.my_kickback
+                  ? numberFormatter(info?.my_kickback, 3, true, {
+                    isShort: true,
+                    round: 0
+                  })
+                  : info?.my_kickback === 0
+                    ? 0
+                    : "-"}
+                <div className={styles.ClaimTip}>Claimed</div>
               </span>
               {/* <Image
                 src="/img/home/solana.png"
@@ -183,9 +185,25 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
                 alt="Solana"
               /> */}
               {
-                info?.RaydiumFee > 0 && (
-                  <button style={{ background: "#FBCA04", color: "#000", padding: "5px 10px", borderRadius: "50px", cursor: "pointer" }} onClick={() => claimRaydiumFee(info?.RaydiumFee)}>Claim</button>
-                )
+                info?.RaydiumFee && <div className={styles.ClaimBox + ' ' + (Number(info?.RaydiumFee) > 1000000 ? styles.ClaimBoxActive : '')}>
+                  <div className={styles.ClaimBoxItemTitle + ' ' + styles.ClaimTipBox}>{
+                    numberFormatter(Number(info?.RaydiumFee) / (10 ** 9), 3, true, {
+                      isShort: true,
+                      round: 0
+                    })
+                  }
+                    <div className={styles.ClaimTip}>Unclaimed</div>
+                  </div>
+                  <div className={styles.ClaimBoxBtn}>
+                    <button className={styles.ClaimBoxBtn} onClick={async () => {
+                      if (Number(info?.RaydiumFee) > 1000000) {
+                        setClaimLoading(true)
+                        await claimRaydiumFee(info?.RaydiumFee)
+                        setClaimLoading(false)
+                      }
+                    }} disabled={claimLoading}>{claimLoading ? 'Claiming...' : 'Claim'}</button>
+                  </div>
+                </div>
               }
             </div>
           </div>
@@ -203,10 +221,10 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
             >
               {info?.my_volume
                 ? numberFormatter(info?.my_volume, 2, true, {
-                    isShort: true,
-                    round: 0,
-                    prefix: "$"
-                  })
+                  isShort: true,
+                  round: 0,
+                  prefix: "$"
+                })
                 : "$-"}
             </div>
           </div>
