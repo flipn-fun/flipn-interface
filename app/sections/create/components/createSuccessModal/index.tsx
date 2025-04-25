@@ -159,14 +159,14 @@ function SuccessModal({
           <div className={style.name}>{token.tokenName}</div>
           <div className={style.ticker}>Ticker: {token.tokenSymbol}</div>
         </div>
-
+{/* 
         {
           data.platform.name === 'FlipN' && (
             <div className={style.successNote}>
               Collect 100 Likes to Bonding now!
             </div>
           )
-        }
+        } */}
 
         <div className={style.btnBox}>
           <MainBtn
@@ -186,8 +186,8 @@ function SuccessModal({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>{isLoading ? <SpinLoading
-              color="#9290B1"
-              style={{ "--size": "14px" }}
+              color="#fff"
+              style={{ "--size": "18px" }}
             /> : 'Share'}</div>
           </MainBtn>
           
