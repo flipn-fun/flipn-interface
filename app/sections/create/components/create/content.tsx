@@ -146,6 +146,20 @@ export default function Create({
         return;
       }
 
+      if (data.platform.name === 'Raydium') {
+        setRayReceiveAmount('0')
+        getQouteBeforeBuy(new Big(debounceVal).mul(10 ** 9).toString())
+        .then((res: any) => {
+          const amount = new Big(res).div(10 ** 6).toFixed(2)
+          setRayReceiveAmount(amount)
+        })
+      } else if (data.platform.name === 'FlipN') {
+        setRayReceiveAmount('0')
+        const res = getQouteBeforeBuyFlipN(new Big(debounceVal).mul(10 ** 9).toString())
+        const amount = new Big(res).div(10 ** 6).toFixed(2)
+        setRayReceiveAmount(amount)
+      }
+
       if (Number(debounceVal) > Number(solBalance) - 0.03) {
         setErrorMsg("Reserve at least 0.03 SOL");
         totalRef.current.isError = true;
@@ -170,19 +184,7 @@ export default function Create({
         setIsError(true);
       }
 
-      if (data.platform.name === 'Raydium') {
-        setRayReceiveAmount('0')
-        getQouteBeforeBuy(new Big(debounceVal).mul(10 ** 9).toString())
-        .then((res: any) => {
-          const amount = new Big(res).div(10 ** 6).toFixed(2)
-          setRayReceiveAmount(amount)
-        })
-      } else if (data.platform.name === 'FlipN') {
-        setRayReceiveAmount('0')
-        const res = getQouteBeforeBuyFlipN(new Big(debounceVal).mul(10 ** 9).toString())
-        const amount = new Big(res).div(10 ** 6).toFixed(2)
-        setRayReceiveAmount(amount)
-      }
+      
     }
   }, [debounceVal, data, solBalance]);
 
