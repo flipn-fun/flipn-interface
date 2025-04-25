@@ -1131,14 +1131,15 @@ export function useTokenTrade({
   }, [programId, state, pool, tokenDecimals, connection]);
 
   const getQouteBeforeBuy = useCallback((solAmount: string) => {
-    const _solAmount = new Big(solAmount).mul(1 - 150 / 10000);
+    const _solAmount = new Big(solAmount).mul(1 - (process.env.NEXT_PUBLIC_NET === 'Mainnet' ? 100 : 150) / 10000);
     const result = new Big('1095840542120770')
       .mul(_solAmount)
-      .div(new Big('1000000000').plus(_solAmount))
+      .div(new Big(process.env.NEXT_PUBLIC_NET === 'Mainnet' ? '15000000000' : '1000000000').plus(_solAmount))
       .toFixed(0, 0);
 
     return result
   }, [])
+
 
   // useEffect(() => {
   //   if (

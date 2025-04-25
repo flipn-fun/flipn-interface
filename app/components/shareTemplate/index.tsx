@@ -226,7 +226,7 @@ function Card({ token, show, onClose }: Props, ref: any) {
             <img src="/img/share/subTitle.png" className={styles.subTitle} />
           </div>
 
-          {/* Main Card Content */}
+          {/* Main Card Content */} 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <div className={styles.mainCard}>
               {token?.status === 0 && (
