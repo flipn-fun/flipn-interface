@@ -176,7 +176,7 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
                   : info?.my_kickback === 0
                     ? 0
                     : "-"}
-                <div className={styles.ClaimTip}>Claimed</div>
+                <div className={styles.ClaimTip}>Total</div>
               </span>
               {/* <Image
                 src="/img/home/solana.png"
