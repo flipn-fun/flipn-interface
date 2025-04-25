@@ -33,7 +33,8 @@ export default function Like({
   return (
     <div
       className={styles.Like + ' ' + (isMobile ? styles.MbLike : styles.PcLike)}
-      onClick={async () => {
+      onClick={async (e) => {
+        e.stopPropagation();
         if (disabled) return;
         if (isLoading) return;
         setIsLoading(true);

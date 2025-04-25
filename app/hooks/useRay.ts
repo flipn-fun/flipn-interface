@@ -12,11 +12,14 @@ import {
 } from '@raydium-io/raydium-sdk-v2'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAccount } from './useAccount';
+import { getPriorityFeeEstimate, useAccount } from './useAccount';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BN } from '@coral-xyz/anchor';
-import { Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
+import { ComputeBudgetProgram, Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { Project } from '../type';
+import { reportTradeData } from '../utils/report';
+import { ReportDataType } from '../utils/report';
+import { useUUID } from '../store/useUUID';
 
 interface Params {
   token: Project;
@@ -25,10 +28,20 @@ interface Params {
 const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM : DEV_LAUNCHPAD_PROGRAM
 
 export const tokenAddresses: any = {}
+
+async function addComputeBudget(transaction: Transaction) {
+  if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
+    const microLamports = await getPriorityFeeEstimate(transaction, '');
+    
+    // transaction.add(ComputeBudgetProgram.setComputeUnitLimit({ units: 500000 }), ComputeBudgetProgram.setComputeUnitPrice({ microLamports }));
+  }
+} 
+
 export const useRay = (params: Params | null) => {
   const { connection } = useConnection();
   const { publicKey, walletProvider } = useAccount();
   const raydiumInstance = useRef<any>(null);
+  const { uuids }: any = useUUID();
 
   useEffect(() => {
     (async () => {
@@ -73,7 +86,7 @@ export const useRay = (params: Params | null) => {
       createOnly = false
     }
 
-    const { builder, extInfo, transaction: t } = await raydiumInstance.current.launchpad.createLaunchpad({
+    const { builder, extInfo, } = await raydiumInstance.current.launchpad.createLaunchpad({
       programId,
       mintA,
       decimals: params.tokenDecimals,
@@ -110,9 +123,17 @@ export const useRay = (params: Params | null) => {
       // },
     })
 
+    const microLamports = await getPriorityFeeEstimate(new Transaction({
+      feePayer: publicKey,
+      recentBlockhash: (await connection.getLatestBlockhash()).blockhash,
+    }).add(...builder.instructions), '');
+
+    builder.addCustomComputeBudget({
+      units: 500000,
+      microLamports: microLamports,
+    })
+
     builder.addInstruction({ signers: [pair] })
-
-
     const { execute, transaction } = await builder.buildV0()
 
     console.log('transaction:', transaction)
@@ -168,7 +189,7 @@ export const useRay = (params: Params | null) => {
     });
 
     return itemBuy.amountA.toString()
-    
+
   }, [raydiumInstance.current, params])
 
   const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
@@ -177,15 +198,11 @@ export const useRay = (params: Params | null) => {
     const mintA = new PublicKey(params.token.address as string)
     const mintB = NATIVE_MINT
 
+
     const inAmount = new BN(amount)
 
     const poolId = getPdaLaunchpadPoolId(programId, mintA, mintB).publicKey
     const poolInfo = await raydiumInstance.current.launchpad.getRpcPoolInfo({ poolId })
-
-    console.log('poolInfo', poolInfo)
-    console.log('poolInfo.totalFundRaisingB', poolInfo.totalFundRaisingB.toString())
-
-
     const data = await raydiumInstance.current.connection.getAccountInfo(poolInfo.platformId)
     const platformInfo = PlatformConfig.decode(data!.data)
 
@@ -303,7 +320,7 @@ export const useRay = (params: Params | null) => {
     const shareFeeRate = shareFeeReceiver ? new BN(0) : new BN(10000)
 
     let _transaction: Transaction | undefined
-
+    let _builder: any
     if (type === 'buy') {
       console.log('poolInfo:', poolInfo, poolInfo.realA.toString(), poolInfo.realB.toString())
 
@@ -325,11 +342,8 @@ export const useRay = (params: Params | null) => {
         // shareFeeRate: new BN(625),  // optional, do not exceed poolInfo.configInfo.maxShareFeeRate
       })
 
-      console.log('transaction:', transaction,extInfo,builder)
-      // _transaction.add(transaction)
-
       _transaction = transaction
-      
+      _builder = builder
     } else if (type === 'sell') {
       const { execute, transaction, builder } = await raydiumInstance.current.launchpad.sellToken({
         programId,
@@ -343,12 +357,23 @@ export const useRay = (params: Params | null) => {
       })
 
       _transaction = transaction
+      _builder = builder
     }
+
+    const microLamports = await getPriorityFeeEstimate(_transaction as any, '');
+
+    _builder.addCustomComputeBudget({
+      units: 500000,
+      microLamports: microLamports,
+    })
 
     const tx = await walletProvider.signAndSendTransaction(_transaction, {}, {
       isVersionedTransaction: true,
       canJitoable: true,
       needFeeEstimate: false,
+      beforeSend: (signature: string) => {
+        reportTradeData(ReportDataType.SWAP, signature, uuids[params.token.address as string]);
+      }
     })
 
     console.log('tx: success', tx)

@@ -6,16 +6,20 @@ import { useUserAgent } from '@/app/context/user-agent';
 import { httpAuthPost, httpGet } from '@/app/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { success } from '@/app/utils/toast';
+import SpinLoading from 'antd-mobile/es/components/spin-loading';
 
 interface PreviewProps {
     isOpen: boolean;
     onClose: () => void;
     token: Project | undefined;
+    xUserInfo: any;
+    onClear: () => void;
 }
 
-export default function Preview({ isOpen, onClose, token }: PreviewProps) {
+export default function Preview({ isOpen, onClose, token, xUserInfo, onClear }: PreviewProps) {
     const { isMobile } = useUserAgent();
     const [shareCopy, setShareCopy] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const getShareCopy = async () => {
@@ -35,16 +39,21 @@ export default function Preview({ isOpen, onClose, token }: PreviewProps) {
     }, []);
 
     const share = useCallback(async () => {
-        if (!token) return;
+        if (!token || isLoading) return;
         try {
-            // const res = await httpAuthPost(`/contents/publish?account_id=${accountId}&project_id=${token?.id}`);
-            // if (res.code === 0) {
-            //     success("Share successfully");
-            // }
+            setIsLoading(true);
+            const res = await httpAuthPost(`/contents/publish?project_id=${token?.id}&sharing_copy=${encodeURIComponent(shareCopy)}`);
+            if (res.code === 0) {
+                success("Share successfully");
+                onClose();
+                onClear();
+            }
+            setIsLoading(false);
         } catch (error) {
             console.error("Failed to share:", error);
+            setIsLoading(false);
         }
-    }, [token]);
+    }, [token, shareCopy, isLoading]);
 
     if (!token) {
         return null;
@@ -65,16 +74,18 @@ export default function Preview({ isOpen, onClose, token }: PreviewProps) {
 
                 <div className={styles.userAction}>
                     <div className={styles.userInfo}>
-                        {/* <img
-                            src={ phylloAccount?.profile_pic_url }
+                        <img
+                            src={ xUserInfo?.profile_image_url }
                             alt="User avatar"
                             className={styles.avatar}
                         />
-                        <span className={styles.username}>{ phylloAccount?.platform_username }</span> */}
+                        <span className={styles.username}>{ xUserInfo?.username }</span>
                     </div>
                     <button className={styles.postButton} onClick={() => {
                         share();
-                    }}>Post</button>
+                    }}>
+                        {isLoading ? <SpinLoading color='#fff' style={{ fontSize: 14 }} /> : 'Post'}
+                    </button>
                 </div>
 
                 <div className={styles.tokenMsg}>

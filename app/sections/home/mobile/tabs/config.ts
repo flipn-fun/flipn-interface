@@ -3,10 +3,10 @@ export default [
     label: "For You",
     key: "all"
   },
-  {
-    label: "Genesis",
-    key: "genesis"
-  },
+  // {
+  //   label: "Genesis",
+  //   key: "genesis"
+  // },
   {
     label: "Bonding",
     key: "ticking"

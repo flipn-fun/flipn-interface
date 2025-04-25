@@ -110,7 +110,6 @@ export default function Laptop() {
                   setStep(2)
                 }}
                 onBack={() => {
-                  console.log('onBack', step)
                   setStep(step - 1);
                 }} />
             </motion.div>

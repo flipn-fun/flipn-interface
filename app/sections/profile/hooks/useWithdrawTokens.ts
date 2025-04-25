@@ -37,7 +37,6 @@ export const useWithdrawTokens = () => {
       const timestamp = new Date().getTime();
       const message = `Close and Withdraw Copy Trade,Id:${id},Timestamp:${timestamp}`;
       const encodedMessage = new TextEncoder().encode(message);
-      console.log(encodedMessage);
       const signature = await walletProvider?.signMessage?.(encodedMessage);
       if (!signature) {
         throw new Error("Failed to sign message");

@@ -2,45 +2,62 @@ import { useUserAgent } from "@/app/context/user-agent";
 import styles from "./index.module.css";
 import usePhyllo from "@/app/hooks/use-phyllo";
 import Preview from "./priview";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Project } from "@/app/type";
 import { Loading, SpinLoading } from "antd-mobile";
 import { success } from "@/app/utils/toast";
 import useTwitterBind from "@/app/hooks/use-twitter-bind";
 import { useSearchParams } from "next/navigation";
 import useXShare from "@/app/hooks/use-x-share";
+import AuthModal from "./auth";
 
 interface ShareListProps {
   data: Project | undefined;
   openX: (show: boolean) => void;
+  openSelf: (token: Project) => void;
+  code: string | null;
+  shareToTwitter: () => Promise<boolean>;
+  clear: () => void;
+  xUserInfo: any;
+  getAuthUrl: () => Promise<boolean>;
+  bindTwitter: (verifier: string) => Promise<boolean>;
+  getXUserInfo: () => Promise<boolean>;
 }
 
 const isInit = true;
 
-const Content: React.FC<ShareListProps> = ({ data, openX }) => {
+const Content: React.FC<ShareListProps> = ({ data, openX, openSelf, code, shareToTwitter, clear, xUserInfo, getAuthUrl, bindTwitter, getXUserInfo}) => {
   const { isMobile } = useUserAgent();
-  // const { isInit, userId, phylloAccount, connectPhyllo } = usePhyllo();
   const [preview, setPreview] = useState(false);
-  const searchParams = useSearchParams();
-  const code = searchParams.get("code");  
-  const { shareToTwitter } = useXShare();
-  
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleAuthSuccess = useCallback(async (code: string) => {
+    setIsAuthModalOpen(false);
+    setPreview(true);
+  }, [bindTwitter]);
+
+  console.log(xUserInfo, 'xUserInfo')
+
   return (
     <div className={isMobile ? styles.mobile : styles.pc}>
       <div className={styles.section}>
         <div className={styles.sectionTitle}>Repost video on</div>
         <div className={styles.iconList}>
-          <div className={styles.iconItem} onClick={() => {
-            // if (!phylloAccount || phylloAccount.status === 'NOT_CONNECTED') {
-            //   connectPhyllo();
-            // } else {
-            //   setPreview(true);
-            // }
-            shareToTwitter({
-              text: "Share to Twitter",
-            });
+          <div className={styles.iconItem} onClick={async () => {
+            if (xUserInfo) {
+              setPreview(true);
+            }
 
-            // setPreview(true);
+            if (!xUserInfo) {
+              const _xUserInfo = await getXUserInfo()
+              if (_xUserInfo) {
+                setPreview(true);
+              } else {
+                setIsAuthModalOpen(true);
+              }
+            } else {
+              setPreview(true);
+            }
           }}>
             {isInit ? (
               <>
@@ -62,7 +79,7 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
           <div className={styles.iconItem} onClick={() => {
             if (!data) return;
             openX(true);
-          }}> 
+          }}>
             <div className={styles.iconWrapper}>
               <img src="/img/share/twitter.svg" alt="X" width={50} height={50} />
             </div>
@@ -107,7 +124,17 @@ const Content: React.FC<ShareListProps> = ({ data, openX }) => {
         </div>
       </div>
 
-      <Preview token={data} isOpen={preview} onClose={() => setPreview(false)} />
+      <Preview token={data} isOpen={preview} xUserInfo={xUserInfo} onClear={() => {
+        clear();
+      }} onClose={() => setPreview(false)} />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onSuccess={handleAuthSuccess}
+        getAuthUrl={getAuthUrl}
+        bindTwitter={bindTwitter}
+      />
     </div>
   );
 };

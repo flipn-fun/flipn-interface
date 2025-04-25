@@ -5,8 +5,10 @@ import { GLOBAL, FEE_RECIPIENT, SYSTEM_PROGRAM_ID, RENT, PUMP_FUN_ACCOUNT, PUMP_
 import { Idl, Program } from '@coral-xyz/anchor';
 import IDL from '@/app/hooks/pump.json';
 import Big from 'big.js';
+import { reportTradeData } from './report';
+import { ReportDataType } from './report';
 
-export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any) {
+export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any, uuid: string) {
     try {
 
         const { virtualTokenReserves, virtualSolReserves, bondingCurve, associatedBondingCurve } = await getCoinData(mintStr, connection)
@@ -83,7 +85,10 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
         txBuilder.add(instruction);
 
         const hash = await walletProvider.signAndSendTransaction(txBuilder, {}, {
-            canJitoable: true
+            canJitoable: true,
+            beforeSend: (signature: string) => {
+                reportTradeData(ReportDataType.SWAP, signature, uuid);
+            }
         })
 
         console.log('hash', hash)
@@ -96,7 +101,7 @@ export async function pumpFunBuy(mintStr: string, solIn: number, slippageDecimal
 }
 
 
-export async function pumpFunSell(mintStr: string, tokenBalance: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any) {
+export async function pumpFunSell(mintStr: string, tokenBalance: number, slippageDecimal: number = 0.25, connection: Connection, walletProvider: any, uuid: string) {
     try {
         const { virtualTokenReserves, virtualSolReserves, bondingCurve, associatedBondingCurve } = await getCoinData(mintStr, connection)
 
@@ -175,7 +180,10 @@ export async function pumpFunSell(mintStr: string, tokenBalance: number, slippag
         }
 
         const hash = await walletProvider.signAndSendTransaction(txBuilder, {}, {
-            canJitoable: true
+            canJitoable: true,
+            beforeSend: (signature: string) => {
+                reportTradeData(ReportDataType.SWAP, signature, uuid);
+            }
         })
 
         console.log('hash', hash)

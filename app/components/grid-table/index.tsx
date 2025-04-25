@@ -17,6 +17,7 @@ const GridTable = (props: Props, ref: any) => {
     colClassName,
     headerColClassName,
     bodyColClassName,
+    emptyClassName,
     sortDataIndex,
     sortDirection,
     onSort,
@@ -167,7 +168,7 @@ const GridTable = (props: Props, ref: any) => {
                 }
               </div>
             )) : (
-              <div className={styles.GridTableLoading}>
+              <div className={clsx(styles.GridTableEmpty, emptyClassName)}>
                 <Empty text="No memes" />
               </div>
             )
@@ -201,6 +202,7 @@ export interface Props {
   colClassName?: string;
   headerColClassName?: string;
   bodyColClassName?: string;
+  emptyClassName?: string;
   sortDataIndex?: string;
   sortDirection?: GridTableSortDirection;
   onSort?: (dataIndex: string, direction: GridTableSortDirection) => void;

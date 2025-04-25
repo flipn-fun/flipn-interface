@@ -13,6 +13,9 @@ import { getAssociatedTokenAddress } from '@solana/spl-token';
 import Decimal from "decimal.js";
 import Big from 'big.js';
 import { simplifyNum } from '../utils';
+import { reportTradeData } from '../utils/report';
+import { ReportDataType } from '../utils/report';
+import { useUUID } from '../store/useUUID';
 
 interface Params {
     token: Project;
@@ -23,6 +26,7 @@ export default function useGoFund({ token }: Params) {
     const [progress, setProgress] = useState<any>(0);
     const [totalRaised, setTotalRaised] = useState<any>(0);
     const [targetRaise, setTargetRaise] = useState<any>(0);
+    const { uuids }: any = useUUID();
 
     const bondingCurvePoolRef = useRef<any>(null);
 
@@ -39,7 +43,7 @@ export default function useGoFund({ token }: Params) {
                     mintB: new PublicKey(token.address as string),
                 });
 
-                const { poolStatus, targetRaise, totalRaised, totalSupply  } = pool.poolData;
+                const { poolStatus, targetRaise, totalRaised, totalSupply } = pool.poolData;
 
                 if (targetRaise.toNumber() > 0) {
                     const progress = simplifyNum(totalRaised.toNumber() / targetRaise.toNumber() * 100, 2);
@@ -106,6 +110,9 @@ export default function useGoFund({ token }: Params) {
             const hash = await walletProvider?.signAndSendTransaction(transaction, {}, {
                 canJitoable: true,
                 needFeeEstimate: false,
+                beforeSend: (signature: string) => {
+                    reportTradeData(ReportDataType.SWAP, signature, uuids[token.address as string]);
+                }
             })
 
             console.log('hash:', hash)
@@ -115,7 +122,7 @@ export default function useGoFund({ token }: Params) {
         return null
     }, [token, publicKey, walletProvider])
 
-   
+
 
     return {
         getQoute,

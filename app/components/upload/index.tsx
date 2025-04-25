@@ -117,7 +117,6 @@ export function Upload({
           scala,
           false
         );
-        console.log(originUrl)
       }
 
       setTimeout(() => {

@@ -26,7 +26,6 @@ const LaptopButton = ({ children, className, onClick, x, run, setX }: any) => {
         if (!entered) return;
 
         let diff = ev.clientX - startXRef.current;
-        console.log("diff", diff);
         if (diff < 0) {
           diff = 0;
         }
