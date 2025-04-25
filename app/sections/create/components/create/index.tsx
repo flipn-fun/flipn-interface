@@ -5,7 +5,7 @@ import Mobile from "./mobile";
 import { useUserAgent } from "@/app/context/user-agent";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { httpGet } from "@/app/utils";
+import { httpGet, sleep } from "@/app/utils";
 import { useMessage } from "@/app/context/messageContext";
 import { mapDataToProject } from "@/app/utils/mapTo";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
@@ -31,8 +31,17 @@ export default memo(function Create(props: any) {
       } else {
         tokenAddress = tokenInfo![0].toBase58()
       }
-      const v = await httpGet("/project?address=" + tokenAddress);
-      if (v.code === 0 && v.data.length > 0) {
+      let v
+      let sum = 100
+
+      do {
+        await sleep(1000)
+        v = await httpGet("/project?address=" + tokenAddress);  
+        sum--
+        console.log('sum:', sum)
+      } while ((v.code !== 0 || !v.data || v.data.length === 0 || v.data.status === 0) && sum > 0)
+
+      if (v.code === 0 && v.data?.length > 0) {
         const data = v.data[0];
         showShare(mapDataToProject(data), true, () => {
           router.push("/detail?address=" + tokenAddress);
@@ -42,8 +51,6 @@ export default memo(function Create(props: any) {
       }
     }
   }, [tokenInfo]);
-
-  console.log('props', props)
 
   return (
     <>

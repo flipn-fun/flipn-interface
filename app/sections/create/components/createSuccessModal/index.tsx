@@ -3,7 +3,7 @@ import MainBtn from "@/app/components/mainBtn";
 import type { Project } from "@/app/type";
 
 import { httpGet } from "@/app/utils";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUserAgent } from "@/app/context/user-agent";
 import { shareToX } from "@/app/utils/share";
 import { useMessage } from "@/app/context/messageContext";
@@ -14,6 +14,7 @@ import { numberFormatter } from "@/app/utils/common";
 // @ts-ignore
 import confetti from "canvas-confetti";
 import { useInterval } from "ahooks";
+import SpinLoading from "antd-mobile/es/components/spin-loading";
 
 interface Props {
   show: boolean;
@@ -91,6 +92,7 @@ function SuccessModal({
 }) {
   const { isMobile } = useUserAgent();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
 
   const launchConfetti = useCallback(() => {
     if (token) {
@@ -169,8 +171,13 @@ function SuccessModal({
         <div className={style.btnBox}>
           <MainBtn
             onClick={async () => {
+              if (isLoading) {
+                return
+              } 
+              setIsLoading(true)
+              await onShare();
               isMobile && onClose();
-              onShare();
+              setIsLoading(false)
             }}
             style={{
               fontWeight: isMobile ? 500 : 700,
@@ -178,8 +185,12 @@ function SuccessModal({
               color: isMobile ? "#FBCA04" : "#000000"
             }}
           >
-            Share
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>{isLoading ? <SpinLoading
+              color="#9290B1"
+              style={{ "--size": "14px" }}
+            /> : 'Share'}</div>
           </MainBtn>
+          
         </div>
       </div>
 
