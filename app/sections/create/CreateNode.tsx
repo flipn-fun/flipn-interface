@@ -428,6 +428,7 @@ export default forwardRef(function CreateNode(
     validateTwitter,
     validateDiscord,
     isMobile,
+    platform,
   ]);
 
   useImperativeHandle(

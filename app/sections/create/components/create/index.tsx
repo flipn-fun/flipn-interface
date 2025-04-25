@@ -43,6 +43,8 @@ export default memo(function Create(props: any) {
     }
   }, [tokenInfo]);
 
+  console.log('props', props)
+
   return (
     <>
       <Mobile {...props} setShowSuccessModal={share} />
