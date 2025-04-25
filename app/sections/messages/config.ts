@@ -15,7 +15,7 @@ export default {
   ],
   token_launching: (item: any) => [
     "Token Bonding",
-    `Congratulations, the ${item.content_2} Token you flipped has entered the Bonding phase, and you have successfully received the token.`,
+    `Congratulations, the ${item.content_2} Token you bought has entered the Bonding phase, and you have successfully received the token.`,
     "Click to view Token details.",
     `/detail?address=${item.msg_id}&from=messages`,
     "Detail"
