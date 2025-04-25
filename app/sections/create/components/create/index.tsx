@@ -39,7 +39,7 @@ export default memo(function Create(props: any) {
         v = await httpGet("/project?address=" + tokenAddress);  
         sum--
         console.log('sum:', sum)
-      } while ((v.code !== 0 || !v.data || v.data.length === 0 || v.data.status === 0) && sum > 0)
+      } while ((v.code !== 0 || !v.data || v.data.length === 0 || v.data[0].status === 0) && sum > 0)
 
       if (v.code === 0 && v.data?.length > 0) {
         const data = v.data[0];
