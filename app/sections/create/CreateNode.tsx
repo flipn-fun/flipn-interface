@@ -68,20 +68,20 @@ const Platforms = [
     value: 'FlipN',
     programId: process.env.NEXT_PUBLIC_PROGRAM_ID,
   },
-  {
-    name: 'Meteora',
-    img: '/img/create/meteora.png',
-    value: 'Meteora',
-    note: <div className={styles.platformNote}>
-      <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
-      <ul className={styles.platformNoteContent}>
-        <li className={styles.platformNoteText}>
-          In the process of bounding, you will enjoy an amount bonus of 0.25% of the total transaction amount.
-        </li>
-      </ul>
-    </div>,
-    programId: 'Meteora'
-  },
+  // {
+  //   name: 'Meteora',
+  //   img: '/img/create/meteora.png',
+  //   value: 'Meteora',
+  //   note: <div className={styles.platformNote}>
+  //     <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
+  //     <ul className={styles.platformNoteContent}>
+  //       <li className={styles.platformNoteText}>
+  //         In the process of bounding, you will enjoy an amount bonus of 0.25% of the total transaction amount.
+  //       </li>
+  //     </ul>
+  //   </div>,
+  //   programId: 'Meteora'
+  // },
 ]
 
 export default forwardRef(function CreateNode(
@@ -399,7 +399,7 @@ export default forwardRef(function CreateNode(
       x,
       tg,
       discord,
-      status: platform.name === 'Raydium' ? 1 : 0,
+      status: 1,
       platform,
     });
 
