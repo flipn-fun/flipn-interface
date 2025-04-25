@@ -117,8 +117,6 @@ export default function Create({
 
   const debounceVal = useDebounce(valInput, { wait: 800 });
 
-  console.log('data', data)
-
   useEffect(() => {
     if (!debounceVal || debounceVal === "0") {
       totalRef.current.isError = false;
@@ -172,8 +170,6 @@ export default function Create({
         setIsError(true);
       }
 
-      console.log('debounceVal', data)
-
       if (data.platform.name === 'Raydium') {
         setRayReceiveAmount('0')
         getQouteBeforeBuy(new Big(debounceVal).mul(10 ** 9).toString())
@@ -182,7 +178,6 @@ export default function Create({
           setRayReceiveAmount(amount)
         })
       } else if (data.platform.name === 'FlipN') {
-        console.log('debounceVal', debounceVal)
         setRayReceiveAmount('0')
         const res = getQouteBeforeBuyFlipN(new Big(debounceVal).mul(10 ** 9).toString())
         const amount = new Big(res).div(10 ** 6).toFixed(2)
