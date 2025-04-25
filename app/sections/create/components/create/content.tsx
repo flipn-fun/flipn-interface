@@ -106,7 +106,7 @@ export default function Create({
     }
   });
 
-  const { createMint: createMintMeteora, getQoute: getQoute } = useMeteoraToken({
+  const { createMint: createMintMeteora, getQouteBeforeBuy: getQouteBeforeBuyMeteora } = useMeteoraToken({
     token: {
       tokenName,
       ticker: data.ticker.toUpperCase(),
@@ -190,6 +190,14 @@ export default function Create({
           })
       }
 
+      if (data.platform.name === 'Meteora') {
+        setRayReceiveAmount('0')
+        getQouteBeforeBuyMeteora(new Big(debounceVal).mul(10 ** 9).toString())
+          .then((res: any) => {
+            const amount = new Big(res).div(10 ** 6).toFixed(2)
+            setRayReceiveAmount(amount)
+          })
+      }
     }
   }, [debounceVal]);
 
@@ -373,7 +381,7 @@ export default function Create({
 
           <div>
             {
-              data.platform.name === 'Raydium' && <div className={styles.receiveBox}>
+              (data.platform.name === 'Raydium' || data.platform.name === 'Meteora') && <div className={styles.receiveBox}>
                 <div className={styles.receiveBoxTitle}>
                   You receive:
                 </div>

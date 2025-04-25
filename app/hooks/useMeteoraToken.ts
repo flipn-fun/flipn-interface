@@ -69,7 +69,7 @@ const fakePool: any = {
     ]
 }
 
-const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('6g98qaTAxqodvDV2boPhinEBMs3AZF4b3ekNDGuh8Ar7') : new PublicKey('3gFSuiBCmupykjZVLrQrm2CctgqEjrR11QFMUFQpbZ8B')
+const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('4smZtL2NfcYNVtk3fFx9YFmbWoTvE3ttToA3KAL2QBMn') : new PublicKey('3gFSuiBCmupykjZVLrQrm2CctgqEjrR11QFMUFQpbZ8B')
 export const useMeteoraToken = ({ token }: { token: Project }) => {
     const { publicKey, walletProvider } = useAccount();
     const { connection } = useConnection()
@@ -99,140 +99,143 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
             poolCreator: creator,
         })
 
-        const program = programclient.getProgram()
-        const eventAuthority = deriveEventAuthority()
-        const poolAuthority = derivePoolAuthority(program.programId)
+        if (amount && Number(amount) > 0) {
+            const program = programclient.getProgram()
+            const eventAuthority = deriveEventAuthority()
+            const poolAuthority = derivePoolAuthority(program.programId)
 
-     
+            const amountIn = new BN(amount)
+            const minimumAmountOut = new BN(0)
+            const swapBaseForQuote = false
+            const owner = publicKey!
 
-        const amountIn = new BN(100000000)
-        const minimumAmountOut = new BN(0)
-        const swapBaseForQuote = false
-        const owner = publicKey!
+            const inputMint = NATIVE_MINT
+            const outputMint = baseMint.publicKey
+            const inputTokenProgram = TOKEN_PROGRAM_ID
+            const outputTokenProgram = TOKEN_PROGRAM_ID
 
-        const inputMint = NATIVE_MINT
-        const outputMint = baseMint.publicKey
-        const inputTokenProgram = TOKEN_PROGRAM_ID
-        const outputTokenProgram = TOKEN_PROGRAM_ID
-        
-     
-        const isSOLInput = true
-        const isSOLOutput = false
+            const isSOLInput = true
+            const isSOLOutput = false
 
-        const inputTokenAccount = findAssociatedTokenAddress(
-            owner,
-            inputMint,
-            inputTokenProgram
-        )
-
-        const outputTokenAccount = findAssociatedTokenAddress(
-            owner,
-            outputMint,
-            outputTokenProgram
-        )
-
-        const pool = derivePool(NATIVE_MINT, baseMint.publicKey, config, program.programId)
-        const baseVault = deriveTokenVaultAddress(
-            pool,
-            baseMint.publicKey,
-            program.programId
-        )
-        const quoteVault = deriveTokenVaultAddress(
-            pool,
-            NATIVE_MINT,
-            program.programId
-        )
-    
-
-        const accounts: SwapAccounts = {
-            baseMint: baseMint.publicKey,
-            quoteMint: NATIVE_MINT,
-            pool: pool,
-            baseVault: baseVault,
-            quoteVault: quoteVault,
-            config: config,
-            eventAuthority,
-            poolAuthority,
-            referralTokenAccount: null,
-            inputTokenAccount,
-            outputTokenAccount,
-            payer: owner,
-            tokenBaseProgram: swapBaseForQuote
-                ? inputTokenProgram
-                : outputTokenProgram,
-            tokenQuoteProgram: swapBaseForQuote
-                ? outputTokenProgram
-                : inputTokenProgram,
-            program: program.programId,
-        }
-
-        // Add preInstructions for ATA creation and SOL wrapping
-        const preInstructions: TransactionInstruction[] = []
-
-        // Check and create ATAs if needed
-        const inputTokenAccountInfo =
-            await connection.getAccountInfo(inputTokenAccount)
-        if (!inputTokenAccountInfo) {
-            preInstructions.push(
-                createAssociatedTokenAccountIdempotentInstruction(
-                    owner,
-                    inputTokenAccount,
-                    owner,
-                    inputMint,
-                    inputTokenProgram
-                )
+            const inputTokenAccount = findAssociatedTokenAddress(
+                owner,
+                inputMint,
+                inputTokenProgram
             )
-        }
 
-        const outputTokenAccountInfo =
-            await connection.getAccountInfo(outputTokenAccount)
-        if (!outputTokenAccountInfo) {
-            preInstructions.push(
-                createAssociatedTokenAccountIdempotentInstruction(
-                    owner,
-                    outputTokenAccount,
-                    owner,
-                    outputMint,
-                    outputTokenProgram
-                )
+            const outputTokenAccount = findAssociatedTokenAddress(
+                owner,
+                outputMint,
+                outputTokenProgram
             )
-        }
 
-        // Add SOL wrapping instructions if needed
-        if (isSOLInput) {
-            preInstructions.push(
-                ...wrapSOLInstruction(
-                    owner,
-                    inputTokenAccount,
-                    BigInt(amountIn.toString())
-                )
+            const pool = derivePool(NATIVE_MINT, baseMint.publicKey, config, program.programId)
+            const baseVault = deriveTokenVaultAddress(
+                pool,
+                baseMint.publicKey,
+                program.programId
             )
+            const quoteVault = deriveTokenVaultAddress(
+                pool,
+                NATIVE_MINT,
+                program.programId
+            )
+
+
+            const accounts: SwapAccounts = {
+                baseMint: baseMint.publicKey,
+                quoteMint: NATIVE_MINT,
+                pool: pool,
+                baseVault: baseVault,
+                quoteVault: quoteVault,
+                config: config,
+                eventAuthority,
+                poolAuthority,
+                referralTokenAccount: null,
+                inputTokenAccount,
+                outputTokenAccount,
+                payer: owner,
+                tokenBaseProgram: swapBaseForQuote
+                    ? inputTokenProgram
+                    : outputTokenProgram,
+                tokenQuoteProgram: swapBaseForQuote
+                    ? outputTokenProgram
+                    : inputTokenProgram,
+                program: program.programId,
+            }
+
+            // Add preInstructions for ATA creation and SOL wrapping
+            const preInstructions: TransactionInstruction[] = []
+
+            // Check and create ATAs if needed
+            const inputTokenAccountInfo =
+                await connection.getAccountInfo(inputTokenAccount)
+            if (!inputTokenAccountInfo) {
+                preInstructions.push(
+                    createAssociatedTokenAccountIdempotentInstruction(
+                        owner,
+                        inputTokenAccount,
+                        owner,
+                        inputMint,
+                        inputTokenProgram
+                    )
+                )
+            }
+
+            const outputTokenAccountInfo =
+                await connection.getAccountInfo(outputTokenAccount)
+            if (!outputTokenAccountInfo) {
+                preInstructions.push(
+                    createAssociatedTokenAccountIdempotentInstruction(
+                        owner,
+                        outputTokenAccount,
+                        owner,
+                        outputMint,
+                        outputTokenProgram
+                    )
+                )
+            }
+
+            // Add SOL wrapping instructions if needed
+            if (isSOLInput) {
+                preInstructions.push(
+                    ...wrapSOLInstruction(
+                        owner,
+                        inputTokenAccount,
+                        BigInt(amountIn.toString())
+                    )
+                )
+            }
+
+            // Add postInstructions for SOL unwrapping
+            const postInstructions: TransactionInstruction[] = []
+            if (isSOLInput || isSOLOutput) {
+                const unwrapIx = await unwrapSOLInstruction(owner)
+                console.log('unwrapIx', unwrapIx)
+                if (unwrapIx) {
+                    postInstructions.push(unwrapIx as any)
+                }
+            }
+
+            const swapInstruction = await program.methods
+                .swap({
+                    amountIn,
+                    minimumAmountOut,
+                })
+                .accounts(accounts)
+                .preInstructions(preInstructions)
+                .postInstructions(postInstructions)
+                .transaction()
+
+            transaction.add(...swapInstruction.instructions)
         }
 
-        // Add postInstructions for SOL unwrapping
-        const postInstructions: TransactionInstruction[] = []
-        // if (isSOLInput || isSOLOutput) {
-        //     const unwrapIx = unwrapSOLInstruction(owner)
-        //     if (unwrapIx) {
-        //         postInstructions.push(unwrapIx as any)
-        //     }
-        // }
 
-        const swapInstruction = await program.methods
-            .swap({
-                amountIn,
-                minimumAmountOut,
-            })
-            .accounts(accounts)
-            .preInstructions(preInstructions)
-            .postInstructions(postInstructions)
-            .transaction()
-
-        console.log('transaction', transaction, swapInstruction)
+        console.log('transaction', transaction)
 
         const latestBlockhash = await connection?.getLatestBlockhash();
         transaction.recentBlockhash = latestBlockhash!.blockhash;
-        transaction.add(...swapInstruction.instructions)
+
 
         const message = new TransactionMessage({
             payerKey: publicKey!, // Public key of the account paying for the transaction
@@ -255,12 +258,6 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         return tx
     }, [publicKey, walletProvider])
 
-    const getSwapInstruction = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
-        const client = new DynamicBondingCurveClient(connection as any)
-        const programclient = new DynamicBondingCurveProgramClient(connection as any)
-        
-        
-    }, [])  
 
     // const createConfig = useCallback(async () => {
     //     const client = new DynamicBondingCurveClient(connection)
@@ -354,22 +351,23 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
 
     // }, [publicKey, walletProvider])
 
-    const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+    const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
         const client = new DynamicBondingCurveClient(connection as any)
         const programclient = new DynamicBondingCurveProgramClient(connection as any)
 
         const poolAddress = await programclient.getPoolAddress(
             NATIVE_MINT,
-            new PublicKey('FEvrgVQbpe775fBxVSixevt1xwh7VH2ZLcBVMqvfGWHw'),
+            // new PublicKey('FEvrgVQbpe775fBxVSixevt1xwh7VH2ZLcBVMqvfGWHw'),
+            new PublicKey(token.address as string),
             config
         )
 
         const transaction = await client.pools.swap(
             poolAddress,
             {
-                amountIn: new BN(1000000),
-                minimumAmountOut: new BN(900000),
-                swapBaseForQuote: false,
+                amountIn: new BN(amount),
+                minimumAmountOut: type === 'sell' ? new BN(amount).mul(new BN(slip)) : new BN(0),
+                swapBaseForQuote: type === 'sell',
                 owner: publicKey!,
             },
         )
@@ -398,31 +396,35 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
 
         console.log('tx', tx)
 
-    }, [publicKey, walletProvider])
+        return tx
 
-    const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+    }, [publicKey, walletProvider, token])
+
+    const _getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", isReal: boolean = false) => {
         const client = new DynamicBondingCurveClient(connection as any)
         const programclient = new DynamicBondingCurveProgramClient(connection as any)
 
-        const poolAddress = await programclient.getPoolAddress(
-            NATIVE_MINT,
-            new PublicKey('8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8'),
-            config
-        )
-
-        console.log('poolAddress', poolAddress.toBase58())
-
+        let pool = fakePool
         const poolConfig = await programclient.getPoolConfig(config)
-
-        const pool = await programclient.getPool(poolAddress)
+        if (isReal) {
+            const poolAddress = await programclient.getPoolAddress(
+                NATIVE_MINT,
+                // new PublicKey('8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8'),
+                new PublicKey(token.address as string),
+                config
+            )
+            console.log('poolAddress', poolAddress.toBase58())
+    
+            pool = await programclient.getPool(poolAddress)
+        }
 
         console.log('pool', pool!.sqrtPrice.toString())
 
         const quote = await client.pools.swapQuote({
-            virtualPool: fakePool!,
+            virtualPool: pool,
             config: poolConfig,
-            swapBaseForQuote: false,
-            amountIn: new BN(1000000),
+            swapBaseForQuote: type === "sell",
+            amountIn: new BN(amount),
             hasReferral: false,
             currentPoint: new BN(0)
         })
@@ -430,12 +432,23 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         console.log('quote', quote.amountOut.toString())
 
         return quote.amountOut.toString()
-    }, [])
+    }, [publicKey, walletProvider, token])
+
+    const getQoute = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
+        const quote = await _getQoute(amount, type, true)
+        return quote
+    }, [_getQoute, token])
+
+    const getQouteBeforeBuy = useCallback(async (amount: string) => {
+        const quote = await _getQoute(amount, 'buy', false)
+        return quote
+    }, [_getQoute])
 
     return {
         createMint,
         trade,
-        getQoute
+        getQoute,
+        getQouteBeforeBuy
     };
 };
 
