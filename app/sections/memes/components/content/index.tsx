@@ -120,7 +120,7 @@ const MemesContent = (props: any) => {
     {
       key: "age",
       dataIndex: "latest",
-      width: "124px",
+      width: "150px",
       title: "Age",
       sort: true,
       ellipsis: true,
