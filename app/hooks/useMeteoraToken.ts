@@ -69,7 +69,7 @@ const fakePool: any = {
     ]
 }
 
-const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('4smZtL2NfcYNVtk3fFx9YFmbWoTvE3ttToA3KAL2QBMn') : new PublicKey('EvZRp56QkDXxBE25DitmEBnRBtgzRc5oQohv6eYHUSyP')
+const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('4smZtL2NfcYNVtk3fFx9YFmbWoTvE3ttToA3KAL2QBMn') : new PublicKey('9KGgxn6H9Y7zRzUDh9o9M5w2KBGdJBNgUeUN8bFFF3FW')
 export const useMeteoraToken = ({ token }: { token: Project }) => {
     const { publicKey, walletProvider } = useAccount();
     const { connection } = useConnection()
