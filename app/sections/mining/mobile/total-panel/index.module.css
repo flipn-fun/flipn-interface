@@ -133,3 +133,66 @@
   gap: 6px;
   margin-top: 4px;
 }
+
+.ClaimBox {
+  display: flex;
+  align-items: center;
+  border: 1px solid #767676;
+  border-radius: 10px;
+  gap: 15px;
+  padding-left: 5px;
+  position: relative;
+}
+
+.ClaimBoxItemTitle {  
+  font-size: 12px;
+  font-weight: 400;
+  position: relative;
+}
+
+.ClaimBoxBtn {
+  background-color: #999999;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  width: 42px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ClaimTipBox:hover .ClaimTip {
+  display: flex;
+}
+
+.ClaimTip {
+  position: absolute;
+  top: -31px;
+  left: 50%;
+  width: 90px;
+  height: 31px;
+  background-color: #000;
+  border: 1px solid #3B3B3B;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #9290B1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+
+.ClaimBoxActive {
+  .ClaimBox {
+    border: 1px solid #C9FF5D;
+  }
+  .ClaimBoxBtn {
+    background-color: #C9FF5D;
+    color: #000;
+  }
+}
+
+

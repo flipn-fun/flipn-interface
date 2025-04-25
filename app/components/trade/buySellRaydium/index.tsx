@@ -659,7 +659,7 @@ export default function BuySellRaydium({
                       const volume = activeIndex === 0 ? buyInSol : sellOutSol;
                       const pointByVolume = await getPointByVolume(
                         Big(volume).toFixed(SOL.tokenDecimals),
-                        "pump"
+                        "raydium"
                       );
 
                       reportTradeData(ReportDataType.SWAP, hash);
