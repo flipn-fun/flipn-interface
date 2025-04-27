@@ -9,7 +9,7 @@ import { Order } from '@/app/sections/memes/config';
 import Loading from '@/app/components/icons/loading';
 
 const MemesSelect = (props: any) => {
-  const { className, value, onChange, options, renderSelectedLabel, renderLabel, memesContainerRef, loading } = props;
+  const { className, containerClassName, value, onChange, options, renderSelectedLabel, renderLabel, memesContainerRef, loading } = props;
 
   const currentValue = useMemo(() => {
     if (typeof value === "object") {
@@ -63,6 +63,7 @@ const MemesSelect = (props: any) => {
       onVisibleChange={(visible) => {
         setOpen(visible);
       }}
+      triggerContainerClassName={containerClassName}
     >
       <button
         type="button"
