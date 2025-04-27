@@ -118,8 +118,10 @@
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  line-height: normal;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .StatisticsValue {
