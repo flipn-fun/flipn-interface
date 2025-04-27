@@ -171,7 +171,7 @@ export default function Laptop() {
           }}>Buy</Button>   
 
           <Button onClick={async () => {
-            const tx = await tradeMeteora('100000000000', 'sell', 100)
+            const tx = await tradeMeteora('100000000', 'sell', 100)
             console.log('tx', tx)
           }}>Sell</Button>
         </div>

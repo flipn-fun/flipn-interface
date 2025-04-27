@@ -362,11 +362,14 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
             config
         )
 
+
+        const quote = await getQoute(amount, type, slip)
+
         const transaction = await client.pools.swap(
             poolAddress,
             {
                 amountIn: new BN(amount),
-                minimumAmountOut: type === 'sell' ? new BN(amount).mul(new BN(slip)) : new BN(0),
+                minimumAmountOut: new BN(quote).mul(new BN(1 - slip / 1000)),
                 swapBaseForQuote: type === 'sell',
                 owner: publicKey!,
             },
