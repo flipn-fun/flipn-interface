@@ -17,11 +17,13 @@ import Search from '@/app/sections/memes/components/content/search';
 import MemesSelect from '@/app/sections/memes/components/select';
 import List from '@/app/sections/memes/components/content/list';
 import Favorite from '@/app/sections/memes/components/content/favorite';
+import useSolPrice from '@/app/hooks/use-sol-price';
 
 const MemesContent = (props: any) => {
   const { } = props;
 
   const { isMobile } = useUserAgent();
+  const { solPrice } = useSolPrice();
   const {
     memesListLoading,
     memesListPageNext,
@@ -181,7 +183,7 @@ const MemesContent = (props: any) => {
       sort: true,
       ellipsis: true,
       render: (record: any) => {
-        return numberFormatter(record.volume, 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
+        return numberFormatter(Big(record.volume || 0).times(solPrice || 0), 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
       },
     },
     {
@@ -277,32 +279,35 @@ const MemesContent = (props: any) => {
                 />
               )
             }
-            {
-              Object.values(MemePhases).map((item, index) => (
-                <button
-                  type="button"
-                  disabled={memesListLoading}
-                  key={index}
-                  className={currentTab?.value === item.value ? styles.MemesPhaseActive : styles.MemesPhase}
-                  onClick={() => {
-                    setCurrentTab?.(item);
-                    initMemesList?.();
-                    getMemesList?.({
-                      type: item.type,
-                      offset: 0,
-                    });
-                  }}
-                >
-                  <div className={styles.MemesPhaseLabel}>
-                    {item.label}
-                  </div>
-                </button>
-              ))
-            }
+            <div className={isMobile ? styles.MemesPhasesListMobile : styles.MemesPhasesList}>
+              {
+                Object.values(MemePhases).map((item, index) => (
+                  <button
+                    type="button"
+                    disabled={memesListLoading}
+                    key={index}
+                    className={currentTab?.value === item.value ? styles.MemesPhaseActive : styles.MemesPhase}
+                    onClick={() => {
+                      setCurrentTab?.(item);
+                      initMemesList?.();
+                      getMemesList?.({
+                        type: item.type,
+                        offset: 0,
+                      });
+                    }}
+                  >
+                    <div className={styles.MemesPhaseLabel}>
+                      {item.label}
+                    </div>
+                  </button>
+                ))
+              }
+            </div>
             {
               isMobile && (
                 <MemesSelect
                   className={styles.MemesFiltersOrderMobile}
+                  containerClassName={styles.MemesFiltersOrderContainerMobile}
                   value={memesListSortDataIndex}
                   loading={memesListLoading}
                   onChange={(option: any) => {
