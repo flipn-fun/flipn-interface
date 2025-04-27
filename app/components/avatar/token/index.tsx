@@ -9,6 +9,7 @@ import LastKing from "./last-king";
 import BlueChipBg from "./blue-chip-bg";
 import BlueChipIcon from "./blue-chip-icon";
 import useGoFund from "@/app/hooks/useGoFund";
+import Big from "big.js";
 
 export default function TokenIcon({
   token,
@@ -29,6 +30,11 @@ export default function TokenIcon({
 
     if (token.DApp === 'gofund') {
       return (gofundProgress / 100) * 138.23;
+    }
+
+    if (token.DApp?.includes('ray_launchpad')) {
+      const rayProgress = Number(token.read_base) > 0 ? new Big(token.read_base).div('8000000000000000').mul(100).toNumber() : 0
+      return (rayProgress / 100) * 138.23;
     }
 
     return (token.bondingProgress / 100) * 138.23;
