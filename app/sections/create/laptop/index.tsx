@@ -34,7 +34,7 @@ export default function Laptop() {
 
   const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken({
     token: {
-      address: '5FqUeNGvTY4kThG8pckse4haAdMA64CrqVBuY9LbaB4i',
+      address: 'HNaSPoZVGTYfJUsTVZwXb9fknom6XK56uZKXWgHZQAcx',
       about: '',
       tokenImg: '',
       tokenName: '',

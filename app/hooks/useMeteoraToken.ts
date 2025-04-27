@@ -418,7 +418,9 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
             pool = await programclient.getPool(poolAddress)
         }
 
-        console.log('pool', pool!.sqrtPrice.toString())
+        console.log('pool', pool!)
+        console.log('pool.baseReserve', pool!.baseReserve.toString())
+        console.log('pool.quoteReserve', pool!.quoteReserve.toString())
 
         const quote = await client.pools.swapQuote({
             virtualPool: pool,
