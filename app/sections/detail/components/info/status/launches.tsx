@@ -6,11 +6,24 @@ import Big from "big.js";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import useGoFund from "@/app/hooks/useGoFund";
+import { useMemo } from "react";
 export default function LaunchesStatus({ data }: any) {
   const { config }: any = useConfig();
   const { progress, totalRaised, targetRaise } = useGoFund({ token: data });
 
-  console.log('data:', data)
+  const rayProgress = useMemo(() => {
+    if (data.DApp.includes('ray_launchpad')) {
+      return Number(data.read_base) > 0 ? new Big(data.read_base).div('8000000000000000').mul(100).toFixed(2, 1) : 0
+    }
+    return 0
+  }, [data])
+
+  const realyProgress = useMemo(() => {
+    if (data.DApp.includes('ray_launchpad')) {
+      return rayProgress
+    }
+    return data.bondingProgress || progress
+  }, [data, rayProgress, progress])
 
   return (
     <div className={styles.panel}>
@@ -18,7 +31,7 @@ export default function LaunchesStatus({ data }: any) {
         <div className={styles.singleProgress}>
           <div className={styles.progressTitleWrapper}>
             <div className={styles.progressPercent}>
-              {data.bondingProgress || progress}%
+              {simplifyNum(realyProgress, 2)}%
             </div>
             <div className={styles.progressTitle}>
               {
@@ -46,7 +59,7 @@ export default function LaunchesStatus({ data }: any) {
           </div>
 
           <ProgressBar
-            percent={data.bondingProgress || progress}
+            percent={realyProgress}
             style={{
               "--track-width": "6px",
               "--fill-color": "#C9FF5D",
