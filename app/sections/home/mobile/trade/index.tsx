@@ -19,7 +19,7 @@ export default function Trade({ token, isCurrent, onClick }: any) {
     if (token.DApp?.includes('ray_launchpad')) {
       return rayProgress
     }
-    return progress || '0'
+    return token.bondingProgress || progress || '0'
   }, [token, rayProgress, progress])
 
   return (
