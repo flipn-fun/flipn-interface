@@ -10,6 +10,8 @@ export default function LaunchesStatus({ data }: any) {
   const { config }: any = useConfig();
   const { progress, totalRaised, targetRaise } = useGoFund({ token: data });
 
+  console.log('data:', data)
+
   return (
     <div className={styles.panel}>
       {data.status === 1 && (
@@ -20,13 +22,23 @@ export default function LaunchesStatus({ data }: any) {
             </div>
             <div className={styles.progressTitle}>
               {
-                data.DApp === 'gofund' ? (
+                data.DApp === 'gofund' && (
                   <>
                     {totalRaised} SOL / <span style={{ color: "#9290B1" }}>{targetRaise} SOL</span>
                   </>
-                ) : (
+                ) 
+              }
+              {
+                data.DApp === 'sexy' && (
                   <>
                     {numberFormatter(new Big(data.solReserve || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
+                  </>
+                )
+              }
+              {
+                data.DApp.includes('ray_launchpad') && (
+                  <>
+                    {numberFormatter(new Big(data.read_quote || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>43 SOL</span>
                   </>
                 )
               }
