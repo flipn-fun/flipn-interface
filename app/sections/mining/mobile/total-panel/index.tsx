@@ -160,7 +160,15 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
               isMobile ? styles.StatisticsItem : styles.StatisticsItemPc
             }
           >
-            <div className={styles.StatisticsLabel}>Kickback</div>
+            <div className={styles.StatisticsLabel}>
+              <Image
+                src="/img/home/solana.png"
+                width={20}
+                height={20}
+                alt="Solana"
+              />
+              <span>Kickback</span>
+            </div>
             <div
               className={styles.StatisticsValue}
               style={{
@@ -178,16 +186,11 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
                     : "-"}
                 <div className={styles.ClaimTip}>Total</div>
               </span>
-              {/* <Image
-                src="/img/home/solana.png"
-                width={20}
-                height={20}
-                alt="Solana"
-              /> */}
+              
               {
-                info?.RaydiumFee && <div className={styles.ClaimBox + ' ' + (Number(info?.RaydiumFee) > 1000000 ? styles.ClaimBoxActive : '')}>
+                info?.RaydiumFee && <div className={styles.ClaimBox + ' ' + (Number(info?.RaydiumFee) >= (10 ** 7) ? styles.ClaimBoxActive : '')}>
                   <div className={styles.ClaimBoxItemTitle + ' ' + styles.ClaimTipBox}>{
-                    numberFormatter(Number(info?.RaydiumFee) / (10 ** 9), 3, true, {
+                    numberFormatter(Number(info?.RaydiumFee) / (10 ** 9), 2, true, {
                       isShort: true,
                       round: 0
                     })

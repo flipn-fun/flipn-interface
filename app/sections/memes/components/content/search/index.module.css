@@ -37,7 +37,7 @@
 }
 .MemesSearchInput {
   flex: 1;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 1);
   text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
   font-family: Unbounded;
   font-size: 13px;
@@ -47,8 +47,8 @@
 }
 .MemesSearchClear {
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   position: absolute;
   background: url("/img/memes/icon-clear.svg") no-repeat center / contain;
   right: 5px;
