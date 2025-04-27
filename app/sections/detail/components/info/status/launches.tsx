@@ -12,14 +12,14 @@ export default function LaunchesStatus({ data }: any) {
   const { progress, totalRaised, targetRaise } = useGoFund({ token: data });
 
   const rayProgress = useMemo(() => {
-    if (data.DApp.includes('ray_launchpad')) {
+    if (data.DApp?.includes('ray_launchpad')) {
       return Number(data.read_base) > 0 ? new Big(data.read_base).div('8000000000000000').mul(100).toFixed(2, 1) : 0
     }
     return 0
   }, [data])
 
   const realyProgress = useMemo(() => {
-    if (data.DApp.includes('ray_launchpad')) {
+    if (data.DApp?.includes('ray_launchpad')) {
       return rayProgress
     }
     return data.bondingProgress || progress

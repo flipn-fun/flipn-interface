@@ -9,14 +9,14 @@ export default function Trade({ token, isCurrent, onClick }: any) {
   const { progress } = useGoFund({ token });
 
   const rayProgress = useMemo(() => {
-    if (token.DApp.includes('ray_launchpad')) {
+    if (token.DApp?.includes('ray_launchpad')) {
       return Number(token.read_base) > 0 ? new Big(token.read_base).div('8000000000000000').mul(100).toFixed(2, 1) : 0
     }
     return 0
   }, [token])
 
   const realyProgress = useMemo(() => {
-    if (token.DApp.includes('ray_launchpad')) {
+    if (token.DApp?.includes('ray_launchpad')) {
       return rayProgress
     }
     return progress || '0'
