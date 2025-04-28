@@ -34,7 +34,7 @@ export default function Laptop() {
 
   const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken({
     token: {
-      address: '8QstioLizYZvYad3W9jqFKmyspPczs6t8sNvfSshBkLU',
+      address: '6XxjYxLi7tU8ypYSJHSuMepiq2m1dGkev5b3mJ7udvfL',
       about: '',
       tokenImg: '',
       tokenName: '',
@@ -151,9 +151,9 @@ export default function Laptop() {
         <div>
           <Button onClick={async () => {
             const tx = await createMintMeteora({
-              tokenName: 'maoli',
-              ticker: 'MAOLI',
-              about: 'maoli',
+              tokenName: 'maoli3',
+              ticker: 'MAOLI3',
+              about: 'maoli3',
               tokenImg: 'https://i.ibb.co/0r00000/maoli.png',
               tokenIcon: 'https://i.ibb.co/0r00000/maoli.png'
             }, '10000000')
@@ -171,7 +171,7 @@ export default function Laptop() {
           }}>Buy</Button>   
 
           <Button onClick={async () => {
-            const tx = await tradeMeteora('100000000', 'sell', 100)
+            const tx = await tradeMeteora('100000000000', 'sell', 100)
             console.log('tx', tx)
           }}>Sell</Button>
         </div>
