@@ -41,6 +41,7 @@ const formatWinRate = (winRate: string) => {
   }
   return new Big(winRate).times(100).toFixed(1) + '%';
 }
+
   return (
     <div className={styles.CopyTradeShareInfoCardContainer}>
       <div className={styles.CopyTradeShareInfoCard}>
@@ -53,8 +54,8 @@ const formatWinRate = (winRate: string) => {
           <div className={styles.publicStyle}>
             <span className={styles.publicStyleTitle}>Total PnL</span>
             <span>
-              <span className={styles.publicStylePNL} style={{color: isGtZero(copyTradersUserInfo?.tradeInfo?.totalPNL || '0') ? '#C2FF49 !important' : '#FF2681 !important'}}>{formatPnl(copyTradersUserInfo?.tradeInfo?.totalPNL || '0')}</span>
-               <span className={styles.publicStyleValueCurrency}>SOL</span>
+              <span className={styles.publicStylePNL} style={{color: isGtZero(copyTradersUserInfo?.tradeInfo?.totalPNL) ? '#C9FF5D' : '#FF2681'}}>{formatPnl(copyTradersUserInfo?.tradeInfo?.totalPNL || '0')}</span>
+               <span className={styles.publicStyleValueCurrency} style={{color: isGtZero(copyTradersUserInfo?.tradeInfo?.totalPNL) ? '#C9FF5D' : '#FF2681'}}>SOL</span>
             </span>
           </div>
 

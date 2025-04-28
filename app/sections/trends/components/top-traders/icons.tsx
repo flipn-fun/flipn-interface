@@ -168,9 +168,10 @@ export const RightTopArrowIcon = () => {
   );
 };
 
-export const QuestionIcon = () => {
+export const QuestionIcon = (props:any) => {
   return (
     <svg
+      {...props}
       width="17"
       height="17"
       viewBox="0 0 17 17"
