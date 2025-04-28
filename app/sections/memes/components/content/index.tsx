@@ -1,5 +1,13 @@
 import styles from './index.module.css';
-import { MemePhase, MemePhases, MemePlatforms, MemeSort, MemeSortOptions, Order } from '@/app/sections/memes/config';
+import {
+  MemePhase,
+  MemePhases,
+  MemePlatform,
+  MemePlatforms,
+  MemeSort,
+  MemeSortOptions,
+  Order
+} from '@/app/sections/memes/config';
 import GridTable, { GridTableSortDirection } from '@/app/components/grid-table';
 import { useContext, useMemo, useState } from 'react';
 import { useUserAgent } from '@/app/context/user-agent';
@@ -139,6 +147,10 @@ const MemesContent = (props: any) => {
       render: (record: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
+
+        if (MemePlatforms[MemePlatform.Raydium].dApp.some((reg) => reg.test(record.DApp))) {
+          record.bonding_progress = Big(record.read_base).div("8000000000000000").mul(100).toFixed(2);
+        }
 
         if (
           Big(record.bonding_progress || 0).lt(100)
