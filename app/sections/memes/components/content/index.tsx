@@ -149,7 +149,7 @@ const MemesContent = (props: any) => {
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
         if (MemePlatforms[MemePlatform.Raydium].dApp.some((reg) => reg.test(record.DApp))) {
-          record.bonding_progress = Big(record.read_base).div("8000000000000000").mul(100).toFixed(2);
+          record.bonding_progress = Big(record.read_base).div("800000000000000").mul(100).toFixed(2);
         }
 
         if (
