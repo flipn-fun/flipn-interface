@@ -34,7 +34,7 @@ export default function Laptop() {
 
   const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken({
     token: {
-      address: 'HNaSPoZVGTYfJUsTVZwXb9fknom6XK56uZKXWgHZQAcx',
+      address: '8QstioLizYZvYad3W9jqFKmyspPczs6t8sNvfSshBkLU',
       about: '',
       tokenImg: '',
       tokenName: '',
@@ -151,11 +151,11 @@ export default function Laptop() {
         <div>
           <Button onClick={async () => {
             const tx = await createMintMeteora({
-              tokenName: 'test',
-              ticker: 'test',
-              about: 'test',
-              tokenImg: 'test',
-              tokenIcon: 'test'
+              tokenName: 'maoli',
+              ticker: 'MAOLI',
+              about: 'maoli',
+              tokenImg: 'https://i.ibb.co/0r00000/maoli.png',
+              tokenIcon: 'https://i.ibb.co/0r00000/maoli.png'
             }, '10000000')
             console.log('tx', tx)
           }}>Create Mint</Button>
