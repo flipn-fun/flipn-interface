@@ -150,12 +150,13 @@ export default function CoppiedAction({ show, onClose, copiedInfo, address }: an
       new Big(copyTimes || 1)
     );
 
+    const availableBalance = new Big(solBalance || 0).sub(0.03);
     //
     const isAmountEmpty = !copyAmount || copyAmount === "0";
     const isTimesEmpty = !copyTimes || copyTimes === "0";
     const isAmountTooSmall = calculatedOnceCopyAmount.lt(minAmount);
     const isBalanceInsufficient = new Big(copyAmount || 0).gt(
-      new Big(solBalance || 0)
+      new Big(availableBalance || 0)
     );
     const isTimesTooSmall = +copyTimes < 1;
 
@@ -167,7 +168,7 @@ export default function CoppiedAction({ show, onClose, copiedInfo, address }: an
     } else if (isAmountTooSmall) {
       newErrMsg = "Minimum amount is 0.1 SOL";
     } else if (isBalanceInsufficient) {
-      newErrMsg = "Insufficient balance";
+      newErrMsg = "Insufficient balance (0.03 SOL reserved for fees)";
     }
 
     setErrMsg(newErrMsg);
@@ -548,7 +549,9 @@ export const AdvancedModal = ({
               <LeftBackIcon />
             </span>
             <span className={styles.advancedModalHeaderTitle}>
-              Advanced Setting <QuestionIcon />
+              Advanced Setting <QuestionIcon  onClick={() => {
+              window.open('https://docs.flipn.fun', '_blank');
+            }}/>
             </span>
           </div>
           <Switch
