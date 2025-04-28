@@ -13,7 +13,7 @@ export default function LaunchesStatus({ data }: any) {
 
   const rayProgress = useMemo(() => {
     if (data.DApp?.includes('ray_launchpad')) {
-      return Number(data.read_base) > 0 ? new Big(data.read_base).div('800000000000000').mul(100).toFixed(2, 1) : 0
+      return Number(data.read_base) > 0 ? new Big(data.read_base).div('800000000000000').toFixed(2, 1) : 0
     }
     return 0
   }, [data])
