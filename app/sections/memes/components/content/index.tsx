@@ -1,5 +1,13 @@
 import styles from './index.module.css';
-import { MemePhase, MemePhases, MemePlatforms, MemeSort, MemeSortOptions, Order } from '@/app/sections/memes/config';
+import {
+  MemePhase,
+  MemePhases,
+  MemePlatform,
+  MemePlatforms,
+  MemeSort,
+  MemeSortOptions,
+  Order
+} from '@/app/sections/memes/config';
 import GridTable, { GridTableSortDirection } from '@/app/components/grid-table';
 import { useContext, useMemo, useState } from 'react';
 import { useUserAgent } from '@/app/context/user-agent';
@@ -17,11 +25,13 @@ import Search from '@/app/sections/memes/components/content/search';
 import MemesSelect from '@/app/sections/memes/components/select';
 import List from '@/app/sections/memes/components/content/list';
 import Favorite from '@/app/sections/memes/components/content/favorite';
+import useSolPrice from '@/app/hooks/use-sol-price';
 
 const MemesContent = (props: any) => {
   const { } = props;
 
   const { isMobile } = useUserAgent();
+  const { solPrice } = useSolPrice();
   const {
     memesListLoading,
     memesListPageNext,
@@ -138,6 +148,10 @@ const MemesContent = (props: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
+        if (MemePlatforms[MemePlatform.Raydium].dApp.some((reg) => reg.test(record.DApp))) {
+          record.bonding_progress = Big(record.read_base).div("800000000000000").mul(100).toFixed(2);
+        }
+
         if (
           Big(record.bonding_progress || 0).lt(100)
           && Big(record.bonding_progress || 0).gte(0)
@@ -181,7 +195,7 @@ const MemesContent = (props: any) => {
       sort: true,
       ellipsis: true,
       render: (record: any) => {
-        return numberFormatter(record.volume, 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
+        return numberFormatter(Big(record.volume || 0).times(solPrice || 0), 2, true, { prefix: "$", isShort: true, isShortUppercase: true });
       },
     },
     {
@@ -277,32 +291,35 @@ const MemesContent = (props: any) => {
                 />
               )
             }
-            {
-              Object.values(MemePhases).map((item, index) => (
-                <button
-                  type="button"
-                  disabled={memesListLoading}
-                  key={index}
-                  className={currentTab?.value === item.value ? styles.MemesPhaseActive : styles.MemesPhase}
-                  onClick={() => {
-                    setCurrentTab?.(item);
-                    initMemesList?.();
-                    getMemesList?.({
-                      type: item.type,
-                      offset: 0,
-                    });
-                  }}
-                >
-                  <div className={styles.MemesPhaseLabel}>
-                    {item.label}
-                  </div>
-                </button>
-              ))
-            }
+            <div className={isMobile ? styles.MemesPhasesListMobile : styles.MemesPhasesList}>
+              {
+                Object.values(MemePhases).map((item, index) => (
+                  <button
+                    type="button"
+                    disabled={memesListLoading}
+                    key={index}
+                    className={currentTab?.value === item.value ? styles.MemesPhaseActive : styles.MemesPhase}
+                    onClick={() => {
+                      setCurrentTab?.(item);
+                      initMemesList?.();
+                      getMemesList?.({
+                        type: item.type,
+                        offset: 0,
+                      });
+                    }}
+                  >
+                    <div className={styles.MemesPhaseLabel}>
+                      {item.label}
+                    </div>
+                  </button>
+                ))
+              }
+            </div>
             {
               isMobile && (
                 <MemesSelect
                   className={styles.MemesFiltersOrderMobile}
+                  containerClassName={styles.MemesFiltersOrderContainerMobile}
                   value={memesListSortDataIndex}
                   loading={memesListLoading}
                   onChange={(option: any) => {
