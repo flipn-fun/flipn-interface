@@ -60,8 +60,10 @@ export const useRay = (params: Params | null) => {
       })
 
       raydiumInstance.current = raydium;
+
+      console.log(2222)
     })();
-  }, []);
+  }, [publicKey]);
 
   const createMint = useCallback(async (params: Project, amount: string) => {
     if (!raydiumInstance.current) return;
@@ -256,10 +258,13 @@ export const useRay = (params: Params | null) => {
   }, [raydiumInstance.current, params])
 
   const createPlatform = useCallback(async () => {
+    console.log(raydiumInstance)
+
     if (!raydiumInstance.current) return;
 
-    const owner = new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP')
+    const owner = new PublicKey('EvZRp56QkDXxBE25DitmEBnRBtgzRc5oQohv6eYHUSyP')
     // const owner = publicKey
+
 
     const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
       programId, // launchpad currently only support in devent
@@ -294,7 +299,7 @@ export const useRay = (params: Params | null) => {
 
     console.log('tx: success', tx)
 
-    return tx
+    return extInfo.platformId.toBase58()
 
   }, [raydiumInstance.current])
 
