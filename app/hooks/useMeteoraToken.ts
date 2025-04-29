@@ -426,6 +426,7 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         console.log('pool', pool!)
         console.log('pool.baseReserve', pool!.baseReserve.toString())
         console.log('pool.quoteReserve', pool!.quoteReserve.toString())
+        console.log('pool.config', poolConfig)
 
         const quote = await client.pools.swapQuote({
             virtualPool: pool,
