@@ -33,7 +33,7 @@ export default function TokenIcon({
     }
 
     if (token.DApp?.includes('ray_launchpad')) {
-      const rayProgress = Number(token.read_base) > 0 ? new Big(token.read_base).div(token.total_base_sell || '800000000000000').mul(100).toNumber() : 0
+      const rayProgress = Number(token.read_base) > 0 ? new Big(token.read_base).div(Number(token.total_base_sell) || '800000000000000').mul(100).toNumber() : 0
       return (Math.min(rayProgress, 100) / 100) * 138.23;
     }
 
