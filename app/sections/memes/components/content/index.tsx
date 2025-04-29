@@ -161,7 +161,7 @@ const MemesContent = (props: any) => {
         }
 
         if (record.DApp?.includes('meteora')) {
-          const bondingProgress = new Big(record.read_base).div(Number(record.total_base_sell) || "800000000000000").mul(100).toNumber()
+          const bondingProgress = new Big(record.read_qoute).div(43 * (10 ** 9)).mul(100).toNumber()
           if (bondingProgress > 100) {
             record.bonding_progress = '100.00'
           } else {
