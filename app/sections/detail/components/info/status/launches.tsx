@@ -21,11 +21,20 @@ export default function LaunchesStatus({ data }: any) {
         return new Big(bondingProgress).toFixed(2, 1)
       }
     }
+    
+    if (data.DApp?.includes('meteora')) {
+      const meteoraProgress = Number(data.read_quote) > 0 ? new Big(data.read_quote).div(43).div(10 ** 9).mul(100).toNumber() : 0
+      if (meteoraProgress > 100) {
+        return 100
+      }
+      return new Big(meteoraProgress).toFixed(2, 1)
+    }
+
     return 0
   }, [data])
 
   const realyProgress = useMemo(() => {
-    if (data.DApp?.includes('ray_launchpad')) {
+    if (data.DApp?.includes('ray_launchpad') || data.DApp?.includes('meteora')) {
       return rayProgress
     }
     return data.bondingProgress || progress
@@ -55,7 +64,7 @@ export default function LaunchesStatus({ data }: any) {
                 )
               }
               {
-                data.DApp.includes('ray_launchpad') && (
+                (data.DApp.includes('ray_launchpad') || data.DApp.includes('meteora')) && (
                   <>
                     {numberFormatter(new Big(data.read_quote || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>43 SOL</span>
                   </>

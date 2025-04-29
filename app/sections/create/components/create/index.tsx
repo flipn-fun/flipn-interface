@@ -9,7 +9,8 @@ import { httpGet, sleep } from "@/app/utils";
 import { useMessage } from "@/app/context/messageContext";
 import { mapDataToProject } from "@/app/utils/mapTo";
 import { useTokenTrade } from "@/app/hooks/useTokenTrade";
-import { tokenAddresses } from "@/app/hooks/useRay";
+import { tokenAddresses as rayTokenAddresses } from "@/app/hooks/useRay";
+import { tokenAddresses as meteoraTokenAddresses } from "@/app/hooks/useMeteoraToken";
 
 export default memo(function Create(props: any) {
   const router = useRouter();
@@ -27,7 +28,9 @@ export default memo(function Create(props: any) {
     if (tokenInfo) {
       let tokenAddress = ''
       if (props.token.platform.name === 'Raydium') {
-        tokenAddress = tokenAddresses[props.token.tokenName + '-' + props.token.tokenSymbol.toUpperCase()]
+        tokenAddress = rayTokenAddresses[props.token.tokenName + '-' + props.token.tokenSymbol.toUpperCase()]
+      } else if (props.token.platform.name === 'Meteora') {
+        tokenAddress = meteoraTokenAddresses[props.token.tokenName + '-' + props.token.tokenSymbol.toUpperCase()]
       } else {
         tokenAddress = tokenInfo![0].toBase58()
       }

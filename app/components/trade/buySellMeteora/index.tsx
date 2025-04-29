@@ -24,7 +24,7 @@ import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import { useUserAgent } from "@/app/context/user-agent";
 import { ReportDataType, reportTradeData } from "@/app/utils/report";
-import { useRay } from "@/app/hooks/useRay";
+import { useMeteoraToken } from "@/app/hooks/useMeteoraToken";
 
 type Token = {
   tokenName: string;
@@ -51,7 +51,7 @@ export const SOL: Token = {
 
 const SOL_PERCENT_LIST = [0.1, 0.5, 1, "Max"];
 
-export default function BuySellRaydium({
+export default function BuySellMeteora({
   token,
   initType,
   from,
@@ -118,7 +118,7 @@ export default function BuySellRaydium({
   });
   const { connection } = useConnection();
 
-  const { trade, getQoute } = useRay({
+  const { trade, getQoute } = useMeteoraToken({
     token
   });
 
@@ -659,7 +659,7 @@ export default function BuySellRaydium({
                       const volume = activeIndex === 0 ? buyInSol : sellOutSol;
                       const pointByVolume = await getPointByVolume(
                         Big(volume).toFixed(SOL.tokenDecimals),
-                        "raydium"
+                        "pump"
                       );
 
                       reportTradeData(ReportDataType.SWAP, hash);

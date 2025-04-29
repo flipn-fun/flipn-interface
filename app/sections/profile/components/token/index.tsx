@@ -227,11 +227,11 @@ export default function Token({
           }
 
           {
-            (data.DApp === 'sexy' || data.DApp === 'meteora' || data.DApp?.includes('ray_launchpad') || data.DApp === 'gofund' || data.DApp === 'pump') && (
+            (data.DApp === 'sexy' || data.DApp?.includes('meteora') || data.DApp?.includes('ray_launchpad') || data.DApp === 'gofund' || data.DApp === 'pump') && (
               <div className={styles.platformIcon}>
                 {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
                 {data.DApp?.includes('ray_launchpad') && <img src="/img/create/raydium.png" alt="" />}
-                {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
+                {data.DApp?.includes('meteora') && <img src="/img/create/meteora.png" alt="" />}
                 {data.DApp === 'gofund' && <img src="/img/home/GFM.svg" alt="" />}
                 {data.DApp === 'pump' && <img src="/img/home/pump.png" alt="" />}
                 </div>

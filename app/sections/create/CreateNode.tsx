@@ -20,7 +20,8 @@ import {
   DEV_LAUNCHPAD_PROGRAM,
   LAUNCHPAD_PROGRAM,
 } from '@raydium-io/raydium-sdk-v2';
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { DYNAMIC_BONDING_CURVE_PROGRAM_ID } from "@meteora-ag/dynamic-bonding-curve-sdk";
+
 
 
 interface Props {
@@ -68,20 +69,20 @@ const Platforms = [
     value: 'FlipN',
     programId: process.env.NEXT_PUBLIC_PROGRAM_ID,
   },
-  // {
-  //   name: 'Meteora',
-  //   img: '/img/create/meteora.png',
-  //   value: 'Meteora',
-  //   note: <div className={styles.platformNote}>
-  //     <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
-  //     <ul className={styles.platformNoteContent}>
-  //       <li className={styles.platformNoteText}>
-  //         In the process of bounding, you will enjoy an amount bonus of 0.25% of the total transaction amount.
-  //       </li>
-  //     </ul>
-  //   </div>,
-  //   programId: 'Meteora'
-  // },
+  {
+    name: 'Meteora',
+    img: '/img/create/meteora.png',
+    value: 'Meteora',
+    note: <div className={styles.platformNote}>
+      <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
+      <ul className={styles.platformNoteContent}>
+        <li className={styles.platformNoteText}>
+          In the process of bounding, you will enjoy an amount bonus of 0.25% of the total transaction amount.
+        </li>
+      </ul>
+    </div>,
+    programId: DYNAMIC_BONDING_CURVE_PROGRAM_ID
+  },
 ]
 
 export default forwardRef(function CreateNode(

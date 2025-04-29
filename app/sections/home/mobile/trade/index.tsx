@@ -9,7 +9,7 @@ export default function Trade({ token, isCurrent, onClick }: any) {
   const { progress } = useGoFund({ token });
 
   const rayProgress = useMemo(() => {
-    if (token.DApp?.includes('ray_launchpad')) {
+    if (token.DApp?.includes('ray_launchpad') ) {
       if (Number(token.read_base) > 0) {
         const bondingProgress = new Big(token.read_base).div('800000000000000').mul(100).toNumber()
         if (bondingProgress > 100) {
@@ -18,11 +18,20 @@ export default function Trade({ token, isCurrent, onClick }: any) {
         return new Big(bondingProgress).toFixed(2, 1)
       }
     }
+
+    if (token.DApp?.includes('meteora')) {
+      const meteoraProgress = Number(token.read_quote) > 0 ? new Big(token.read_quote).div(43).div(10 ** 9).mul(100).toNumber() : 0
+      if (meteoraProgress > 100) {
+        return 100
+      }
+      return new Big(meteoraProgress).toFixed(2, 1)
+    }
+
     return 0
   }, [token])
 
   const realyProgress = useMemo(() => {
-    if (token.DApp?.includes('ray_launchpad')) {
+    if (token.DApp?.includes('ray_launchpad') || token.DApp?.includes('meteora')) {
       return rayProgress
     }
     return token.bondingProgress || progress || '0'
