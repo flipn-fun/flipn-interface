@@ -294,6 +294,8 @@ export default function Create({
     [totalRef, isError, solBalance]
   );
 
+  console.log('data', data)
+
   return (
     <>
       {!modalShow && (
@@ -380,6 +382,7 @@ export default function Create({
               )}
             </div>
           </div>
+
 
 
           <div>

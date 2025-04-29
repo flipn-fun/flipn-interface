@@ -387,7 +387,12 @@ export default forwardRef(function CreateNode(
       return isValid;
     }
 
-  
+    let DApp = 'sexy';
+    if (platform.value === 'Meteora') {
+      DApp = 'meteora';
+    } else if (platform.value === 'Raydium') {
+      DApp = 'ray_launchpad';
+    }
 
     onAddDataFill({
       tokenName,
@@ -402,6 +407,7 @@ export default forwardRef(function CreateNode(
       discord,
       status: 1,
       platform,
+      DApp: DApp,
     });
 
     if (!isMobile) {
