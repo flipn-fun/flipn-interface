@@ -10,7 +10,13 @@ export default function Trade({ token, isCurrent, onClick }: any) {
 
   const rayProgress = useMemo(() => {
     if (token.DApp?.includes('ray_launchpad')) {
-      return Number(token.read_base) > 0 ? new Big(token.read_base).div('800000000000000').toFixed(2, 1) : 0
+      if (Number(token.read_base) > 0) {
+        const bondingProgress = new Big(token.read_base).div('800000000000000').mul(100).toNumber()
+        if (bondingProgress > 100) {
+          return 100
+        }
+        return new Big(bondingProgress).toFixed(2, 1)
+      }
     }
     return 0
   }, [token])
