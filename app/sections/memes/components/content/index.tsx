@@ -151,9 +151,10 @@ const MemesContent = (props: any) => {
         if (record.DApp?.includes('ray_launchpad')) {
           const bondingProgress = new Big(record.read_base).div(Number(record.total_base_sell) || "800000000000000").mul(100).toNumber()
           if (bondingProgress > 100) {
-            return 100
+            record.bonding_progress = '100.00'
+          } else {
+            record.bonding_progress = new Big(bondingProgress).toFixed(2, 1)
           }
-          record.bonding_progress = new Big(bondingProgress).toFixed(2, 1)
         }
 
         if (
