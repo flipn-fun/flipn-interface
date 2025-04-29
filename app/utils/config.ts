@@ -37,4 +37,4 @@ export const SYSTEM_PROGRAM_ID = SystemProgram.programId;
 
 export const SHOW_COPY_TRADE = true;
 
-export const ALLOW_COPY_TRADE = true;
+export const ALLOW_COPY_TRADE = false;
