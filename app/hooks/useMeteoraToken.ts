@@ -31,14 +31,14 @@ const fakePool: any = {
     "baseMint": new PublicKey("8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8"),
     "baseVault": new PublicKey("FdhrwbCPAz3PYRXdT55P8Y7PmmNiieneHs4FrhX5d5Pe"),
     "quoteVault": new PublicKey("63ffWfjxkuoX3h4akt3aAPV2cATwHX3Lnzzzg4oWrfeD"),
-    "baseReserve": new BN(parseInt("038d7ea4c68000", 16)),
+    "baseReserve": new BN('1000000000000000'),
     "quoteReserve": new BN("00"),
     "protocolBaseFee": new BN("00"),
     "protocolQuoteFee": new BN("00"),
     "tradingBaseFee": new BN("00"),
     "tradingQuoteFee": new BN("00"),
-    "sqrtPrice": new BN('17860983147306975'),
-    "activationPoint": new BN(parseInt("166e5227", 16)),
+    "sqrtPrice": new BN('12218524266351781'),
+    "activationPoint": new BN(parseInt("167fa753", 16)),
     "poolType": 0,
     "isMigrated": 0,
     "isPartnerWithdrawSurplus": 0,
@@ -426,6 +426,7 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         console.log('pool', pool!)
         console.log('pool.baseReserve', pool!.baseReserve.toString())
         console.log('pool.quoteReserve', pool!.quoteReserve.toString())
+        console.log('pool.sqrtPrice', pool!.sqrtPrice.toString())
         console.log('pool.config', poolConfig)
 
         const quote = await client.pools.swapQuote({
