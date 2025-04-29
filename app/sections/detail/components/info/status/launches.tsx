@@ -14,7 +14,7 @@ export default function LaunchesStatus({ data }: any) {
   const rayProgress = useMemo(() => {
     if (data.DApp?.includes('ray_launchpad')) {
       if (Number(data.read_base) > 0) {
-        const bondingProgress = new Big(data.read_base).div(data.total_base_sell || '800000000000000').mul(100).toNumber()
+        const bondingProgress = new Big(data.read_base).div(Number(data.total_base_sell) || '800000000000000').mul(100).toNumber()
         if (bondingProgress > 100) {
           return 100
         }

@@ -149,7 +149,7 @@ const MemesContent = (props: any) => {
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
         if (record.DApp?.includes('ray_launchpad')) {
-          const bondingProgress = new Big(record.read_base).div(record.total_base_sell || "800000000000000").mul(100).toNumber()
+          const bondingProgress = new Big(record.read_base).div(Number(record.total_base_sell) || "800000000000000").mul(100).toNumber()
           if (bondingProgress > 100) {
             return 100
           }
