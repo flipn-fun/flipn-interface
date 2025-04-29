@@ -51,10 +51,10 @@ export default function Tabs({
       name: "Created",
       ...createTabContent("created", "Created")
     },
-    {
-      name: "Flipped",
-      ...createTabContent("flipped", "Flipped")
-    },
+    // {
+    //   name: "Flipped",
+    //   ...createTabContent("flipped", "Flipped")
+    // },
     {
       name: "Held",
       content: <Held from={from} address={address} />

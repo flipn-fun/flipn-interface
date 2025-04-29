@@ -227,11 +227,11 @@ export default function Token({
           }
 
           {
-            (data.DApp === 'sexy' || data.DApp === 'meteora' || data.DApp?.includes('ray_launchpad') || data.DApp === 'gofund' || data.DApp === 'pump') && (
+            (data.DApp === 'sexy' || data.DApp?.includes('meteora') || data.DApp?.includes('ray_launchpad') || data.DApp === 'gofund' || data.DApp === 'pump') && (
               <div className={styles.platformIcon}>
                 {data.DApp === 'sexy' && <img src="/img/create/flip.svg" alt="" />}
                 {data.DApp?.includes('ray_launchpad') && <img src="/img/create/raydium.png" alt="" />}
-                {data.DApp === 'meteora' && <img src="/img/create/meteora.png" alt="" />}
+                {data.DApp?.includes('meteora') && <img src="/img/create/meteora.png" alt="" />}
                 {data.DApp === 'gofund' && <img src="/img/home/GFM.svg" alt="" />}
                 {data.DApp === 'pump' && <img src="/img/home/pump.png" alt="" />}
                 </div>
@@ -344,12 +344,8 @@ export default function Token({
         }}>
           {
             (typeof (_likeStatus[data.id!]) === 'undefined' ? (data as any).is_collect : likeStatus[data.id!])
-              ? <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 0L12.9624 5.92255L19.5106 6.90983L14.7933 11.5574L15.8779 18.0902L10 15.04L4.12215 18.0902L5.20668 11.5574L0.489435 6.90983L7.03756 5.92255L10 0Z" fill="white" fill-opacity="0.6" />
-              </svg>
-              : <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 1.11768L12.5153 6.14623L12.6313 6.37828L12.8879 6.41697L18.4476 7.25521L14.4424 11.2013L14.2576 11.3834L14.3001 11.6393L15.2209 17.1859L10.2303 14.5962L10 14.4767L9.7697 14.5962L4.77911 17.1859L5.69992 11.6393L5.74242 11.3834L5.55759 11.2013L1.55242 7.25521L7.11211 6.41697L7.36867 6.37828L7.48474 6.14623L10 1.11768Z" stroke="white" />
-              </svg>
+              ? <img src="/img/home/star-full-2.svg" alt="" style={{ width: 20, height: 20 }} />
+              : <img src="/img/home/star-empty-2.svg" alt="" style={{ width: 20, height: 20 }} />
           }
         </div>
       </div>

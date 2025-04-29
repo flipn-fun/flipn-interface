@@ -6,9 +6,39 @@ import Big from "big.js";
 import { numberFormatter } from "@/app/utils/common";
 import { useConfig } from "@/app/store/useConfig";
 import useGoFund from "@/app/hooks/useGoFund";
+import { useMemo } from "react";
 export default function LaunchesStatus({ data }: any) {
   const { config }: any = useConfig();
   const { progress, totalRaised, targetRaise } = useGoFund({ token: data });
+
+  const rayProgress = useMemo(() => {
+    if (data.DApp?.includes('ray_launchpad')) {
+      if (Number(data.read_base) > 0) {
+        const bondingProgress = new Big(data.read_base).div('800000000000000').mul(100).toNumber()
+        if (bondingProgress > 100) {
+          return 100
+        }
+        return new Big(bondingProgress).toFixed(2, 1)
+      }
+    }
+    
+    if (data.DApp?.includes('meteora')) {
+      const meteoraProgress = Number(data.read_quote) > 0 ? new Big(data.read_quote).div(43).div(10 ** 9).mul(100).toNumber() : 0
+      if (meteoraProgress > 100) {
+        return 100
+      }
+      return new Big(meteoraProgress).toFixed(2, 1)
+    }
+
+    return 0
+  }, [data])
+
+  const realyProgress = useMemo(() => {
+    if (data.DApp?.includes('ray_launchpad') || data.DApp?.includes('meteora')) {
+      return rayProgress
+    }
+    return data.bondingProgress || progress
+  }, [data, rayProgress, progress])
 
   return (
     <div className={styles.panel}>
@@ -16,17 +46,27 @@ export default function LaunchesStatus({ data }: any) {
         <div className={styles.singleProgress}>
           <div className={styles.progressTitleWrapper}>
             <div className={styles.progressPercent}>
-              {data.bondingProgress || progress}%
+              {simplifyNum(realyProgress, 2)}%
             </div>
             <div className={styles.progressTitle}>
               {
-                data.DApp === 'gofund' ? (
+                data.DApp === 'gofund' && (
                   <>
                     {totalRaised} SOL / <span style={{ color: "#9290B1" }}>{targetRaise} SOL</span>
                   </>
-                ) : (
+                ) 
+              }
+              {
+                data.DApp === 'sexy' && (
                   <>
                     {numberFormatter(new Big(data.solReserve || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>40.56 SOL</span>
+                  </>
+                )
+              }
+              {
+                (data.DApp.includes('ray_launchpad') || data.DApp.includes('meteora')) && (
+                  <>
+                    {numberFormatter(new Big(data.read_quote || 0).div(10 ** 9).toString(), 2, true)} SOL / <span style={{ color: "#9290B1" }}>43 SOL</span>
                   </>
                 )
               }
@@ -34,7 +74,7 @@ export default function LaunchesStatus({ data }: any) {
           </div>
 
           <ProgressBar
-            percent={data.bondingProgress || progress}
+            percent={realyProgress}
             style={{
               "--track-width": "6px",
               "--fill-color": "#C9FF5D",

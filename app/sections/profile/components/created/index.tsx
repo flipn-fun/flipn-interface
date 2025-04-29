@@ -154,11 +154,11 @@ export default function Created({
               amount: res.data.launching_num || 0,
               value: 1
             },
-            {
-              label: "Genesis",
-              amount: res.data.pre_launch_num || 0,
-              value: 0
-            }
+            // {
+            //   label: "Genesis",
+            //   amount: res.data.pre_launch_num || 0,
+            //   value: 0
+            // }
           ];
           setSummaries({
             ...summaries,
@@ -389,8 +389,6 @@ const PlatformSelect = (props: any) => {
   const { type, popoverRef, currentSummary, handleSelect } = props;
   const { isMobile } = useUserAgent();
   if (type !== "liked") return null;
-
-  console.log(type, type !== "liked")
 
   return (
     <div

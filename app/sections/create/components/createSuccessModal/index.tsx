@@ -3,7 +3,7 @@ import MainBtn from "@/app/components/mainBtn";
 import type { Project } from "@/app/type";
 
 import { httpGet } from "@/app/utils";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUserAgent } from "@/app/context/user-agent";
 import { shareToX } from "@/app/utils/share";
 import { useMessage } from "@/app/context/messageContext";
@@ -14,6 +14,7 @@ import { numberFormatter } from "@/app/utils/common";
 // @ts-ignore
 import confetti from "canvas-confetti";
 import { useInterval } from "ahooks";
+import SpinLoading from "antd-mobile/es/components/spin-loading";
 
 interface Props {
   show: boolean;
@@ -71,6 +72,11 @@ export default function CreateSuccessModal({
   );
 }
 
+const MEMETICS: any = {
+  'Raydium': 1338.75,
+  'FlipN': 4614.75
+}
+
 function SuccessModal({
   onClose,
   onShare,
@@ -86,6 +92,7 @@ function SuccessModal({
 }) {
   const { isMobile } = useUserAgent();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false)
 
   const launchConfetti = useCallback(() => {
     if (token) {
@@ -125,7 +132,7 @@ function SuccessModal({
           You will get
           <span className={style.tokenSymbol}>
             {" "}
-            {numberFormatter(5950, 4, true)} MEMETICS{" "}
+            {numberFormatter(MEMETICS[data.platform.name], 4, true)} MEMETICS{" "}
           </span>
           when this token hit bonding curve.
         </div>
@@ -152,20 +159,25 @@ function SuccessModal({
           <div className={style.name}>{token.tokenName}</div>
           <div className={style.ticker}>Ticker: {token.tokenSymbol}</div>
         </div>
-
+{/* 
         {
           data.platform.name === 'FlipN' && (
             <div className={style.successNote}>
               Collect 100 Likes to Bonding now!
             </div>
           )
-        }
+        } */}
 
         <div className={style.btnBox}>
           <MainBtn
             onClick={async () => {
+              if (isLoading) {
+                return
+              } 
+              setIsLoading(true)
+              await onShare();
               isMobile && onClose();
-              onShare();
+              setIsLoading(false)
             }}
             style={{
               fontWeight: isMobile ? 500 : 700,
@@ -173,8 +185,12 @@ function SuccessModal({
               color: isMobile ? "#FBCA04" : "#000000"
             }}
           >
-            Share
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>{isLoading ? <SpinLoading
+              color="#fff"
+              style={{ "--size": "18px" }}
+            /> : 'Share'}</div>
           </MainBtn>
+          
         </div>
       </div>
 

@@ -400,7 +400,7 @@ export default forwardRef(function CreateNode(
       x,
       tg,
       discord,
-      status: platform.name === 'Raydium' ? 1 : 0,
+      status: 1,
       platform,
     });
 
@@ -429,6 +429,7 @@ export default forwardRef(function CreateNode(
     validateTwitter,
     validateDiscord,
     isMobile,
+    platform,
   ]);
 
   useImperativeHandle(

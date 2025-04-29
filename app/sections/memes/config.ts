@@ -19,7 +19,7 @@ export enum Order {
 
 export enum MemePlatform {
   Raydium = "Raydium",
-  Meteora = "Meteora",
+  // Meteora = "Meteora",
   FlipN = "sexy",
 }
 
@@ -38,12 +38,12 @@ export const MemePlatforms: Record<MemePlatform, MemePlatformItem> = {
     icon: "/img/memes/icon-raydium.svg",
     dApp: [/^ray[a-zA-Z0-9_]*$/i],
   },
-  [MemePlatform.Meteora]: {
-    value: MemePlatform.Meteora,
-    label: "Meteora",
-    icon: "/img/memes/icon-meteora.svg",
-    dApp: [/^meteora$/i],
-  },
+  // [MemePlatform.Meteora]: {
+  //   value: MemePlatform.Meteora,
+  //   label: "Meteora",
+  //   icon: "/img/memes/icon-meteora.svg",
+  //   dApp: [/^meteora$/i],
+  // },
   [MemePlatform.FlipN]: {
     value: MemePlatform.FlipN,
     label: "FlipN",

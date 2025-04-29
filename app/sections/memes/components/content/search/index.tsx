@@ -86,7 +86,7 @@ const Search = (props: any) => {
               ref={inputRef}
               type="text"
               className={styles.MemesSearchInput}
-              placeholder=""
+              placeholder="Please enter the Token name"
               value={searchTextInner}
               onChange={(e) => {
                 cancelSearch();

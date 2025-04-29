@@ -20,18 +20,8 @@ export default function Laptop() {
   const createRef = useRef<any>();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const { isMobile } = useUserAgent();
-  const { createMint, getQoute, trade, createPlatform } = useRay({
-    token: {
-      address: '5FqUeNGvTY4kThG8pckse4haAdMA64CrqVBuY9LbaB4i',
-      about: '',
-      tokenImg: '',
-      tokenName: '',
-      ticker: '',
-    }
-  });
 
   
-
   const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken({
     token: {
       address: '6XxjYxLi7tU8ypYSJHSuMepiq2m1dGkev5b3mJ7udvfL',
@@ -116,37 +106,6 @@ export default function Laptop() {
           )}
         </div>
 
-        <div>
-        <Button onClick={async () => {    
-          const tx = await createMint({
-            tokenName: 'test',
-            ticker: 'test',
-            about: 'test',
-            tokenImg: 'test',
-            tokenIcon: 'test'
-          }, '10000000')
-        }}>Raudium</Button>
-
-        <Button onClick={async () => {
-          const quote = await getQoute('10000', 'buy')
-          console.log('quote', quote)
-        }}>Get Quote</Button>
-
-        <Button onClick={async () => {
-          const tx = await trade('100000000', 'buy', 100)
-          console.log('tx', tx)
-        }}>Buy</Button>
-
-        <Button onClick={async () => {
-          const tx = await trade('100000000000', 'sell', 100)
-          console.log('tx', tx)
-        }}>Sell</Button>  
-
-        <Button onClick={async () => {
-          const tx = await createPlatform()
-          console.log('tx', tx)
-        }}>Create Platform</Button>
-        </div>
 
         <div>
           <Button onClick={async () => {

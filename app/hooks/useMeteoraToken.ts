@@ -8,7 +8,7 @@ import { Keypair, PublicKey, Transaction, TransactionInstruction, TransactionMes
 import { useCallback, useEffect } from 'react';
 import { unwrapSOLInstruction, wrapSOLInstruction } from '@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils';
 
-
+export const tokenAddresses: any = {}
 const fakePool: any = {
     "volatilityTracker": {
         "lastUpdateTimestamp": new BN("00"),
@@ -85,6 +85,8 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         console.log('DYNAMIC_BONDING_CURVE_PROGRAM_ID', DYNAMIC_BONDING_CURVE_PROGRAM_ID.toBase58())
 
         console.log('config', params)
+
+        tokenAddresses[params.tokenName + '-' + params.ticker] = baseMint.publicKey.toBase58()
 
         const transaction = await client.pools.createPool({
             quoteMint: NATIVE_MINT,
