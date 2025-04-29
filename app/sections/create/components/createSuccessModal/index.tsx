@@ -73,7 +73,8 @@ export default function CreateSuccessModal({
 }
 
 const MEMETICS: any = {
-  'Raydium': 1338.75,
+  'Raydium': 50,
+  'Meteora': 50,
   'FlipN': 4614.75
 }
 

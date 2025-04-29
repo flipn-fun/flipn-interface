@@ -25,6 +25,11 @@ export default function Trade({
   onSuccess
 }: Props) {
 
+  if ((token as any).id === 'preview') {
+    return null
+  }
+
+
   return (
     <div className={styles.main}>
       {token.status === 1 && token.DApp === "pump" && (

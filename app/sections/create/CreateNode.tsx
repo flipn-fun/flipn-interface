@@ -55,7 +55,7 @@ const Platforms = [
       <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
       <ul className={styles.platformNoteContent}>
         <li className={styles.platformNoteText}>
-        Once the Token is created, it can be exposed directly on the LaunchPad platform.
+          Once the Token is created, it can be exposed directly on the LaunchPad platform.
         </li>
         <li className={styles.platformNoteText}>
           In the process of bounding, you will enjoy an amount bonus of 0.5% of the total transaction amount.
@@ -77,7 +77,10 @@ const Platforms = [
       <div className={styles.platformNoteIcon}>{noteIcon} <strong>NOTE</strong></div>
       <ul className={styles.platformNoteContent}>
         <li className={styles.platformNoteText}>
-          In the process of bounding, you will enjoy an amount bonus of 0.25% of the total transaction amount.
+          Once the Token is created, it can be exposed directly on the Meteora platform.
+        </li>
+        <li className={styles.platformNoteText}>
+          In the process of bounding, you will enjoy an amount bonus of 0.5% of the total transaction amount.
         </li>
       </ul>
     </div>,
