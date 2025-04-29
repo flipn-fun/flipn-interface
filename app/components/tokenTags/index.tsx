@@ -5,6 +5,7 @@ import Gofund from "../tag/gofund";
 import Raydium from "../tag/raydium";
 import styles from "./TokenTags.module.css";
 import { useMemo } from "react";
+import Meteora from "../tag/meteora";
 
 interface Props {
   token: Project;
@@ -25,6 +26,7 @@ export default function TokenTags({ token }: Props) {
       {token.DApp === "pump" && <Import />}
       {token.DApp === "gofund" && <Gofund />}
       {token.DApp?.includes("ray_launchpad") && <Raydium />}
+      {token.DApp?.includes("meteora") && <Meteora />}
     </div>
   );
 }
