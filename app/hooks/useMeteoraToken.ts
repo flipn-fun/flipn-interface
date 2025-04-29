@@ -355,20 +355,11 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
 
     const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip: number) => {
         const client = new DynamicBondingCurveClient(connection as any)
-        const programclient = new DynamicBondingCurveProgramClient(connection as any)
-
-        const poolAddress = await programclient.getPoolAddress(
-            NATIVE_MINT,
-            // new PublicKey('FEvrgVQbpe775fBxVSixevt1xwh7VH2ZLcBVMqvfGWHw'),
-            new PublicKey(token.address as string),
-            config
-        )
-
 
         const quote = await getQoute(amount, type, slip)
 
         const transaction = await client.pools.swap(
-            poolAddress,
+            (token as any).pool_address,
             {
                 amountIn: new BN(amount),
                 minimumAmountOut: new BN(quote).mul(new BN(1 - slip / 1000)),
@@ -409,18 +400,22 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         const client = new DynamicBondingCurveClient(connection as any)
         const programclient = new DynamicBondingCurveProgramClient(connection as any)
 
+        console.log('token', token)
+
         let pool = fakePool
-        const poolConfig = await programclient.getPoolConfig(config)
+        let poolConfig = await programclient.getPoolConfig(config)
         if (isReal) {
-            const poolAddress = await programclient.getPoolAddress(
-                NATIVE_MINT,
-                // new PublicKey('8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8'),
-                new PublicKey(token.address as string),
-                config
-            )
-            console.log('poolAddress', poolAddress.toBase58())
+            
+            // const poolAddress = await programclient.getPoolAddress(
+            //     NATIVE_MINT,
+            //     // new PublicKey('8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8'),
+            //     new PublicKey(token.address as string),
+            //     config
+            // )
+            // console.log('poolAddress', poolAddress.toBase58())
     
-            pool = await programclient.getPool(poolAddress)
+            pool = await programclient.getPool((token as any).pool_address)
+            poolConfig = await programclient.getPoolConfig(pool.config)
         }
 
         console.log('pool', pool!)
