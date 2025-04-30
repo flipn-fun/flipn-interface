@@ -38,6 +38,7 @@ const fakePool: any = {
     "tradingBaseFee": new BN("00"),
     "tradingQuoteFee": new BN("00"),
     "sqrtPrice": new BN('12218524266351781'),
+    // "sqrtPrice": new BN('1209633902368826381'),
     "activationPoint": new BN(parseInt("167fa753", 16)),
     "poolType": 0,
     "isMigrated": 0,
@@ -69,7 +70,7 @@ const fakePool: any = {
     ]
 }
 
-const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('4smZtL2NfcYNVtk3fFx9YFmbWoTvE3ttToA3KAL2QBMn') : new PublicKey('9KGgxn6H9Y7zRzUDh9o9M5w2KBGdJBNgUeUN8bFFF3FW')
+const config = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('BCvanWhP7B3x56nUzyWxUJBaxyayvAkm8WsCj7zAGF3c') : new PublicKey('9KGgxn6H9Y7zRzUDh9o9M5w2KBGdJBNgUeUN8bFFF3FW')
 export const useMeteoraToken = ({ token }: { token: Project }) => {
     const { publicKey, walletProvider } = useAccount();
     const { connection } = useConnection()
@@ -84,8 +85,10 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         console.log('baseMint', baseMint.publicKey.toBase58())
         console.log('DYNAMIC_BONDING_CURVE_PROGRAM_ID', DYNAMIC_BONDING_CURVE_PROGRAM_ID.toBase58())
 
-        console.log('config', params)
+        console.log('config', config.toBase58())
 
+        let poolConfig = await programclient.getPoolConfig(config)
+        console.log('poolConfig', poolConfig)
         tokenAddresses[params.tokenName + '-' + params.ticker] = baseMint.publicKey.toBase58()
 
         const transaction = await client.pools.createPool({
