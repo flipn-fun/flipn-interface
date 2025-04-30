@@ -64,12 +64,6 @@ const Platforms = [
     </div>
   },
   {
-    name: 'FlipN',
-    img: '/img/create/flip.png',
-    value: 'FlipN',
-    programId: process.env.NEXT_PUBLIC_PROGRAM_ID,
-  },
-  {
     name: 'Meteora',
     img: '/img/create/meteora.png',
     value: 'Meteora',
@@ -85,6 +79,12 @@ const Platforms = [
       </ul>
     </div>,
     programId: DYNAMIC_BONDING_CURVE_PROGRAM_ID
+  },
+  {
+    name: 'FlipN',
+    img: '/img/create/flip.png',
+    value: 'FlipN',
+    programId: process.env.NEXT_PUBLIC_PROGRAM_ID,
   },
 ]
 
