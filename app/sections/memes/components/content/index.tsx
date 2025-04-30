@@ -81,8 +81,6 @@ const MemesContent = (props: any) => {
           return p.dApp.some((reg) => reg.test(record.DApp));
         });
 
-        console.log('MemePlatforms:', MemePlatforms);
-
         return (
           <div className={styles.MemesTableToken}>
             <FallbackImg
@@ -150,24 +148,6 @@ const MemesContent = (props: any) => {
       render: (record: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
-
-        if (record.DApp?.includes('ray_launchpad')) {
-          const bondingProgress = new Big(record.read_base).div(Number(record.total_base_sell) || "800000000000000").mul(100).toNumber()
-          if (bondingProgress > 100) {
-            record.bonding_progress = '100.00'
-          } else {
-            record.bonding_progress = new Big(bondingProgress).toFixed(2, 1)
-          }
-        }
-
-        if (record.DApp?.includes('meteora')) {
-          const bondingProgress = new Big(record.read_quote).div(43 * (10 ** 9)).mul(100).toNumber()
-          if (bondingProgress > 100) {
-            record.bonding_progress = '100.00'
-          } else {
-            record.bonding_progress = new Big(bondingProgress).toFixed(2, 1)
-          }
-        }
 
         if (
           Big(record.bonding_progress || 0).lt(100)

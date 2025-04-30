@@ -225,12 +225,15 @@ export interface Meme {
   price: string;
   share_num: number;
   total_amount: number;
-  bonding_progress: number;
+  bonding_progress: number | string;
   king_progress: number;
   market_cap_change: number;
   time: number;
   market_cap: number;
   countdown: number;
+  read_base: string;
+  total_base_sell: string;
+  read_quote: string;
 
   // front-end attributes
   kind: 'Meme',
