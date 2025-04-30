@@ -23,7 +23,7 @@ export default function LaunchesStatus({ data }: any) {
     }
     
     if (data.DApp?.includes('meteora')) {
-      const meteoraProgress = Number(data.read_quote) > 0 ? new Big(data.read_quote).div(43).div(10 ** 9).mul(100).toNumber() : 0
+      const meteoraProgress = Number(data.read_quote) > 0 ? new Big(data.read_quote).div(Number(data.total_base_sell) || (43 * (10 ** 9))).mul(100).toNumber() : 0
       if (meteoraProgress > 100) {
         return 100
       }

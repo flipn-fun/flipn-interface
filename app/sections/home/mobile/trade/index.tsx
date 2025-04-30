@@ -20,7 +20,7 @@ export default function Trade({ token, isCurrent, onClick }: any) {
     }
 
     if (token.DApp?.includes('meteora')) {
-      const meteoraProgress = Number(token.read_quote) > 0 ? new Big(token.read_quote).div(43).div(10 ** 9).mul(100).toNumber() : 0
+      const meteoraProgress = Number(token.read_quote) > 0 ? new Big(token.read_quote).div(Number(token.total_base_sell) || (43 * (10 ** 9))).mul(100).toNumber() : 0
       if (meteoraProgress > 100) {
         return 100
       }
