@@ -81,8 +81,6 @@ const MemesContent = (props: any) => {
           return p.dApp.some((reg) => reg.test(record.DApp));
         });
 
-        console.log('MemePlatforms:', MemePlatforms);
-
         return (
           <div className={styles.MemesTableToken}>
             <FallbackImg
@@ -170,7 +168,7 @@ const MemesContent = (props: any) => {
         }
 
         if (
-          Big(record.bonding_progress || 0).lt(100)
+          Big(record.bonding_progress || 0).lte(100)
           && Big(record.bonding_progress || 0).gte(0)
           && status !== MemePhases[MemePhase.Listed].status
         ) {
