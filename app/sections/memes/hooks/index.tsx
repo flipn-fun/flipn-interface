@@ -269,7 +269,7 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       }
 
       if (MemePlatforms[MemePlatform.Meteora].dApp.some((reg) => reg.test(it.DApp))) {
-        let bondingProgress = new Big(it.read_quote).div(43 * (10 ** 9)).mul(100).toNumber();
+        let bondingProgress = new Big(it.read_quote).div(Number(it.total_base_sell) || (43 * (10 ** 9))).mul(100).toNumber()
         bondingProgress = Math.max(Math.min(bondingProgress, 100), 0);
         it.bonding_progress = Big(Math.min(bondingProgress, 100)).toFixed(2, 1);
       }
