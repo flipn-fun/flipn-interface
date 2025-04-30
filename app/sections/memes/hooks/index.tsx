@@ -12,7 +12,7 @@ import {
   MemePhase,
   MemePhaseType,
   MemePlatform,
-  MemePlatformItem,
+  MemePlatformItem, MemePlatforms,
   MemeSort,
 } from '@/app/sections/memes/config';
 import { useDebounceFn, useRequest, useThrottleFn } from 'ahooks';
@@ -261,6 +261,18 @@ export function useMemes(props?: { isLoadData?: boolean }): Memes {
       it.kind = "Meme";
       it.created2Now = timeAgo(it.DApp === "pump" ? it.time : it.created_at);
       it.created2Now = it.created2Now?.replace(/minutes/i, "min");
+
+      if (MemePlatforms[MemePlatform.Raydium].dApp.some((reg) => reg.test(it.DApp))) {
+        let bondingProgress = new Big(it.read_base).div(Number(it.total_base_sell) || "800000000000000").mul(100).toNumber();
+        bondingProgress = Math.max(Math.min(bondingProgress, 100), 0);
+        it.bonding_progress = Big(Math.min(bondingProgress, 100)).toFixed(2, 1);
+      }
+
+      if (MemePlatforms[MemePlatform.Meteora].dApp.some((reg) => reg.test(it.DApp))) {
+        let bondingProgress = new Big(it.read_quote).div(Number(it.total_base_sell) || (43 * (10 ** 9))).mul(100).toNumber()
+        bondingProgress = Math.max(Math.min(bondingProgress, 100), 0);
+        it.bonding_progress = Big(Math.min(bondingProgress, 100)).toFixed(2, 1);
+      }
 
       setMemesHoldersQueue(it.address);
 
