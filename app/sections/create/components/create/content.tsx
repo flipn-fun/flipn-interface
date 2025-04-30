@@ -26,6 +26,7 @@ import { useUser } from "@/app/store/useUser";
 import StepAction from "../stepAction";
 import { SpinLoading } from "antd-mobile";
 import { useRay } from "@/app/hooks/useRay";
+import { useMeteoraToken } from "@/app/hooks/useMeteoraToken";
 
 type Token = {
   tokenName: string;
@@ -95,7 +96,7 @@ export default function Create({
     loadData: false
   });
 
-  const { programId, createMint, getQouteBeforeBuy } = useRay({
+  const { createMint, getQouteBeforeBuy } = useRay({
     token: {
       tokenName,
       ticker: data.ticker.toUpperCase(),
@@ -104,6 +105,16 @@ export default function Create({
       tokenIcon: data.tokenIcon
     }
   });
+
+  const { createMint: createMintMeteora, getQouteBeforeBuy: getQouteBeforeBuyMeteora } = useMeteoraToken({
+    token: {
+      tokenName,
+      ticker: data.ticker.toUpperCase(),
+      about: data.about,
+      tokenImg: data.tokenImg,
+      tokenIcon: data.tokenIcon
+    }
+  })
 
   const { solBalance } = useBalance({
     reFreshBalnace: 10,
@@ -158,6 +169,13 @@ export default function Create({
         const res = getQouteBeforeBuyFlipN(new Big(debounceVal).mul(10 ** 9).toString())
         const amount = new Big(res).div(10 ** 6).toFixed(2)
         setRayReceiveAmount(amount)
+      } else if (data.platform.name === 'Meteora') {
+        setRayReceiveAmount('0')
+        getQouteBeforeBuyMeteora(new Big(debounceVal).mul(10 ** 9).toString())
+          .then((res: any) => {
+            const amount = new Big(res).div(10 ** 6).toFixed(2)
+            setRayReceiveAmount(amount)
+          })
       }
 
       if (Number(debounceVal) > Number(solBalance) - 0.03) {
@@ -183,8 +201,6 @@ export default function Create({
         totalRef.current.isError = true;
         setIsError(true);
       }
-
-      
     }
   }, [debounceVal, data, solBalance]);
 
@@ -217,6 +233,17 @@ export default function Create({
 
         if (data.platform.name === 'Raydium') {
           hash = await createMint({
+            tokenName,
+            ticker: data.ticker.toUpperCase(),
+            about: data.about,
+            tokenImg: filePath,
+            tokenDecimals: 6
+          }, ignorePrepaid !== 0 && totalRef.current.inputVal
+            ? new Big(totalRef.current.inputVal).mul(10 ** 9).toString()
+            : ''
+          )
+        } else if (data.platform.name === 'Meteora') {
+          hash = await createMintMeteora({
             tokenName,
             ticker: data.ticker.toUpperCase(),
             about: data.about,
@@ -355,9 +382,10 @@ export default function Create({
           </div>
 
 
+
           <div>
             {
-              (data.platform.name === 'Raydium' || data.platform.name === 'FlipN') && <div className={styles.receiveBox}>
+              (data.platform.name === 'Raydium' || data.platform.name === 'FlipN' || data.platform.name === 'Meteora') && <div className={styles.receiveBox}>
                 <div className={styles.receiveBoxTitle}>
                   You receive:
                 </div>

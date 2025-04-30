@@ -42,7 +42,7 @@ export const MemePlatforms: Record<MemePlatform, MemePlatformItem> = {
     value: MemePlatform.Meteora,
     label: "Meteora",
     icon: "/img/memes/icon-meteora.svg",
-    dApp: [/^meteora$/i],
+    dApp: [/^meteora[a-zA-Z0-9_]*$/i],
   },
   [MemePlatform.FlipN]: {
     value: MemePlatform.FlipN,

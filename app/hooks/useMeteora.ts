@@ -29,10 +29,10 @@ export default function useMeteora({ token }: Params) {
     useEffect(() => {
         (async () => {
             if (token && token.status === 3 && token.DApp === 'sexy') {
-                const pools = await AmmImpl.searchPoolsByToken(connection, new PublicKey(token.address as string))
+                const pools = await AmmImpl.searchPoolsByToken(connection as any, new PublicKey(token.address as string))
                 if (pools.length > 0) {
                     const pool = pools[0]
-                    const constantProductPool = await AmmImpl.create(connection, pool.publicKey);
+                    const constantProductPool = await AmmImpl.create(connection as any, pool.publicKey);
                     setMeteoraPool(pool)
                     meteoraPoolRef.current = constantProductPool
                 }

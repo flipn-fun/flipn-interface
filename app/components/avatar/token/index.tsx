@@ -37,6 +37,11 @@ export default function TokenIcon({
       return (Math.min(rayProgress, 100) / 100) * 138.23;
     }
 
+    if (token.DApp?.includes('meteora')) {
+      const meteoraProgress = Number(token.read_quote) > 0 ? new Big(token.read_quote).div(Number(token.total_base_sell) || (43 * (10 ** 9))).mul(100).toNumber() : 0
+      return (Math.min(meteoraProgress, 100) / 100) * 138.23;
+    }
+
     return (token.bondingProgress / 100) * 138.23;
   }, [token, gofundProgress]);
   return (

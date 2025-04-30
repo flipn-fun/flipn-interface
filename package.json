@@ -16,6 +16,7 @@
     "@coral-xyz/anchor": "0.29.0",
     "@gofundmeme/sdk-frontend": "^1.0.4",
     "@mercurial-finance/dynamic-amm-sdk": "^1.1.23",
+    "@meteora-ag/dynamic-bonding-curve-sdk": "1.1.1-rc.3",
     "@metaplex-foundation/js": "^0.20.1",
     "@okxconnect/solana-provider": "1.6.7",
     "@okxconnect/ui": "1.6.7",
@@ -60,7 +61,7 @@
     "react-lazy-load-image-component": "^1.6.3",
     "recharts": "^2.15.1",
     "zustand": "^5.0.2",
-    "@raydium-io/raydium-sdk-v2": "0.1.126-alpha"
+    "@raydium-io/raydium-sdk-v2": "0.1.128-alpha"
   },
   "devDependencies": {
     "@types/big.js": "^6.2.2",

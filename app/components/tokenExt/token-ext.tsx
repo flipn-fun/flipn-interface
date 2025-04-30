@@ -35,6 +35,23 @@ export default function TokenExt({ token, showTrade }: Props) {
         );
     }
 
+    if (token?.DApp?.includes("meteora")) {
+        return (
+            <>
+                {
+                    (token as any).data_type !== "top_project" && (!showTrade || isMobile) && (
+                        <div className={styles.TokenExtMeteoraContainer + ' ' + (isMobile ? styles.Mobile : '')}>
+                        </div>
+                    )
+                }
+                <div className={styles.ImgContainer + ' ' + (isMobile ? styles.MobileImgContainer : '')}>
+                    <img src="/img/create/meteora.png" className={styles.PlatformImg} style={{ position: 'relative', top: 3 }} alt="raydium" />
+                    <div className={styles.ImgText}>Meteora</div>
+                </div>
+            </>
+        );
+    }
+
 
 
     return null;
