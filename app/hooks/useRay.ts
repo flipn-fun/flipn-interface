@@ -29,6 +29,7 @@ const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM 
 
 export const tokenAddresses: any = {}
 
+
 async function addComputeBudget(transaction: Transaction) {
   if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
     const microLamports = await getPriorityFeeEstimate(transaction, '');
@@ -61,7 +62,7 @@ export const useRay = (params: Params | null) => {
 
       raydiumInstance.current = raydium;
     })();
-  }, []);
+  }, [publicKey]);
 
   const createMint = useCallback(async (params: Project, amount: string) => {
     if (!raydiumInstance.current) return;
@@ -256,16 +257,44 @@ export const useRay = (params: Params | null) => {
   }, [raydiumInstance.current, params])
 
   const createPlatform = useCallback(async () => {
+    console.log(raydiumInstance)
+
     if (!raydiumInstance.current) return;
 
-    const owner = new PublicKey('9Rny1dwV3TvSvx9sxif2pdZJgFFTThg1riPNzNMVGRsP')
-    // const owner = publicKey
+    // const owner = new PublicKey('EvZRp56QkDXxBE25DitmEBnRBtgzRc5oQohv6eYHUSyP')
+    const owner = publicKey
+
+    console.log('programId:', programId.toBase58())
+    console.log('LAUNCHPAD_PROGRAM:', DEV_LAUNCHPAD_PROGRAM.toBase58())
+    // console.log('owner:', owner.toBase58())
+    console.log('owner:', raydiumInstance)
+
+    console.log({
+      programId, // launchpad currently only support in devent
+      platformAdmin: publicKey,
+      platformClaimFeeWallet: owner,
+      platformLockNftWallet: owner,
+      // cpConfigid: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
+      migrateCpLockNftScale: {
+        platformScale: new BN(400000), // set up your config
+        creatorScale: new BN(400000), // set up your config
+        burnScale: new BN(200000), // set up your config
+      },
+      feeRate: new BN(1125), // set up your config
+      name: 'Flipn',
+      web: 'https://flipn.fun',
+      img: 'https://app.flipn.fun/img/create/flip.png',
+      txVersion: TxVersion.V0,
+      feePayer: publicKey,
+    })
+    
 
     const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
       programId, // launchpad currently only support in devent
       platformAdmin: publicKey,
       platformClaimFeeWallet: owner,
       platformLockNftWallet: owner,
+      cpConfigId: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
       migrateCpLockNftScale: {
         platformScale: new BN(400000), // set up your config
         creatorScale: new BN(400000), // set up your config
@@ -284,7 +313,7 @@ export const useRay = (params: Params | null) => {
       // },
     })
 
-    console.log(`platformId: ${extInfo.platformId.toBase58()}`)
+    console.log(`platformId:`, extInfo)
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
@@ -294,9 +323,9 @@ export const useRay = (params: Params | null) => {
 
     console.log('tx: success', tx)
 
-    return tx
+    // return extInfo.platformId.toBase58()
 
-  }, [raydiumInstance.current])
+  }, [raydiumInstance.current, publicKey, walletProvider])
 
   const trade = useCallback(async (amount: string, type: "buy" | "sell" = "buy", slip?: number) => {
     if (!raydiumInstance.current || !params) return;

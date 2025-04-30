@@ -19,7 +19,7 @@ export default function useUserMining() {
         );
  
         RaydiumFeeResponse = await httpAuthGet(
-          `/account/launchpad/fee?DApp=ray_launchpad&token=So11111111111111111111111111111111111111112`
+          `/account/launchpad/fee?token=So11111111111111111111111111111111111111112`
         )
 
         clime_created = Number(pointsResponse?.data?.points) > 0;
@@ -39,7 +39,7 @@ export default function useUserMining() {
 
   const claimRaydiumFee = async (amount: number) => {
     try {
-      const response = await httpAuthPost(`/account/launchpad/fee/claim?DApp=ray_launchpad&token=So11111111111111111111111111111111111111112&amount=${amount}`);
+      const response = await httpAuthPost(`/account/launchpad/fee/claim?token=So11111111111111111111111111111111111111112&amount=${amount}`);
       if (response.code === 0) {
         onQuery();
       }
