@@ -12,6 +12,7 @@ import Header from "./header";
 import { SHOW_COPY_TRADE } from "@/app/utils/config";
 import { INVITE_TYPE } from "@/app/config/invite";
 import BottomActions from "./bottom-actions";
+import RaydiumTest from "@/app/sections/create/RaydiumTest";
 
 const CreatePage = dynamic(() => import("@/app/sections/create/laptop"));
 const MemesPage = dynamic(() => import("@/app/sections/memes"));
@@ -38,6 +39,10 @@ export default function Laptop({ children }: any) {
 
   if (pathname === "/ref") {
     return <InviteCodeView type={INVITE_TYPE.REF} />;
+  }
+
+  if (pathname === "/raydium-test") {
+    return <RaydiumTest />;
   }
 
   return (
