@@ -3,7 +3,7 @@ import { Button } from "antd-mobile";
 import { useRay } from "../../hooks/useRay";
 import { useState } from "react";
 export default function RaydiumTest() {
-  const [paltformId, setPlatformId] = useState()
+  const [paltformId, setPlatformId] = useState<any>()
 
   const { createPlatform } = useRay({
     token: {
