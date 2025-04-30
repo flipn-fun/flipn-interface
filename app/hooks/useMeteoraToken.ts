@@ -1,10 +1,10 @@
 import { BN } from '@coral-xyz/anchor';
 import type { Project } from '../type';
-import { useAccount } from "./useAccount";
+import { getPriorityFeeEstimate, useAccount } from "./useAccount";
 import { TokenType, DynamicBondingCurveClient, DYNAMIC_BONDING_CURVE_PROGRAM_ID, DynamicBondingCurveProgramClient, SwapAccounts } from "@meteora-ag/dynamic-bonding-curve-sdk";
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountIdempotentInstruction, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { useConnection } from "@solana/wallet-adapter-react";
-import { Keypair, PublicKey, Transaction, TransactionInstruction, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
+import { ComputeBudgetProgram, Keypair, PublicKey, Transaction, TransactionInstruction, TransactionMessage, VersionedTransaction } from '@solana/web3.js';
 import { useCallback, useEffect } from 'react';
 import { unwrapSOLInstruction, wrapSOLInstruction } from '@mercurial-finance/dynamic-amm-sdk/dist/cjs/src/amm/utils';
 
@@ -32,14 +32,13 @@ const fakePool: any = {
     "baseVault": new PublicKey("FdhrwbCPAz3PYRXdT55P8Y7PmmNiieneHs4FrhX5d5Pe"),
     "quoteVault": new PublicKey("63ffWfjxkuoX3h4akt3aAPV2cATwHX3Lnzzzg4oWrfeD"),
     "baseReserve": new BN('1000000000000000'),
-    "quoteReserve": new BN("00"),
+    "quoteReserve": new BN("1"),
     "protocolBaseFee": new BN("00"),
     "protocolQuoteFee": new BN("00"),
     "tradingBaseFee": new BN("00"),
     "tradingQuoteFee": new BN("00"),
-    "sqrtPrice": new BN('12218524266351781'),
-    // "sqrtPrice": new BN('1209633902368826381'),
-    "activationPoint": new BN(parseInt("167fa753", 16)),
+    "sqrtPrice": process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new BN('67620592181540166') : new BN('12218524266351781'),
+    "activationPoint": new BN(parseInt("64136fc3", 16)),
     "poolType": 0,
     "isMigrated": 0,
     "isPartnerWithdrawSurplus": 0,
@@ -236,10 +235,22 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         }
 
 
+
         console.log('transaction', transaction)
 
         const latestBlockhash = await connection?.getLatestBlockhash();
         transaction.recentBlockhash = latestBlockhash!.blockhash;
+
+        const microLamports = await getPriorityFeeEstimate(transaction as any, '');
+
+        transaction.add(
+            ComputeBudgetProgram.setComputeUnitLimit({
+                units: 500000
+            }),
+            ComputeBudgetProgram.setComputeUnitPrice({
+                microLamports: microLamports
+            })
+        );
 
 
         const message = new TransactionMessage({
@@ -408,7 +419,7 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
         let pool = fakePool
         let poolConfig = await programclient.getPoolConfig(config)
         if (isReal) {
-            
+
             // const poolAddress = await programclient.getPoolAddress(
             //     NATIVE_MINT,
             //     // new PublicKey('8dRdXBwhUnRsZKT8gUyMkqJCBJJexioGYdenjzUPgVf8'),
@@ -416,7 +427,7 @@ export const useMeteoraToken = ({ token }: { token: Project }) => {
             //     config
             // )
             // console.log('poolAddress', poolAddress.toBase58())
-    
+
             pool = await programclient.getPool((token as any).pool_address)
             poolConfig = await programclient.getPoolConfig(pool.config)
         }
