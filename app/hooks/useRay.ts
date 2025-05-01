@@ -29,15 +29,6 @@ const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM 
 
 export const tokenAddresses: any = {}
 
-
-async function addComputeBudget(transaction: Transaction) {
-  if (process.env.NEXT_PUBLIC_NET === 'Mainnet') {
-    const microLamports = await getPriorityFeeEstimate(transaction, '');
-    
-    // transaction.add(ComputeBudgetProgram.setComputeUnitLimit({ units: 500000 }), ComputeBudgetProgram.setComputeUnitPrice({ microLamports }));
-  }
-} 
-
 export const useRay = (params: Params | null) => {
   const { connection } = useConnection();
   const { publicKey, walletProvider } = useAccount();
@@ -269,51 +260,56 @@ export const useRay = (params: Params | null) => {
     // console.log('owner:', owner.toBase58())
     console.log('owner:', raydiumInstance)
 
-    console.log({
-      programId, // launchpad currently only support in devent
-      platformAdmin: publicKey,
-      platformClaimFeeWallet: owner,
-      platformLockNftWallet: owner,
-      // cpConfigid: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
-      migrateCpLockNftScale: {
-        platformScale: new BN(400000), // set up your config
-        creatorScale: new BN(400000), // set up your config
-        burnScale: new BN(200000), // set up your config
-      },
-      feeRate: new BN(1125), // set up your config
-      name: 'Flipn',
-      web: 'https://flipn.fun',
-      img: 'https://app.flipn.fun/img/create/flip.png',
-      txVersion: TxVersion.V0,
-      feePayer: publicKey,
-    })
-    
+    // console.log({
+    //   programId, // launchpad currently only support in devent
+    //   platformAdmin: publicKey,
+    //   platformClaimFeeWallet: owner,
+    //   platformLockNftWallet: owner,
+    //   // cpConfigid: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
+    //   migrateCpLockNftScale: {
+    //     platformScale: new BN(400000), // set up your config
+    //     creatorScale: new BN(400000), // set up your config
+    //     burnScale: new BN(200000), // set up your config
+    //   },
+    //   feeRate: new BN(1125), // set up your config
+    //   name: 'Flipn',
+    //   web: 'https://flipn.fun',
+    //   img: 'https://app.flipn.fun/img/create/flip.png',
+    //   txVersion: TxVersion.V0,
+    //   feePayer: publicKey,
+    // })
+    const configKeypair = Keypair.generate()
+    const space = 100; // 按你程序的数据结构大小调整
+    const lamports = await connection.getMinimumBalanceForRentExemption(space);
 
     const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
       programId, // launchpad currently only support in devent
       platformAdmin: publicKey,
       platformClaimFeeWallet: owner,
       platformLockNftWallet: owner,
-      cpConfigId: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
+      cpConfigId: new PublicKey(configKeypair.publicKey.toBase58()),
       migrateCpLockNftScale: {
         platformScale: new BN(400000), // set up your config
         creatorScale: new BN(400000), // set up your config
         burnScale: new BN(200000), // set up your config
       },
       feeRate: new BN(1125), // set up your config
-      name: 'Flipn',
-      web: 'https://flipn.fun',
+      name: 'Flipn1',
+      web: 'https://flipn.fun1',
       img: 'https://app.flipn.fun/img/create/flip.png',
       txVersion: TxVersion.V0,
       feePayer: publicKey,
       // totalFundRaisingAmount: new BN(1000000000000000000),
-      // computeBudgetConfig: {
-      //   units: 600000,
-      //   microLamports: 600000,
-      // },
+      computeBudgetConfig: {
+        units: 600000,
+        microLamports: 600000,
+      },
     })
 
-    console.log(`platformId:`, extInfo)
+    console.log('transaction', transaction)
+
+ 
+    console.log(`platformId:`, extInfo.platformId.toBase58())
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
@@ -323,7 +319,7 @@ export const useRay = (params: Params | null) => {
 
     console.log('tx: success', tx)
 
-    // return extInfo.platformId.toBase58()
+    return extInfo.platformId.toBase58()
 
   }, [raydiumInstance.current, publicKey, walletProvider])
 
