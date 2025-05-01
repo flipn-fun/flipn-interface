@@ -15,7 +15,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getPriorityFeeEstimate, useAccount } from './useAccount';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddressSync, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { BN } from '@coral-xyz/anchor';
-import { ComputeBudgetProgram, Keypair, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
+import { ComputeBudgetProgram, Keypair, PublicKey, SystemProgram, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { Project } from '../type';
 import { reportTradeData } from '../utils/report';
 import { ReportDataType } from '../utils/report';
@@ -26,7 +26,10 @@ interface Params {
 }
 
 const programId = process.env.NEXT_PUBLIC_NET === 'Mainnet' ? LAUNCHPAD_PROGRAM : DEV_LAUNCHPAD_PROGRAM
+const platformId = process.env.NEXT_PUBLIC_RAYDIUM_PLATFORM ? new PublicKey(process.env.NEXT_PUBLIC_RAYDIUM_PLATFORM) : new PublicKey('Dj4pgzpYAw3yAY7U4EtQ3CnTWVy568DRKtdkjtpLhMWg')
+// Dj4pgzpYAw3yAY7U4EtQ3CnTWVy568DRKtdkjtpLhMWg
 
+// const platformId = new PublicKey('Dj4pgzpYAw3yAY7U4EtQ3CnTWVy568DRKtdkjtpLhMWg')
 export const tokenAddresses: any = {}
 
 export const useRay = (params: Params | null) => {
@@ -63,7 +66,7 @@ export const useRay = (params: Params | null) => {
     const pair = Keypair.generate()
     const mintA = pair.publicKey
 
-    console.log('createMint', configId, programId, LAUNCHPAD_PROGRAM)
+    console.log('createMint', configId, programId, LAUNCHPAD_PROGRAM.toBase58(), platformId.toBase58())
 
     const configData = await raydiumInstance.current.connection.getAccountInfo(configId)
 
@@ -97,7 +100,8 @@ export const useRay = (params: Params | null) => {
       }, // optional, sdk will get data by configId if not provided
       mintBDecimals: mintBInfo.decimals, // default 9
       /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
-      platformId: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T') : new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
+      // platformId: process.env.NEXT_PUBLIC_NET === 'Mainnet' ? new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T') : new PublicKey('9MJwEH3bWhwTJVvLVjWefTY4SmVqBPJoFR84i8HBbAkD'),
+      platformId,
       txVersion: TxVersion.V0,
       slippage: new BN(100), // means 1%
       buyAmount: createOnly ? new BN(1) : inAmount,
@@ -252,50 +256,35 @@ export const useRay = (params: Params | null) => {
 
     if (!raydiumInstance.current) return;
 
-    // const owner = new PublicKey('EvZRp56QkDXxBE25DitmEBnRBtgzRc5oQohv6eYHUSyP')
-    const owner = publicKey
+    const owner = new PublicKey('EvZRp56QkDXxBE25DitmEBnRBtgzRc5oQohv6eYHUSyP')
+    // const owner = publicKey
 
     console.log('programId:', programId.toBase58())
     console.log('LAUNCHPAD_PROGRAM:', DEV_LAUNCHPAD_PROGRAM.toBase58())
     // console.log('owner:', owner.toBase58())
-    console.log('owner:', raydiumInstance)
+    // console.log('owner:', raydiumInstance)
 
-    // console.log({
-    //   programId, // launchpad currently only support in devent
-    //   platformAdmin: publicKey,
-    //   platformClaimFeeWallet: owner,
-    //   platformLockNftWallet: owner,
-    //   // cpConfigid: new PublicKey('C4JeAyndKKqrzcWsF941dUMXacMb8tz8DkjvzVTpgi9T'),
-    //   migrateCpLockNftScale: {
-    //     platformScale: new BN(400000), // set up your config
-    //     creatorScale: new BN(400000), // set up your config
-    //     burnScale: new BN(200000), // set up your config
-    //   },
-    //   feeRate: new BN(1125), // set up your config
-    //   name: 'Flipn',
-    //   web: 'https://flipn.fun',
-    //   img: 'https://app.flipn.fun/img/create/flip.png',
-    //   txVersion: TxVersion.V0,
-    //   feePayer: publicKey,
-    // })
+ 
     const configKeypair = Keypair.generate()
     const space = 100; // 按你程序的数据结构大小调整
     const lamports = await connection.getMinimumBalanceForRentExemption(space);
 
-    const { transaction, extInfo, execute } = await raydiumInstance.current.launchpad.createPlatformConfig({
+    console.log('aydiumInstance.current.launchpad', raydiumInstance.current.launchpad)
+
+    const { extInfo, builder } = await raydiumInstance.current.launchpad.createPlatformConfig({
       programId, // launchpad currently only support in devent
       platformAdmin: publicKey,
       platformClaimFeeWallet: owner,
       platformLockNftWallet: owner,
-      cpConfigId: new PublicKey(configKeypair.publicKey.toBase58()),
+      cpConfigId: new PublicKey('D4FPEruKEHrG5TenZ2mpDGEfu1iUvTiqBxvpU8HLBvC2'),
       migrateCpLockNftScale: {
         platformScale: new BN(400000), // set up your config
         creatorScale: new BN(400000), // set up your config
         burnScale: new BN(200000), // set up your config
       },
       feeRate: new BN(1125), // set up your config
-      name: 'Flipn1',
-      web: 'https://flipn.fun1',
+      name: 'Flipn',
+      web: 'https://flipn.fun',
       img: 'https://app.flipn.fun/img/create/flip.png',
       txVersion: TxVersion.V0,
       feePayer: publicKey,
@@ -306,10 +295,11 @@ export const useRay = (params: Params | null) => {
       },
     })
 
-    console.log('transaction', transaction)
-
- 
     console.log(`platformId:`, extInfo.platformId.toBase58())
+    // builder.addInstruction({ signers: [configKeypair] })
+    
+    const { execute, transaction } = await builder.buildV0()
+    console.log('transaction', transaction)
 
     const tx = await walletProvider.signAndSendTransaction(transaction, {}, {
       isVersionedTransaction: true,
