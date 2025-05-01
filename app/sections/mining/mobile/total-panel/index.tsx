@@ -199,7 +199,7 @@ export default function TotalPanel({ info, userInfo, claimRaydiumFee }: any) {
                   </div>
                   <div className={styles.ClaimBoxBtn}>
                     <button className={styles.ClaimBoxBtn} onClick={async () => {
-                      if (Number(info?.RaydiumFee) > 1000000) {
+                      if (Number(info?.RaydiumFee) > 10 ** 7) {
                         setClaimLoading(true)
                         await claimRaydiumFee(info?.RaydiumFee)
                         setClaimLoading(false)
