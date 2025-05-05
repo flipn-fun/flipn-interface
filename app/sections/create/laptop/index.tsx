@@ -22,15 +22,15 @@ export default function Laptop() {
   const { isMobile } = useUserAgent();
 
   
-  const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken({
-    token: {
-      address: '6XxjYxLi7tU8ypYSJHSuMepiq2m1dGkev5b3mJ7udvfL',
-      about: '',
-      tokenImg: '',
-      tokenName: '',
-      ticker: '',
-    }
-  })
+  // const { createMint: createMintMeteora, trade: tradeMeteora, getQoute: getQouteMeteora } = useMeteoraToken({
+  //   token: {
+  //     address: '6XxjYxLi7tU8ypYSJHSuMepiq2m1dGkev5b3mJ7udvfL',
+  //     about: '',
+  //     tokenImg: '',
+  //     tokenName: '',
+  //     ticker: '',
+  //   }
+  // })
 
   const query = useMemo(() => {
     const query: any = {
@@ -107,7 +107,7 @@ export default function Laptop() {
         </div>
 
 
-        <div>
+        {/* <div>
           <Button onClick={async () => {
             const tx = await createMintMeteora({
               tokenName: 'maoli3',
@@ -133,7 +133,7 @@ export default function Laptop() {
             const tx = await tradeMeteora('100000000000', 'sell', 100)
             console.log('tx', tx)
           }}>Sell</Button>
-        </div>
+        </div> */}
 
       </motion.div>
     </>
