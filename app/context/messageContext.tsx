@@ -47,6 +47,7 @@ export const MessageContextProvider: React.FC<{
         setcloseFn(closeFn);
         // setShareTemplateShow(true);
         
+        
         if (videoReg.test(token.tokenImg)) {
           setShareListShow(true);
         } else {
