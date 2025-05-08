@@ -149,24 +149,6 @@ const MemesContent = (props: any) => {
         const { status } = record;
         const currPhase = Object.values(MemePhases).find((p) => p.status === status);
 
-        if (record.DApp?.includes('ray_launchpad')) {
-          const bondingProgress = new Big(record.read_base).div(Number(record.total_base_sell) || "800000000000000").mul(100).toNumber()
-          if (bondingProgress > 100) {
-            record.bonding_progress = '100.00'
-          } else {
-            record.bonding_progress = new Big(bondingProgress).toFixed(2, 1)
-          }
-        }
-
-        if (record.DApp?.includes('meteora')) {
-          const bondingProgress = new Big(record.read_quote).div(Number(record.total_base_sell) || (43 * (10 ** 9))).mul(100).toNumber()
-          if (bondingProgress > 100) {
-            record.bonding_progress = '100.00'
-          } else {
-            record.bonding_progress = new Big(bondingProgress).toFixed(2, 1)
-          }
-        }
-
         if (
           Big(record.bonding_progress || 0).lte(100)
           && Big(record.bonding_progress || 0).gte(0)
