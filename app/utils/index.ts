@@ -84,8 +84,9 @@ export async function http(
   } catch (e: any) {
     console.log('error: ', e);
     if (e.message.includes('Failed to fetch')) {
-      window.sign();
       window.localStorage.removeItem(AUTH_KEY);
+      window.disconnect?.();
+      logOut();
     }
     return {
       code: -1,
