@@ -21,59 +21,81 @@ export async function http(
   isRepeat?: boolean
 ) {
   if (!path) return;
-  let _path = path,
-    postBody = {};
-  if (method === "GET" && params) {
-    const _paramsString = Object.keys(params)
-      .map((key) => {
-        return `${key}=${encodeURIComponent(params[key])}`;
-      })
-      .join("&");
-    if (path.indexOf("?") > -1) {
-      _path = `${_path}&${_paramsString}`;
-    } else {
-      _path = `${_path}?${_paramsString}`;
+  try {
+    let _path = path,
+      postBody = {};
+    if (method === "GET" && params) {
+      const _paramsString = Object.keys(params)
+        .map((key) => {
+          return `${key}=${encodeURIComponent(params[key])}`;
+        })
+        .join("&");
+      if (path.indexOf("?") > -1) {
+        _path = `${_path}&${_paramsString}`;
+      } else {
+        _path = `${_path}?${_paramsString}`;
+      }
+    } else if (method === "POST") {
+      postBody = {
+        body: JSON.stringify(params)
+      };
     }
-  } else if (method === "POST") {
-    postBody = {
-      body: JSON.stringify(params)
-    };
-  }
 
-  let _header = headers
-    ? {
+    let _header = headers
+      ? {
         headers: headers
       }
-    : {
+      : {
         headers: {
           authorization: getAuthorizationByLocal()
         }
       };
 
-  const response = await fetch(`${BASE_URL}${_path}`, {
-    method: method,
-    ...postBody,
-    ..._header
-  });
-  const data = await response.json();
-  if (typeof data?.code === "undefined") return data;
+    const response = await fetch(`${BASE_URL}${_path}`, {
+      method: method,
+      ...postBody,
+      ..._header
+    });
 
-  if (data.code === TOKEN_ERROR_CODE) {
-    if (!window.connecting) {
+    if (response.status === 401) {
       window.sign();
       window.localStorage.removeItem(AUTH_KEY);
     }
-    if (isRepeat) {
-      return await http(path, method, params, headers, false);
+
+    const data = await response.json();
+    if (typeof data?.code === "undefined") return data;
+
+    if (data.code === TOKEN_ERROR_CODE) {
+      if (!window.connecting) {
+        window.sign();
+        window.localStorage.removeItem(AUTH_KEY);
+      }
+      if (isRepeat) {
+        return await http(path, method, params, headers, false);
+      }
+      return data;
     }
-    return data;
-  }
-  if (data.code !== 0) {
-    return data;
-  } else {
-    return data;
+    if (data.code !== 0) {
+      return data;
+    } else {
+      return data;
+    }
+
+  } catch (e: any) {
+    console.log('error: ', e);
+    if (e.message.includes('Failed to fetch')) {
+      window.localStorage.removeItem(AUTH_KEY);
+      window.disconnect?.();
+      logOut();
+    }
+    return {
+      code: -1,
+      data: null
+    };
   }
 }
+
+
 
 export async function httpGet(
   path: string,
@@ -120,9 +142,9 @@ export async function httpAuthPost(
     params,
     isJson
       ? {
-          authorization,
-          "Content-Type": "application/json"
-        }
+        authorization,
+        "Content-Type": "application/json"
+      }
       : { authorization },
     isRepeat
   );
@@ -308,7 +330,7 @@ export function getFullNum(value: any) {
       }
     }
     return x;
-  } catch (e) {}
+  } catch (e) { }
 
   return value;
 }
@@ -531,7 +553,7 @@ export async function postUpload(
       }
 
       const url = `${process.env.NEXT_PUBLIC_S3_URL_PREFIX}/${s3_dir}${newFileName}`
-      
+
       if (/^image\/(jpg|jpeg|png|gif|bmp|webp|svg|tiff|tif)$/.test(type)) {
 
         const checkImgRes = await httpAuthGet('/check/image?url=' + url)
@@ -544,7 +566,7 @@ export async function postUpload(
         }
       }
 
-      return url 
+      return url
     }
   } catch (e) {
     fail("error: Upload fail");
